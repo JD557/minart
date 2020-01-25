@@ -1,8 +1,9 @@
 package eu.joaocosta.minart
 
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension}
-import java.awt.image.{DataBufferInt, BufferedImage}
+import java.awt.image.{ DataBufferInt, BufferedImage }
+import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
 import javax.swing.JFrame
+import scala.language.reflectiveCalls
 
 case class AwtCanvas(
   width: Int,
@@ -41,12 +42,12 @@ case class AwtCanvas(
     Color(
       r = (c & 0x00FF0000) >> 16,
       g = (c & 0x0000FF00) >> 8,
-      b = (c & 0x000000FF)
-    )
+      b = (c & 0x000000FF))
 
-  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = deltas.foreach { case (dx, dy) =>
-    javaCanvas.imagePixels
-      .setElem((y * scale + dy) * scaledWidth + (x * scale + dx) % scaledWidth, pack(c.r, c.g, c.b))
+  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = deltas.foreach {
+    case (dx, dy) =>
+      javaCanvas.imagePixels
+        .setElem((y * scale + dy) * scaledWidth + (x * scale + dx) % scaledWidth, pack(c.r, c.g, c.b))
   }
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit =
@@ -54,8 +55,8 @@ case class AwtCanvas(
       .setElem(y * scaledWidth + x % scaledWidth, pack(c.r, c.g, c.b))
 
   private[this] val _putPixel =
-    if (scale == 1) {(x: Int, y: Int, c: Color) => putPixelUnscaled(x, y, c)}
-    else {(x: Int, y: Int, c: Color) => putPixelScaled(x, y, c)}
+    if (scale == 1) { (x: Int, y: Int, c: Color) => putPixelUnscaled(x, y, c) }
+    else { (x: Int, y: Int, c: Color) => putPixelScaled(x, y, c) }
 
   def putPixel(x: Int, y: Int, color: Color): Unit = _putPixel(x, y, color)
 
@@ -65,7 +66,7 @@ case class AwtCanvas(
 
   def clear(): Unit = {
     val color = pack(clearColor.r, clearColor.g, clearColor.b)
-    for {i <- (0 until (scaledWidth * scaledWidth))} javaCanvas.imagePixels.setElem(i, color)
+    for { i <- (0 until (scaledWidth * scaledWidth)) } javaCanvas.imagePixels.setElem(i, color)
   }
 
   def redraw(): Unit = {

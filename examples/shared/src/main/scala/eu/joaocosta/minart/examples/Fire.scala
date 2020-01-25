@@ -22,7 +22,7 @@ object Fire {
         (math.max(0, x - 1) to math.min(x + 1, canvas.width - 1)).toList.map { xx =>
           canvas.getBackbufferPixel(xx, y + 1)
         }
-      val randomLoss = 0.8 + (scala.util.Random.nextDouble() / 5) 
+      val randomLoss = 0.8 + (scala.util.Random.nextDouble() / 5)
       val temperature = ((neighbors.map(c => (c.r + c.g + c.b) / 3).sum / 3) * randomLoss).toInt
       Color(math.min(255, temperature * 1.6).toInt, (temperature * 0.8).toInt, (temperature * 0.6).toInt)
     }

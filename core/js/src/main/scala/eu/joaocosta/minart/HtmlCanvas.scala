@@ -4,10 +4,10 @@ import org.scalajs.dom
 import org.scalajs.dom.html.{ Canvas => JsCanvas }
 
 case class HtmlCanvas(
-    width: Int,
-    height: Int,
-    scale: Int = 1,
-    clearColor: Color = Color(255, 255, 255)) extends Canvas {
+  width: Int,
+  height: Int,
+  scale: Int = 1,
+  clearColor: Color = Color(255, 255, 255)) extends Canvas {
   private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   canvas.width = scaledWidth
@@ -30,8 +30,8 @@ case class HtmlCanvas(
   }
 
   def clear(): Unit = {
-      ctxBuff.fillStyle = s"rgb(${clearColor.r}, ${clearColor.g}, ${clearColor.b})"
-      ctxBuff.fillRect(0, 0, scaledWidth, scaledHeight)
+    ctxBuff.fillStyle = s"rgb(${clearColor.r}, ${clearColor.g}, ${clearColor.b})"
+    ctxBuff.fillRect(0, 0, scaledWidth, scaledHeight)
   }
 
   def redraw(): Unit = {

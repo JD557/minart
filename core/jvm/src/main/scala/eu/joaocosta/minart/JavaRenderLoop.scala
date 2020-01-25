@@ -4,17 +4,18 @@ import scala.annotation.tailrec
 import scala.concurrent.duration.FiniteDuration
 
 object JavaRenderLoop extends RenderLoop {
-  def infiniteRenderLoop[S](initialState: S, renderFrame: S => S, frameDuration: FiniteDuration): Unit = {
+  def finiteRenderLoop[S](initialState: S, renderFrame: S => S, terminateWhen: S => Boolean, frameDuration: FiniteDuration): Unit = {
     val frameMillis = frameDuration.toMillis
     @tailrec
-    def infiniteRenderLoopAux(state: S): Unit = {
+    def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState = renderFrame(state)
       val endTime = System.currentTimeMillis()
-      val waitTime = math.max(0, frameMillis - (endTime - startTime)) 
+      val waitTime = math.max(0, frameMillis - (endTime - startTime))
       Thread.sleep(math.max(0, frameMillis - (endTime - startTime)))
-      infiniteRenderLoopAux(newState)
+      if (terminateWhen(newState)) ()
+      else finiteRenderLoopAux(newState)
     }
-    infiniteRenderLoopAux(initialState)
+    finiteRenderLoopAux(initialState)
   }
 }
