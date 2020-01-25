@@ -5,11 +5,11 @@ import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension 
 import javax.swing.JFrame
 import scala.language.reflectiveCalls
 
-case class AwtCanvas(
-  width: Int,
-  height: Int,
-  scale: Int = 1,
-  clearColor: Color = Color(255, 255, 255)) extends Canvas { outerCanvas =>
+class AwtCanvas(
+  val width: Int,
+  val height: Int,
+  val scale: Int = 1,
+  val clearColor: Color = Color(255, 255, 255)) extends Canvas { outerCanvas =>
 
   private[this] val javaCanvas = new JavaCanvas {
     val frame = new JFrame()

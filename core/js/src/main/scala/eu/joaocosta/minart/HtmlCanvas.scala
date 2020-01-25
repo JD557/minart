@@ -3,11 +3,11 @@ package eu.joaocosta.minart
 import org.scalajs.dom
 import org.scalajs.dom.html.{ Canvas => JsCanvas }
 
-case class HtmlCanvas(
-  width: Int,
-  height: Int,
-  scale: Int = 1,
-  clearColor: Color = Color(255, 255, 255)) extends Canvas {
+class HtmlCanvas(
+  val width: Int,
+  val height: Int,
+  val scale: Int = 1,
+  val clearColor: Color = Color(255, 255, 255)) extends Canvas {
   private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   canvas.width = scaledWidth
