@@ -1,10 +1,9 @@
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+import ReleaseTransformations._
 
 name := "minart"
 
 organization := "eu.joaocosta"
-
-version := "0.1.0-SNAPSHOT"
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
@@ -38,3 +37,21 @@ lazy val examples =
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "0.9.7"
       )))
+
+releaseCrossBuild := true
+releaseTagComment := s"Release ${(version in ThisBuild).value}"
+releaseCommitMessage := s"Set version to ${(version in ThisBuild).value}"
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges)
