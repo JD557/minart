@@ -21,7 +21,7 @@ I wouldn't recommend using this in any serious production environment.
 To include minart, simply add `minart-core` to your project:
 
 ```scala
-libraryDependencies += "eu.joaocosta"       %% "minart-core"   % "0.1.0"
+libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.1.0"
 ```
 
 The `examples` folder contains some sample code.
