@@ -3,7 +3,6 @@ package eu.joaocosta.minart
 import java.awt.image.{ DataBufferInt, BufferedImage }
 import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
 import javax.swing.JFrame
-import scala.language.reflectiveCalls
 
 class AwtCanvas(
   val width: Int,
@@ -11,24 +10,7 @@ class AwtCanvas(
   val scale: Int = 1,
   val clearColor: Color = Color(255, 255, 255)) extends Canvas { outerCanvas =>
 
-  private[this] val javaCanvas = new JavaCanvas {
-    val frame = new JFrame()
-    frame.setSize(new Dimension(scaledWidth, scaledHeight))
-    frame.setMaximumSize(new Dimension(scaledWidth, scaledHeight))
-    frame.setMinimumSize(new Dimension(scaledWidth, scaledHeight))
-    frame.add(this)
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-    frame.pack()
-
-    this.createBufferStrategy(2)
-    val buffStrategy = getBufferStrategy
-    val image = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB)
-    val imagePixels = image.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
-
-    override def repaint() = outerCanvas.redraw()
-
-    frame.setVisible(true)
-  }
+  private[this] val javaCanvas = new AwtCanvas.InnerCanvas(scaledWidth, scaledHeight, this)
 
   private[this] val deltas = for {
     dx <- 0 until scale
@@ -75,5 +57,25 @@ class AwtCanvas(
     g.dispose()
     javaCanvas.buffStrategy.show()
   }
+}
 
+object AwtCanvas {
+  private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, outerCanvas: AwtCanvas) extends JavaCanvas {
+    val frame = new JFrame()
+    frame.setSize(new Dimension(scaledWidth, scaledHeight))
+    frame.setMaximumSize(new Dimension(scaledWidth, scaledHeight))
+    frame.setMinimumSize(new Dimension(scaledWidth, scaledHeight))
+    frame.add(this)
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    frame.pack()
+
+    this.createBufferStrategy(2)
+    val buffStrategy = getBufferStrategy
+    val image = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB)
+    val imagePixels = image.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
+
+    override def repaint() = outerCanvas.redraw()
+
+    frame.setVisible(true)
+  }
 }
