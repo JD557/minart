@@ -1,5 +1,7 @@
 # Minart
 
+![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/eu.joaocosta/minart-core_2.13?server=https%3A%2F%2Foss.sonatype.org)
+
 Minart is a very minimalistic Scala library to put pixels in a canvas.
 
 It's mostly useful for small toy projects or prototypes that deal with
@@ -15,6 +17,12 @@ I wouldn't recommend using this in any serious production environment.
 * Integer scaling
 
 ## Sample Usage
+
+To include minart, simply add `minart-core` to your project:
+
+```scala
+libraryDependencies += "eu.joaocosta"       %% "minart-core"   % "0.1.0"
+```
 
 The `examples` folder contains some sample code.
 
