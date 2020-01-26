@@ -17,3 +17,7 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 .bloop
+
+# Metals specific
+project/metals.sbt
+.metals/
