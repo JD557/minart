@@ -21,20 +21,32 @@ val sharedSettings = Seq(
   autoAPIMappings := true
 )
 
-lazy val root = (project in file("."))
+val publishSettings = Seq(
+  publishMavenStyle := true,
+  publishArtifact in Test := false,
+  pomIncludeRepository := { _ => false },
+)
+
+val noPublishSettings = Seq(
+  skip in publish := true,
+  publish := (()),
+  publishLocal := (()),
+  publishArtifact := false,
+  publishTo := None
+)
+
+lazy val root = (crossProject(JVMPlatform, JSPlatform) in file("."))
   .settings(sharedSettings)
   .settings(name := "minart")
-  .aggregate(core.jvm, core.js)
+  .settings(publishSettings)
+  .dependsOn(core)
+  .aggregate(core)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform)
     .settings(sharedSettings)
     .settings(name := "minart-core")
-    .settings(
-      publishMavenStyle := true,
-      publishArtifact in Test := false,
-      pomIncludeRepository := { _ => false },
-    )
+    .settings(publishSettings)
     .jsSettings(Seq(
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "0.9.7"
@@ -45,13 +57,7 @@ lazy val examples =
     .dependsOn(core)
     .settings(sharedSettings)
     .settings(name := "minart-examples")
-    .settings(
-      skip in publish := true,
-      publish := (()),
-      publishLocal := (()),
-      publishArtifact := false,
-      publishTo := None
-    )
+    .settings(noPublishSettings)
     .jsSettings(Seq(
       scalaJSUseMainModuleInitializer := true,
       libraryDependencies ++= Seq(
