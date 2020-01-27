@@ -54,6 +54,6 @@ object Fire {
         canvas.putPixel(x, y, color)
       }
       canvas.redraw()
-    }, 16.millis)
+    }, FrameRate.fps60)
   }
 }

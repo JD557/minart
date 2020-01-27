@@ -1,7 +1,5 @@
 package eu.joaocosta.minart
 
-import scala.concurrent.duration.FiniteDuration
-
 /**
  * The `RenderLoop` contains a set of helpful methods to implement basic render
  * loops in a platform agonstic way.
@@ -16,9 +14,9 @@ trait RenderLoop {
    * @param initialState Initial state when the loop starts
    * @param renderFrame Operation to render the frame and update the state
    * @param terminateWhen Loop termination check
-   * @param frameDuration Desired frame duration
+   * @param frameRate Frame rate limit
    */
-  def finiteRenderLoop[S](initialState: S, renderFrame: S => S, terminateWhen: S => Boolean, frameDuration: FiniteDuration): Unit
+  def finiteRenderLoop[S](initialState: S, renderFrame: S => S, terminateWhen: S => Boolean, frameRate: FrameRate): Unit
 
   /**
    * Creates a render loop that never terminates.
@@ -27,17 +25,17 @@ trait RenderLoop {
    *
    * @param initialState Initial state when the loop starts
    * @param renderFrame Operation to render the frame and update the state
-   * @param frameDuration Desired frame duration
+   * @param frameRate Frame rate limit
    */
-  def infiniteRenderLoop[S](initialState: S, renderFrame: S => S, frameDuration: FiniteDuration): Unit =
-    finiteRenderLoop(initialState, renderFrame, (_: S) => false, frameDuration)
+  def infiniteRenderLoop[S](initialState: S, renderFrame: S => S, frameRate: FrameRate): Unit =
+    finiteRenderLoop(initialState, renderFrame, (_: S) => false, frameRate)
 
   /**
    * Creates a render loop that never terminates.
    *
    * @param renderFrame Operation to render the frame and update the state
-   * @param frameDuration Desired frame duration
+   * @param frameRate Frame rate limit
    */
-  def infiniteRenderLoop(renderFrame: Unit => Unit, frameDuration: FiniteDuration): Unit =
-    infiniteRenderLoop((), renderFrame, frameDuration)
+  def infiniteRenderLoop(renderFrame: Unit => Unit, frameRate: FrameRate): Unit =
+    infiniteRenderLoop((), renderFrame, frameRate)
 }

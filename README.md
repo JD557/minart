@@ -53,6 +53,6 @@ canvas.redraw()
 There's also a `RenderLoop` object on each platform (`JavaRenderLoop` and `JsRenderLoop`)
 with helpful methods to implement simple render loops:
 
-* `finiteRenderLoop[S](initialState: S, renderFrame: S => S, terminateWhen: S => Boolean, frameDuration: FiniteDuration): Unit`
-* `infiniteRenderLoop[S](initialState: S, renderFrame: S => S, frameDuration: FiniteDuration): Unit`
-* `infiniteRenderLoop(renderFrame: Unit => Unit, frameDuration: FiniteDuration): Unit`
+* `finiteRenderLoop[S](initialState: S, renderFrame: S => S, terminateWhen: S => Boolean, frameRate: FrameRate): Unit`
+* `infiniteRenderLoop[S](initialState: S, renderFrame: S => S, frameRate: FrameRate): Unit`
+* `infiniteRenderLoop(renderFrame: Unit => Unit, frameRate: FrameRate): Unit`
