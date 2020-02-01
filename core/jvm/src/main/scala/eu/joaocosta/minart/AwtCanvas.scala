@@ -26,6 +26,8 @@ class AwtCanvas(
       g = (c & 0x0000FF00) >> 8,
       b = (c & 0x000000FF))
 
+  private[this] val packedClearColor = pack(clearColor.r, clearColor.g, clearColor.b)
+
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = deltas.foreach {
     case (dx, dy) =>
       javaCanvas.imagePixels
@@ -47,8 +49,7 @@ class AwtCanvas(
   }
 
   def clear(): Unit = {
-    val color = pack(clearColor.r, clearColor.g, clearColor.b)
-    for { i <- (0 until (scaledWidth * scaledWidth)) } javaCanvas.imagePixels.setElem(i, color)
+    for { i <- (0 until (scaledWidth * scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
   }
 
   def redraw(): Unit = {

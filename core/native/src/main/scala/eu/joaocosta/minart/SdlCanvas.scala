@@ -22,6 +22,10 @@ class SdlCanvas(
   private[this] val surface = SDL_GetWindowSurface(window)
   private[this] val renderer = SDL_CreateSoftwareRenderer(surface)
 
+  private[this] val ubyteClearR = clearColor.r.toUByte
+  private[this] val ubyteClearG = clearColor.g.toUByte
+  private[this] val ubyteClearB = clearColor.b.toUByte
+
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
     SDL_SetRenderDrawColor(
       renderer,
@@ -61,9 +65,9 @@ class SdlCanvas(
   def clear(): Unit = {
     SDL_SetRenderDrawColor(
       renderer,
-      clearColor.r.toUByte,
-      clearColor.g.toUByte,
-      clearColor.b.toUByte,
+      ubyteClearR,
+      ubyteClearG,
+      ubyteClearB,
       0.toUByte)
     SDL_RenderClear(renderer)
   }

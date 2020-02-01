@@ -19,6 +19,8 @@ class HtmlCanvas(
   canvasBuff.width = scaledWidth
   canvasBuff.height = scaledHeight
 
+  private[this] val clearColorStr = s"rgb(${clearColor.r}, ${clearColor.g}, ${clearColor.b})"
+
   def putPixel(x: Int, y: Int, color: Color): Unit = {
     ctxBuff.fillStyle = s"rgb(${color.r}, ${color.g}, ${color.b})"
     ctxBuff.fillRect(x * scale, y * scale, scale, scale)
@@ -30,7 +32,7 @@ class HtmlCanvas(
   }
 
   def clear(): Unit = {
-    ctxBuff.fillStyle = s"rgb(${clearColor.r}, ${clearColor.g}, ${clearColor.b})"
+    ctxBuff.fillStyle = clearColorStr
     ctxBuff.fillRect(0, 0, scaledWidth, scaledHeight)
   }
 
