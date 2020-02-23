@@ -9,7 +9,7 @@ class SdlCanvas(
   val width: Int,
   val height: Int,
   val scale: Int = 1,
-  val clearColor: Color = Color(255, 255, 255)) extends Canvas {
+  val clearColor: Color = Color(255, 255, 255)) extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window] = _
   private[this] var surface: Ptr[SDL_Surface] = _

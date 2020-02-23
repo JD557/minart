@@ -9,7 +9,7 @@ class AwtCanvas(
   val width: Int,
   val height: Int,
   val scale: Int = 1,
-  val clearColor: Color = Color(255, 255, 255)) extends Canvas {
+  val clearColor: Color = Color(255, 255, 255)) extends LowLevelCanvas {
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
 

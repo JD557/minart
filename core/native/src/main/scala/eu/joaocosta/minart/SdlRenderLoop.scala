@@ -9,15 +9,16 @@ import sdl2.Extras._
 
 object SdlRenderLoop extends RenderLoop {
   def finiteRenderLoop[S](
-    canvas: Canvas,
+    canvasManager: CanvasManager,
     initialState: S,
-    renderFrame: (RenderLoopCanvas, S) => S,
+    renderFrame: (Canvas, S) => S,
     terminateWhen: S => Boolean,
     frameRate: FrameRate): Unit = {
     val frameMillis = frameRate match {
       case FrameRate.Uncapped => 0
       case FrameRate.FrameDuration(ms) => ms
     }
+    val canvas = canvasManager.init()
     @tailrec
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
@@ -25,10 +26,10 @@ object SdlRenderLoop extends RenderLoop {
       val endTime = System.currentTimeMillis()
       val waitTime = scala.math.max(0, frameMillis - (endTime - startTime))
       if (waitTime > 0) SDL_Delay(waitTime.toUInt)
-      if (terminateWhen(newState) || !canvas.isCreated()) ()
+      if (terminateWhen(newState) || !canvasManager.isCreated()) ()
       else finiteRenderLoopAux(newState)
     }
     finiteRenderLoopAux(initialState)
-    canvas.destroy()
+    canvasManager.destroy()
   }
 }

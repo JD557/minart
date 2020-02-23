@@ -8,11 +8,11 @@ import scala.scalajs.js.timers
 
 object JsRenderLoop extends RenderLoop {
   def finiteRenderLoop[S](
-    canvas: Canvas,
+    canvasManager: CanvasManager,
     initialState: S,
-    renderFrame: (RenderLoopCanvas, S) => S,
+    renderFrame: (Canvas, S) => S,
     terminateWhen: S => Boolean, frameRate: FrameRate): Unit = {
-    canvas.init()
+    val canvas = canvasManager.init()
     val frameMillis = frameRate match {
       case FrameRate.Uncapped => 0
       case FrameRate.FrameDuration(ms) => ms
@@ -22,11 +22,11 @@ object JsRenderLoop extends RenderLoop {
       val newState = renderFrame(canvas, state)
       val endTime = System.currentTimeMillis()
       val waitTime = math.max(0, frameMillis - (endTime - startTime))
-      if (!terminateWhen(state) && canvas.isCreated())
+      if (!terminateWhen(state) && canvasManager.isCreated())
         if (waitTime > 0) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
         else dom.window.requestAnimationFrame((_: Double) => finiteRenderLoopAux(newState))
     }
     finiteRenderLoopAux(initialState)
-    canvas.destroy()
+    canvasManager.destroy()
   }
 }

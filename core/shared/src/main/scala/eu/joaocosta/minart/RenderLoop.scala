@@ -11,16 +11,16 @@ trait RenderLoop {
    *
    * Each loop iteration receives and passes an updated state.
    *
-   * @param canvas Canvas to use in the render loop
+   * @param canvasManager Canvas manager to use in the render loop
    * @param initialState Initial state when the loop starts
    * @param renderFrame Operation to render the frame and update the state
    * @param terminateWhen Loop termination check
    * @param frameRate Frame rate limit
    */
   def finiteRenderLoop[S](
-    canvas: Canvas,
+    canvasManager: CanvasManager,
     initialState: S,
-    renderFrame: (RenderLoopCanvas, S) => S,
+    renderFrame: (Canvas, S) => S,
     terminateWhen: S => Boolean,
     frameRate: FrameRate): Unit
 
@@ -29,17 +29,17 @@ trait RenderLoop {
    *
    * Each loop iteration receives and passes an updated state.
    *
-   * @param canvas Canvas to use in the render loop
+   * @param canvasManager Canvas manager to use in the render loop
    * @param initialState Initial state when the loop starts
    * @param renderFrame Operation to render the frame and update the state
    * @param frameRate Frame rate limit
    */
   def infiniteRenderLoop[S](
-    canvas: Canvas,
+    canvasManager: CanvasManager,
     initialState: S,
-    renderFrame: (RenderLoopCanvas, S) => S,
+    renderFrame: (Canvas, S) => S,
     frameRate: FrameRate): Unit =
-    finiteRenderLoop(canvas, initialState, renderFrame, (_: S) => false, frameRate)
+    finiteRenderLoop(canvasManager, initialState, renderFrame, (_: S) => false, frameRate)
 
   /**
    * Creates a render loop that never terminates.
@@ -49,8 +49,8 @@ trait RenderLoop {
    * @param frameRate Frame rate limit
    */
   def infiniteRenderLoop(
-    canvas: Canvas,
-    renderFrame: RenderLoopCanvas => Unit,
+    canvasManager: CanvasManager,
+    renderFrame: Canvas => Unit,
     frameRate: FrameRate): Unit =
-    infiniteRenderLoop(canvas, (), (c: RenderLoopCanvas, _: Unit) => renderFrame(c), frameRate)
+    infiniteRenderLoop(canvasManager, (), (c: Canvas, _: Unit) => renderFrame(c), frameRate)
 }

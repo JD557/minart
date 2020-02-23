@@ -3,7 +3,7 @@ package eu.joaocosta.minart.examples
 import eu.joaocosta.minart._
 
 object ColorSquare {
-  def runExample(canvas: Canvas) = {
+  def runExample(canvas: LowLevelCanvas) = {
     canvas.init()
     for {
       x <- (0 until canvas.width)

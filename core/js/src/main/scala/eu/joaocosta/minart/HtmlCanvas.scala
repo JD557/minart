@@ -7,7 +7,7 @@ class HtmlCanvas(
   val width: Int,
   val height: Int,
   val scale: Int = 1,
-  val clearColor: Color = Color(255, 255, 255)) extends Canvas {
+  val clearColor: Color = Color(255, 255, 255)) extends LowLevelCanvas {
   private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private[this] var childNode: dom.Node = _

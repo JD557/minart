@@ -6,7 +6,7 @@ import eu.joaocosta.minart._
 
 object Fire {
 
-  def runExample(canvas: Canvas, renderLoop: RenderLoop) = {
+  def runExample(canvas: LowLevelCanvas, renderLoop: RenderLoop) = {
 
     canvas.init()
     // Fill everything with black

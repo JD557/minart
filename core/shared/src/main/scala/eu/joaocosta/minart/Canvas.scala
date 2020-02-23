@@ -9,38 +9,49 @@ package eu.joaocosta.minart
  * There's also a `scale` variable that controls the integer scaling
  * and a `clearColor` that is applied to the whole canvas when it's cleared.
  *
- * Before using a Canvas, it's important to call the `init` operation to create
- * the window. There's also a `destroy` operation do destroy the window.
  */
-trait Canvas extends RenderLoopCanvas {
+trait Canvas {
+  /** The Canvas width */
+  def width: Int
+  /** The Canvas height */
+  def height: Int
+  /** The Canvas integer scaling factor */
+  def scale: Int
+  /** The color to be used when the canvas is cleared */
+  def clearColor: Color
 
-  private[this] var created = false
-
-  protected def unsafeInit(): Unit
-  protected def unsafeDestroy(): Unit
+  /** The Canvas width with the integer scaling applied */
+  lazy val scaledWidth = width * scale
+  /** The Canvas height with the integer scaling applied */
+  lazy val scaledHeight = height * scale
 
   /**
-   * Checks if the window is created or if it has been destroyed
-   */
-  def isCreated(): Boolean = created
-
-  /**
-   * Creates the canvas window.
+   * Puts a pixel in the back buffer with a certain color.
    *
-   * Rendering operations can only be called after calling this
+   * @param x pixel x position
+   * @param y pixel y position
+   * @param color `Color` to apply to the pixel
    */
-  def init(): Unit = if (!created) {
-    unsafeInit()
-    created = true
-  }
+  def putPixel(x: Int, y: Int, color: Color): Unit
 
   /**
-   * Destroys the canvas window.
+   * Gets the color from the backbuffer.
+   * This operation can be perfomance intensive, so it might be worthwile
+   * to implement this operation on the application code.
    *
-   * Rendering operations cannot be called after calling this
+   * @param x pixel x position
+   * @param y pixel y position
+   * @return pixel color
    */
-  def destroy(): Unit = if (created) {
-    unsafeDestroy()
-    created = false
-  }
+  def getBackbufferPixel(x: Int, y: Int): Color
+
+  /**
+   * Clears the backbuffer
+   */
+  def clear(): Unit
+
+  /**
+   * Flips buffers and redraws the screen
+   */
+  def redraw(): Unit
 }
