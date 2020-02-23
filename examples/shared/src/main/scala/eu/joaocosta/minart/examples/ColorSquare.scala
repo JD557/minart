@@ -4,6 +4,7 @@ import eu.joaocosta.minart._
 
 object ColorSquare {
   def runExample(canvas: Canvas) = {
+    canvas.init()
     for {
       x <- (0 until canvas.width)
       y <- (0 until canvas.height)

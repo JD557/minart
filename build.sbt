@@ -71,6 +71,7 @@ lazy val examples =
     .settings(name := "minart-examples")
     .settings(noPublishSettings)
     .jsSettings(jsSettings)
+    .jsSettings(scalaJSUseMainModuleInitializer := true)
     .nativeSettings(nativeSettings)
 
 releaseCrossBuild := true

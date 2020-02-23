@@ -6,6 +6,7 @@ object NativeColorSquare {
   def main(args: Array[String]): Unit = {
     val canvas = new SdlCanvas(128, 128, scale = 4)
     SdlRenderLoop.infiniteRenderLoop(
+      canvas,
       _ => ColorSquare.runExample(canvas),
       FrameRate.Uncapped)
   }

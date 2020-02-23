@@ -10,9 +10,17 @@ class HtmlCanvas(
   val clearColor: Color = Color(255, 255, 255)) extends Canvas {
   private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  private[this] var childNode: dom.Node = _
   canvas.width = scaledWidth
   canvas.height = scaledHeight
-  dom.document.body.appendChild(canvas)
+
+  def unsafeInit(): Unit = {
+    childNode = dom.document.body.appendChild(canvas)
+  }
+  def unsafeDestroy(): Unit = {
+    dom.document.body.removeChild(childNode)
+    childNode = null
+  }
 
   private[this] val canvasBuff = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctxBuff = canvasBuff.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]

@@ -11,16 +11,25 @@ class SdlCanvas(
   val scale: Int = 1,
   val clearColor: Color = Color(255, 255, 255)) extends Canvas {
 
-  SDL_Init(SDL_INIT_VIDEO)
-  private[this] val window = SDL_CreateWindow(
-    c"Minart",
-    SDL_WINDOWPOS_CENTERED,
-    SDL_WINDOWPOS_CENTERED,
-    scaledWidth,
-    scaledHeight,
-    SDL_WINDOW_SHOWN)
-  private[this] val surface = SDL_GetWindowSurface(window)
-  private[this] val renderer = SDL_CreateSoftwareRenderer(surface)
+  private[this] var window: Ptr[SDL_Window] = _
+  private[this] var surface: Ptr[SDL_Surface] = _
+  private[this] var renderer: Ptr[SDL_Renderer] = _
+
+  def unsafeInit() = {
+    SDL_Init(SDL_INIT_VIDEO)
+    window = SDL_CreateWindow(
+      c"Minart",
+      SDL_WINDOWPOS_CENTERED,
+      SDL_WINDOWPOS_CENTERED,
+      scaledWidth,
+      scaledHeight,
+      SDL_WINDOW_SHOWN)
+    surface = SDL_GetWindowSurface(window)
+    renderer = SDL_CreateSoftwareRenderer(surface)
+  }
+  def unsafeDestroy() = {
+    SDL_Quit()
+  }
 
   private[this] val ubyteClearR = clearColor.r.toUByte
   private[this] val ubyteClearG = clearColor.g.toUByte
@@ -72,6 +81,14 @@ class SdlCanvas(
     SDL_RenderClear(renderer)
   }
 
-  def redraw(): Unit =
+  def redraw(): Unit = {
+    val event = stackalloc[SDL_Event]
+    while (SDL_PollEvent(event) != 0) {
+      if (event.type_ == SDL_QUIT) {
+        destroy()
+        return
+      }
+    }
     SDL_UpdateWindowSurface(window)
+  }
 }

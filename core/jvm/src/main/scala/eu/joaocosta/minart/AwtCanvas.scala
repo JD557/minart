@@ -2,15 +2,24 @@ package eu.joaocosta.minart
 
 import java.awt.image.{ DataBufferInt, BufferedImage }
 import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
+import java.awt.event.{ WindowAdapter, WindowEvent }
 import javax.swing.JFrame
 
 class AwtCanvas(
   val width: Int,
   val height: Int,
   val scale: Int = 1,
-  val clearColor: Color = Color(255, 255, 255)) extends Canvas { outerCanvas =>
+  val clearColor: Color = Color(255, 255, 255)) extends Canvas {
 
-  private[this] val javaCanvas = new AwtCanvas.InnerCanvas(scaledWidth, scaledHeight, this)
+  private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
+
+  def unsafeInit(): Unit = {
+    javaCanvas = new AwtCanvas.InnerCanvas(scaledWidth, scaledHeight, this)
+  }
+  def unsafeDestroy(): Unit = {
+    javaCanvas.frame.dispose()
+    javaCanvas = null
+  }
 
   private[this] val deltas = for {
     dx <- 0 until scale
@@ -78,5 +87,10 @@ object AwtCanvas {
     override def repaint() = outerCanvas.redraw()
 
     frame.setVisible(true)
+    frame.addWindowListener(new WindowAdapter() {
+      override def windowClosing(e: WindowEvent) {
+        outerCanvas.destroy()
+      }
+    });
   }
 }
