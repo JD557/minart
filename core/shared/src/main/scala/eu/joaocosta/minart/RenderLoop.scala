@@ -44,8 +44,8 @@ trait RenderLoop {
   /**
    * Creates a render loop that never terminates.
    *
-   * @param canvas Canvas to use in the render loop
-   * @param renderFrame Operation to render the frame and update the state
+   * @param canvasManager Canvas manager to use in the render loop
+   * @param renderFrame Operation to render the frame
    * @param frameRate Frame rate limit
    */
   def infiniteRenderLoop(
@@ -53,4 +53,14 @@ trait RenderLoop {
     renderFrame: Canvas => Unit,
     frameRate: FrameRate): Unit =
     infiniteRenderLoop(canvasManager, (), (c: Canvas, _: Unit) => renderFrame(c), frameRate)
+
+  /**
+   * Renders a single frame
+   *
+   * @param canvas Canvas manager to use in the render loop
+   * @param renderFrame Operation to render the frame and update the state
+   */
+  def singleFrame(
+    canvasManager: CanvasManager,
+    renderFrame: Canvas => Unit): Unit
 }

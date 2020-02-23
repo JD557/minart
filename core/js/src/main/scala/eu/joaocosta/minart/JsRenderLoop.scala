@@ -29,4 +29,11 @@ object JsRenderLoop extends RenderLoop {
     finiteRenderLoopAux(initialState)
     canvasManager.destroy()
   }
+
+  def singleFrame(
+    canvasManager: CanvasManager,
+    renderFrame: Canvas => Unit): Unit = {
+    val canvas = canvasManager.init()
+    renderFrame(canvas)
+  }
 }

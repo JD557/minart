@@ -32,4 +32,19 @@ object SdlRenderLoop extends RenderLoop {
     finiteRenderLoopAux(initialState)
     canvasManager.destroy()
   }
+
+  def singleFrame(
+    canvasManager: CanvasManager,
+    renderFrame: Canvas => Unit): Unit = {
+    val canvas = canvasManager.init()
+    renderFrame(canvas)
+    var quit = false
+    val event = stackalloc[SDL_Event]
+    while (!quit) {
+      while (SDL_PollEvent(event) != 0) {
+        if (event.type_ == SDL_QUIT) { quit = true }
+      }
+    }
+    canvasManager.destroy()
+  }
 }
