@@ -11,7 +11,7 @@ I wouldn't recommend using this in any serious production environment.
 
 ## Features
 
-* JVM and JS support
+* JVM, JS and Native support
 * Small footprint
 * Double buffered canvas
 * Integer scaling
