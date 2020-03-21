@@ -2,6 +2,7 @@ package eu.joaocosta.minart
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{ Canvas => JsCanvas }
+import org.scalajs.dom.raw.KeyboardEvent
 
 class HtmlCanvas(
   val width: Int,
@@ -11,11 +12,16 @@ class HtmlCanvas(
   private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private[this] var childNode: dom.Node = _
+  private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   canvas.width = scaledWidth
   canvas.height = scaledHeight
 
   def unsafeInit(): Unit = {
     childNode = dom.document.body.appendChild(canvas)
+    dom.document.addEventListener[KeyboardEvent]("keydown", ev =>
+      HtmlCanvas.convertKeyCode(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k)))
+    dom.document.addEventListener[KeyboardEvent]("keyup", ev =>
+      HtmlCanvas.convertKeyCode(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k)))
   }
   def unsafeDestroy(): Unit = {
     dom.document.body.removeChild(childNode)
@@ -46,5 +52,17 @@ class HtmlCanvas(
 
   def redraw(): Unit = {
     ctx.drawImage(canvasBuff, 0, 0)
+  }
+
+  def getKeyboardInput(): KeyboardInput = keyboardInput
+}
+
+object HtmlCanvas {
+  private def convertKeyCode(code: Int): Option[KeyboardInput.Key] = code match {
+    case 38 => Some(KeyboardInput.Key.Up)
+    case 40 => Some(KeyboardInput.Key.Down)
+    case 37 => Some(KeyboardInput.Key.Left)
+    case 39 => Some(KeyboardInput.Key.Right)
+    case _ => None
   }
 }

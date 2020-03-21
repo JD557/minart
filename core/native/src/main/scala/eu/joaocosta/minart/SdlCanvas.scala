@@ -4,6 +4,7 @@ import sdl2.SDL._
 import sdl2.Extras._
 
 import scalanative.native._
+import eu.joaocosta.minart.KeyboardInput.Key
 
 class SdlCanvas(
   val width: Int,
@@ -14,6 +15,7 @@ class SdlCanvas(
   private[this] var window: Ptr[SDL_Window] = _
   private[this] var surface: Ptr[SDL_Surface] = _
   private[this] var renderer: Ptr[SDL_Renderer] = _
+  private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
 
   def unsafeInit() = {
     SDL_Init(SDL_INIT_VIDEO)
@@ -26,6 +28,7 @@ class SdlCanvas(
       SDL_WINDOW_SHOWN)
     surface = SDL_GetWindowSurface(window)
     renderer = SDL_CreateSoftwareRenderer(surface)
+    keyboardInput = KeyboardInput(Set(), Set(), Set())
   }
   def unsafeDestroy() = {
     SDL_Quit()
@@ -71,24 +74,47 @@ class SdlCanvas(
       surface.pixels(baseAddr + 0).toInt & 0xFF)
   }
 
-  def clear(): Unit = {
-    SDL_SetRenderDrawColor(
-      renderer,
-      ubyteClearR,
-      ubyteClearG,
-      ubyteClearB,
-      0.toUByte)
-    SDL_RenderClear(renderer)
-  }
-
-  def redraw(): Unit = {
+  private[this] def handleEvents(): Boolean = {
     val event = stackalloc[SDL_Event]
     while (SDL_PollEvent(event) != 0) {
       if (event.type_ == SDL_QUIT) {
         destroy()
-        return
+        return false
+      } else if (event.type_ == SDL_KEYDOWN) {
+        SdlCanvas.convertKeyCode(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
+      } else if (event.type_ == SDL_KEYUP) {
+        SdlCanvas.convertKeyCode(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
       }
     }
-    SDL_UpdateWindowSurface(window)
+    true
+  }
+
+  def clear(): Unit = {
+    keyboardInput = keyboardInput.clearPressRelease()
+    if (handleEvents()) {
+      SDL_SetRenderDrawColor(
+        renderer,
+        ubyteClearR,
+        ubyteClearG,
+        ubyteClearB,
+        0.toUByte)
+      SDL_RenderClear(renderer)
+    }
+  }
+
+  def redraw(): Unit = {
+    if (handleEvents()) SDL_UpdateWindowSurface(window)
+  }
+
+  def getKeyboardInput(): KeyboardInput = keyboardInput
+}
+
+object SdlCanvas {
+  private def convertKeyCode(code: SDL_Keycode): Option[KeyboardInput.Key] = code match {
+    case SDLK_UP => Some(Key.Up)
+    case SDLK_DOWN => Some(Key.Down)
+    case SDLK_LEFT => Some(Key.Left)
+    case SDLK_RIGHT => Some(Key.Right)
+    case _ => None
   }
 }

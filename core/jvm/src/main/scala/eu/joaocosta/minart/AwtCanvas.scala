@@ -1,9 +1,12 @@
 package eu.joaocosta.minart
 
+import java.awt.event.{ WindowAdapter, WindowEvent }
+import java.awt.event.{ KeyEvent, KeyListener => JavaKeyListener }
 import java.awt.image.{ DataBufferInt, BufferedImage }
 import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
-import java.awt.event.{ WindowAdapter, WindowEvent }
 import javax.swing.JFrame
+
+import eu.joaocosta.minart.KeyboardInput.Key
 
 class AwtCanvas(
   val width: Int,
@@ -12,9 +15,12 @@ class AwtCanvas(
   val clearColor: Color = Color(255, 255, 255)) extends LowLevelCanvas {
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
+  private[this] var keyListener: AwtCanvas.KeyListener = _
 
   def unsafeInit(): Unit = {
     javaCanvas = new AwtCanvas.InnerCanvas(scaledWidth, scaledHeight, this)
+    keyListener = new AwtCanvas.KeyListener()
+    javaCanvas.addKeyListener(keyListener)
   }
   def unsafeDestroy(): Unit = {
     javaCanvas.frame.dispose()
@@ -59,6 +65,7 @@ class AwtCanvas(
 
   def clear(): Unit = {
     for { i <- (0 until (scaledWidth * scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
+    keyListener.clearPressRelease()
   }
 
   def redraw(): Unit = {
@@ -67,6 +74,8 @@ class AwtCanvas(
     g.dispose()
     javaCanvas.buffStrategy.show()
   }
+
+  def getKeyboardInput(): KeyboardInput = keyListener.getKeyboardInput()
 }
 
 object AwtCanvas {
@@ -92,5 +101,22 @@ object AwtCanvas {
         outerCanvas.destroy()
       }
     });
+  }
+
+  private class KeyListener extends JavaKeyListener {
+    private[this] var state = KeyboardInput(Set(), Set(), Set())
+    private[this] def getKey(ev: KeyEvent): Option[Key] = ev.getKeyCode() match {
+      case KeyEvent.VK_UP => Some(Key.Up)
+      case KeyEvent.VK_DOWN => Some(Key.Down)
+      case KeyEvent.VK_LEFT => Some(Key.Left)
+      case KeyEvent.VK_RIGHT => Some(Key.Right)
+      case _ => None
+    }
+
+    def keyPressed(ev: KeyEvent): Unit = getKey(ev).foreach(key => state = state.press(key))
+    def keyReleased(ev: KeyEvent): Unit = getKey(ev).foreach(key => state = state.release(key))
+    def keyTyped(ev: KeyEvent): Unit = ()
+    def clearPressRelease(): Unit = state = state.clearPressRelease()
+    def getKeyboardInput(): KeyboardInput = state
   }
 }

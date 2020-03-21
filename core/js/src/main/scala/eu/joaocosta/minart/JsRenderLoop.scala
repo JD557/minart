@@ -25,9 +25,9 @@ object JsRenderLoop extends RenderLoop {
       if (!terminateWhen(state) && canvasManager.isCreated())
         if (waitTime > 0) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
         else dom.window.requestAnimationFrame((_: Double) => finiteRenderLoopAux(newState))
+      else if (canvasManager.isCreated()) canvasManager.destroy()
     }
     finiteRenderLoopAux(initialState)
-    canvasManager.destroy()
   }
 
   def singleFrame(

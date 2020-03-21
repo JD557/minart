@@ -54,4 +54,11 @@ trait Canvas {
    * Flips buffers and redraws the screen
    */
   def redraw(): Unit
+
+  /**
+   * Gets the current keyboard input
+   *
+   * @return current keyboard input
+   */
+  def getKeyboardInput(): KeyboardInput
 }
