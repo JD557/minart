@@ -64,9 +64,18 @@ lazy val core =
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
-lazy val examples =
+lazy val pure =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-pure")
+    .settings(publishSettings)
+    .jsSettings(jsSettings)
+    .nativeSettings(nativeSettings)
+
+lazy val examples =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .dependsOn(core, pure)
     .settings(sharedSettings)
     .settings(name := "minart-examples")
     .settings(noPublishSettings)
