@@ -18,9 +18,9 @@ class HtmlCanvas(
 
   def unsafeInit(): Unit = {
     childNode = dom.document.body.appendChild(canvas)
-    dom.document.addEventListener[KeyboardEvent]("keydown", ev =>
+    dom.document.addEventListener[KeyboardEvent]("keydown", (ev: KeyboardEvent) =>
       HtmlCanvas.convertKeyCode(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k)))
-    dom.document.addEventListener[KeyboardEvent]("keyup", ev =>
+    dom.document.addEventListener[KeyboardEvent]("keyup", (ev: KeyboardEvent) =>
       HtmlCanvas.convertKeyCode(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k)))
   }
   def unsafeDestroy(): Unit = {
