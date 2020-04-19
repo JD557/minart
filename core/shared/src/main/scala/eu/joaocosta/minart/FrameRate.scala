@@ -30,5 +30,13 @@ object FrameRate {
    */
   def fromDuration(duration: FiniteDuration): FrameRate =
     if (duration.toMillis <= 0) Uncapped
-    else (FrameDuration(duration.toMillis))
+    else FrameDuration(duration.toMillis)
+
+  /**
+   * Builds a [[FrameRate]] according to a set of FPS
+   */
+  def fromFps(fps: Int): FrameRate = {
+    if (fps <= 0) Uncapped
+    else FrameDuration(1000 / fps)
+  }
 }

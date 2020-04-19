@@ -13,10 +13,10 @@ case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased
 object KeyboardInput {
   sealed trait Key
   object Key {
-    case object Up extends Key
-    case object Down extends Key
-    case object Left extends Key
-    case object Right extends Key
+    final case object Up extends Key
+    final case object Down extends Key
+    final case object Left extends Key
+    final case object Right extends Key
   }
 }
 
