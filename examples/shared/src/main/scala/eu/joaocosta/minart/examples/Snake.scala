@@ -1,7 +1,8 @@
 package eu.joaocosta.minart.examples
 
-import eu.joaocosta.minart._
 import scala.util.Random
+
+import eu.joaocosta.minart.core._
 
 object Snake {
 

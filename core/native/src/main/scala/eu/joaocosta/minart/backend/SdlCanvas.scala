@@ -1,10 +1,12 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.backend
+
+import scalanative.native._
 
 import sdl2.SDL._
 import sdl2.Extras._
 
-import scalanative.native._
-import eu.joaocosta.minart.KeyboardInput.Key
+import eu.joaocosta.minart.core.KeyboardInput.Key
+import eu.joaocosta.minart.core._
 
 class SdlCanvas(
   val width: Int,

@@ -1,4 +1,4 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.core
 
 import scala.concurrent.duration._
 

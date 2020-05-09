@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.examples
 
-import eu.joaocosta.minart._
+import eu.joaocosta.minart.backend._
 
 object NativeFire {
   def main(args: Array[String]): Unit = {

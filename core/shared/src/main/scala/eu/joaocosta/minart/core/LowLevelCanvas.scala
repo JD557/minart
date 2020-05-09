@@ -1,4 +1,4 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.core
 
 /**
  * A low-level version of a canvas that provides its own canvas manager

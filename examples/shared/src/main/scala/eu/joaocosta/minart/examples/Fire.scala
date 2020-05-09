@@ -2,7 +2,7 @@ package eu.joaocosta.minart.examples
 
 import scala.concurrent.duration._
 
-import eu.joaocosta.minart._
+import eu.joaocosta.minart.core._
 
 object Fire {
 

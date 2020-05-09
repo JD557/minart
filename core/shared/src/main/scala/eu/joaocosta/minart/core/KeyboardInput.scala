@@ -1,6 +1,6 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.core
 
-import eu.joaocosta.minart.KeyboardInput.Key
+import eu.joaocosta.minart.core.KeyboardInput.Key
 
 case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased: Set[Key]) {
   def isDown(key: Key): Boolean = keysDown(key)

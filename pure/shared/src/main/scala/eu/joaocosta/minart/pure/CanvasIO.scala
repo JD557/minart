@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.pure
 
-import eu.joaocosta.minart._
+import eu.joaocosta.minart.core._
 
 sealed trait CanvasIO[+A] {
   def run(canvas: Canvas): A

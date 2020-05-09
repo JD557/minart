@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.examples
 
-import eu.joaocosta.minart._
+import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.pure._
 
 trait PureColorSquare extends MinartApp {
