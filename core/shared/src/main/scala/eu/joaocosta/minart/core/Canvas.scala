@@ -1,4 +1,4 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.core
 
 /**
  * Canvas that can be painted.

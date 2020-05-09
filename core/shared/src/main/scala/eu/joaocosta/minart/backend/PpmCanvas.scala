@@ -1,4 +1,6 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.backend
+
+import eu.joaocosta.minart.core._
 
 class PpmCanvas(
   val width: Int,
@@ -7,8 +9,7 @@ class PpmCanvas(
   val clearColor: Color = Color(255, 255, 255)) extends LowLevelCanvas {
   private[this] val buffer: Array[Array[Color]] =
     Array.fill(height)(Array.fill(width)(clearColor))
-  // Keyboard input not supported
-  private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
+  private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set()) // Keyboard input not supported
 
   def unsafeInit(): Unit = ()
   def unsafeDestroy(): Unit = ()

@@ -1,8 +1,10 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.backend
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{ Canvas => JsCanvas }
 import org.scalajs.dom.raw.KeyboardEvent
+
+import eu.joaocosta.minart.core._
 
 class HtmlCanvas(
   val width: Int,

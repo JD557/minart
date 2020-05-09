@@ -1,4 +1,4 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.backend
 
 import java.awt.event.{ WindowAdapter, WindowEvent }
 import java.awt.event.{ KeyEvent, KeyListener => JavaKeyListener }
@@ -6,7 +6,8 @@ import java.awt.image.{ DataBufferInt, BufferedImage }
 import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
 import javax.swing.JFrame
 
-import eu.joaocosta.minart.KeyboardInput.Key
+import eu.joaocosta.minart.core.KeyboardInput.Key
+import eu.joaocosta.minart.core._
 
 class AwtCanvas(
   val width: Int,

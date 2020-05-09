@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.examples
 
-import eu.joaocosta.minart._
+import eu.joaocosta.minart.backend._
+import eu.joaocosta.minart.core._
 
 object JvmSnake {
   def main(args: Array[String]): Unit = {

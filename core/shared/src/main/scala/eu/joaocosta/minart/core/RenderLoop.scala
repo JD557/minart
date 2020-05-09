@@ -1,4 +1,4 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.core
 
 /**
  * The `RenderLoop` contains a set of helpful methods to implement basic render

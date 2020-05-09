@@ -1,32 +1,35 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.backend
+
+import org.scalajs.dom
 
 import scala.annotation.tailrec
 import scala.concurrent.duration.FiniteDuration
+import scala.scalajs.js.timers
 
-object JavaRenderLoop extends RenderLoop {
+import eu.joaocosta.minart.core._
+
+object JsRenderLoop extends RenderLoop {
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,
     renderFrame: (Canvas, S) => S,
-    terminateWhen: S => Boolean,
-    frameRate: FrameRate): Unit = {
+    terminateWhen: S => Boolean, frameRate: FrameRate): Unit = {
+    val canvas = canvasManager.init()
     val frameMillis = frameRate match {
       case FrameRate.Uncapped => 0
       case FrameRate.FrameDuration(ms) => ms
     }
-    val canvas = canvasManager.init()
-    @tailrec
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState = renderFrame(canvas, state)
       val endTime = System.currentTimeMillis()
       val waitTime = math.max(0, frameMillis - (endTime - startTime))
-      if (waitTime > 0) Thread.sleep(waitTime)
-      if (terminateWhen(newState) || !canvasManager.isCreated()) ()
-      else finiteRenderLoopAux(newState)
+      if (!terminateWhen(state) && canvasManager.isCreated())
+        if (waitTime > 0) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
+        else dom.window.requestAnimationFrame((_: Double) => finiteRenderLoopAux(newState))
+      else if (canvasManager.isCreated()) canvasManager.destroy()
     }
     finiteRenderLoopAux(initialState)
-    canvasManager.destroy()
   }
 
   def singleFrame(
