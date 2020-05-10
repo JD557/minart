@@ -85,11 +85,60 @@ lazy val pure =
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
-lazy val examples =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .dependsOn(core, pure)
+lazy val examples = (project in file("examples"))
+    .dependsOn(
+      examples_colorSquare.jvm,     examples_colorSquare.js,     /*examples_colorSquare.native,*/
+      examples_pureColorSquare.jvm, examples_pureColorSquare.js, /*examples_pureColorSquare.native,*/
+      examples_fire.jvm,            examples_fire.js,            /*examples_fire.native,*/
+      examples_snake.jvm,           examples_snake.js/*,           examples_snake.native*/)
     .settings(sharedSettings)
     .settings(name := "minart-examples")
+    .settings(noPublishSettings)
+    .aggregate(
+      examples_colorSquare.jvm,     examples_colorSquare.js,     /*examples_colorSquare.native,*/
+      examples_pureColorSquare.jvm, examples_pureColorSquare.js, /*examples_pureColorSquare.native,*/
+      examples_fire.jvm,            examples_fire.js,            /*examples_fire.native,*/
+      examples_snake.jvm,           examples_snake.js/*,           examples_snake.native*/)
+
+lazy val examples_colorSquare =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .in(file("examples/colorsquare"))
+    .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-examples-colorsquare")
+    .settings(noPublishSettings)
+    .jsSettings(jsSettings)
+    .jsSettings(scalaJSUseMainModuleInitializer := true)
+    .nativeSettings(nativeSettings)
+
+lazy val examples_pureColorSquare =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .in(file("examples/purecolorsquare"))
+    .dependsOn(core, pure)
+    .settings(sharedSettings)
+    .settings(name := "minart-examples-purecolorsquare")
+    .settings(noPublishSettings)
+    .jsSettings(jsSettings)
+    .jsSettings(scalaJSUseMainModuleInitializer := true)
+    .nativeSettings(nativeSettings)
+
+lazy val examples_fire =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .in(file("examples/fire"))
+    .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-examples-fire")
+    .settings(noPublishSettings)
+    .jsSettings(jsSettings)
+    .jsSettings(scalaJSUseMainModuleInitializer := true)
+    .nativeSettings(nativeSettings)
+
+lazy val examples_snake =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .in(file("examples/snake"))
+    .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-examples-snake")
     .settings(noPublishSettings)
     .jsSettings(jsSettings)
     .jsSettings(scalaJSUseMainModuleInitializer := true)
