@@ -21,6 +21,13 @@ val sharedSettings = Seq(
   autoAPIMappings := true
 )
 
+val testSettings = Seq(
+  libraryDependencies ++= Seq(
+    "org.specs2" %%% "specs2-core" % "4.8.3" % Test
+  ),
+  scalacOptions in Test ++= Seq("-Yrangepos")
+)
+
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "0.9.7"
@@ -32,7 +39,8 @@ val nativeSettings = Seq(
   crossScalaVersions := Seq("2.11.12"),
   libraryDependencies ++= Seq(
     "com.regblanc" %%% "native-sdl2" % "0.1"
-  )
+  ),
+  nativeLinkStubs := true
 )
 
 val publishSettings = Seq(
@@ -60,6 +68,7 @@ lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .settings(sharedSettings)
     .settings(name := "minart-core")
+    .settings(testSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
