@@ -17,9 +17,9 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   def unsafeInit(): Unit = {
     childNode = dom.document.body.appendChild(canvas)
     dom.document.addEventListener[KeyboardEvent]("keydown", (ev: KeyboardEvent) =>
-      HtmlCanvas.convertKeyCode(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k)))
+      JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k)))
     dom.document.addEventListener[KeyboardEvent]("keyup", (ev: KeyboardEvent) =>
-      HtmlCanvas.convertKeyCode(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k)))
+      JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k)))
   }
   def unsafeDestroy(): Unit = {
     dom.document.body.removeChild(childNode)
@@ -53,14 +53,4 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-}
-
-object HtmlCanvas {
-  private def convertKeyCode(code: Int): Option[KeyboardInput.Key] = code match {
-    case 38 => Some(KeyboardInput.Key.Up)
-    case 40 => Some(KeyboardInput.Key.Down)
-    case 37 => Some(KeyboardInput.Key.Left)
-    case 39 => Some(KeyboardInput.Key.Right)
-    case _ => None
-  }
 }

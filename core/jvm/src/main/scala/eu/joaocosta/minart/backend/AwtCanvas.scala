@@ -106,16 +106,9 @@ object AwtCanvas {
 
   private class KeyListener extends JavaKeyListener {
     private[this] var state = KeyboardInput(Set(), Set(), Set())
-    private[this] def getKey(ev: KeyEvent): Option[Key] = ev.getKeyCode() match {
-      case KeyEvent.VK_UP => Some(Key.Up)
-      case KeyEvent.VK_DOWN => Some(Key.Down)
-      case KeyEvent.VK_LEFT => Some(Key.Left)
-      case KeyEvent.VK_RIGHT => Some(Key.Right)
-      case _ => None
-    }
 
-    def keyPressed(ev: KeyEvent): Unit = getKey(ev).foreach(key => state = state.press(key))
-    def keyReleased(ev: KeyEvent): Unit = getKey(ev).foreach(key => state = state.release(key))
+    def keyPressed(ev: KeyEvent): Unit = AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.press(key))
+    def keyReleased(ev: KeyEvent): Unit = AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.release(key))
     def keyTyped(ev: KeyEvent): Unit = ()
     def clearPressRelease(): Unit = state = state.clearPressRelease()
     def getKeyboardInput(): KeyboardInput = state

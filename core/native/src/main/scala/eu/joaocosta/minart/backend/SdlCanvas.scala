@@ -79,9 +79,9 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
         destroy()
         return false
       } else if (event.type_ == SDL_KEYDOWN) {
-        SdlCanvas.convertKeyCode(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
+        SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
       } else if (event.type_ == SDL_KEYUP) {
-        SdlCanvas.convertKeyCode(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
+        SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
       }
     }
     true
@@ -105,14 +105,4 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-}
-
-object SdlCanvas {
-  private def convertKeyCode(code: SDL_Keycode): Option[KeyboardInput.Key] = code match {
-    case SDLK_UP => Some(Key.Up)
-    case SDLK_DOWN => Some(Key.Down)
-    case SDLK_LEFT => Some(Key.Left)
-    case SDLK_RIGHT => Some(Key.Right)
-    case _ => None
-  }
 }
