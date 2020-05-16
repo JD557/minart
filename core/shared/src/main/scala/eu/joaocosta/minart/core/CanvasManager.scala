@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.core
 
+import eu.joaocosta.minart.backend.defaults.DefaultBackend
+
 /**
  * Abstraction that provides `init` and `destroy` operations to
  * create and destroy canvas windows.
@@ -41,3 +43,9 @@ trait CanvasManager { canvas: Canvas =>
     created = false
   }
 }
+
+object CanvasManager {
+  def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Canvas.Settings, CanvasManager]): CanvasManager =
+    d.defaultValue(settings)
+}
+

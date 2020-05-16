@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.core
 
+import eu.joaocosta.minart.backend.defaults.DefaultBackend
+
 /**
  * The `RenderLoop` contains a set of helpful methods to implement basic render
  * loops in a platform agonstic way.
@@ -63,4 +65,9 @@ trait RenderLoop {
   def singleFrame(
     canvasManager: CanvasManager,
     renderFrame: Canvas => Unit): Unit
+}
+
+object RenderLoop {
+  def default()(implicit d: DefaultBackend[Any, RenderLoop]): RenderLoop =
+    d.defaultValue(())
 }

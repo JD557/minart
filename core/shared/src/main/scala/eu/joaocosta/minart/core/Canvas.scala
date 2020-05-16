@@ -11,19 +11,10 @@ package eu.joaocosta.minart.core
  *
  */
 trait Canvas {
-  /** The Canvas width */
-  def width: Int
-  /** The Canvas height */
-  def height: Int
-  /** The Canvas integer scaling factor */
-  def scale: Int
-  /** The color to be used when the canvas is cleared */
-  def clearColor: Color
-
-  /** The Canvas width with the integer scaling applied */
-  lazy val scaledWidth = width * scale
-  /** The Canvas height with the integer scaling applied */
-  lazy val scaledHeight = height * scale
+  /**
+   * The settings used to create this canvas
+   */
+  def settings: Canvas.Settings
 
   /**
    * Puts a pixel in the back buffer with a certain color.
@@ -61,4 +52,21 @@ trait Canvas {
    * @return current keyboard input
    */
   def getKeyboardInput(): KeyboardInput
+}
+
+object Canvas {
+  /**
+   * The canvas settings.
+   *
+   * @param width The canvas width
+   * @param height The canvas height
+   * @param scale The canvas integer scaling gactor
+   * @param clearColor The color to be used when the canvas is cleared
+   */
+  case class Settings(width: Int, height: Int, scale: Int = 1, clearColor: Color = Color(255, 255, 255)) {
+    /** The Canvas width with the integer scaling applied */
+    lazy val scaledWidth = width * scale
+    /** The Canvas height with the integer scaling applied */
+    lazy val scaledHeight = height * scale
+  }
 }
