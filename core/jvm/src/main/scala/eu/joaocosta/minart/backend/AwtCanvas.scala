@@ -98,7 +98,7 @@ object AwtCanvas {
 
     frame.setVisible(true)
     frame.addWindowListener(new WindowAdapter() {
-      override def windowClosing(e: WindowEvent) {
+      override def windowClosing(e: WindowEvent): Unit = {
         outerCanvas.destroy()
       }
     });
