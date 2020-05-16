@@ -2,6 +2,7 @@ package eu.joaocosta.minart.examples
 
 import scala.util.Random
 
+import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.core._
 
 object Snake {
@@ -53,11 +54,17 @@ object Snake {
     lazy val gameOver: Boolean = board(snakeHead._2)(snakeHead._1) > 0
   }
 
-  def runExample(canvas: LowLevelCanvas, renderLoop: RenderLoop) = {
-    val initialState = GameState(Vector.fill(canvas.height)(Vector.fill(canvas.width)(0)))
+  val canvasSettings = Canvas.Settings(
+    width = 32,
+    height = 32,
+    scale = 16,
+    clearColor = Color(0, 0, 0))
 
-    renderLoop.infiniteRenderLoop[GameState](
-      canvas,
+  def main(args: Array[String]): Unit = {
+    val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canvasSettings.width)(0)))
+
+    RenderLoop.default().infiniteRenderLoop[GameState](
+      CanvasManager.default(canvasSettings),
       initialState,
       (c, state) => {
         c.clear()

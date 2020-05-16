@@ -21,8 +21,7 @@ object CanvasIO {
   }
 
   def pure[A](x: A): CanvasIO[A] = Suspend[A](_ => x)
-  val getWidth: CanvasIO[Int] = Suspend[Int](_.width)
-  val getHeight: CanvasIO[Int] = Suspend[Int](_.height)
+  val getSettings: CanvasIO[Canvas.Settings] = Suspend[Canvas.Settings](_.settings)
   def putPixel(x: Int, y: Int, color: Color): CanvasIO[Unit] = Suspend[Unit](_.putPixel(x, y, color))
   def getBackbufferPixel(x: Int, y: Int): CanvasIO[Color] = Suspend[Color](_.getBackbufferPixel(x, y))
   val getKeyboardInput: CanvasIO[KeyboardInput] = Suspend[KeyboardInput](_.getKeyboardInput())

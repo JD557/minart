@@ -14,7 +14,7 @@ trait RenderLoopTests extends Specification {
     "have a singleFrame operation that runs only once" in {
       var renderCount: Int = 0
       renderLoop.singleFrame(
-        canvasManager = new PpmCanvas(4, 4),
+        canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
         renderFrame = (canvas: Canvas) => renderCount += 1)
       renderCount === 1
     }
@@ -23,7 +23,7 @@ trait RenderLoopTests extends Specification {
       if (!testLoop) skipped("Test not supported")
       var renderCount: Int = 0
       renderLoop.finiteRenderLoop[Int](
-        canvasManager = new PpmCanvas(4, 4),
+        canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
         initialState = 0,
         renderFrame = (canvas: Canvas, state: Int) => {
           renderCount += 1

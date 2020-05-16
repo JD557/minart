@@ -8,11 +8,7 @@ import sdl2.Extras._
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
-class SdlCanvas(
-  val width: Int,
-  val height: Int,
-  val scale: Int = 1,
-  val clearColor: Color = Color(255, 255, 255)) extends LowLevelCanvas {
+class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window] = _
   private[this] var surface: Ptr[SDL_Surface] = _
@@ -25,8 +21,8 @@ class SdlCanvas(
       c"Minart",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
-      scaledWidth,
-      scaledHeight,
+      settings.scaledWidth,
+      settings.scaledHeight,
       SDL_WINDOW_SHOWN)
     surface = SDL_GetWindowSurface(window)
     renderer = SDL_CreateSoftwareRenderer(surface)
@@ -36,9 +32,9 @@ class SdlCanvas(
     SDL_Quit()
   }
 
-  private[this] val ubyteClearR = clearColor.r.toUByte
-  private[this] val ubyteClearG = clearColor.g.toUByte
-  private[this] val ubyteClearB = clearColor.b.toUByte
+  private[this] val ubyteClearR = settings.clearColor.r.toUByte
+  private[this] val ubyteClearG = settings.clearColor.g.toUByte
+  private[this] val ubyteClearB = settings.clearColor.b.toUByte
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
     SDL_SetRenderDrawColor(
@@ -47,7 +43,7 @@ class SdlCanvas(
       c.g.toUByte,
       c.b.toUByte,
       0.toUByte)
-    val rect = stackalloc[SDL_Rect].init(x * scale, y * scale, scale, scale)
+    val rect = stackalloc[SDL_Rect].init(x * settings.scale, y * settings.scale, settings.scale, settings.scale)
     SDL_RenderFillRect(renderer, rect)
   }
 
@@ -62,14 +58,14 @@ class SdlCanvas(
   }
 
   private[this] val _putPixel =
-    if (scale == 1) { (x: Int, y: Int, c: Color) => putPixelUnscaled(x, y, c) }
+    if (settings.scale == 1) { (x: Int, y: Int, c: Color) => putPixelUnscaled(x, y, c) }
     else { (x: Int, y: Int, c: Color) => putPixelScaled(x, y, c) }
 
   def putPixel(x: Int, y: Int, color: Color): Unit = _putPixel(x, y, color)
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     // Assuming a BGRA surface
-    val baseAddr = 4 * (y * scale * scaledWidth + (x * scale) % scaledWidth)
+    val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale) % settings.scaledWidth)
     Color(
       surface.pixels(baseAddr + 2).toInt & 0xFF,
       surface.pixels(baseAddr + 1).toInt & 0xFF,
