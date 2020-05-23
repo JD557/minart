@@ -37,9 +37,9 @@ trait Canvas {
   def getBackbufferPixel(x: Int, y: Int): Color
 
   /**
-   * Clears the backbuffer
+   * Clears resources, such as the backbuffer and keyboard inputs
    */
-  def clear(): Unit
+  def clear(resources: Set[Canvas.Resource] = Set(Canvas.Resource.Backbuffer, Canvas.Resource.Keyboard)): Unit
 
   /**
    * Flips buffers and redraws the screen
@@ -55,6 +55,13 @@ trait Canvas {
 }
 
 object Canvas {
+
+  sealed trait Resource
+  object Resource {
+    case object Backbuffer extends Resource
+    case object Keyboard extends Resource
+  }
+
   /**
    * The canvas settings.
    *

@@ -87,9 +87,12 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     true
   }
 
-  def clear(): Unit = {
-    keyboardInput = keyboardInput.clearPressRelease()
-    if (handleEvents()) {
+  def clear(resources: Set[Canvas.Resource]): Unit = {
+    if (resources.contains(Canvas.Resource.Keyboard)) {
+      keyboardInput = keyboardInput.clearPressRelease()
+    }
+    val keepGoing = handleEvents()
+    if (resources.contains(Canvas.Resource.Backbuffer) && keepGoing) {
       SDL_SetRenderDrawColor(
         renderer,
         ubyteClearR,
