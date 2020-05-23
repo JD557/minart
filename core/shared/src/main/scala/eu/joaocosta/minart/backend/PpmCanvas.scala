@@ -14,7 +14,11 @@ class PpmCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def getBackbufferPixel(x: Int, y: Int): Color = buffer(y)(x)
 
-  def clear(): Unit = buffer.foreach(_.transform(_ => settings.clearColor))
+  def clear(resources: Set[Canvas.Resource]): Unit = {
+    if (resources.contains(Canvas.Resource.Backbuffer)) {
+      buffer.foreach(_.transform(_ => settings.clearColor))
+    }
+  }
 
   def redraw(): Unit = {
     println("P3")

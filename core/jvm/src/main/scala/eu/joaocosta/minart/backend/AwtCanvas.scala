@@ -64,9 +64,13 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     unpack(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale) % settings.scaledWidth))
   }
 
-  def clear(): Unit = {
-    for { i <- (0 until (settings.scaledWidth * settings.scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
-    keyListener.clearPressRelease()
+  def clear(resources: Set[Canvas.Resource]): Unit = {
+    if (resources.contains(Canvas.Resource.Backbuffer)) {
+      for { i <- (0 until (settings.scaledWidth * settings.scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
+    }
+    if (resources.contains(Canvas.Resource.Keyboard)) {
+      keyListener.clearPressRelease()
+    }
   }
 
   def redraw(): Unit = {

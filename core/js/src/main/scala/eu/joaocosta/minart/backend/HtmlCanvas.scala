@@ -43,9 +43,14 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     Color(imgData(0), imgData(1), imgData(2))
   }
 
-  def clear(): Unit = {
-    ctxBuff.fillStyle = clearColorStr
-    ctxBuff.fillRect(0, 0, settings.scaledWidth, settings.scaledHeight)
+  def clear(resources: Set[Canvas.Resource]): Unit = {
+    if (resources.contains(Canvas.Resource.Backbuffer)) {
+      ctxBuff.fillStyle = clearColorStr
+      ctxBuff.fillRect(0, 0, settings.scaledWidth, settings.scaledHeight)
+    }
+    if (resources.contains(Canvas.Resource.Keyboard)) {
+      keyboardInput = keyboardInput.clearPressRelease
+    }
   }
 
   def redraw(): Unit = {
