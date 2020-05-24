@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.backend
 
-import java.awt.event.{ WindowAdapter, WindowEvent }
 import java.awt.event.{ KeyEvent, KeyListener => JavaKeyListener }
+import java.awt.event.{ WindowAdapter, WindowEvent }
 import java.awt.image.{ DataBufferInt, BufferedImage }
 import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
 import javax.swing.JFrame

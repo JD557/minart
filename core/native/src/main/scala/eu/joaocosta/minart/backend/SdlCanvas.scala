@@ -2,8 +2,8 @@ package eu.joaocosta.minart.backend
 
 import scalanative.native._
 
-import sdl2.SDL._
 import sdl2.Extras._
+import sdl2.SDL._
 
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
