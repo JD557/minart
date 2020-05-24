@@ -8,6 +8,7 @@ It's mostly useful for small toy projects or prototypes that deal with
 generative art or software rendering.
 
 I wouldn't recommend using this in any serious production environment.
+The API is constantly breaking and I'm not making any effort to not break backwards compatibility.
 
 ## Features
 
@@ -15,6 +16,7 @@ I wouldn't recommend using this in any serious production environment.
 * Small footprint
 * Double buffered canvas
 * Integer scaling
+* Keyboard Input
 
 ## Concepts
 
@@ -27,11 +29,13 @@ and delete a new window with a Canvas.
 
 ### The Canvas
 
-The `Canvas`, which provides the operations required to draw on the window:
+The `Canvas`, which provides the operations required to draw on the window and read inputs:
 * `putPixel(x: Int, y: Int, color: Color): Unit`
 * `getBackbufferPixel(x: Int, y: Int): Color`
-* `clear(): Unit`
+* `getBackbufferPixel(): Vector[Vector[Color]]`
+* `clear(resources: Set[Canvas.Resource]): Unit`
 * `redraw(): Unit`
+* `getKeyboardInput(): KeyboardInput`
 
 ### The RenderLoop
 
@@ -51,7 +55,7 @@ Note that `clear`/`redraw` still need to be called manually (since in some cases
 To include minart, simply add `minart-core` to your project:
 
 ```scala
-libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.1.3"
+libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.1.4"
 ```
 
 The `examples` folder contains some sample code.
@@ -63,27 +67,45 @@ while it also takes care of some low-level platform-specific details.
 Here's a simple example that renders a color gradient to a screen:
 
 ```scala
-JavaRenderLoop.singleFrame(new AwtCanvas(128, 128, scale = 4), canvas => {
+import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.core._
+
+val canvasSettings = Canvas.Settings(
+  width = 128,
+  height = 128,
+  scale = 4)
+
+
+RenderLoop.default().singleFrame(CanvasManager.default(canvasSettings), c => {
   for {
-    x <- (0 until canvas.width)
-    y <- (0 until canvas.height)
+    x <- (0 until c.settings.width)
+    y <- (0 until c.settings.height)
   } {
-    val color = Color((255 * x.toDouble / canvas.width).toInt, (255 * y.toDouble / canvas.height).toInt, 255)
-    canvas.putPixel(x, y, color)
+    val color = Color((255 * x.toDouble / c.settings.width).toInt, (255 * y.toDouble / c.settings.height).toInt, 255)
+    c.putPixel(x, y, color)
   }
-  canvas.redraw()
+  c.redraw()
 })
 ```
 
-Note that you can avoid this and use the `LowLevelCanvas` interface, which is
-just a `Canvas with CanvasManager`.
+Note that you can avoid this and use the `LowLevelCanvas` interface,
+which is just a `Canvas with CanvasManager`.
+You also can remove the `eu.joaocosta.minart.defaults._` import,
+but then you need to manually create the platform-specific canvas.
 
 ```scala
-val canvas = new AwtCanvas(128, 128, scale = 4)
+import eu.joaocosta.minart.core._
+
+val canvasSettings = Canvas.Settings(
+  width = 128,
+  height = 128,
+  scale = 4)
+
+val canvas = new AwtCanvas(canvasSettings)
 canvas.init()
 for {
-  x <- (0 until canvas.width)
-  y <- (0 until canvas.height)
+  x <- (0 until canvasSettings.width)
+  y <- (0 until canvasSettings.height)
 } {
   val color = Color((255 * x.toDouble / canvas.width).toInt, (255 * y.toDouble / canvas.height).toInt, 255)
   canvas.putPixel(x, y, color)
@@ -95,8 +117,11 @@ canvas.redraw()
 
 ## Multiplatform support
 
-To compile for different platforms, one needs to use the correct `Canvas` and `RenderLoop`:
+To compile for different platforms, one needs to either use import `eu.joaocosta.minart.backend.defaults._`
+package and use the `default` method or use the correct `Canvas` and `RenderLoop` (see the examples above).
 
+The following canvas and render loops are available:
+* All: `PpmCanvas`
 * JVM: `AwtCanvas` and `JavaRenderLoop`
 * JS: `HtmlCanvas` and `JsRenderLoop`
 * Native: `SdlCanvas` and `SdlRenderLoop`
