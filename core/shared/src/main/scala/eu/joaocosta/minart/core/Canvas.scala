@@ -28,6 +28,7 @@ trait Canvas {
   /**
    * Gets the color from the backbuffer.
    * This operation can be perfomance intensive, so it might be worthwile
+   * to either use `getBackbuffer` to fetch multiple pixels at the same time or
    * to implement this operation on the application code.
    *
    * @param x pixel x position
@@ -35,6 +36,15 @@ trait Canvas {
    * @return pixel color
    */
   def getBackbufferPixel(x: Int, y: Int): Color
+
+  /**
+   * Returns the backbuffer.
+   * This operation can be perfomance intensive, so it might be worthwile
+   * to implement this operation on the application code.
+   *
+   * @return backbuffer
+   */
+  def getBackbuffer(): Vector[Vector[Color]]
 
   /**
    * Clears resources, such as the backbuffer and keyboard inputs

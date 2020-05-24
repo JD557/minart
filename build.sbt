@@ -43,7 +43,8 @@ val nativeSettings = Seq(
   libraryDependencies --= Seq(
     "org.specs2" %%% "specs2-core" % "4.8.3" % Test
   ),
-  nativeLinkStubs := true
+  nativeLinkStubs := true,
+  nativeMode := "release"
 )
 
 val publishSettings = Seq(

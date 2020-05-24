@@ -61,7 +61,18 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   def putPixel(x: Int, y: Int, color: Color): Unit = _putPixel(x, y, color)
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    unpack(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale) % settings.scaledWidth))
+    unpack(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
+  }
+
+  def getBackbuffer(): Vector[Vector[Color]] = {
+    val flatData = javaCanvas.imagePixels.getData()
+    (0 until settings.height).map { y =>
+      val lineBase = y * settings.scale * settings.scaledWidth
+      (0 until settings.width).map { x =>
+        val baseAddr = (lineBase + (x * settings.scale))
+        unpack(flatData(baseAddr))
+      }.toVector
+    }.toVector
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = {

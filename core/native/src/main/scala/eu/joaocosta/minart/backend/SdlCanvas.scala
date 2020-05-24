@@ -65,11 +65,24 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     // Assuming a BGRA surface
-    val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale) % settings.scaledWidth)
+    val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
     Color(
       surface.pixels(baseAddr + 2).toInt & 0xFF,
       surface.pixels(baseAddr + 1).toInt & 0xFF,
       surface.pixels(baseAddr + 0).toInt & 0xFF)
+  }
+
+  def getBackbuffer(): Vector[Vector[Color]] = {
+    (0 until settings.height).map { y =>
+      val lineBase = y * settings.scale * settings.scaledWidth
+      (0 until settings.width).map { x =>
+        val baseAddr = 4 * (lineBase + (x * settings.scale))
+        Color(
+          surface.pixels(baseAddr + 2).toInt & 0xFF,
+          surface.pixels(baseAddr + 1).toInt & 0xFF,
+          surface.pixels(baseAddr + 0).toInt & 0xFF)
+      }.toVector
+    }.toVector
   }
 
   private[this] def handleEvents(): Boolean = {

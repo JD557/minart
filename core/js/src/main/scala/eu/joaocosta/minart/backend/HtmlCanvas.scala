@@ -43,6 +43,17 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     Color(imgData(0), imgData(1), imgData(2))
   }
 
+  def getBackbuffer(): Vector[Vector[Color]] = {
+    val imgData = ctxBuff.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight).data
+    (0 until settings.height).map { y =>
+      val lineBase = y * settings.scale * settings.scaledWidth
+      (0 until settings.width).map { x =>
+        val baseAddr = 4 * (lineBase + (x * settings.scale))
+        Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
+      }.toVector
+    }.toVector
+  }
+
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
       ctxBuff.fillStyle = clearColorStr

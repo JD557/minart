@@ -24,6 +24,7 @@ object CanvasIO {
   val getSettings: CanvasIO[Canvas.Settings] = Suspend[Canvas.Settings](_.settings)
   def putPixel(x: Int, y: Int, color: Color): CanvasIO[Unit] = Suspend[Unit](_.putPixel(x, y, color))
   def getBackbufferPixel(x: Int, y: Int): CanvasIO[Color] = Suspend[Color](_.getBackbufferPixel(x, y))
+  val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = Suspend[Vector[Vector[Color]]](_.getBackbuffer)
   val getKeyboardInput: CanvasIO[KeyboardInput] = Suspend[KeyboardInput](_.getKeyboardInput())
   val clear: CanvasIO[Unit] = Suspend[Unit](_.clear())
   val redraw: CanvasIO[Unit] = Suspend[Unit](_.redraw())

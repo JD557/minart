@@ -21,10 +21,10 @@ object Fire {
 
     var temperatureMod = 1.0
 
-    def automata(x: Int, y: Int): Color = {
+    def automata(backbuffer: Vector[Vector[Color]], x: Int, y: Int): Color = {
       val neighbors =
         (math.max(0, x - 1) to math.min(x + 1, canvas.settings.width - 1)).toList.map { xx =>
-          canvas.getBackbufferPixel(xx, y + 1)
+          backbuffer(y + 1)(xx)
         }
       val randomLoss = 0.8 + (scala.util.Random.nextDouble() / 5)
       val temperature = ((neighbors.map(c => (c.r + c.g + c.b) / 3).sum / 3) * randomLoss).toInt
@@ -53,11 +53,12 @@ object Fire {
       }
 
       // Evolve fire
+      val backbuffer = canvas.getBackbuffer()
       for {
         x <- (0 until canvas.settings.width)
         y <- (0 until (canvas.settings.height - 1)).reverse
       } {
-        val color = automata(x, y)
+        val color = automata(backbuffer, x, y)
         canvas.putPixel(x, y, color)
       }
       canvas.redraw()
