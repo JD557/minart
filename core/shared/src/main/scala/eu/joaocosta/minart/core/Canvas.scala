@@ -49,7 +49,7 @@ trait Canvas {
   /**
    * Clears resources, such as the backbuffer and keyboard inputs.
    *
-   * @param resources set of [[Resource]]s to be cleared
+   * @param resources set of [[Canvas.Resource]]s to be cleared
    */
   def clear(resources: Set[Canvas.Resource] = Set(Canvas.Resource.Backbuffer, Canvas.Resource.Keyboard)): Unit
 
