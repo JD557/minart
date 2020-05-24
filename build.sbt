@@ -65,8 +65,8 @@ lazy val root = (project in file("."))
   .settings(sharedSettings)
   .settings(name := "minart")
   .settings(publishSettings)
-  .dependsOn(core.jvm, core.js)
-  .aggregate(core.jvm, core.js)
+  .dependsOn(core.jvm, core.js, pure.jvm, pure.js)
+  .aggregate(core.jvm, core.js, pure.jvm, pure.js)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
