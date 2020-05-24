@@ -47,17 +47,19 @@ trait Canvas {
   def getBackbuffer(): Vector[Vector[Color]]
 
   /**
-   * Clears resources, such as the backbuffer and keyboard inputs
+   * Clears resources, such as the backbuffer and keyboard inputs.
+   *
+   * @param resources set of [[Resource]]s to be cleared
    */
   def clear(resources: Set[Canvas.Resource] = Set(Canvas.Resource.Backbuffer, Canvas.Resource.Keyboard)): Unit
 
   /**
-   * Flips buffers and redraws the screen
+   * Flips buffers and redraws the screen.
    */
   def redraw(): Unit
 
   /**
-   * Gets the current keyboard input
+   * Gets the current keyboard input.
    *
    * @return current keyboard input
    */
@@ -66,6 +68,9 @@ trait Canvas {
 
 object Canvas {
 
+  /**
+   * A system resource used by the Canvas.
+   */
   sealed trait Resource
   object Resource {
     case object Backbuffer extends Resource
@@ -77,13 +82,13 @@ object Canvas {
    *
    * @param width The canvas width
    * @param height The canvas height
-   * @param scale The canvas integer scaling gactor
+   * @param scale The canvas integer scaling factor
    * @param clearColor The color to be used when the canvas is cleared
    */
   case class Settings(width: Int, height: Int, scale: Int = 1, clearColor: Color = Color(255, 255, 255)) {
-    /** The Canvas width with the integer scaling applied */
+    /** The canvas width with the integer scaling applied. */
     lazy val scaledWidth = width * scale
-    /** The Canvas height with the integer scaling applied */
+    /** The canvas height with the integer scaling applied. */
     lazy val scaledHeight = height * scale
   }
 }

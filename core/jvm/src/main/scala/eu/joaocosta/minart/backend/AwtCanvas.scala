@@ -9,6 +9,9 @@ import javax.swing.JFrame
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
+/**
+ * A low level Canvas implementation that shows the image in an AWT/Swing window.
+ */
 class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas = _

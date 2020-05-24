@@ -45,6 +45,12 @@ trait CanvasManager { canvas: Canvas =>
 }
 
 object CanvasManager {
+  /**
+   * Returns [[CanvasManager]] for the default backend for the target platform.
+   *
+   * @param settings Settings used to create the new canvas
+   * @return [[CanvasManager]] using the default backend for the target platform
+   */
   def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Canvas.Settings, CanvasManager]): CanvasManager =
     d.defaultValue(settings)
 }

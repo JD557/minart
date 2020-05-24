@@ -8,6 +8,9 @@ import sdl2.SDL._
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
+/**
+* A low level Canvas implementation that shows the image in a SDL Window.
+*/
 class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window] = _
