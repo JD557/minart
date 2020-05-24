@@ -2,6 +2,10 @@ package eu.joaocosta.minart.backend
 
 import eu.joaocosta.minart.core._
 
+/**
+ * A low level Canvas implementation that outputs the image in the PPM format to the stdout.
+ * This canvas doesn't support fetching the keyboard input.
+ */
 class PpmCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val buffer: Array[Array[Color]] =
     Array.fill(settings.height)(Array.fill(settings.width)(settings.clearColor))

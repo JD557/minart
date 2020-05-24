@@ -68,6 +68,9 @@ trait RenderLoop {
 }
 
 object RenderLoop {
+  /**
+   * Returns [[RenderLoop]] for the default backend for the target platform.
+   */
   def default()(implicit d: DefaultBackend[Any, RenderLoop]): RenderLoop =
     d.defaultValue(())
 }

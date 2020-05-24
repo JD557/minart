@@ -4,8 +4,8 @@ import scala.annotation.tailrec
 import scala.concurrent.duration.FiniteDuration
 import scalanative.native._
 
-import sdl2.SDL._
 import sdl2.Extras._
+import sdl2.SDL._
 
 import eu.joaocosta.minart.core._
 

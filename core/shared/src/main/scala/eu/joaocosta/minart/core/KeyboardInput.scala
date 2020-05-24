@@ -2,21 +2,41 @@ package eu.joaocosta.minart.core
 
 import eu.joaocosta.minart.core.KeyboardInput.Key
 
+/**
+ * The keyboard input stores the state of the keyboard at a certain point in time.
+ * It also accumulates keys that have been pressed and released.
+ *
+ * @param keysDown keys that are pressed down
+ * @param keysPressed keys that have been pressed
+ * @param keysReleased keys that have been released
+ */
 case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased: Set[Key]) {
+  /** Checks if a key is down. */
   def isDown(key: Key): Boolean = keysDown(key)
+  /** Checks if a key is up. */
   def isUp(key: Key): Boolean = !keysDown(key)
+  /** Returns a new state where a key has been pressed. */
   def press(key: Key): KeyboardInput = KeyboardInput(keysDown + key, keysPressed + key, keysReleased - key)
+  /** Returns a new state where a key has been released. */
   def release(key: Key): KeyboardInput = KeyboardInput(keysDown - key, keysPressed - key, keysReleased + key)
+  /** Clears the `keysPressed` and `keysReleased`. */
   def clearPressRelease(): KeyboardInput = KeyboardInput(keysDown, Set(), Set())
 }
 
 object KeyboardInput {
 
+  /**
+   * Internal trait to store mappings from platform-specific key representations to a [[Key]].
+   * This should not have to be used in the application code.
+   */
   trait KeyMapping[A] {
     protected def mappings: Map[A, Key]
     def getKey(keyCode: A): Option[Key] = mappings.get(keyCode)
   }
 
+  /**
+   * Platform-agnostic identifier for a keyboard key.
+   */
   sealed trait Key
   object Key {
     final case object A extends Key

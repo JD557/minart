@@ -6,6 +6,9 @@ import org.scalajs.dom.raw.KeyboardEvent
 
 import eu.joaocosta.minart.core._
 
+/**
+ * A low level Canvas implementation that shows the image in an HTML Canvas element.
+ */
 class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]

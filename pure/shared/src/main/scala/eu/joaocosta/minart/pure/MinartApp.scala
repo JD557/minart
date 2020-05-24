@@ -2,6 +2,7 @@ package eu.joaocosta.minart.pure
 
 import eu.joaocosta.minart.core._
 
+/** Entrypoint for pure Minart applications. */
 trait MinartApp {
   type State
   def canvasManager: CanvasManager

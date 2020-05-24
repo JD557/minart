@@ -15,16 +15,15 @@ object PureColorSquare extends MinartApp {
   val frameRate = FrameRate.Uncapped
   val terminateWhen = (_: State) => false
   val renderFrame = (_: State) => {
-    val colors = for {
-      settings <- CanvasIO.getSettings
-    } yield for {
-      x <- (0 until settings.width)
-      y <- (0 until settings.height)
-      r = (255 * x.toDouble / settings.width).toInt
-      g = (255 * y.toDouble / settings.height).toInt
-      b = 255
-    } yield (x, y, Color(r, g, b))
-    colors.flatMap(c =>
-      CanvasIO.forEach(c) { case (x, y, c) => CanvasIO.putPixel(x, y, c) }).andThen(CanvasIO.redraw)
+    CanvasIO.getSettings.map { settings =>
+      for {
+        x <- (0 until settings.width)
+        y <- (0 until settings.height)
+        r = (255 * x.toDouble / settings.width).toInt
+        g = (255 * y.toDouble / settings.height).toInt
+        b = 255
+      } yield CanvasIO.putPixel(x, y, Color(r, g, b))
+    }.flatMap(CanvasIO.sequence)
+      .andThen(CanvasIO.redraw)
   }
 }
