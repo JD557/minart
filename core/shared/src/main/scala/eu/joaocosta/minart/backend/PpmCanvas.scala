@@ -10,6 +10,7 @@ class PpmCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val buffer: Array[Array[Color]] =
     Array.fill(settings.height)(Array.fill(settings.width)(settings.clearColor))
   private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set()) // Keyboard input not supported
+  private[this] val pointerInput: PointerInput = PointerInput(None, Nil, Nil, false) // Pointer input not supported
 
   def unsafeInit(): Unit = ()
   def unsafeDestroy(): Unit = ()
@@ -39,4 +40,5 @@ class PpmCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
+  def getPointerInput(): PointerInput = pointerInput
 }

@@ -91,7 +91,8 @@ lazy val examples = (project in file("examples"))
       examples_colorSquare.jvm,     examples_colorSquare.js,     /*examples_colorSquare.native,*/
       examples_pureColorSquare.jvm, examples_pureColorSquare.js, /*examples_pureColorSquare.native,*/
       examples_fire.jvm,            examples_fire.js,            /*examples_fire.native,*/
-      examples_snake.jvm,           examples_snake.js/*,           examples_snake.native*/)
+      examples_snake.jvm,           examples_snake.js,           /*examples_snake.native,*/
+      examples_mousePointer.jvm,    examples_mousePointer.js/*,    examples_mousePointer.native*/)
     .settings(sharedSettings)
     .settings(name := "minart-examples")
     .settings(noPublishSettings)
@@ -99,7 +100,8 @@ lazy val examples = (project in file("examples"))
       examples_colorSquare.jvm,     examples_colorSquare.js,     /*examples_colorSquare.native,*/
       examples_pureColorSquare.jvm, examples_pureColorSquare.js, /*examples_pureColorSquare.native,*/
       examples_fire.jvm,            examples_fire.js,            /*examples_fire.native,*/
-      examples_snake.jvm,           examples_snake.js/*,           examples_snake.native*/)
+      examples_snake.jvm,           examples_snake.js,           /*examples_snake.native,*/
+      examples_mousePointer.jvm,    examples_mousePointer.js/*,    examples_mousePointer.native*/)
 
 lazy val examples_colorSquare =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -140,6 +142,17 @@ lazy val examples_snake =
     .dependsOn(core)
     .settings(sharedSettings)
     .settings(name := "minart-examples-snake")
+    .settings(noPublishSettings)
+    .jsSettings(jsSettings)
+    .jsSettings(scalaJSUseMainModuleInitializer := true)
+    .nativeSettings(nativeSettings)
+
+lazy val examples_mousePointer =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .in(file("examples/mousepointer"))
+    .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-examples-mousepointer")
     .settings(noPublishSettings)
     .jsSettings(jsSettings)
     .jsSettings(scalaJSUseMainModuleInitializer := true)

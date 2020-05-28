@@ -64,6 +64,13 @@ trait Canvas {
    * @return current keyboard input
    */
   def getKeyboardInput(): KeyboardInput
+
+  /**
+   * Gets the current pointer input.
+   *
+   * @return current pointer input
+   */
+  def getPointerInput(): PointerInput
 }
 
 object Canvas {
@@ -75,6 +82,7 @@ object Canvas {
   object Resource {
     case object Backbuffer extends Resource
     case object Keyboard extends Resource
+    case object Pointer extends Resource
   }
 
   /**

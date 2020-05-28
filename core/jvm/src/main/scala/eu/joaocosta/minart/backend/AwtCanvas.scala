@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.backend
 
 import java.awt.event.{ KeyEvent, KeyListener => JavaKeyListener }
+import java.awt.event.{ MouseEvent, MouseListener => JavaMouseListener }
 import java.awt.event.{ WindowAdapter, WindowEvent }
 import java.awt.image.{ DataBufferInt, BufferedImage }
 import java.awt.{ Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension }
@@ -16,11 +17,18 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
   private[this] var keyListener: AwtCanvas.KeyListener = _
+  private[this] var mouseListener: AwtCanvas.MouseListener = _
 
   def unsafeInit(): Unit = {
     javaCanvas = new AwtCanvas.InnerCanvas(settings.scaledWidth, settings.scaledHeight, this)
     keyListener = new AwtCanvas.KeyListener()
+    mouseListener = new AwtCanvas.MouseListener(() => for {
+      point <- Option(javaCanvas.getMousePosition())
+      x <- Option(point.getX())
+      y <- Option(point.getY())
+    } yield PointerInput.Position(x.toInt / settings.scale, y.toInt / settings.scale))
     javaCanvas.addKeyListener(keyListener)
+    javaCanvas.addMouseListener(mouseListener)
   }
   def unsafeDestroy(): Unit = {
     javaCanvas.frame.dispose()
@@ -85,6 +93,9 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
     }
+    if (resources.contains(Canvas.Resource.Pointer)) {
+      mouseListener.clearPressRelease()
+    }
   }
 
   def redraw(): Unit = {
@@ -95,6 +106,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyListener.getKeyboardInput()
+  def getPointerInput(): PointerInput = mouseListener.getPointerInput()
 }
 
 object AwtCanvas {
@@ -130,5 +142,17 @@ object AwtCanvas {
     def keyTyped(ev: KeyEvent): Unit = ()
     def clearPressRelease(): Unit = state = state.clearPressRelease()
     def getKeyboardInput(): KeyboardInput = state
+  }
+
+  private class MouseListener(getMousePos: () => Option[PointerInput.Position]) extends JavaMouseListener {
+    private[this] var state = PointerInput(None, Nil, Nil, false)
+
+    def mousePressed(ev: MouseEvent): Unit = state = state.move(getMousePos()).press
+    def mouseReleased(ev: MouseEvent): Unit = state = state.move(getMousePos()).release
+    def mouseClicked(ev: MouseEvent): Unit = ()
+    def mouseEntered(ev: MouseEvent): Unit = ()
+    def mouseExited(ev: MouseEvent): Unit = ()
+    def clearPressRelease(): Unit = state = state.clearPressRelease()
+    def getPointerInput(): PointerInput = state.move(getMousePos())
   }
 }
