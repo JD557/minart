@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{ Canvas => JsCanvas }
-import org.scalajs.dom.raw.KeyboardEvent
+import org.scalajs.dom.raw.{ MouseEvent, KeyboardEvent }
 
 import eu.joaocosta.minart.core._
 
@@ -14,6 +14,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private[this] var childNode: dom.Node = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
+  private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
   canvas.width = settings.scaledWidth
   canvas.height = settings.scaledHeight
 
@@ -23,6 +24,21 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k)))
     dom.document.addEventListener[KeyboardEvent]("keyup", (ev: KeyboardEvent) =>
       JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k)))
+
+    val canvasRect = canvas.getBoundingClientRect();
+    dom.document.addEventListener[MouseEvent]("mousedown", (ev: MouseEvent) =>
+      mouseInput = mouseInput.press)
+    dom.document.addEventListener[MouseEvent]("mouseup", (ev: MouseEvent) =>
+      mouseInput = mouseInput.release)
+    canvas.addEventListener[MouseEvent]("mousemove", (ev: MouseEvent) => {
+      val x = ev.clientX - canvasRect.left
+      val y = ev.clientY - canvasRect.top
+      if (x >= 0 && y >= 0 && x < settings.scaledWidth && y < settings.scaledHeight) {
+        mouseInput = mouseInput.move(Some(PointerInput.Position(x.toInt / settings.scale, y.toInt / settings.scale)))
+      } else {
+        mouseInput = mouseInput.move(None)
+      }
+    })
   }
   def unsafeDestroy(): Unit = {
     dom.document.body.removeChild(childNode)
@@ -65,6 +81,9 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyboardInput = keyboardInput.clearPressRelease
     }
+    if (resources.contains(Canvas.Resource.Pointer)) {
+      mouseInput = mouseInput.clearPressRelease
+    }
   }
 
   def redraw(): Unit = {
@@ -72,4 +91,5 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
+  def getPointerInput(): PointerInput = mouseInput
 }
