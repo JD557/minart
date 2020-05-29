@@ -71,12 +71,16 @@ object CanvasIO {
 
   /** Gets the current keyboard input. */
   val getKeyboardInput: CanvasIO[KeyboardInput] = Suspend[KeyboardInput](_.getKeyboardInput())
+
+  /** Gets the current pointer input. */
+  val getPointerInput: CanvasIO[PointerInput] = Suspend[PointerInput](_.getPointerInput())
+
   /**
    * Clears resources, such as the backbuffer and keyboard inputs.
    *
    * @param resources set of [[Canvas.Resource]]s to be cleared
    */
-  def clear(resources: Set[Canvas.Resource] = Set(Canvas.Resource.Backbuffer, Canvas.Resource.Keyboard)): CanvasIO[Unit] =
+  def clear(resources: Set[Canvas.Resource] = Canvas.Resource.all): CanvasIO[Unit] =
     Suspend[Unit](_.clear(resources))
 
   /** Flips buffers and redraws the screen. */
