@@ -35,8 +35,8 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
         pointerInput = pointerInput.move(None)
       }
     }
-    dom.document.addEventListener[MouseEvent]("mousedown", _ => handlePress())
-    dom.document.addEventListener[MouseEvent]("mouseup", _ => handleRelease())
+    dom.document.addEventListener[MouseEvent]("mousedown", (_: MouseEvent) => handlePress())
+    dom.document.addEventListener[MouseEvent]("mouseup", (_: MouseEvent) => handleRelease())
     canvas.addEventListener[MouseEvent]("mousemove", (ev: MouseEvent) => {
       val x = (ev.clientX - canvasRect.left).toInt
       val y = (ev.clientY - canvasRect.top).toInt
@@ -49,8 +49,8 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       handleMove(x, y)
       handlePress()
     })
-    dom.document.addEventListener[TouchEvent]("touchend", _ => handleRelease())
-    dom.document.addEventListener[TouchEvent]("touchcancel", _ => handleRelease())
+    dom.document.addEventListener[TouchEvent]("touchend", (_: TouchEvent) => handleRelease())
+    dom.document.addEventListener[TouchEvent]("touchcancel", (_: TouchEvent) => handleRelease())
     canvas.addEventListener[TouchEvent]("touchmove", (ev: TouchEvent) => {
       val touch = ev.changedTouches(0)
       val x = (touch.clientX - canvasRect.left).toInt
