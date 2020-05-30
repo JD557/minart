@@ -9,14 +9,15 @@ import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
 /**
-* A low level Canvas implementation that shows the image in a SDL Window.
-*/
+ * A low level Canvas implementation that shows the image in a SDL Window.
+ */
 class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window] = _
   private[this] var surface: Ptr[SDL_Surface] = _
   private[this] var renderer: Ptr[SDL_Renderer] = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
+  private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
   def unsafeInit() = {
     SDL_Init(SDL_INIT_VIDEO)
@@ -90,22 +91,41 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] def handleEvents(): Boolean = {
     val event = stackalloc[SDL_Event]
-    while (SDL_PollEvent(event) != 0) {
-      if (event.type_ == SDL_QUIT) {
-        destroy()
-        return false
-      } else if (event.type_ == SDL_KEYDOWN) {
-        SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
-      } else if (event.type_ == SDL_KEYUP) {
-        SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
+    var keepGoing: Boolean = true
+    while (keepGoing && SDL_PollEvent(event) != 0) {
+      keepGoing = event.type_ match {
+        case SDL_QUIT =>
+          destroy()
+          false
+        case SDL_KEYDOWN =>
+          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
+          true
+        case SDL_KEYUP =>
+          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
+          true
+        case SDL_MOUSEMOTION =>
+          mouseInput = mouseInput.move(
+            Option(PointerInput.Position(event.motion.x / settings.scale, event.motion.y / settings.scale)))
+          true
+        case SDL_MOUSEBUTTONDOWN =>
+          mouseInput = mouseInput.press
+          true
+        case SDL_MOUSEBUTTONUP =>
+          mouseInput = mouseInput.release
+          true
+        case _ =>
+          true
       }
     }
-    true
+    keepGoing
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyboardInput = keyboardInput.clearPressRelease()
+    }
+    if (resources.contains(Canvas.Resource.Pointer)) {
+      mouseInput = mouseInput.clearPressRelease()
     }
     val keepGoing = handleEvents()
     if (resources.contains(Canvas.Resource.Backbuffer) && keepGoing) {
@@ -124,4 +144,5 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
+  def getPointerInput(): PointerInput = mouseInput
 }
