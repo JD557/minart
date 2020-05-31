@@ -90,11 +90,15 @@ object CanvasIO {
   def sequence[A](it: Iterable[CanvasIO[A]]): CanvasIO[List[A]] =
     Suspend(canvas => it.map(_.run(canvas)).toList)
 
+  /** Converts an `Iterable[CanvasIO[A]]` into a `CanvasIO[Unit]`. */
+  def sequence_(it: Iterable[CanvasIO[Any]]): CanvasIO[Unit] =
+    Suspend(canvas => it.foreach(_.run(canvas)))
+
   /** Converts an `Iterable[A]` into a `CanvasIO[List[B]]` by applying an operation to each element. */
   def traverse[A, B](it: Iterable[A])(f: A => CanvasIO[B]): CanvasIO[List[B]] =
-    Suspend(canvas => it.map(f).map(_.run(canvas)).toList)
+    sequence(it.map(f))
 
   /** Applies an operation to each element of a `Iterable[A]` and discards the result. */
-  def forEach[A](it: Iterable[A])(f: A => CanvasIO[Any]): CanvasIO[Unit] =
-    it.map(f).foldLeft[CanvasIO[Unit]](Suspend(_ => ())) { case (acc, next) => acc.andFinally(next) }
+  def foreach[A](it: Iterable[A])(f: A => CanvasIO[Any]): CanvasIO[Unit] =
+    sequence_(it.map(f))
 }
