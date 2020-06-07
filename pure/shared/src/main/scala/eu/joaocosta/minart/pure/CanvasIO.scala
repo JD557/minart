@@ -36,6 +36,9 @@ object CanvasIO {
     def map[C](f: B => C): CanvasIO[C] = FlatMap[B, C](this, x => Suspend(_ => f(x)))
   }
 
+  /** An operation that does nothing **/
+  val noop: CanvasIO[Unit] = Suspend(_ => ())
+
   /** Lifts a value into a [[CanvasIO]]. */
   def pure[A](x: A): CanvasIO[A] = Suspend[A](_ => x)
 
