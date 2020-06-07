@@ -27,11 +27,11 @@ sealed trait CanvasIO[+A] {
 }
 
 object CanvasIO {
-  private case class Suspend[A](thunk: Canvas => A) extends CanvasIO[A] {
+  private final case class Suspend[A](thunk: Canvas => A) extends CanvasIO[A] {
     def run(canvas: Canvas): A = thunk(canvas)
     def map[B](f: A => B): CanvasIO[B] = Suspend(thunk.andThen(f))
   }
-  private case class FlatMap[A, B](io: CanvasIO[A], andThen: A => CanvasIO[B]) extends CanvasIO[B] {
+  private final case class FlatMap[A, B](io: CanvasIO[A], andThen: A => CanvasIO[B]) extends CanvasIO[B] {
     def run(canvas: Canvas): B = andThen(io.run(canvas)).run(canvas)
     def map[C](f: B => C): CanvasIO[C] = FlatMap[B, C](this, x => Suspend(_ => f(x)))
   }
@@ -42,8 +42,11 @@ object CanvasIO {
   /** Lifts a value into a [[CanvasIO]]. */
   def pure[A](x: A): CanvasIO[A] = Suspend[A](_ => x)
 
+  /** Store an unsafe canvas operation in a [[CanvasIO]]. */
+  def accessCanvas[A](f: Canvas => A): CanvasIO[A] = Suspend[A](f)
+
   /** Fetches the canvas settings. */
-  val getSettings: CanvasIO[Canvas.Settings] = Suspend[Canvas.Settings](_.settings)
+  val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
 
   /**
    * Puts a pixel in the back buffer with a certain color.
@@ -52,7 +55,7 @@ object CanvasIO {
    * @param y pixel y position
    * @param color `Color` to apply to the pixel
    */
-  def putPixel(x: Int, y: Int, color: Color): CanvasIO[Unit] = Suspend[Unit](_.putPixel(x, y, color))
+  def putPixel(x: Int, y: Int, color: Color): CanvasIO[Unit] = accessCanvas(_.putPixel(x, y, color))
 
   /**
    * Gets the color from the backbuffer.
@@ -63,20 +66,20 @@ object CanvasIO {
    * @param x pixel x position
    * @param y pixel y position
    */
-  def getBackbufferPixel(x: Int, y: Int): CanvasIO[Color] = Suspend[Color](_.getBackbufferPixel(x, y))
+  def getBackbufferPixel(x: Int, y: Int): CanvasIO[Color] = accessCanvas(_.getBackbufferPixel(x, y))
 
   /**
    * Returns the backbuffer.
    * This operation can be perfomance intensive, so it might be worthwile
    * to implement this operation on the application code.
    */
-  val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = Suspend[Vector[Vector[Color]]](_.getBackbuffer)
+  val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = accessCanvas(_.getBackbuffer)
 
   /** Gets the current keyboard input. */
-  val getKeyboardInput: CanvasIO[KeyboardInput] = Suspend[KeyboardInput](_.getKeyboardInput())
+  val getKeyboardInput: CanvasIO[KeyboardInput] = accessCanvas(_.getKeyboardInput())
 
   /** Gets the current pointer input. */
-  val getPointerInput: CanvasIO[PointerInput] = Suspend[PointerInput](_.getPointerInput())
+  val getPointerInput: CanvasIO[PointerInput] = accessCanvas(_.getPointerInput())
 
   /**
    * Clears resources, such as the backbuffer and keyboard inputs.
@@ -84,18 +87,18 @@ object CanvasIO {
    * @param resources set of [[Canvas.Resource]]s to be cleared
    */
   def clear(resources: Set[Canvas.Resource] = Canvas.Resource.all): CanvasIO[Unit] =
-    Suspend[Unit](_.clear(resources))
+    accessCanvas(_.clear(resources))
 
   /** Flips buffers and redraws the screen. */
-  val redraw: CanvasIO[Unit] = Suspend[Unit](_.redraw())
+  val redraw: CanvasIO[Unit] = accessCanvas(_.redraw())
 
   /** Converts an `Iterable[CanvasIO[A]]` into a `CanvasIO[List[A]]`. */
   def sequence[A](it: Iterable[CanvasIO[A]]): CanvasIO[List[A]] =
-    Suspend(canvas => it.map(_.run(canvas)).toList)
+    accessCanvas(canvas => it.map(_.run(canvas)).toList)
 
   /** Converts an `Iterable[CanvasIO[A]]` into a `CanvasIO[Unit]`. */
   def sequence_(it: Iterable[CanvasIO[Any]]): CanvasIO[Unit] =
-    Suspend(canvas => it.foreach(_.run(canvas)))
+    accessCanvas(canvas => it.foreach(_.run(canvas)))
 
   /** Converts an `Iterable[A]` into a `CanvasIO[List[B]]` by applying an operation to each element. */
   def traverse[A, B](it: Iterable[A])(f: A => CanvasIO[B]): CanvasIO[List[B]] =
