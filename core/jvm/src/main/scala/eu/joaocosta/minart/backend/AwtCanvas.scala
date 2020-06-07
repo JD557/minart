@@ -111,13 +111,15 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
 object AwtCanvas {
   private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, outerCanvas: AwtCanvas) extends JavaCanvas {
+
+    override def getPreferredSize(): Dimension =
+      new Dimension(scaledWidth, scaledHeight)
+
     val frame = new JFrame()
-    frame.setSize(new Dimension(scaledWidth, scaledHeight))
-    frame.setMaximumSize(new Dimension(scaledWidth, scaledHeight))
-    frame.setMinimumSize(new Dimension(scaledWidth, scaledHeight))
     frame.add(this)
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     frame.pack()
+    frame.setResizable(false)
 
     this.createBufferStrategy(2)
     val buffStrategy = getBufferStrategy
