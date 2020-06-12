@@ -88,7 +88,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      for { i <- (0 until (settings.scaledWidth * settings.scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
+      for { i <- (0 until (settings.scaledHeight * settings.scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
