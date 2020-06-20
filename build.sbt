@@ -87,12 +87,6 @@ lazy val pure =
     .nativeSettings(nativeSettings)
 
 lazy val examples = (project in file("examples"))
-    .dependsOn(
-      `examples-colorSquare`.jvm,     `examples-colorSquare`.js,
-      `examples-pureColorSquare`.jvm, `examples-pureColorSquare`.js,
-      `examples-fire`.jvm,            `examples-fire`.js,           
-      `examples-snake`.jvm,           `examples-snake`.js,          
-      `examples-mousePointer`.jvm,    `examples-mousePointer`.js)
     .settings(sharedSettings)
     .settings(name := "minart-examples")
     .settings(noPublishSettings)
