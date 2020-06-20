@@ -28,23 +28,11 @@ val testSettings = Seq(
   scalacOptions in Test ++= Seq("-Yrangepos")
 )
 
-val jsSettings = Seq(
-  libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "1.0.0"
-  )
-)
-
-val nativeSettings = Seq(
-  scalaVersion := "2.11.12",
-  crossScalaVersions := Seq("2.11.12"),
-  libraryDependencies ++= Seq(
-    "com.regblanc" %%% "native-sdl2" % "0.1"
-  ),
+val noTestSettings = Seq(
   libraryDependencies --= Seq(
     "org.specs2" %%% "specs2-core" % "4.8.3" % Test
   ),
-  nativeLinkStubs := true,
-  nativeMode := "release"
+  test := (())
 )
 
 val publishSettings = Seq(
@@ -61,12 +49,33 @@ val noPublishSettings = Seq(
   publishTo := None
 )
 
-lazy val root = (project in file("."))
+val jsSettings = Seq(
+  libraryDependencies ++= Seq(
+    "org.scala-js" %%% "scalajs-dom" % "1.0.0"
+  )
+)
+
+val nativeSettings = Seq(
+  scalaVersion := "2.11.12",
+  crossScalaVersions := Seq("2.11.12"),
+  libraryDependencies ++= Seq(
+    "com.regblanc" %%% "native-sdl2" % "0.1"
+  ),
+  nativeLinkStubs := true,
+  nativeMode := "release"
+) ++ noPublishSettings ++ noTestSettings
+
+
+lazy val root =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+  .in(file("."))
   .settings(sharedSettings)
   .settings(name := "minart")
   .settings(publishSettings)
-  .dependsOn(core.jvm, core.js, pure.jvm, pure.js)
-  .aggregate(core.jvm, core.js, pure.jvm, pure.js)
+  .jsSettings(jsSettings)
+  .nativeSettings(nativeSettings)
+  .dependsOn(core, pure)
+  .aggregate(core, pure)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
