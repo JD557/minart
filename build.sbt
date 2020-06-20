@@ -88,75 +88,47 @@ lazy val pure =
 
 lazy val examples = (project in file("examples"))
     .dependsOn(
-      examples_colorSquare.jvm,     examples_colorSquare.js,     /*examples_colorSquare.native,*/
-      examples_pureColorSquare.jvm, examples_pureColorSquare.js, /*examples_pureColorSquare.native,*/
-      examples_fire.jvm,            examples_fire.js,            /*examples_fire.native,*/
-      examples_snake.jvm,           examples_snake.js,           /*examples_snake.native,*/
-      examples_mousePointer.jvm,    examples_mousePointer.js/*,    examples_mousePointer.native*/)
+      `examples-colorSquare`.jvm,     `examples-colorSquare`.js,
+      `examples-pureColorSquare`.jvm, `examples-pureColorSquare`.js,
+      `examples-fire`.jvm,            `examples-fire`.js,           
+      `examples-snake`.jvm,           `examples-snake`.js,          
+      `examples-mousePointer`.jvm,    `examples-mousePointer`.js)
     .settings(sharedSettings)
     .settings(name := "minart-examples")
     .settings(noPublishSettings)
     .aggregate(
-      examples_colorSquare.jvm,     examples_colorSquare.js,     /*examples_colorSquare.native,*/
-      examples_pureColorSquare.jvm, examples_pureColorSquare.js, /*examples_pureColorSquare.native,*/
-      examples_fire.jvm,            examples_fire.js,            /*examples_fire.native,*/
-      examples_snake.jvm,           examples_snake.js,           /*examples_snake.native,*/
-      examples_mousePointer.jvm,    examples_mousePointer.js/*,    examples_mousePointer.native*/)
+      `examples-colorSquare`.jvm,     `examples-colorSquare`.js,
+      `examples-pureColorSquare`.jvm, `examples-pureColorSquare`.js,
+      `examples-fire`.jvm,            `examples-fire`.js,           
+      `examples-snake`.jvm,           `examples-snake`.js,          
+      `examples-mousePointer`.jvm,    `examples-mousePointer`.js)
 
-lazy val examples_colorSquare =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .in(file("examples/colorsquare"))
+def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) = {
+    project
+    .in(file(s"examples/${exampleName}"))
     .dependsOn(core)
     .settings(sharedSettings)
-    .settings(name := "minart-examples-colorsquare")
+    .settings(name := s"minart-examples-${exampleName}")
     .settings(noPublishSettings)
     .jsSettings(jsSettings)
     .jsSettings(scalaJSUseMainModuleInitializer := true)
     .nativeSettings(nativeSettings)
+}
 
-lazy val examples_pureColorSquare =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .in(file("examples/purecolorsquare"))
-    .dependsOn(core, pure)
-    .settings(sharedSettings)
-    .settings(name := "minart-examples-purecolorsquare")
-    .settings(noPublishSettings)
-    .jsSettings(jsSettings)
-    .jsSettings(scalaJSUseMainModuleInitializer := true)
-    .nativeSettings(nativeSettings)
+lazy val `examples-colorSquare` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "colorsquare")
 
-lazy val examples_fire =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .in(file("examples/fire"))
-    .dependsOn(core)
-    .settings(sharedSettings)
-    .settings(name := "minart-examples-fire")
-    .settings(noPublishSettings)
-    .jsSettings(jsSettings)
-    .jsSettings(scalaJSUseMainModuleInitializer := true)
-    .nativeSettings(nativeSettings)
+lazy val `examples-pureColorSquare` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "purecolorsquare").dependsOn(pure)
 
-lazy val examples_snake =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .in(file("examples/snake"))
-    .dependsOn(core)
-    .settings(sharedSettings)
-    .settings(name := "minart-examples-snake")
-    .settings(noPublishSettings)
-    .jsSettings(jsSettings)
-    .jsSettings(scalaJSUseMainModuleInitializer := true)
-    .nativeSettings(nativeSettings)
+lazy val `examples-fire` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "fire")
 
-lazy val examples_mousePointer =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .in(file("examples/mousepointer"))
-    .dependsOn(core)
-    .settings(sharedSettings)
-    .settings(name := "minart-examples-mousepointer")
-    .settings(noPublishSettings)
-    .jsSettings(jsSettings)
-    .jsSettings(scalaJSUseMainModuleInitializer := true)
-    .nativeSettings(nativeSettings)
+lazy val `examples-snake` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "snake")
+
+lazy val `examples-mousePointer` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "mousepointer")
 
 releaseCrossBuild := true
 releaseTagComment := s"Release ${(version in ThisBuild).value}"
