@@ -7,11 +7,21 @@ env:
 
 jobs:
   compile-lib:
-    name: Compile Lib
+    name: Compile library (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: true
+      matrix:
+        scala: [2.11.12, 2.12.10, 2.13.1]
+        platform: [JVM, JS]
+        include:
+          - scala: 2.11.12
+          - platform: Native
+
+    env:
+      SCALA_VERSION: ${{ matrix.scala }}
+      PROJECT: root${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@v2
@@ -34,12 +44,8 @@ jobs:
       with:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-    - name: Compile Native
-      run: sbt -Dsbt.color=always ++2.11.12 rootNative/compile
-    - name: Compile JVM
-      run: sbt -Dsbt.color=always ++rootJVM/compile
-    - name: Compile JS
-      run: sbt -Dsbt.color=always ++rootJS/compile
+    - name: Compile
+      run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
   compile-examples:
     name: Compile examples (Scala ${{ matrix.scala }})
     runs-on: ubuntu-latest
@@ -83,7 +89,7 @@ jobs:
       fail-fast: true
       matrix:
         scala: [2.11.12, 2.12.10, 2.13.1]
-        platform: ["JVM", "JS"]
+        platform: [JVM, JS]
 
     env:
       SCALA_VERSION: ${{ matrix.scala }}
