@@ -35,7 +35,7 @@ jobs:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Compile Native
-      run: sbt -Dsbt.color=always ++2.11.2 rootNative/compile
+      run: sbt -Dsbt.color=always ++2.11.12 rootNative/compile
     - name: Compile JVM
       run: sbt -Dsbt.color=always ++rootJVM/compile  ++examplesJVM/compile
     - name: Compile JS
@@ -76,4 +76,4 @@ jobs:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Run tests
-      run: sbt -Dsbt.color=always ++$SCALA_VERSION root$PLATFORM/test:compile root$PLATFORM/test
+      run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
