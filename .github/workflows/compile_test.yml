@@ -6,17 +6,12 @@ env:
   CI: true # disables SBT super shell which has problems with CI environments
 
 jobs:
-  build:
-    name: Scala ${{ matrix.scala }}
+  compile-lib:
+    name: Compile Lib
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: true
-      matrix:
-        scala: [2.11.12, 2.12.10, 2.13.1]
-
-    env:
-      SCALA_VERSION: ${{ matrix.scala }}
 
     steps:
     - uses: actions/checkout@v2
@@ -39,7 +34,46 @@ jobs:
       with:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-    - name: Compile
-      run: sbt -Dsbt.color=always ++$SCALA_VERSION compile
+    - name: Compile Native
+      run: sbt -Dsbt.color=always ++2.11.2 rootNative/compile
+    - name: Compile JVM
+      run: sbt -Dsbt.color=always ++rootJVM/compile  ++examplesJVM/compile
+    - name: Compile JS
+      run: sbt -Dsbt.color=always ++rootJS/compile ++examplesJS/compile
+  test:
+    name: Unit tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        scala: [2.11.12, 2.12.10, 2.13.1]
+        platform: ["JVM", "JS"]
+
+    env:
+      SCALA_VERSION: ${{ matrix.scala }}
+      PROJECT: root${{ matrix.platform }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8 and SBT
+      uses: olafurpg/setup-scala@v7
+      with:
+        java-version: openjdk@1.8
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
+    - name: Cache SBT ivy cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache SBT
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Run tests
-      run: sbt -Dsbt.color=always ++$SCALA_VERSION test:compile test
+      run: sbt -Dsbt.color=always ++$SCALA_VERSION root$PLATFORM/test:compile root$PLATFORM/test

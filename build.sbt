@@ -102,8 +102,8 @@ lazy val examples = (project in file("examples"))
     .aggregate(
       `examples-colorSquare`.jvm,     `examples-colorSquare`.js,
       `examples-pureColorSquare`.jvm, `examples-pureColorSquare`.js,
-      `examples-fire`.jvm,            `examples-fire`.js,           
-      `examples-snake`.jvm,           `examples-snake`.js,          
+      `examples-fire`.jvm,            `examples-fire`.js,
+      `examples-snake`.jvm,           `examples-snake`.js,
       `examples-mousePointer`.jvm,    `examples-mousePointer`.js)
 
 def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) = {
