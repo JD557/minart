@@ -7,7 +7,7 @@ env:
 
 jobs:
   compile-lib:
-    name: Compile library (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+    name: Compile library
     runs-on: ubuntu-latest
 
     strategy:
@@ -44,10 +44,10 @@ jobs:
       with:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-    - name: Compile
+    - name: Compile (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
   compile-examples:
-    name: Compile examples (Scala ${{ matrix.scala }})
+    name: Compile examples
     runs-on: ubuntu-latest
 
     strategy:
@@ -79,10 +79,10 @@ jobs:
       with:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-    - name: Compile examples
+    - name: Compile examples (Scala ${{ matrix.scala }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION examples/compile
   test:
-    name: Unit tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+    name: Unit tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -116,5 +116,5 @@ jobs:
       with:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-    - name: Run tests
+    - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
