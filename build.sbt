@@ -8,8 +8,8 @@ publishTo in ThisBuild := sonatypePublishToBundle.value
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
-  scalaVersion := "2.13.2",
-  crossScalaVersions := Seq("2.11.12", "2.12.11", "2.13.2"),
+  scalaVersion := "2.11.12",
+  crossScalaVersions := Seq("2.11.12", "2.12.11", "2.13.3"),
   licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
   homepage := Some(url("https://github.com/JD557/minart")),
   scmInfo := Some(
