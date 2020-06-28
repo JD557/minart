@@ -5,6 +5,7 @@ name := "minart"
 
 organization in ThisBuild := "eu.joaocosta"
 publishTo in ThisBuild := sonatypePublishToBundle.value
+scalaVersion in ThisBuild := "2.11.12"
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
