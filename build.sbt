@@ -6,6 +6,14 @@ name := "minart"
 organization in ThisBuild := "eu.joaocosta"
 publishTo in ThisBuild := sonatypePublishToBundle.value
 scalaVersion in ThisBuild := "2.11.12"
+licenses in ThisBuild := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+homepage in ThisBuild := Some(url("https://github.com/JD557/minart"))
+scmInfo in ThisBuild := Some(
+  ScmInfo(
+    url("https://github.com/JD557/minart"),
+    "scm:git@github.com:JD557/minart.git"
+  )
+)
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
