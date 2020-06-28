@@ -33,7 +33,8 @@ val noTestSettings = Seq(
   libraryDependencies --= Seq(
     "org.specs2" %%% "specs2-core" % "4.8.3" % Test
   ),
-  test := (())
+  test := (()),
+  test in Test := (())
 )
 
 val publishSettings = Seq(
