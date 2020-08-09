@@ -101,6 +101,7 @@ lazy val pure =
     .dependsOn(core)
     .settings(sharedSettings)
     .settings(name := "minart-pure")
+    .settings(testSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
