@@ -5,45 +5,19 @@ import eu.joaocosta.minart.core._
 /**
  * Representation of a canvas operation, with the common Monad operations.
  */
-sealed trait CanvasIO[+A] {
-  /** Runs this operation on a specified canvas. */
-  def run(canvas: Canvas): A
-  /** Maps the result of this operation. */
-  def map[B](f: A => B): CanvasIO[B]
-  /** Combines two operations by applying a function to the result of the first operation. */
-  def flatMap[B](f: A => CanvasIO[B]): CanvasIO[B] = CanvasIO.FlatMap[A, B](this, f)
-  /** Combines two operations by discarding the result of the first operation. */
-  def andThen[B](that: CanvasIO[B]): CanvasIO[B] = CanvasIO.FlatMap[A, B](this, _ => that)
-  /** Combines two operations by discarding the result of the second operation. */
-  def andFinally[B](that: CanvasIO[B]): CanvasIO[A] = CanvasIO.FlatMap[A, A](this, x => that.as(x))
-  /** Combines two operations by combining their results with the given function. */
-  def zipWith[B, C](that: CanvasIO[B])(f: (A, B) => C): CanvasIO[C] = this.flatMap(x => that.map(y => f(x, y)))
-  /** Combines two operations by combining their results into a tuple. */
-  def zip[B](that: CanvasIO[B]): CanvasIO[(A, B)] = this.zipWith(that)((x, y) => x -> y)
-  /** Changes the result of this operation to another value */
-  def as[B](x: B): CanvasIO[B] = this.map(_ => x)
-  /** Changes the result of this operation unit */
-  lazy val unit: CanvasIO[Unit] = this.as(())
-}
-
 object CanvasIO {
-  private final case class Suspend[A](thunk: Canvas => A) extends CanvasIO[A] {
-    def run(canvas: Canvas): A = thunk(canvas)
-    def map[B](f: A => B): CanvasIO[B] = Suspend(thunk.andThen(f))
-  }
-  private final case class FlatMap[A, B](io: CanvasIO[A], andThen: A => CanvasIO[B]) extends CanvasIO[B] {
-    def run(canvas: Canvas): B = andThen(io.run(canvas)).run(canvas)
-    def map[C](f: B => C): CanvasIO[C] = FlatMap[B, C](this, x => Suspend(_ => f(x)))
-  }
 
   /** An operation that does nothing **/
-  val noop: CanvasIO[Unit] = Suspend(_ => ())
+  val noop: CanvasIO[Unit] = RIO.noop
 
   /** Lifts a value into a [[CanvasIO]]. */
-  def pure[A](x: A): CanvasIO[A] = Suspend[A](_ => x)
+  def pure[A](x: A): CanvasIO[A] = RIO.pure(x)
+
+  /** Suspends a computation into a [[CanvasIO]]. */
+  def suspend[A](x: => A): CanvasIO[A] = RIO.suspend(x)
 
   /** Store an unsafe canvas operation in a [[CanvasIO]]. */
-  def accessCanvas[A](f: Canvas => A): CanvasIO[A] = Suspend[A](f)
+  def accessCanvas[A](f: Canvas => A): CanvasIO[A] = RIO.access[Canvas, A](f)
 
   /** Fetches the canvas settings. */
   val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
