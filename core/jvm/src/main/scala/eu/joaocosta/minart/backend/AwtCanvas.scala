@@ -65,11 +65,9 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
         y * settings.scaledWidth + x % settings.scaledWidth,
         pack(c.r, c.g, c.b))
 
-  private[this] val _putPixel =
-    if (settings.scale == 1) { (x: Int, y: Int, c: Color) => putPixelUnscaled(x, y, c) }
-    else { (x: Int, y: Int, c: Color) => putPixelScaled(x, y, c) }
-
-  def putPixel(x: Int, y: Int, color: Color): Unit = _putPixel(x, y, color)
+  def putPixel(x: Int, y: Int, color: Color): Unit =
+    if (settings.scale == 1) putPixelUnscaled(x, y, color)
+    else putPixelScaled(x, y, color)
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     unpack(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
