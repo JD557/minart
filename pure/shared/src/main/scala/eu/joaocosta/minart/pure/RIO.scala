@@ -1,12 +1,15 @@
 package eu.joaocosta.minart.pure
 
+import scala.concurrent.Future
+import scala.util.Try
+
 import eu.joaocosta.minart.core._
 
 /**
  * Representation of an effectful operation, based on Haskell's RIO Monad.
  */
 sealed trait RIO[-R, +A] {
-  /** Runs this operation */
+  /** Runs this operation. */
   def run(resource: R): A
   /** Maps the result of this operation. */
   def map[B](f: A => B): RIO[R, B]
@@ -20,13 +23,13 @@ sealed trait RIO[-R, +A] {
   def zipWith[RR <: R, B, C](that: RIO[RR, B])(f: (A, B) => C): RIO[RR, C] = this.flatMap(x => that.map(y => f(x, y)))
   /** Combines two operations by combining their results into a tuple. */
   def zip[RR <: R, B](that: RIO[RR, B]): RIO[RR, (A, B)] = this.zipWith(that)((x, y) => x -> y)
-  /** Changes the result of this operation to another value */
+  /** Changes the result of this operation to another value. */
   def as[B](x: B): RIO[R, B] = this.map(_ => x)
-  /** Transforms the resource required by this operation */
+  /** Transforms the resource required by this operation. */
   def contramap[RR](f: RR => R): RIO[RR, A] = RIO.Suspend[RR, A](res => this.run(f(res)))
-  /** Provides the required resource to this operation */
+  /** Provides the required resource to this operation. */
   def provide(res: R): RIO[Any, A] = this.contramap(_ => res)
-  /** Changes the result of this operation unit */
+  /** Changes the result of this operation unit. */
   lazy val unit: RIO[R, Unit] = this.as(())
 }
 
@@ -40,7 +43,7 @@ object RIO {
     def map[C](f: B => C): RIO[R, C] = FlatMap[R, B, C](this, x => Suspend(_ => f(x)))
   }
 
-  /** An operation that does nothing **/
+  /** An operation that does nothing. **/
   val noop: RIO[Any, Unit] = Suspend[Any, Unit](_ => ())
 
   /** Lifts a value into a [[RIO]]. */
@@ -51,6 +54,9 @@ object RIO {
 
   /** Returns a operation that requires some resource. */
   def access[R, A](f: R => A): RIO[R, A] = Suspend[R, A](f)
+
+  /** Polls a future and optionally returns its result. */
+  def pollFuture[A](future: Future[A]): RIO[Any, Option[Try[A]]] = Suspend[Any, Option[Try[A]]](_ => future.value)
 
   /** Converts an `Iterable[RIO[R, A]]` into a `RIO[R, List[A]]`. */
   def sequence[R, A](it: Iterable[RIO[R, A]]): RIO[R, List[A]] =

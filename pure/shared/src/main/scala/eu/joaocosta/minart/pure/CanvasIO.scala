@@ -1,5 +1,8 @@
 package eu.joaocosta.minart.pure
 
+import scala.concurrent.Future
+import scala.util.Try
+
 import eu.joaocosta.minart.core._
 
 /**
@@ -18,6 +21,9 @@ object CanvasIO {
 
   /** Store an unsafe canvas operation in a [[CanvasIO]]. */
   def accessCanvas[A](f: Canvas => A): CanvasIO[A] = RIO.access[Canvas, A](f)
+
+  /** Polls a future and optionally returns its result. */
+  def pollFuture[A](future: Future[A]): CanvasIO[Option[Try[A]]] = RIO.pollFuture(future)
 
   /** Fetches the canvas settings. */
   val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)

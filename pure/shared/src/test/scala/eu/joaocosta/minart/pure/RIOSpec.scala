@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.pure
 
+import scala.concurrent._
+
 import org.specs2.mutable._
 
 import eu.joaocosta.minart.core._
@@ -16,6 +18,14 @@ class RIOSpec extends Specification {
       hasRun === false
       io.run(())
       hasRun === true
+    }
+
+    "allow polling Futures" in {
+      val promise = Promise[Int]
+      val io = RIO.pollFuture(promise.future)
+      io.run(()) === None
+      promise.complete(scala.util.Success(0))
+      io.run(()) === Some(scala.util.Success(0))
     }
 
     "provide a stack-safe map operation" in {
