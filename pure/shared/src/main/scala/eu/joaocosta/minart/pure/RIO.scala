@@ -68,9 +68,9 @@ object RIO {
 
   /** Converts an `Iterable[A]` into a `RIO[R, List[B]]` by applying an operation to each element. */
   def traverse[R, A, B](it: Iterable[A])(f: A => RIO[R, B]): RIO[R, List[B]] =
-    sequence(it.map(f))
+    access(res => it.map(x => f(x).run(res)).toList)
 
   /** Applies an operation to each element of a `Iterable[A]` and discards the result. */
   def foreach[R, A](it: Iterable[A])(f: A => RIO[R, Any]): RIO[R, Unit] =
-    sequence_(it.map(f))
+    access(res => it.foreach(x => f(x).run(res)))
 }

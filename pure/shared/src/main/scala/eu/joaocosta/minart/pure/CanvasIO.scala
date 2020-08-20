@@ -74,17 +74,17 @@ object CanvasIO {
 
   /** Converts an `Iterable[CanvasIO[A]]` into a `CanvasIO[List[A]]`. */
   def sequence[A](it: Iterable[CanvasIO[A]]): CanvasIO[List[A]] =
-    accessCanvas(canvas => it.map(_.run(canvas)).toList)
+    RIO.sequence[Canvas, A](it)
 
   /** Converts an `Iterable[CanvasIO[A]]` into a `CanvasIO[Unit]`. */
   def sequence_(it: Iterable[CanvasIO[Any]]): CanvasIO[Unit] =
-    accessCanvas(canvas => it.foreach(_.run(canvas)))
+    RIO.sequence_[Canvas](it)
 
   /** Converts an `Iterable[A]` into a `CanvasIO[List[B]]` by applying an operation to each element. */
   def traverse[A, B](it: Iterable[A])(f: A => CanvasIO[B]): CanvasIO[List[B]] =
-    sequence(it.map(f))
+    RIO.traverse[Canvas, A, B](it)(f)
 
   /** Applies an operation to each element of a `Iterable[A]` and discards the result. */
   def foreach[A](it: Iterable[A])(f: A => CanvasIO[Any]): CanvasIO[Unit] =
-    sequence_(it.map(f))
+    RIO.foreach[Canvas, A](it)(f)
 }
