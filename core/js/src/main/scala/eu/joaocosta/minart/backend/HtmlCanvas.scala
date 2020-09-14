@@ -63,25 +63,43 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     childNode = null
   }
 
-  private[this] val canvasBuff = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
-  private[this] val ctxBuff = canvasBuff.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  canvasBuff.width = settings.scaledWidth
-  canvasBuff.height = settings.scaledHeight
+  private[this] val buffer = ctx.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight)
 
-  private[this] val clearColorStr = s"rgb(${settings.clearColor.r}, ${settings.clearColor.g}, ${settings.clearColor.b})"
+  private[this] val deltas = for {
+    dx <- 0 until settings.scale
+    dy <- 0 until settings.scale
+  } yield (dx, dy)
 
-  def putPixel(x: Int, y: Int, color: Color): Unit = {
-    ctxBuff.fillStyle = s"rgb(${color.r}, ${color.g}, ${color.b})"
-    ctxBuff.fillRect(x * settings.scale, y * settings.scale, settings.scale, settings.scale)
+  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
+    deltas.foreach {
+      case (dx, dy) =>
+        val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+        val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
+        buffer.data(baseAddr + 0) = c.r
+        buffer.data(baseAddr + 1) = c.g
+        buffer.data(baseAddr + 2) = c.b
+    }
   }
 
+  private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
+    val lineBase = y * settings.scaledWidth
+    val baseAddr = 4 * (lineBase + x)
+    buffer.data(baseAddr + 0) = c.r
+    buffer.data(baseAddr + 1) = c.g
+    buffer.data(baseAddr + 2) = c.b
+  }
+
+  def putPixel(x: Int, y: Int, color: Color): Unit =
+    if (settings.scale == 1) putPixelUnscaled(x, y, color)
+    else putPixelScaled(x, y, color)
+
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    val imgData = ctxBuff.getImageData(x * settings.scale, y * settings.scale, 1, 1).data
+    val imgData = ctx.getImageData(x * settings.scale, y * settings.scale, 1, 1).data
     Color(imgData(0), imgData(1), imgData(2))
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
-    val imgData = ctxBuff.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight).data
+    val imgData = ctx.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight).data
     (0 until settings.height).map { y =>
       val lineBase = y * settings.scale * settings.scaledWidth
       (0 until settings.width).map { x =>
@@ -93,8 +111,11 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      ctxBuff.fillStyle = clearColorStr
-      ctxBuff.fillRect(0, 0, settings.scaledWidth, settings.scaledHeight)
+      for (i <- (0 until (4 * settings.scaledHeight * settings.scaledWidth))) {
+        buffer.data(i + 0) = settings.clearColor.r
+        buffer.data(i + 1) = settings.clearColor.g
+        buffer.data(i + 2) = settings.clearColor.b
+      }
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyboardInput = keyboardInput.clearPressRelease
@@ -105,7 +126,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def redraw(): Unit = {
-    ctx.drawImage(canvasBuff, 0, 0)
+    ctx.putImageData(buffer, 0, 0)
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
