@@ -35,11 +35,6 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     javaCanvas = null
   }
 
-  private[this] val deltas = for {
-    dx <- 0 until settings.scale
-    dy <- 0 until settings.scale
-  } yield (dx, dy)
-
   private[this] def pack(r: Int, g: Int, b: Int): Int =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
@@ -51,13 +46,17 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] val packedClearColor = pack(settings.clearColor.r, settings.clearColor.g, settings.clearColor.b)
 
-  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = deltas.foreach {
-    case (dx, dy) =>
-      javaCanvas.imagePixels
-        .setElem(
-          (y * settings.scale + dy) * settings.scaledWidth + (x * settings.scale + dx) % settings.scaledWidth,
-          pack(c.r, c.g, c.b))
-  }
+  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
+    (0 until settings.scale).foreach { dy =>
+      val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+      (0 until settings.scale).foreach { dx =>
+        val baseAddr = lineBase + (x * settings.scale + dx)
+        javaCanvas.imagePixels
+          .setElem(
+            baseAddr,
+            pack(c.r, c.g, c.b))
+      }
+    }
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit =
     javaCanvas.imagePixels

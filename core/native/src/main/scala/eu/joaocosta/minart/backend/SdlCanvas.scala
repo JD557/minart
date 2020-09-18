@@ -15,6 +15,7 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window] = _
   private[this] var surface: Ptr[SDL_Surface] = _
+  private[this] var buffer: Ptr[SDL_Surface] = _
   private[this] var renderer: Ptr[SDL_Renderer] = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
@@ -41,24 +42,28 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val ubyteClearB = settings.clearColor.b.toUByte
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
-    SDL_SetRenderDrawColor(
-      renderer,
-      c.r.toUByte,
-      c.g.toUByte,
-      c.b.toUByte,
-      0.toUByte)
-    val rect = stackalloc[SDL_Rect].init(x * settings.scale, y * settings.scale, settings.scale, settings.scale)
-    SDL_RenderFillRect(renderer, rect)
+    var dy = 0
+    while (dy < settings.scale) {
+      var dx = 0
+      val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+      while (dx < settings.scale) {
+        val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
+        surface.pixels(baseAddr + 0) = c.b.toByte
+        surface.pixels(baseAddr + 1) = c.g.toByte
+        surface.pixels(baseAddr + 2) = c.r.toByte
+        dx = dx + 1
+      }
+      dy = dy + 1
+    }
   }
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
-    SDL_SetRenderDrawColor(
-      renderer,
-      c.r.toUByte,
-      c.g.toUByte,
-      c.b.toUByte,
-      0.toUByte)
-    SDL_RenderDrawPoint(renderer, x, y)
+    // Assuming a BGRA surface
+    val lineBase = y * settings.scaledWidth
+    val baseAddr = 4 * (lineBase + x)
+    surface.pixels(baseAddr + 0) = c.b.toByte
+    surface.pixels(baseAddr + 1) = c.g.toByte
+    surface.pixels(baseAddr + 2) = c.r.toByte
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit =

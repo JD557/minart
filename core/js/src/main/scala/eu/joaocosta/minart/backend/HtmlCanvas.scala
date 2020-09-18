@@ -65,21 +65,16 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] val buffer = ctx.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight)
 
-  private[this] val deltas = for {
-    dx <- 0 until settings.scale
-    dy <- 0 until settings.scale
-  } yield (dx, dy)
-
-  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
-    deltas.foreach {
-      case (dx, dy) =>
-        val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
+    (0 until settings.scale).foreach { dy =>
+      val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+      (0 until settings.scale).foreach { dx =>
         val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
         buffer.data(baseAddr + 0) = c.r
         buffer.data(baseAddr + 1) = c.g
         buffer.data(baseAddr + 2) = c.b
+      }
     }
-  }
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
     val lineBase = y * settings.scaledWidth
@@ -94,12 +89,15 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     else putPixelScaled(x, y, color)
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    val imgData = ctx.getImageData(x * settings.scale, y * settings.scale, 1, 1).data
-    Color(imgData(0), imgData(1), imgData(2))
+    val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
+    Color(
+      buffer.data(baseAddr + 0).toInt,
+      buffer.data(baseAddr + 1).toInt,
+      buffer.data(baseAddr + 2).toInt)
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
-    val imgData = ctx.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight).data
+    val imgData = buffer.data
     (0 until settings.height).map { y =>
       val lineBase = y * settings.scale * settings.scaledWidth
       (0 until settings.width).map { x =>
