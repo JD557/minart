@@ -8,7 +8,7 @@ It's mostly useful for small toy projects or prototypes that deal with
 generative art or software rendering.
 
 I wouldn't recommend using this in any serious production environment.
-The API is constantly breaking and I'm not making any effort to not break backwards compatibility.
+The API is constantly changing and I'm not making any effort to maintain backwards compatibility.
 
 ## Features
 
