@@ -19,5 +19,5 @@ project/plugins/project/
 .bloop
 
 # Metals specific
-project/metals.sbt
+metals.sbt
 .metals/
