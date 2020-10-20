@@ -93,6 +93,7 @@ object KeyboardInput {
     final case object Enter extends Key
     final case object Backspace extends Key
 
+    final case object Escape extends Key
     final case object Shift extends Key
     final case object Ctrl extends Key
     final case object Alt extends Key

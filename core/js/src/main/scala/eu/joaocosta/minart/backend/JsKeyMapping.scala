@@ -58,6 +58,7 @@ object JsKeyMapping extends KeyMapping[Int] {
     13 -> Key.Enter,
     8 -> Key.Backspace,
 
+    27 -> Key.Escape,
     16 -> Key.Shift,
     17 -> Key.Ctrl,
     18 -> Key.Alt,

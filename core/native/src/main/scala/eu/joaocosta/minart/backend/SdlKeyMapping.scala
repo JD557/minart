@@ -66,6 +66,7 @@ object SdlKeyMapping extends KeyMapping[SDL_Keycode] {
     SDLK_BACKSPACE -> Key.Backspace,
     SDLK_KP_BACKSPACE -> Key.Backspace,
 
+    SDLK_ESCAPE -> Key.Escape,
     SDLK_LSHIFT -> Key.Shift,
     SDLK_RSHIFT -> Key.Shift,
     SDLK_LCTRL -> Key.Ctrl,
