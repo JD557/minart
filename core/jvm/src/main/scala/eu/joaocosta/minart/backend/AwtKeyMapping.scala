@@ -55,6 +55,7 @@ object AwtKeyMapping extends KeyMapping[Int] {
     KeyEvent.VK_NUMPAD8 -> Key.NumPad8,
     KeyEvent.VK_NUMPAD9 -> Key.NumPad9,
 
+    KeyEvent.VK_ESCAPE -> Key.Escape,
     KeyEvent.VK_SPACE -> Key.Space,
     KeyEvent.VK_TAB -> Key.Tab,
     KeyEvent.VK_ENTER -> Key.Enter,
