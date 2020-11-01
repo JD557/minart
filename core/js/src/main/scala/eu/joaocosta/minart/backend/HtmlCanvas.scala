@@ -57,6 +57,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       val y = (touch.clientY - canvasRect.top).toInt
       handleMove(x, y)
     })
+    clear(Set(Canvas.Resource.Backbuffer)) // Sets the clear color and the alpha to 255
   }
   def unsafeDestroy(): Unit = {
     dom.document.body.removeChild(childNode)
@@ -109,10 +110,11 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      for (i <- (0 until (4 * settings.scaledHeight * settings.scaledWidth))) {
+      for (i <- (0 until (4 * settings.scaledHeight * settings.scaledWidth)) by 4) {
         buffer.data(i + 0) = settings.clearColor.r
         buffer.data(i + 1) = settings.clearColor.g
         buffer.data(i + 2) = settings.clearColor.b
+        buffer.data(i + 3) = 255
       }
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
