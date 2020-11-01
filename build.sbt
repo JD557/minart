@@ -32,14 +32,14 @@ val sharedSettings = Seq(
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.specs2" %%% "specs2-core" % "4.8.3" % Test
+    "org.specs2" %%% "specs2-core" % "4.10.0" % Test
   ),
   scalacOptions in Test ++= Seq("-Yrangepos")
 )
 
 val noTestSettings = Seq(
   libraryDependencies --= Seq(
-    "org.specs2" %%% "specs2-core" % "4.8.3" % Test
+    "org.specs2" %%% "specs2-core" % "4.10.0" % Test
   ),
   test := (()),
   test in Test := (())
@@ -61,8 +61,9 @@ val noPublishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "1.0.0"
-  )
+    "org.scala-js" %%% "scalajs-dom" % "1.1.0"
+  ),
+  scalaJSLinkerConfig in ThisBuild ~= { _.withESFeatures(_.withUseECMAScript2015(false)) } // Fixes Firefox performance problems
 )
 
 val nativeSettings = Seq(
