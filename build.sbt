@@ -69,9 +69,6 @@ val jsSettings = Seq(
 val nativeSettings = Seq(
   scalaVersion := "2.11.12",
   crossScalaVersions := Seq("2.11.12"),
-  libraryDependencies ++= Seq(
-    "com.regblanc" %%% "native-sdl2" % "0.1"
-  ),
   nativeLinkStubs := true,
   nativeMode := "release"
 ) ++ noPublishSettings ++ noTestSettings
