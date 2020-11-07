@@ -70,7 +70,8 @@ val nativeSettings = Seq(
   scalaVersion := "2.11.12",
   crossScalaVersions := Seq("2.11.12"),
   nativeLinkStubs := true,
-  nativeMode := "release"
+  nativeMode := "release",
+  nativeLTO := "thin"
 ) ++ noPublishSettings ++ noTestSettings
 
 
