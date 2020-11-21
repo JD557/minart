@@ -26,9 +26,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8 and SBT
-      uses: olafurpg/setup-scala@v7
+      uses: olafurpg/setup-scala@v10
       with:
-        java-version: openjdk@1.8
+        java-version: adopt@1.8
     - name: Cache Coursier
       uses: actions/cache@v1
       with:
@@ -61,9 +61,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8 and SBT
-      uses: olafurpg/setup-scala@v7
+      uses: olafurpg/setup-scala@v10
       with:
-        java-version: openjdk@1.8
+        java-version: adopt@1.8
     - name: Cache Coursier
       uses: actions/cache@v1
       with:
@@ -98,9 +98,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8 and SBT
-      uses: olafurpg/setup-scala@v7
+      uses: olafurpg/setup-scala@v10
       with:
-        java-version: openjdk@1.8
+        java-version: adopt@1.8
     - name: Cache Coursier
       uses: actions/cache@v1
       with:
