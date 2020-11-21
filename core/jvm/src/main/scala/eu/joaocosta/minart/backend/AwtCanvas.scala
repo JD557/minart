@@ -44,12 +44,17 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       g = ((c & 0x0000FF00) >> 8).toShort,
       b = ((c & 0x000000FF)).toShort)
 
+  private[this] val allPixels = (0 until (settings.scaledHeight * settings.scaledWidth))
+  private[this] val pixelSize = (0 until settings.scale)
+  private[this] val lines = (0 until settings.height)
+  private[this] val columns = (0 until settings.width)
+
   private[this] val packedClearColor = pack(settings.clearColor.r, settings.clearColor.g, settings.clearColor.b)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    (0 until settings.scale).foreach { dy =>
+    pixelSize.foreach { dy =>
       val lineBase = (y * settings.scale + dy) * settings.scaledWidth
-      (0 until settings.scale).foreach { dx =>
+      pixelSize.foreach { dx =>
         val baseAddr = lineBase + (x * settings.scale + dx)
         javaCanvas.imagePixels
           .setElem(
@@ -74,9 +79,9 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val flatData = javaCanvas.imagePixels.getData()
-    (0 until settings.height).map { y =>
+    lines.map { y =>
       val lineBase = y * settings.scale * settings.scaledWidth
-      (0 until settings.width).map { x =>
+      columns.map { x =>
         val baseAddr = (lineBase + (x * settings.scale))
         unpack(flatData(baseAddr))
       }.toVector
@@ -85,7 +90,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      for { i <- (0 until (settings.scaledHeight * settings.scaledWidth)) } javaCanvas.imagePixels.setElem(i, packedClearColor)
+      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, packedClearColor))
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
