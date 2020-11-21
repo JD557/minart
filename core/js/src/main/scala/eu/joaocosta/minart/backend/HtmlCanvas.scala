@@ -66,10 +66,15 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] val buffer = ctx.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight)
 
+  private[this] val allPixels = (0 until 4 * (settings.scaledHeight * settings.scaledWidth) by 4)
+  private[this] val pixelSize = (0 until settings.scale)
+  private[this] val lines = (0 until settings.height)
+  private[this] val columns = (0 until settings.width)
+
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    (0 until settings.scale).foreach { dy =>
+    pixelSize.foreach { dy =>
       val lineBase = (y * settings.scale + dy) * settings.scaledWidth
-      (0 until settings.scale).foreach { dx =>
+      pixelSize.foreach { dx =>
         val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
         buffer.data(baseAddr + 0) = c.r
         buffer.data(baseAddr + 1) = c.g
@@ -92,25 +97,25 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   def getBackbufferPixel(x: Int, y: Int): Color = {
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
     Color(
-      buffer.data(baseAddr + 0).toInt,
-      buffer.data(baseAddr + 1).toInt,
-      buffer.data(baseAddr + 2).toInt)
+      buffer.data(baseAddr + 0).toShort,
+      buffer.data(baseAddr + 1).toShort,
+      buffer.data(baseAddr + 2).toShort)
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val imgData = buffer.data
-    (0 until settings.height).map { y =>
+    lines.map { y =>
       val lineBase = y * settings.scale * settings.scaledWidth
-      (0 until settings.width).map { x =>
+      columns.map { x =>
         val baseAddr = 4 * (lineBase + (x * settings.scale))
-        Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
+        Color(imgData(baseAddr).toShort, imgData(baseAddr + 1).toShort, imgData(baseAddr + 2).toShort)
       }.toVector
     }.toVector
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      for (i <- (0 until (4 * settings.scaledHeight * settings.scaledWidth)) by 4) {
+      allPixels.foreach { i =>
         buffer.data(i + 0) = settings.clearColor.r
         buffer.data(i + 1) = settings.clearColor.g
         buffer.data(i + 2) = settings.clearColor.b
