@@ -40,9 +40,9 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] def unpack(c: Int): Color =
     Color(
-      r = (c & 0x00FF0000) >> 16,
-      g = (c & 0x0000FF00) >> 8,
-      b = (c & 0x000000FF))
+      r = ((c & 0x00FF0000) >> 16).toShort,
+      g = ((c & 0x0000FF00) >> 8).toShort,
+      b = ((c & 0x000000FF)).toShort)
 
   private[this] val packedClearColor = pack(settings.clearColor.r, settings.clearColor.g, settings.clearColor.b)
 

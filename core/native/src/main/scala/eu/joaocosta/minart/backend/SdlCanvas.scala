@@ -74,9 +74,9 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     // Assuming a BGRA surface
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
     Color(
-      surface.pixels(baseAddr + 2).toInt & 0xFF,
-      surface.pixels(baseAddr + 1).toInt & 0xFF,
-      surface.pixels(baseAddr + 0).toInt & 0xFF)
+      (surface.pixels(baseAddr + 2) & 0xFF).toShort,
+      (surface.pixels(baseAddr + 1) & 0xFF).toShort,
+      (surface.pixels(baseAddr + 0) & 0xFF).toShort)
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
@@ -85,9 +85,9 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       (0 until settings.width).map { x =>
         val baseAddr = 4 * (lineBase + (x * settings.scale))
         Color(
-          surface.pixels(baseAddr + 2).toInt & 0xFF,
-          surface.pixels(baseAddr + 1).toInt & 0xFF,
-          surface.pixels(baseAddr + 0).toInt & 0xFF)
+          (surface.pixels(baseAddr + 2) & 0xFF).toShort,
+          (surface.pixels(baseAddr + 1) & 0xFF).toShort,
+          (surface.pixels(baseAddr + 0) & 0xFF).toShort)
       }.toVector
     }.toVector
   }

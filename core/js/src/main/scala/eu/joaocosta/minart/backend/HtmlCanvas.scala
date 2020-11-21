@@ -92,9 +92,9 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   def getBackbufferPixel(x: Int, y: Int): Color = {
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
     Color(
-      buffer.data(baseAddr + 0).toInt,
-      buffer.data(baseAddr + 1).toInt,
-      buffer.data(baseAddr + 2).toInt)
+      buffer.data(baseAddr + 0).toShort,
+      buffer.data(baseAddr + 1).toShort,
+      buffer.data(baseAddr + 2).toShort)
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
@@ -103,7 +103,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       val lineBase = y * settings.scale * settings.scaledWidth
       (0 until settings.width).map { x =>
         val baseAddr = 4 * (lineBase + (x * settings.scale))
-        Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
+        Color(imgData(baseAddr).toShort, imgData(baseAddr + 1).toShort, imgData(baseAddr + 2).toShort)
       }.toVector
     }.toVector
   }
