@@ -38,18 +38,10 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] def pack(r: Int, g: Int, b: Int): Int =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
-  private[this] def unpack(c: Int): Color =
-    Color(
-      r = ((c & 0x00FF0000) >> 16).toShort,
-      g = ((c & 0x0000FF00) >> 8).toShort,
-      b = ((c & 0x000000FF)).toShort)
-
   private[this] val allPixels = (0 until (settings.scaledHeight * settings.scaledWidth))
   private[this] val pixelSize = (0 until settings.scale)
   private[this] val lines = (0 until settings.height)
   private[this] val columns = (0 until settings.width)
-
-  private[this] val packedClearColor = pack(settings.clearColor.r, settings.clearColor.g, settings.clearColor.b)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
     pixelSize.foreach { dy =>
@@ -59,7 +51,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
         javaCanvas.imagePixels
           .setElem(
             baseAddr,
-            pack(c.r, c.g, c.b))
+            c.argb)
       }
     }
 
@@ -67,14 +59,14 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     javaCanvas.imagePixels
       .setElem(
         y * settings.scaledWidth + x % settings.scaledWidth,
-        pack(c.r, c.g, c.b))
+        c.argb)
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     if (settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    unpack(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
+    Color.fromRGB(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
@@ -83,14 +75,14 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       val lineBase = y * settings.scale * settings.scaledWidth
       columns.map { x =>
         val baseAddr = (lineBase + (x * settings.scale))
-        unpack(flatData(baseAddr))
+        Color.fromRGB(flatData(baseAddr))
       }.toVector
     }.toVector
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, packedClearColor))
+      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()

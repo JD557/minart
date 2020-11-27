@@ -73,7 +73,7 @@ object Snake {
           (line, y) <- state.board.zipWithIndex
           (value, x) <- line.zipWithIndex
           if (value > 0)
-        } c.putPixel(x, y, Color(0, (55 + (200 * value / state.snakeSize)).toShort, 0))
+        } c.putPixel(x, y, Color(0, (55 + (200 * value / state.snakeSize)), 0))
 
         c.putPixel(state.snakeHead._1, state.snakeHead._2, Color(0, 255, 0))
         c.putPixel(state.applePos._1, state.applePos._2, Color(255, 0, 0))
