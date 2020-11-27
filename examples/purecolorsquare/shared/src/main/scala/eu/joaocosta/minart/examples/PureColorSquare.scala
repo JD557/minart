@@ -19,8 +19,8 @@ object PureColorSquare extends MinartApp {
       for {
         x <- (0 until settings.width)
         y <- (0 until settings.height)
-        r = (255 * x.toDouble / settings.width).toShort
-        g = (255 * y.toDouble / settings.height).toShort
+        r = (255 * x.toDouble / settings.width).toInt
+        g = (255 * y.toDouble / settings.height).toInt
       } yield CanvasIO.putPixel(x, y, Color(r, g, 255))
     }.flatMap(CanvasIO.sequence)
       .andThen(CanvasIO.redraw)

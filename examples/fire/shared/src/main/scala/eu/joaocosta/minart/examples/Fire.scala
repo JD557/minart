@@ -28,7 +28,7 @@ object Fire {
         }
       val randomLoss = 0.8 + (scala.util.Random.nextDouble() / 5)
       val temperature = ((neighbors.map(c => (c.r + c.g + c.b) / 3).sum / 3) * randomLoss).toInt
-      Color(math.min(255, temperature * 1.6 * temperatureMod).toShort, (temperature * 0.8 * temperatureMod).toShort, (temperature * 0.6 * temperatureMod).toShort)
+      Color(math.min(255, temperature * 1.6 * temperatureMod).toInt, (temperature * 0.8 * temperatureMod).toInt, (temperature * 0.6 * temperatureMod).toInt)
     }
 
     RenderLoop.default().infiniteRenderLoop(canvas, safeCanvas => {
