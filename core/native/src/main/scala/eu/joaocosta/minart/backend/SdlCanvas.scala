@@ -42,19 +42,19 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val ubyteClearG = settings.clearColor.g.toUByte
   private[this] val ubyteClearB = settings.clearColor.b.toUByte
 
+  private[this] val pixelSize = (0 until settings.scale)
+  private[this] val lines = (0 until settings.height)
+  private[this] val columns = (0 until settings.width)
+
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
-    var dy = 0
-    while (dy < settings.scale) {
-      var dx = 0
+    pixelSize.foreach { dy =>
       val lineBase = (y * settings.scale + dy) * settings.scaledWidth
-      while (dx < settings.scale) {
+      pixelSize.foreach { dx =>
         val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
         surface.pixels(baseAddr + 0) = c.b.toByte
         surface.pixels(baseAddr + 1) = c.g.toByte
         surface.pixels(baseAddr + 2) = c.r.toByte
-        dx = dx + 1
       }
-      dy = dy + 1
     }
   }
 
@@ -75,20 +75,20 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     // Assuming a BGRA surface
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
     Color(
-      surface.pixels(baseAddr + 2).toInt & 0xFF,
-      surface.pixels(baseAddr + 1).toInt & 0xFF,
-      surface.pixels(baseAddr + 0).toInt & 0xFF)
+      (surface.pixels(baseAddr + 2) & 0xFF).toShort,
+      (surface.pixels(baseAddr + 1) & 0xFF).toShort,
+      (surface.pixels(baseAddr + 0) & 0xFF).toShort)
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
-    (0 until settings.height).map { y =>
+    lines.map { y =>
       val lineBase = y * settings.scale * settings.scaledWidth
-      (0 until settings.width).map { x =>
+      columns.map { x =>
         val baseAddr = 4 * (lineBase + (x * settings.scale))
         Color(
-          surface.pixels(baseAddr + 2).toInt & 0xFF,
-          surface.pixels(baseAddr + 1).toInt & 0xFF,
-          surface.pixels(baseAddr + 0).toInt & 0xFF)
+          (surface.pixels(baseAddr + 2) & 0xFF).toShort,
+          (surface.pixels(baseAddr + 1) & 0xFF).toShort,
+          (surface.pixels(baseAddr + 0) & 0xFF).toShort)
       }.toVector
     }.toVector
   }
