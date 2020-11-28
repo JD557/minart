@@ -62,8 +62,7 @@ val noPublishSettings = Seq(
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "1.1.0"
-  ),
-  scalaJSLinkerConfig in ThisBuild ~= { _.withESFeatures(_.withUseECMAScript2015(false)) } // Fixes Firefox performance problems
+  )
 )
 
 val nativeSettings = Seq(
