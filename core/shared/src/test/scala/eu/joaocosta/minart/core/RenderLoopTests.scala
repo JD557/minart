@@ -6,7 +6,7 @@ import eu.joaocosta.minart.backend.PpmCanvas
 
 trait RenderLoopTests extends Specification {
 
-  def renderLoop: RenderLoop
+  def renderLoop: RenderLoop.ImpureRenderLoop
   def renderLoopName: String
   def testLoop: Boolean = true
 
