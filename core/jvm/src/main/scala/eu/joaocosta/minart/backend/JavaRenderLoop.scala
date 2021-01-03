@@ -5,7 +5,7 @@ import scala.concurrent.duration.FiniteDuration
 
 import eu.joaocosta.minart.core._
 
-object JavaRenderLoop extends RenderLoop {
+object JavaRenderLoop extends ImpureRenderLoop {
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,

@@ -6,7 +6,7 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
  * The `RenderLoop` contains a set of helpful methods to implement basic render
  * loops in a platform agonstic way.
  */
-trait RenderLoop {
+trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
 
   /**
    * Creates a render loop that terminates when a certain condition is reached.
@@ -22,7 +22,7 @@ trait RenderLoop {
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,
-    renderFrame: (Canvas, S) => S,
+    renderFrame: F2[Canvas, S, S],
     terminateWhen: S => Boolean,
     frameRate: FrameRate): Unit
 
@@ -39,9 +39,8 @@ trait RenderLoop {
   def infiniteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,
-    renderFrame: (Canvas, S) => S,
-    frameRate: FrameRate): Unit =
-    finiteRenderLoop(canvasManager, initialState, renderFrame, (_: S) => false, frameRate)
+    renderFrame: F2[Canvas, S, S],
+    frameRate: FrameRate): Unit
 
   /**
    * Creates a render loop that never terminates.
@@ -52,9 +51,8 @@ trait RenderLoop {
    */
   def infiniteRenderLoop(
     canvasManager: CanvasManager,
-    renderFrame: Canvas => Unit,
-    frameRate: FrameRate): Unit =
-    infiniteRenderLoop(canvasManager, (), (c: Canvas, _: Unit) => renderFrame(c), frameRate)
+    renderFrame: F1[Canvas, Unit],
+    frameRate: FrameRate): Unit
 
   /**
    * Renders a single frame
@@ -64,13 +62,13 @@ trait RenderLoop {
    */
   def singleFrame(
     canvasManager: CanvasManager,
-    renderFrame: Canvas => Unit): Unit
+    renderFrame: F1[Canvas, Unit]): Unit
 }
 
 object RenderLoop {
   /**
-   * Returns [[RenderLoop]] for the default backend for the target platform.
+   * Returns a [[RenderLoop]] for the default backend for the target platform.
    */
-  def default()(implicit d: DefaultBackend[Any, RenderLoop]): RenderLoop =
+  def default()(implicit d: DefaultBackend[Any, RenderLoop[Function1, Function2]]): RenderLoop[Function1, Function2] =
     d.defaultValue(())
 }

@@ -2,11 +2,11 @@ package eu.joaocosta.minart.core
 
 import org.specs2.mutable._
 
-import eu.joaocosta.minart.backend.PpmCanvas
+import eu.joaocosta.minart.backend._
 
 trait RenderLoopTests extends Specification {
 
-  def renderLoop: RenderLoop
+  def renderLoop: ImpureRenderLoop
   def renderLoopName: String
   def testLoop: Boolean = true
 

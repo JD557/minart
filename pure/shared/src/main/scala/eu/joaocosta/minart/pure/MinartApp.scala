@@ -1,12 +1,13 @@
 package eu.joaocosta.minart.pure
 
 import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.pure.backend._
 
 /** Entrypoint for pure Minart applications. */
 trait MinartApp {
   type State
   def canvasManager: CanvasManager
-  def renderLoop: RenderLoop
+  def renderLoop: PureRenderLoop
   def initialState: State
   def renderFrame: State => CanvasIO[State]
   def terminateWhen: State => Boolean
@@ -16,7 +17,7 @@ trait MinartApp {
     renderLoop.finiteRenderLoop[State](
       canvasManager,
       initialState,
-      (canvas, state) => renderFrame(state).run(canvas),
+      renderFrame,
       terminateWhen,
       frameRate)
   }
