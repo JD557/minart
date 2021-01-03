@@ -90,9 +90,10 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     buffer.data(baseAddr + 2) = c.b
   }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
+  def putPixel(x: Int, y: Int, color: Color): Unit = try {
     if (settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
+  } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))

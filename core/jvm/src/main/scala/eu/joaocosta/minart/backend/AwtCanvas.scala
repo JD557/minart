@@ -61,9 +61,10 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
         y * settings.scaledWidth + x % settings.scaledWidth,
         c.argb)
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
+  def putPixel(x: Int, y: Int, color: Color): Unit = try {
     if (settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
+  } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     Color.fromRGB(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
@@ -92,12 +93,12 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     }
   }
 
-  def redraw(): Unit = {
+  def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
     g.drawImage(javaCanvas.image, 0, 0, settings.scaledWidth, settings.scaledHeight, javaCanvas)
     g.dispose()
     javaCanvas.buffStrategy.show()
-  }
+  } catch { case _: Throwable => () }
 
   def getKeyboardInput(): KeyboardInput = keyListener.getKeyboardInput()
   def getPointerInput(): PointerInput = mouseListener.getPointerInput()
