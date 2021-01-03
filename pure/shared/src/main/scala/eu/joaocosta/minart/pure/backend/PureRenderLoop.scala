@@ -1,9 +1,11 @@
-package eu.joaocosta.minart.pure
+package eu.joaocosta.minart.pure.backend
 
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.backend.ImpureRenderLoop
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.pure._
 
-class PureRenderLoop(impureRenderLoop: RenderLoop.ImpureRenderLoop) extends RenderLoop[RIO, PureRenderLoop.StateCanvasIO] {
+class PureRenderLoop(impureRenderLoop: ImpureRenderLoop) extends RenderLoop[RIO, PureRenderLoop.StateCanvasIO] {
 
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
@@ -52,6 +54,6 @@ object PureRenderLoop {
   /**
    * Returns [[PureRenderLoop]] for the default backend for the target platform.
    */
-  def default()(implicit d: DefaultBackend[Any, RenderLoop.ImpureRenderLoop]): PureRenderLoop =
+  def default()(implicit d: DefaultBackend[Any, ImpureRenderLoop]): PureRenderLoop =
     new PureRenderLoop(d.defaultValue(()))
 }

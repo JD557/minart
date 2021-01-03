@@ -9,7 +9,7 @@ import sdl2.SDL._
 
 import eu.joaocosta.minart.core._
 
-object SdlRenderLoop extends RenderLoop.ImpureRenderLoop {
+object SdlRenderLoop extends ImpureRenderLoop {
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,
