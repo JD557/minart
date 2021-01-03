@@ -8,7 +8,7 @@ import scala.scalajs.js.timers
 
 import eu.joaocosta.minart.core._
 
-object JsRenderLoop extends RenderLoop {
+object JsRenderLoop extends RenderLoop.ImpureRenderLoop {
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,
