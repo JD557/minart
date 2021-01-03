@@ -53,7 +53,7 @@ object CanvasIO {
    * This operation can be perfomance intensive, so it might be worthwile
    * to implement this operation on the application code.
    */
-  val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = accessCanvas(_.getBackbuffer)
+  val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = accessCanvas(_.getBackbuffer())
 
   /** Gets the current keyboard input. */
   val getKeyboardInput: CanvasIO[KeyboardInput] = accessCanvas(_.getKeyboardInput())

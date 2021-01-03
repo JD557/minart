@@ -124,10 +124,10 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       }
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
-      keyboardInput = keyboardInput.clearPressRelease
+      keyboardInput = keyboardInput.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Pointer)) {
-      pointerInput = pointerInput.clearPressRelease
+      pointerInput = pointerInput.clearPressRelease()
     }
   }
 
