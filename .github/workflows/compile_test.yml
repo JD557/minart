@@ -90,6 +90,9 @@ jobs:
       matrix:
         scala: [2.11.12, 2.12.10, 2.13.3]
         platform: [JVM, JS]
+        include:
+          - scala: 2.11.12
+            platform: Native
 
     env:
       SCALA_VERSION: ${{ matrix.scala }}
