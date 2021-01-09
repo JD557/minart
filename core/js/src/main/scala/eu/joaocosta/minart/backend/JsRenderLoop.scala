@@ -4,11 +4,13 @@ import org.scalajs.dom
 
 import scala.annotation.tailrec
 import scala.concurrent.duration.FiniteDuration
-import scala.scalajs.js.timers
+import scala.scalajs.js.{ isUndefined, timers }
 
 import eu.joaocosta.minart.core._
 
 object JsRenderLoop extends ImpureRenderLoop {
+  lazy val hasWindow = !isUndefined(dom.window)
+
   def finiteRenderLoop[S](
     canvasManager: CanvasManager,
     initialState: S,
@@ -25,7 +27,7 @@ object JsRenderLoop extends ImpureRenderLoop {
       val endTime = System.currentTimeMillis()
       val waitTime = math.max(0, frameMillis - (endTime - startTime))
       if (!terminateWhen(state) && canvasManager.isCreated())
-        if (waitTime > 0) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
+        if (waitTime > 0 || !hasWindow) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
         else dom.window.requestAnimationFrame((_: Double) => finiteRenderLoopAux(newState))
       else if (canvasManager.isCreated()) canvasManager.destroy()
     }
