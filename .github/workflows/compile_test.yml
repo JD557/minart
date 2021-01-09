@@ -120,6 +120,6 @@ jobs:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Install libunwind # Required for the scala native tests
-      run: sudo apt-get -y install libunwind
+      run: sudo apt-get -y install libunwind-dev
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
