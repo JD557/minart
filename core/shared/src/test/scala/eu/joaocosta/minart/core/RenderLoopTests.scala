@@ -1,37 +1,32 @@
 package eu.joaocosta.minart.core
 
-import org.specs2.mutable._
+import verify._
 
-import eu.joaocosta.minart.backend.PpmCanvas
+import eu.joaocosta.minart.backend._
 
-trait RenderLoopTests extends Specification {
+trait RenderLoopTests extends BasicTestSuite {
 
-  def renderLoop: RenderLoop
-  def renderLoopName: String
-  def testLoop: Boolean = true
+  def renderLoop: ImpureRenderLoop
 
-  s"A $renderLoopName" should {
-    "have a singleFrame operation that runs only once" in {
-      var renderCount: Int = 0
-      renderLoop.singleFrame(
-        canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
-        renderFrame = (canvas: Canvas) => renderCount += 1)
-      renderCount === 1
-    }
+  def singleFrameTest() = test("Have a singleFrame operation that runs only once") {
+    var renderCount: Int = 0
+    renderLoop.singleFrame(
+      canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
+      renderFrame = (canvas: Canvas) => renderCount += 1)
+    assert(renderCount == 1)
+  }
 
-    "have a finiteRenderLoop operation that ends when a certain state is reached" in {
-      if (!testLoop) skipped("Test not supported")
-      var renderCount: Int = 0
-      renderLoop.finiteRenderLoop[Int](
-        canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
-        initialState = 0,
-        renderFrame = (canvas: Canvas, state: Int) => {
-          renderCount += 1
-          state + 1
-        },
-        terminateWhen = _ >= 5,
-        frameRate = FrameRate.Uncapped)
-      renderCount === 5
-    }
+  def loopTest() = test("Have a finiteRenderLoop operation that ends when a certain state is reached") {
+    var renderCount: Int = 0
+    renderLoop.finiteRenderLoop[Int](
+      canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
+      initialState = 0,
+      renderFrame = (canvas: Canvas, state: Int) => {
+        renderCount += 1
+        state + 1
+      },
+      terminateWhen = _ >= 5,
+      frameRate = FrameRate.Uncapped)
+    assert(renderCount == 5)
   }
 }

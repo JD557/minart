@@ -32,17 +32,10 @@ val sharedSettings = Seq(
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.specs2" %%% "specs2-core" % "4.10.0" % Test
+    "com.eed3si9n.verify" %%% "verify" % "1.0.0" % Test
   ),
+  testFrameworks += new TestFramework("verify.runner.Framework"),
   scalacOptions in Test ++= Seq("-Yrangepos")
-)
-
-val noTestSettings = Seq(
-  libraryDependencies --= Seq(
-    "org.specs2" %%% "specs2-core" % "4.10.0" % Test
-  ),
-  test := (()),
-  test in Test := (())
 )
 
 val publishSettings = Seq(
@@ -61,7 +54,7 @@ val noPublishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "1.1.0"
+    "org.scala-js" %%% "scalajs-dom" % "1.0.0"
   )
 )
 
@@ -69,9 +62,10 @@ val nativeSettings = Seq(
   scalaVersion := "2.11.12",
   crossScalaVersions := Seq("2.11.12"),
   nativeLinkStubs := true,
-  nativeMode := "release",
-  nativeLTO := "thin"
-) ++ noPublishSettings ++ noTestSettings
+  nativeMode in Compile := "release",
+  nativeMode in Test := "debug",
+  nativeLTO := "thin",
+) ++ noPublishSettings
 
 
 lazy val root =

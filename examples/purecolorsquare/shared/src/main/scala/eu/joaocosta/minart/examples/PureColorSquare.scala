@@ -2,10 +2,11 @@ package eu.joaocosta.minart.examples
 
 import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.pure._
+import eu.joaocosta.minart.pure.backend._
 
 object PureColorSquare extends MinartApp {
   type State = Unit
-  val renderLoop = RenderLoop.default()
+  val renderLoop = PureRenderLoop.default()
   val canvasSettings = Canvas.Settings(
     width = 128,
     height = 128,

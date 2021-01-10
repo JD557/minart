@@ -67,9 +67,10 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     surface.pixels(baseAddr + 2) = c.r.toByte
   }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
+  def putPixel(x: Int, y: Int, color: Color): Unit = try {
     if (settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
+  } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     // Assuming a BGRA surface
