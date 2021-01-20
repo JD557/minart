@@ -13,11 +13,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        scala: [2.11.12, 2.12.10, 2.13.3]
-        platform: [JVM, JS]
-        include:
-          - scala: 2.11.12
-            platform: Native
+        scala: [2.11.12, 2.12.13, 2.13.4]
+        platform: [JVM, JS, Native]
 
     env:
       SCALA_VERSION: ${{ matrix.scala }}
@@ -53,7 +50,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        scala: [2.11.12, 2.12.10, 2.13.3]
+        scala: [2.11.12, 2.12.13, 2.13.4]
 
     env:
       SCALA_VERSION: ${{ matrix.scala }}
@@ -88,11 +85,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        scala: [2.11.12, 2.12.10, 2.13.3]
-        platform: [JVM, JS]
-        include:
-          - scala: 2.11.12
-            platform: Native
+        scala: [2.11.12, 2.12.13, 2.13.4]
+        platform: [JVM, JS, Native]
 
     env:
       SCALA_VERSION: ${{ matrix.scala }}
@@ -120,6 +114,6 @@ jobs:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Install scala-native libraries
-      run: sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
+      run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test

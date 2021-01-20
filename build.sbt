@@ -5,7 +5,7 @@ name := "minart"
 
 organization in ThisBuild := "eu.joaocosta"
 publishTo in ThisBuild := sonatypePublishToBundle.value
-scalaVersion in ThisBuild := "2.11.12"
+scalaVersion in ThisBuild := "2.13.4"
 licenses in ThisBuild := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 homepage in ThisBuild := Some(url("https://github.com/JD557/minart"))
 scmInfo in ThisBuild := Some(
@@ -17,8 +17,8 @@ scmInfo in ThisBuild := Some(
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
-  scalaVersion := "2.11.12",
-  crossScalaVersions := Seq("2.11.12", "2.12.11", "2.13.3"),
+  scalaVersion := "2.13.4",
+  crossScalaVersions := Seq("2.11.12", "2.12.13", "2.13.4"),
   licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
   homepage := Some(url("https://github.com/JD557/minart")),
   scmInfo := Some(
@@ -27,7 +27,8 @@ val sharedSettings = Seq(
       "scm:git@github.com:JD557/minart.git"
     )
   ),
-  autoAPIMappings := true
+  autoAPIMappings := true,
+  scalacOptions in Test ++= Seq("-unchecked", "-deprecation")
 )
 
 val testSettings = Seq(
@@ -59,14 +60,11 @@ val jsSettings = Seq(
 )
 
 val nativeSettings = Seq(
-  scalaVersion := "2.11.12",
-  crossScalaVersions := Seq("2.11.12"),
-  libraryDependencies ++= Seq(
-    "com.regblanc" %%% "native-sdl2" % "0.1"
-  ),
   nativeLinkStubs := true,
-  nativeMode := "release"
-) ++ noPublishSettings
+  nativeMode in Compile := "release",
+  nativeMode in Test := "debug",
+  nativeLTO := "thin",
+)
 
 
 lazy val root =

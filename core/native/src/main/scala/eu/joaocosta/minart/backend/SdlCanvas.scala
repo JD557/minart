@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.backend
 
-import scalanative.native._
+import scalanative.unsafe._
+import scalanative.unsigned._
 
 import sdl2.Extras._
 import sdl2.SDL._

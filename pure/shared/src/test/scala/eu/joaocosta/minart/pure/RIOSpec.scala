@@ -20,7 +20,7 @@ object RIOSpec extends BasicTestSuite {
   }
 
   test("allow polling Futures") {
-    val promise = Promise[Int]
+    val promise = Promise[Int]()
     val io = RIO.pollFuture(promise.future)
     assert(io.run(()) == None)
     promise.complete(scala.util.Success(0))
