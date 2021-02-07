@@ -25,11 +25,11 @@ object SdlRenderLoop extends ImpureRenderLoop {
     val canvas = canvasManager.init()
     @tailrec
     def finiteRenderLoopAux(state: S): Unit = {
-      val startTime = System.currentTimeMillis()
+      val startTime = SDL_GetTicks()
       val newState  = renderFrame(canvas, state)
       if (!terminateWhen(newState) && canvasManager.isCreated()) {
-        val endTime  = System.currentTimeMillis()
-        val waitTime = frameMillis - (endTime - startTime)
+        val endTime  = SDL_GetTicks()
+        val waitTime = frameMillis - (endTime - startTime).toInt
         if (waitTime > 0) SDL_Delay(waitTime.toUInt)
         finiteRenderLoopAux(newState)
       } else ()
