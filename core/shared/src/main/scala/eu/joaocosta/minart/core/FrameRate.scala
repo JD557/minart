@@ -2,30 +2,36 @@ package eu.joaocosta.minart.core
 
 import scala.concurrent.duration._
 
-/** Frame rate definition */
+/** Frame rate definition. */
 sealed trait FrameRate
 
 object FrameRate {
 
-  /** Frame rate defined by a frame duration
+  /** Frame rate defined by a frame duration.
     *
     * @param millis minimum frame duration
     */
   final case class FrameDuration(millis: Long) extends FrameRate
 
-  /** Uncapped frame rate */
+  /** Uncapped frame rate. */
   final case object Uncapped extends FrameRate
 
-  /** 60 FPS */
-  final val fps60 = FrameDuration(1000 / 60)
+  /** 60 FPS. */
+  final val fps60 = fromFps(60)
 
-  /** 30 FPS */
-  final val fps30 = FrameDuration(1000 / 30)
+  /** 50 FPS. */
+  final val fps50 = fromFps(50)
 
-  /** 24 FPS */
-  final val fps24 = FrameDuration(1000 / 24)
+  /** 30 FPS. */
+  final val fps30 = fromFps(30)
 
-  /** Builds a [[FrameRate]] from a scala duration
+  /** 24 FPS. */
+  final val fps24 = fromFps(24)
+
+  /** 15 FPS. */
+  final val fps15 = fromFps(15)
+
+  /** Builds a [[FrameRate]] from a Scala duration.
     *
     * @param duration minimum frame duration
     */
@@ -33,7 +39,7 @@ object FrameRate {
     if (duration.toMillis <= 0) Uncapped
     else FrameDuration(duration.toMillis)
 
-  /** Builds a [[FrameRate]] according to a set of FPS
+  /** Builds a [[FrameRate]] according to a set of FPS.
     */
   def fromFps(fps: Int): FrameRate = {
     if (fps <= 0) Uncapped
