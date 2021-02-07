@@ -1,10 +1,9 @@
 package eu.joaocosta.minart.backend.defaults
 
-/**
- * Typeclass to fetch an implicit default backend (e.g. Canvas or RenderLoop) for a cetain platform.
- * This is used to power the `Backend.default()` implementations.
- * Ideally, an end user of the library should not need to implement this.
- */
+/** Typeclass to fetch an implicit default backend (e.g. Canvas or RenderLoop) for a cetain platform.
+  * This is used to power the `Backend.default()` implementations.
+  * Ideally, an end user of the library should not need to implement this.
+  */
 trait DefaultBackend[-A, +B] {
   def defaultValue(params: A): B
 }

@@ -1,5 +1,5 @@
 import ReleaseTransformations._
-import sbtcrossproject.CrossPlugin.autoImport.{ crossProject, CrossType }
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 name := "minart"
 
@@ -28,7 +28,8 @@ val sharedSettings = Seq(
     )
   ),
   autoAPIMappings := true,
-  scalacOptions in Test ++= Seq("-unchecked", "-deprecation")
+  scalacOptions in Test ++= Seq("-unchecked", "-deprecation"),
+  scalafmtOnCompile := true
 )
 
 val testSettings = Seq(
@@ -42,7 +43,7 @@ val testSettings = Seq(
 val publishSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
-  pomIncludeRepository := { _ => false },
+  pomIncludeRepository := { _ => false }
 )
 
 val noPublishSettings = Seq(
@@ -63,20 +64,19 @@ val nativeSettings = Seq(
   nativeLinkStubs := true,
   nativeMode in Compile := "release",
   nativeMode in Test := "debug",
-  nativeLTO := "thin",
+  nativeLTO := "thin"
 )
-
 
 lazy val root =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
-  .in(file("."))
-  .settings(sharedSettings)
-  .settings(name := "minart")
-  .settings(publishSettings)
-  .jsSettings(jsSettings)
-  .nativeSettings(nativeSettings)
-  .dependsOn(core, pure)
-  .aggregate(core, pure)
+    .in(file("."))
+    .settings(sharedSettings)
+    .settings(name := "minart")
+    .settings(publishSettings)
+    .jsSettings(jsSettings)
+    .nativeSettings(nativeSettings)
+    .dependsOn(core, pure)
+    .aggregate(core, pure)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -98,18 +98,24 @@ lazy val pure =
     .nativeSettings(nativeSettings)
 
 lazy val examples = (project in file("examples"))
-    .settings(sharedSettings)
-    .settings(name := "minart-examples")
-    .settings(noPublishSettings)
-    .aggregate(
-      `examples-colorSquare`.jvm,     `examples-colorSquare`.js,
-      `examples-pureColorSquare`.jvm, `examples-pureColorSquare`.js,
-      `examples-fire`.jvm,            `examples-fire`.js,
-      `examples-snake`.jvm,           `examples-snake`.js,
-      `examples-mousePointer`.jvm,    `examples-mousePointer`.js)
+  .settings(sharedSettings)
+  .settings(name := "minart-examples")
+  .settings(noPublishSettings)
+  .aggregate(
+    `examples-colorSquare`.jvm,
+    `examples-colorSquare`.js,
+    `examples-pureColorSquare`.jvm,
+    `examples-pureColorSquare`.js,
+    `examples-fire`.jvm,
+    `examples-fire`.js,
+    `examples-snake`.jvm,
+    `examples-snake`.js,
+    `examples-mousePointer`.jvm,
+    `examples-mousePointer`.js
+  )
 
 def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) = {
-    project
+  project
     .in(file(s"examples/${exampleName}"))
     .dependsOn(core)
     .settings(sharedSettings)
@@ -151,4 +157,5 @@ releaseProcess := Seq[ReleaseStep](
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  pushChanges)
+  pushChanges
+)

@@ -13,7 +13,7 @@ object RIOSpec extends BasicTestSuite {
 
   test("suspend computations") {
     var hasRun: Boolean = false
-    val io = RIO.suspend({ hasRun = true })
+    val io              = RIO.suspend({ hasRun = true })
     assert(hasRun == false)
     io.run(())
     assert(hasRun == true)
@@ -21,7 +21,7 @@ object RIOSpec extends BasicTestSuite {
 
   test("allow polling Futures") {
     val promise = Promise[Int]()
-    val io = RIO.pollFuture(promise.future)
+    val io      = RIO.pollFuture(promise.future)
     assert(io.run(()) == None)
     promise.complete(scala.util.Success(0))
     assert(io.run(()) == Some(scala.util.Success(0)))

@@ -6,11 +6,11 @@ import scala.concurrent.duration._
 sealed trait FrameRate
 
 object FrameRate {
-  /**
-   * Frame rate defined by a frame duration
-   *
-   * @param millis minimum frame duration
-   */
+
+  /** Frame rate defined by a frame duration
+    *
+    * @param millis minimum frame duration
+    */
   final case class FrameDuration(millis: Long) extends FrameRate
 
   /** Uncapped frame rate */
@@ -18,23 +18,23 @@ object FrameRate {
 
   /** 60 FPS */
   final val fps60 = FrameDuration(1000 / 60)
+
   /** 30 FPS */
   final val fps30 = FrameDuration(1000 / 30)
+
   /** 24 FPS */
   final val fps24 = FrameDuration(1000 / 24)
 
-  /**
-   * Builds a [[FrameRate]] from a scala duration
-   *
-   * @param duration minimum frame duration
-   */
+  /** Builds a [[FrameRate]] from a scala duration
+    *
+    * @param duration minimum frame duration
+    */
   def fromDuration(duration: FiniteDuration): FrameRate =
     if (duration.toMillis <= 0) Uncapped
     else FrameDuration(duration.toMillis)
 
-  /**
-   * Builds a [[FrameRate]] according to a set of FPS
-   */
+  /** Builds a [[FrameRate]] according to a set of FPS
+    */
   def fromFps(fps: Int): FrameRate = {
     if (fps <= 0) Uncapped
     else FrameDuration(1000 / fps)

@@ -9,17 +9,16 @@ import sdl2.SDL._
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
-/**
- * A low level Canvas implementation that shows the image in a SDL Window.
- */
+/** A low level Canvas implementation that shows the image in a SDL Window.
+  */
 class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
-  private[this] var window: Ptr[SDL_Window] = _
-  private[this] var surface: Ptr[SDL_Surface] = _
-  private[this] var buffer: Ptr[SDL_Surface] = _
-  private[this] var renderer: Ptr[SDL_Renderer] = _
+  private[this] var window: Ptr[SDL_Window]      = _
+  private[this] var surface: Ptr[SDL_Surface]    = _
+  private[this] var buffer: Ptr[SDL_Surface]     = _
+  private[this] var renderer: Ptr[SDL_Renderer]  = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
-  private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
+  private[this] var mouseInput: PointerInput     = PointerInput(None, Nil, Nil, false)
 
   def unsafeInit() = {
     SDL_Init(SDL_INIT_VIDEO)
@@ -29,7 +28,8 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       SDL_WINDOWPOS_CENTERED,
       settings.scaledWidth,
       settings.scaledHeight,
-      SDL_WINDOW_SHOWN)
+      SDL_WINDOW_SHOWN
+    )
     surface = SDL_GetWindowSurface(window)
     renderer = SDL_CreateSoftwareRenderer(surface)
     keyboardInput = KeyboardInput(Set(), Set(), Set())
@@ -43,8 +43,8 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] val ubyteClearB = settings.clearColor.b.toUByte
 
   private[this] val pixelSize = (0 until settings.scale)
-  private[this] val lines = (0 until settings.height)
-  private[this] val columns = (0 until settings.width)
+  private[this] val lines     = (0 until settings.height)
+  private[this] val columns   = (0 until settings.width)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
     pixelSize.foreach { dy =>
@@ -76,9 +76,10 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     // Assuming a BGRA surface
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
     Color(
-      (surface.pixels(baseAddr + 2) & 0xFF),
-      (surface.pixels(baseAddr + 1) & 0xFF),
-      (surface.pixels(baseAddr + 0) & 0xFF))
+      (surface.pixels(baseAddr + 2) & 0xff),
+      (surface.pixels(baseAddr + 1) & 0xff),
+      (surface.pixels(baseAddr + 0) & 0xff)
+    )
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
@@ -87,15 +88,16 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
       columns.map { x =>
         val baseAddr = 4 * (lineBase + (x * settings.scale))
         Color(
-          (surface.pixels(baseAddr + 2) & 0xFF),
-          (surface.pixels(baseAddr + 1) & 0xFF),
-          (surface.pixels(baseAddr + 0) & 0xFF))
+          (surface.pixels(baseAddr + 2) & 0xff),
+          (surface.pixels(baseAddr + 1) & 0xff),
+          (surface.pixels(baseAddr + 0) & 0xff)
+        )
       }.toVector
     }.toVector
   }
 
   private[this] def handleEvents(): Boolean = {
-    val event = stackalloc[SDL_Event]
+    val event              = stackalloc[SDL_Event]
     var keepGoing: Boolean = true
     while (keepGoing && SDL_PollEvent(event) != 0) {
       keepGoing = event.type_ match {
@@ -110,7 +112,8 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
           true
         case SDL_MOUSEMOTION =>
           mouseInput = mouseInput.move(
-            Option(PointerInput.Position(event.motion.x / settings.scale, event.motion.y / settings.scale)))
+            Option(PointerInput.Position(event.motion.x / settings.scale, event.motion.y / settings.scale))
+          )
           true
         case SDL_MOUSEBUTTONDOWN =>
           mouseInput = mouseInput.press
@@ -134,12 +137,7 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     }
     val keepGoing = handleEvents()
     if (resources.contains(Canvas.Resource.Backbuffer) && keepGoing) {
-      SDL_SetRenderDrawColor(
-        renderer,
-        ubyteClearR,
-        ubyteClearG,
-        ubyteClearB,
-        0.toUByte)
+      SDL_SetRenderDrawColor(renderer, ubyteClearR, ubyteClearG, ubyteClearB, 0.toUByte)
       SDL_RenderClear(renderer)
     }
   }
@@ -149,5 +147,5 @@ class SdlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-  def getPointerInput(): PointerInput = mouseInput
+  def getPointerInput(): PointerInput   = mouseInput
 }

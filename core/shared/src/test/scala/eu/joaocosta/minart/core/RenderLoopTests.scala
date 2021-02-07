@@ -12,7 +12,8 @@ trait RenderLoopTests extends BasicTestSuite {
     var renderCount: Int = 0
     renderLoop.singleFrame(
       canvasManager = new PpmCanvas(Canvas.Settings(4, 4)),
-      renderFrame = (canvas: Canvas) => renderCount += 1)
+      renderFrame = (canvas: Canvas) => renderCount += 1
+    )
     assert(renderCount == 1)
   }
 
@@ -26,7 +27,8 @@ trait RenderLoopTests extends BasicTestSuite {
         state + 1
       },
       terminateWhen = _ >= 5,
-      frameRate = FrameRate.Uncapped)
+      frameRate = FrameRate.Uncapped
+    )
     assert(renderCount == 5)
   }
 }
