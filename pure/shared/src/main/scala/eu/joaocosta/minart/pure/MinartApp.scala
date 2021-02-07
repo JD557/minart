@@ -14,11 +14,6 @@ trait MinartApp {
   def frameRate: FrameRate
 
   def main(args: Array[String]): Unit = {
-    renderLoop.finiteRenderLoop[State](
-      canvasManager,
-      initialState,
-      renderFrame,
-      terminateWhen,
-      frameRate)
+    renderLoop.finiteRenderLoop[State](canvasManager, initialState, renderFrame, terminateWhen, frameRate)
   }
 }

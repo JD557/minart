@@ -1,29 +1,32 @@
 package eu.joaocosta.minart.backend
 
 import org.scalajs.dom
-import org.scalajs.dom.html.{ Canvas => JsCanvas }
-import org.scalajs.dom.raw.{ MouseEvent, KeyboardEvent, TouchEvent }
+import org.scalajs.dom.html.{Canvas => JsCanvas}
+import org.scalajs.dom.raw.{MouseEvent, KeyboardEvent, TouchEvent}
 
 import eu.joaocosta.minart.core._
 
-/**
- * A low level Canvas implementation that shows the image in an HTML Canvas element.
- */
+/** A low level Canvas implementation that shows the image in an HTML Canvas element.
+  */
 class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
-  private[this] val canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
-  private[this] val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private[this] var childNode: dom.Node = _
+  private[this] val canvas                       = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
+  private[this] val ctx                          = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  private[this] var childNode: dom.Node          = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
-  private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
+  private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
   canvas.width = settings.scaledWidth
   canvas.height = settings.scaledHeight
 
   def unsafeInit(): Unit = {
     childNode = dom.document.body.appendChild(canvas)
-    dom.document.addEventListener[KeyboardEvent]("keydown", (ev: KeyboardEvent) =>
-      JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k)))
-    dom.document.addEventListener[KeyboardEvent]("keyup", (ev: KeyboardEvent) =>
-      JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k)))
+    dom.document.addEventListener[KeyboardEvent](
+      "keydown",
+      (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k))
+    )
+    dom.document.addEventListener[KeyboardEvent](
+      "keyup",
+      (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
+    )
 
     val canvasRect = canvas.getBoundingClientRect();
     def handlePress() = { pointerInput = pointerInput.press }
@@ -37,26 +40,35 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     }
     dom.document.addEventListener[MouseEvent]("mousedown", (_: MouseEvent) => handlePress())
     dom.document.addEventListener[MouseEvent]("mouseup", (_: MouseEvent) => handleRelease())
-    canvas.addEventListener[MouseEvent]("mousemove", (ev: MouseEvent) => {
-      val x = (ev.clientX - canvasRect.left).toInt
-      val y = (ev.clientY - canvasRect.top).toInt
-      handleMove(x, y)
-    })
-    dom.document.addEventListener[TouchEvent]("touchstart", (ev: TouchEvent) => {
-      val touch = ev.changedTouches(0)
-      val x = (touch.clientX - canvasRect.left).toInt
-      val y = (touch.clientY - canvasRect.top).toInt
-      handleMove(x, y)
-      handlePress()
-    })
+    canvas.addEventListener[MouseEvent](
+      "mousemove",
+      (ev: MouseEvent) => {
+        val x = (ev.clientX - canvasRect.left).toInt
+        val y = (ev.clientY - canvasRect.top).toInt
+        handleMove(x, y)
+      }
+    )
+    dom.document.addEventListener[TouchEvent](
+      "touchstart",
+      (ev: TouchEvent) => {
+        val touch = ev.changedTouches(0)
+        val x     = (touch.clientX - canvasRect.left).toInt
+        val y     = (touch.clientY - canvasRect.top).toInt
+        handleMove(x, y)
+        handlePress()
+      }
+    )
     dom.document.addEventListener[TouchEvent]("touchend", (_: TouchEvent) => handleRelease())
     dom.document.addEventListener[TouchEvent]("touchcancel", (_: TouchEvent) => handleRelease())
-    canvas.addEventListener[TouchEvent]("touchmove", (ev: TouchEvent) => {
-      val touch = ev.changedTouches(0)
-      val x = (touch.clientX - canvasRect.left).toInt
-      val y = (touch.clientY - canvasRect.top).toInt
-      handleMove(x, y)
-    })
+    canvas.addEventListener[TouchEvent](
+      "touchmove",
+      (ev: TouchEvent) => {
+        val touch = ev.changedTouches(0)
+        val x     = (touch.clientX - canvasRect.left).toInt
+        val y     = (touch.clientY - canvasRect.top).toInt
+        handleMove(x, y)
+      }
+    )
     clear(Set(Canvas.Resource.Backbuffer)) // Sets the clear color and the alpha to 255
   }
   def unsafeDestroy(): Unit = {
@@ -68,8 +80,8 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] val allPixels = (0 until 4 * (settings.scaledHeight * settings.scaledWidth) by 4)
   private[this] val pixelSize = (0 until settings.scale)
-  private[this] val lines = (0 until settings.height)
-  private[this] val columns = (0 until settings.width)
+  private[this] val lines     = (0 until settings.height)
+  private[this] val columns   = (0 until settings.width)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
     pixelSize.foreach { dy =>
@@ -97,10 +109,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
-    Color(
-      buffer.data(baseAddr + 0),
-      buffer.data(baseAddr + 1),
-      buffer.data(baseAddr + 2))
+    Color(buffer.data(baseAddr + 0), buffer.data(baseAddr + 1), buffer.data(baseAddr + 2))
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
@@ -136,5 +145,5 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-  def getPointerInput(): PointerInput = pointerInput
+  def getPointerInput(): PointerInput   = pointerInput
 }

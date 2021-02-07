@@ -9,4 +9,3 @@ package object defaults {
   implicit val defaultRenderLoop: DefaultBackend[Any, SdlRenderLoop.type] =
     DefaultBackend.fromConstant(SdlRenderLoop)
 }
-
