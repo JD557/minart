@@ -22,6 +22,7 @@ import scalanative.unsigned._
 @link("SDL2")
 object SDL {
 
+  def SDL_GetTicks(): UInt      = extern
   def SDL_Delay(ms: UInt): Unit = extern
 
   type _2  = Nat._2
