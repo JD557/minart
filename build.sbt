@@ -102,16 +102,13 @@ lazy val examples = (project in file("examples"))
   .settings(name := "minart-examples")
   .settings(noPublishSettings)
   .aggregate(
-    `examples-colorSquare`.jvm,
-    `examples-colorSquare`.js,
-    `examples-pureColorSquare`.jvm,
-    `examples-pureColorSquare`.js,
-    `examples-fire`.jvm,
-    `examples-fire`.js,
-    `examples-snake`.jvm,
-    `examples-snake`.js,
-    `examples-mousePointer`.jvm,
-    `examples-mousePointer`.js
+    Seq(
+      `examples-colorSquare`.componentProjects,
+      `examples-pureColorSquare`.componentProjects,
+      `examples-fire`.componentProjects,
+      `examples-snake`.componentProjects,
+      `examples-mousePointer`.componentProjects
+    ).flatten.map(_.project): _*
   )
 
 def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) = {
