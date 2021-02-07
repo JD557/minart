@@ -26,12 +26,12 @@ object JsRenderLoop extends ImpureRenderLoop {
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState  = renderFrame(canvas, state)
-      val endTime   = System.currentTimeMillis()
-      val waitTime  = math.max(0, frameMillis - (endTime - startTime))
-      if (!terminateWhen(state) && canvasManager.isCreated())
+      if (!terminateWhen(newState) && canvasManager.isCreated()) {
+        val endTime  = System.currentTimeMillis()
+        val waitTime = frameMillis - (endTime - startTime)
         if (waitTime > 0 || !hasWindow) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
         else dom.window.requestAnimationFrame((_: Double) => finiteRenderLoopAux(newState))
-      else if (canvasManager.isCreated()) canvasManager.destroy()
+      } else if (canvasManager.isCreated()) canvasManager.destroy()
     }
     finiteRenderLoopAux(initialState)
   }

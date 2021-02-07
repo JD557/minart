@@ -27,14 +27,15 @@ object SdlRenderLoop extends ImpureRenderLoop {
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState  = renderFrame(canvas, state)
-      val endTime   = System.currentTimeMillis()
-      val waitTime  = scala.math.max(0, frameMillis - (endTime - startTime))
-      if (waitTime > 0) SDL_Delay(waitTime.toUInt)
-      if (terminateWhen(newState) || !canvasManager.isCreated()) ()
-      else finiteRenderLoopAux(newState)
+      if (!terminateWhen(newState) && canvasManager.isCreated()) {
+        val endTime  = System.currentTimeMillis()
+        val waitTime = frameMillis - (endTime - startTime)
+        if (waitTime > 0) SDL_Delay(waitTime.toUInt)
+        finiteRenderLoopAux(newState)
+      } else ()
     }
     finiteRenderLoopAux(initialState)
-    canvasManager.destroy()
+    if (canvasManager.isCreated()) canvasManager.destroy()
   }
 
   def singleFrame(canvasManager: CanvasManager, renderFrame: Canvas => Unit): Unit = {
