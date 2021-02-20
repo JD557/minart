@@ -10,14 +10,16 @@ object ColorSquare {
     RenderLoop
       .default()
       .singleFrame(
-        CanvasManager.default(canvasSettings),
+        CanvasManager.default(),
+        canvasSettings,
         c => {
+          val (width, height) = c.settings.map(s => (s.width, s.height)).getOrElse(0, 0)
           for {
-            x <- (0 until c.settings.width)
-            y <- (0 until c.settings.height)
+            x <- (0 until width)
+            y <- (0 until height)
           } {
             val color =
-              Color((255 * x.toDouble / c.settings.width).toInt, (255 * y.toDouble / c.settings.height).toInt, 255)
+              Color((255 * x.toDouble / width).toInt, (255 * y.toDouble / height).toInt, 255)
             c.putPixel(x, y, color)
           }
           c.redraw()

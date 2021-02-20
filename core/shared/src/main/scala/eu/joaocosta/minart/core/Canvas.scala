@@ -10,9 +10,9 @@ package eu.joaocosta.minart.core
   */
 trait Canvas {
 
-  /** The settings used to create this canvas
+  /** The settings applied to this canvas.
     */
-  def settings: Canvas.Settings
+  def settings: Option[Canvas.Settings]
 
   /** Puts a pixel in the back buffer with a certain color.
     *

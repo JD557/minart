@@ -7,6 +7,7 @@ import eu.joaocosta.minart.pure.backend._
 trait MinartApp {
   type State
   def canvasManager: CanvasManager
+  def canvasSettings: Canvas.Settings
   def renderLoop: PureRenderLoop
   def initialState: State
   def renderFrame: State => CanvasIO[State]
@@ -14,6 +15,7 @@ trait MinartApp {
   def frameRate: FrameRate
 
   def main(args: Array[String]): Unit = {
-    renderLoop.finiteRenderLoop[State](canvasManager, initialState, renderFrame, terminateWhen, frameRate)
+    renderLoop
+      .finiteRenderLoop[State](canvasManager, canvasSettings, initialState, renderFrame, terminateWhen, frameRate)
   }
 }

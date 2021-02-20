@@ -9,6 +9,7 @@ class PureRenderLoop(impureRenderLoop: ImpureRenderLoop) extends RenderLoop[RIO,
 
   def finiteRenderLoop[S](
       canvasManager: CanvasManager,
+      canvasSettings: Canvas.Settings,
       initialState: S,
       renderFrame: S => CanvasIO[S],
       terminateWhen: S => Boolean,
@@ -16,6 +17,7 @@ class PureRenderLoop(impureRenderLoop: ImpureRenderLoop) extends RenderLoop[RIO,
   ): Unit =
     impureRenderLoop.finiteRenderLoop[S](
       canvasManager,
+      canvasSettings,
       initialState,
       (canvas, state) => renderFrame(state).run(canvas),
       terminateWhen,
@@ -24,18 +26,35 @@ class PureRenderLoop(impureRenderLoop: ImpureRenderLoop) extends RenderLoop[RIO,
 
   def infiniteRenderLoop[S](
       canvasManager: CanvasManager,
+      canvasSettings: Canvas.Settings,
       initialState: S,
       renderFrame: S => CanvasIO[S],
       frameRate: FrameRate
   ): Unit =
     impureRenderLoop
-      .infiniteRenderLoop[S](canvasManager, initialState, (canvas, state) => renderFrame(state).run(canvas), frameRate)
+      .infiniteRenderLoop[S](
+        canvasManager,
+        canvasSettings,
+        initialState,
+        (canvas, state) => renderFrame(state).run(canvas),
+        frameRate
+      )
 
-  def infiniteRenderLoop(canvasManager: CanvasManager, renderFrame: CanvasIO[Unit], frameRate: FrameRate): Unit =
-    impureRenderLoop.infiniteRenderLoop(canvasManager, canvas => renderFrame.run(canvas), frameRate)
+  def infiniteRenderLoop(
+      canvasManager: CanvasManager,
+      canvasSettings: Canvas.Settings,
+      renderFrame: CanvasIO[Unit],
+      frameRate: FrameRate
+  ): Unit =
+    impureRenderLoop.infiniteRenderLoop(
+      canvasManager,
+      canvasSettings: Canvas.Settings,
+      canvas => renderFrame.run(canvas),
+      frameRate
+    )
 
-  def singleFrame(canvasManager: CanvasManager, renderFrame: CanvasIO[Unit]): Unit =
-    impureRenderLoop.singleFrame(canvasManager, canvas => renderFrame.run(canvas))
+  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: CanvasIO[Unit]): Unit =
+    impureRenderLoop.singleFrame(canvasManager, canvasSettings, canvas => renderFrame.run(canvas))
 }
 
 object PureRenderLoop {

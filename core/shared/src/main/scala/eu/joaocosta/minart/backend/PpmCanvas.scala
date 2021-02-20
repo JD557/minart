@@ -5,13 +5,15 @@ import eu.joaocosta.minart.core._
 /** A low level Canvas implementation that outputs the image in the PPM format to the stdout.
   * This canvas doesn't support fetching the keyboard input.
   */
-class PpmCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
-  private[this] val buffer: Array[Array[Color]] =
-    Array.fill(settings.height)(Array.fill(settings.width)(settings.clearColor))
+class PpmCanvas() extends LowLevelCanvas {
+  private[this] var buffer: Array[Array[Color]]  = _
   private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())  // Keyboard input not supported
   private[this] val pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false) // Pointer input not supported
 
-  def unsafeInit(): Unit    = ()
+  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+    buffer = Array.fill(newSettings.height)(Array.fill(newSettings.width)(newSettings.clearColor))
+    currentSettings = newSettings
+  }
   def unsafeDestroy(): Unit = ()
 
   def putPixel(x: Int, y: Int, color: Color): Unit = buffer(y)(x) = color
@@ -22,19 +24,19 @@ class PpmCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      buffer.foreach(_.transform(_ => settings.clearColor))
+      buffer.foreach(_.transform(_ => currentSettings.clearColor))
     }
   }
 
   def redraw(): Unit = {
     println("P3")
-    println(s"${settings.scaledWidth} ${settings.scaledHeight}")
+    println(s"${currentSettings.scaledWidth} ${currentSettings.scaledHeight}")
     println("255")
     for {
       line           <- buffer
-      _              <- (0 until settings.scale)
+      _              <- (0 until currentSettings.scale)
       Color(r, g, b) <- line
-      _              <- (0 until settings.scale)
+      _              <- (0 until currentSettings.scale)
     } println(s"$r $g $b")
   }
 

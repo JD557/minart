@@ -6,19 +6,36 @@ import org.scalajs.dom.raw.{MouseEvent, KeyboardEvent, TouchEvent}
 
 import eu.joaocosta.minart.core._
 
+import org.scalajs.dom.raw.ImageData
+
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
-class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
-  private[this] val canvas                       = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
-  private[this] val ctx                          = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private[this] var childNode: dom.Node          = _
-  private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
-  private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
-  canvas.width = settings.scaledWidth
-  canvas.height = settings.scaledHeight
+class HtmlCanvas() extends LowLevelCanvas {
+  private[this] var canvas: JsCanvas                  = _
+  private[this] var ctx: dom.CanvasRenderingContext2D = _
+  private[this] var childNode: dom.Node               = _
+  private[this] var keyboardInput: KeyboardInput      = KeyboardInput(Set(), Set(), Set())
+  private[this] var pointerInput: PointerInput        = PointerInput(None, Nil, Nil, false)
 
-  def unsafeInit(): Unit = {
+  private[this] var buffer: ImageData = _
+
+  private[this] var allPixels: Range = _
+  private[this] var pixelSize: Range = _
+  private[this] var lines: Range     = _
+  private[this] var columns: Range   = _
+
+  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+    canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
+    ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    canvas.width = newSettings.scaledWidth
+    canvas.height = newSettings.scaledHeight
     childNode = dom.document.body.appendChild(canvas)
+    buffer = ctx.getImageData(0, 0, newSettings.scaledWidth, newSettings.scaledHeight)
+    allPixels = (0 until 4 * (newSettings.scaledHeight * newSettings.scaledWidth) by 4)
+    pixelSize = (0 until newSettings.scale)
+    lines = (0 until newSettings.height)
+    columns = (0 until newSettings.width)
+
     dom.document.addEventListener[KeyboardEvent](
       "keydown",
       (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k))
@@ -32,8 +49,8 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     def handlePress() = { pointerInput = pointerInput.press }
     def handleRelease() = { pointerInput = pointerInput.release }
     def handleMove(x: Int, y: Int) = {
-      if (x >= 0 && y >= 0 && x < settings.scaledWidth && y < settings.scaledHeight) {
-        pointerInput = pointerInput.move(Some(PointerInput.Position(x / settings.scale, y / settings.scale)))
+      if (x >= 0 && y >= 0 && x < newSettings.scaledWidth && y < newSettings.scaledHeight) {
+        pointerInput = pointerInput.move(Some(PointerInput.Position(x / newSettings.scale, y / newSettings.scale)))
       } else {
         pointerInput = pointerInput.move(None)
       }
@@ -69,6 +86,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
         handleMove(x, y)
       }
     )
+    currentSettings = newSettings
     clear(Set(Canvas.Resource.Backbuffer)) // Sets the clear color and the alpha to 255
   }
   def unsafeDestroy(): Unit = {
@@ -76,18 +94,11 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     childNode = null
   }
 
-  private[this] val buffer = ctx.getImageData(0, 0, settings.scaledWidth, settings.scaledHeight)
-
-  private[this] val allPixels = (0 until 4 * (settings.scaledHeight * settings.scaledWidth) by 4)
-  private[this] val pixelSize = (0 until settings.scale)
-  private[this] val lines     = (0 until settings.height)
-  private[this] val columns   = (0 until settings.width)
-
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
     pixelSize.foreach { dy =>
-      val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+      val lineBase = (y * currentSettings.scale + dy) * currentSettings.scaledWidth
       pixelSize.foreach { dx =>
-        val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
+        val baseAddr = 4 * (lineBase + (x * currentSettings.scale + dx))
         buffer.data(baseAddr + 0) = c.r
         buffer.data(baseAddr + 1) = c.g
         buffer.data(baseAddr + 2) = c.b
@@ -95,7 +106,7 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     }
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
-    val lineBase = y * settings.scaledWidth
+    val lineBase = y * currentSettings.scaledWidth
     val baseAddr = 4 * (lineBase + x)
     buffer.data(baseAddr + 0) = c.r
     buffer.data(baseAddr + 1) = c.g
@@ -103,21 +114,21 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (settings.scale == 1) putPixelUnscaled(x, y, color)
+    if (currentSettings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    val baseAddr = 4 * (y * settings.scale * settings.scaledWidth + (x * settings.scale))
+    val baseAddr = 4 * (y * currentSettings.scale * currentSettings.scaledWidth + (x * currentSettings.scale))
     Color(buffer.data(baseAddr + 0), buffer.data(baseAddr + 1), buffer.data(baseAddr + 2))
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val imgData = buffer.data
     lines.map { y =>
-      val lineBase = y * settings.scale * settings.scaledWidth
+      val lineBase = y * currentSettings.scale * currentSettings.scaledWidth
       columns.map { x =>
-        val baseAddr = 4 * (lineBase + (x * settings.scale))
+        val baseAddr = 4 * (lineBase + (x * currentSettings.scale))
         Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
       }.toVector
     }.toVector
@@ -126,9 +137,9 @@ class HtmlCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
       allPixels.foreach { i =>
-        buffer.data(i + 0) = settings.clearColor.r
-        buffer.data(i + 1) = settings.clearColor.g
-        buffer.data(i + 2) = settings.clearColor.b
+        buffer.data(i + 0) = currentSettings.clearColor.r
+        buffer.data(i + 1) = currentSettings.clearColor.g
+        buffer.data(i + 2) = currentSettings.clearColor.b
         buffer.data(i + 3) = 255
       }
     }

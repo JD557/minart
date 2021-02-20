@@ -64,7 +64,8 @@ object Snake {
     RenderLoop
       .default()
       .infiniteRenderLoop[GameState](
-        CanvasManager.default(canvasSettings),
+        CanvasManager.default(),
+        canvasSettings,
         initialState,
         (c, state) => {
           c.clear()

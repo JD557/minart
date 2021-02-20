@@ -13,6 +13,7 @@ import eu.joaocosta.minart.core._
 object SdlRenderLoop extends ImpureRenderLoop {
   def finiteRenderLoop[S](
       canvasManager: CanvasManager,
+      canvasSettings: Canvas.Settings,
       initialState: S,
       renderFrame: (Canvas, S) => S,
       terminateWhen: S => Boolean,
@@ -22,7 +23,7 @@ object SdlRenderLoop extends ImpureRenderLoop {
       case FrameRate.Uncapped          => 0
       case FrameRate.FrameDuration(ms) => ms
     }
-    val canvas = canvasManager.init()
+    val canvas = canvasManager.init(canvasSettings)
     @tailrec
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = SDL_GetTicks()
@@ -38,8 +39,8 @@ object SdlRenderLoop extends ImpureRenderLoop {
     if (canvasManager.isCreated()) canvasManager.destroy()
   }
 
-  def singleFrame(canvasManager: CanvasManager, renderFrame: Canvas => Unit): Unit = {
-    val canvas = canvasManager.init()
+  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: Canvas => Unit): Unit = {
+    val canvas = canvasManager.init(canvasSettings)
     renderFrame(canvas)
     var quit  = false
     val event = stackalloc[SDL_Event]

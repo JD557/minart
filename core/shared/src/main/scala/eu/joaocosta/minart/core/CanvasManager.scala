@@ -7,14 +7,14 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
   */
 trait CanvasManager { canvas: Canvas =>
 
-  private[this] var created = false
+  protected[this] var currentSettings: Canvas.Settings = null
 
-  protected def unsafeInit(): Unit
+  protected def unsafeInit(settings: Canvas.Settings): Unit
   protected def unsafeDestroy(): Unit
 
   /** Checks if the window is created or if it has been destroyed
     */
-  def isCreated(): Boolean = created
+  def isCreated(): Boolean = !(currentSettings == null)
 
   /** Creates the canvas window.
     *
@@ -22,10 +22,12 @@ trait CanvasManager { canvas: Canvas =>
     *
     * @return canvas object linked to the created window
     */
-  def init(): Canvas = {
-    if (!created) {
-      unsafeInit()
-      created = true
+  def init(settings: Canvas.Settings): Canvas = {
+    if (isCreated && settings != currentSettings) {
+      destroy()
+    }
+    if (!isCreated) {
+      unsafeInit(settings = settings)
     }
     canvas
   }
@@ -34,9 +36,9 @@ trait CanvasManager { canvas: Canvas =>
     *
     * Rendering operations cannot be called after calling this
     */
-  def destroy(): Unit = if (created) {
+  def destroy(): Unit = if (isCreated) {
     unsafeDestroy()
-    created = false
+    currentSettings = null
   }
 }
 
@@ -44,9 +46,8 @@ object CanvasManager {
 
   /** Returns [[CanvasManager]] for the default backend for the target platform.
     *
-    * @param settings Settings used to create the new canvas
     * @return [[CanvasManager]] using the default backend for the target platform
     */
-  def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Canvas.Settings, CanvasManager]): CanvasManager =
-    d.defaultValue(settings)
+  def default()(implicit d: DefaultBackend[Any, CanvasManager]): CanvasManager =
+    d.defaultValue()
 }

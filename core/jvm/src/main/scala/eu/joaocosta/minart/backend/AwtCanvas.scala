@@ -12,24 +12,34 @@ import eu.joaocosta.minart.core._
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
-class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
+class AwtCanvas() extends LowLevelCanvas {
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas      = _
   private[this] var keyListener: AwtCanvas.KeyListener     = _
   private[this] var mouseListener: AwtCanvas.MouseListener = _
 
-  def unsafeInit(): Unit = {
-    javaCanvas = new AwtCanvas.InnerCanvas(settings.scaledWidth, settings.scaledHeight, this)
+  private[this] var allPixels: Range = _
+  private[this] var pixelSize: Range = _
+  private[this] var lines: Range     = _
+  private[this] var columns: Range   = _
+
+  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+    allPixels = (0 until (newSettings.scaledHeight * newSettings.scaledWidth))
+    pixelSize = (0 until newSettings.scale)
+    lines = (0 until newSettings.height)
+    columns = (0 until newSettings.width)
+    javaCanvas = new AwtCanvas.InnerCanvas(newSettings.scaledWidth, newSettings.scaledHeight, this)
     keyListener = new AwtCanvas.KeyListener()
     mouseListener = new AwtCanvas.MouseListener(() =>
       for {
         point <- Option(javaCanvas.getMousePosition())
         x     <- Option(point.getX())
         y     <- Option(point.getY())
-      } yield PointerInput.Position(x.toInt / settings.scale, y.toInt / settings.scale)
+      } yield PointerInput.Position(x.toInt / newSettings.scale, y.toInt / newSettings.scale)
     )
     javaCanvas.addKeyListener(keyListener)
     javaCanvas.addMouseListener(mouseListener)
+    currentSettings = newSettings
   }
   def unsafeDestroy(): Unit = {
     javaCanvas.frame.dispose()
@@ -39,16 +49,11 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   private[this] def pack(r: Int, g: Int, b: Int): Int =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
-  private[this] val allPixels = (0 until (settings.scaledHeight * settings.scaledWidth))
-  private[this] val pixelSize = (0 until settings.scale)
-  private[this] val lines     = (0 until settings.height)
-  private[this] val columns   = (0 until settings.width)
-
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
     pixelSize.foreach { dy =>
-      val lineBase = (y * settings.scale + dy) * settings.scaledWidth
+      val lineBase = (y * currentSettings.scale + dy) * currentSettings.scaledWidth
       pixelSize.foreach { dx =>
-        val baseAddr = lineBase + (x * settings.scale + dx)
+        val baseAddr = lineBase + (x * currentSettings.scale + dx)
         javaCanvas.imagePixels
           .setElem(baseAddr, c.argb)
       }
@@ -56,23 +61,27 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit =
     javaCanvas.imagePixels
-      .setElem(y * settings.scaledWidth + x % settings.scaledWidth, c.argb)
+      .setElem(y * currentSettings.scaledWidth + x % currentSettings.scaledWidth, c.argb)
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (settings.scale == 1) putPixelUnscaled(x, y, color)
+    if (currentSettings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    Color.fromRGB(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
+    Color.fromRGB(
+      javaCanvas.imagePixels.getElem(
+        y * currentSettings.scale * currentSettings.scaledWidth + (x * currentSettings.scale)
+      )
+    )
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val flatData = javaCanvas.imagePixels.getData()
     lines.map { y =>
-      val lineBase = y * settings.scale * settings.scaledWidth
+      val lineBase = y * currentSettings.scale * currentSettings.scaledWidth
       columns.map { x =>
-        val baseAddr = (lineBase + (x * settings.scale))
+        val baseAddr = (lineBase + (x * currentSettings.scale))
         Color.fromRGB(flatData(baseAddr))
       }.toVector
     }.toVector
@@ -80,7 +89,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
+      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, currentSettings.clearColor.argb))
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
@@ -92,7 +101,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
-    g.drawImage(javaCanvas.image, 0, 0, settings.scaledWidth, settings.scaledHeight, javaCanvas)
+    g.drawImage(javaCanvas.image, 0, 0, currentSettings.scaledWidth, currentSettings.scaledHeight, javaCanvas)
     g.dispose()
     javaCanvas.buffStrategy.show()
   } catch { case _: Throwable => () }

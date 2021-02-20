@@ -10,9 +10,9 @@ object Fire {
 
   def main(args: Array[String]): Unit = {
 
-    val canvas = LowLevelCanvas.default(canvasSettings)
+    val canvas = LowLevelCanvas.default()
 
-    canvas.init()
+    canvas.init(canvasSettings)
     canvas.clear()
     canvas.redraw()
 
@@ -20,7 +20,7 @@ object Fire {
 
     def automata(backbuffer: Vector[Vector[Color]], x: Int, y: Int): Color = {
       val neighbors =
-        (math.max(0, x - 1) to math.min(x + 1, canvas.settings.width - 1)).toList.map { xx =>
+        (math.max(0, x - 1) to math.min(x + 1, canvas.settings.get.width - 1)).toList.map { xx =>
           backbuffer(y + 1)(xx)
         }
       val randomLoss  = 0.8 + (scala.util.Random.nextDouble() / 5)
@@ -36,23 +36,25 @@ object Fire {
       .default()
       .infiniteRenderLoop(
         canvas,
+        canvasSettings,
         safeCanvas => {
-          val keys = safeCanvas.getKeyboardInput()
+          val keys            = safeCanvas.getKeyboardInput()
+          val (width, height) = safeCanvas.settings.map(s => (s.width, s.height)).getOrElse((0, 0))
           if (keys.isDown(KeyboardInput.Key.Up)) temperatureMod = math.min(temperatureMod + 0.1, 1.0)
           else if (keys.isDown(KeyboardInput.Key.Down)) temperatureMod = math.max(0.1, temperatureMod - 0.1)
           // Add bottom fire root
           for {
-            x <- (0 until safeCanvas.settings.width)
-            y <- (canvas.settings.height - 4 until canvas.settings.height)
+            x <- (0 until width)
+            y <- (height - 4 until height)
           } {
             canvas.putPixel(x, y, Color(255, 255, 255))
           }
 
           // Add middle fire root
           for {
-            x <- (0 until canvas.settings.width)
-            y <- (0 until canvas.settings.height)
-            dist = math.pow(x - canvas.settings.width / 2, 2) + math.pow(y - canvas.settings.height / 2, 2)
+            x <- (0 until width)
+            y <- (0 until height)
+            dist = math.pow(x - width / 2, 2) + math.pow(y - height / 2, 2)
           } {
             if (dist > 25 && dist <= 100) canvas.putPixel(x, y, Color(255, 255, 255))
           }
@@ -60,8 +62,8 @@ object Fire {
           // Evolve fire
           val backbuffer = canvas.getBackbuffer()
           for {
-            x <- (0 until canvas.settings.width)
-            y <- (0 until (canvas.settings.height - 1)).reverse
+            x <- (0 until width)
+            y <- (0 until (height - 1)).reverse
           } {
             val color = automata(backbuffer, x, y)
             canvas.putPixel(x, y, color)
