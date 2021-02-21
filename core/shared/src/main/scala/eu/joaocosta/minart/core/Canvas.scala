@@ -14,6 +14,12 @@ trait Canvas {
     */
   def settings: Option[Canvas.Settings]
 
+  /** Changes the settings applied to this canvas
+    *
+    *  @param newSettings new canvas settings
+    */
+  def changeSettings(newSettings: Canvas.Settings): Unit
+
   /** Puts a pixel in the back buffer with a certain color.
     *
     * @param x pixel x position
@@ -82,9 +88,16 @@ object Canvas {
     * @param width The canvas width
     * @param height The canvas height
     * @param scale The canvas integer scaling factor
+    * @param fullscreen Whether the canvas should be rendered in a full screen window
     * @param clearColor The color to be used when the canvas is cleared
     */
-  case class Settings(width: Int, height: Int, scale: Int = 1, clearColor: Color = Color(255, 255, 255)) {
+  case class Settings(
+      width: Int,
+      height: Int,
+      scale: Int = 1,
+      fullScreen: Boolean = false,
+      clearColor: Color = Color(255, 255, 255)
+  ) {
 
     /** The canvas width with the integer scaling applied. */
     lazy val scaledWidth = width * scale

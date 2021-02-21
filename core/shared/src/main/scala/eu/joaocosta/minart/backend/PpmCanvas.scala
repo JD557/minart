@@ -14,7 +14,8 @@ class PpmCanvas() extends LowLevelCanvas {
     buffer = Array.fill(newSettings.height)(Array.fill(newSettings.width)(newSettings.clearColor))
     currentSettings = newSettings
   }
-  def unsafeDestroy(): Unit = ()
+  def unsafeDestroy(): Unit                        = ()
+  def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
 
   def putPixel(x: Int, y: Int, color: Color): Unit = buffer(y)(x) = color
 

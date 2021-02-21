@@ -104,10 +104,11 @@ lazy val examples = (project in file("examples"))
   .aggregate(
     Seq(
       `examples-colorSquare`.componentProjects,
-      `examples-pureColorSquare`.componentProjects,
       `examples-fire`.componentProjects,
-      `examples-snake`.componentProjects,
-      `examples-mousePointer`.componentProjects
+      `examples-mousePointer`.componentProjects,
+      `examples-pureColorSquare`.componentProjects,
+      `examples-settings`.componentProjects,
+      `examples-snake`.componentProjects
     ).flatten.map(_.project): _*
   )
 
@@ -126,17 +127,20 @@ def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) 
 lazy val `examples-colorSquare` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "colorsquare")
 
-lazy val `examples-pureColorSquare` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "purecolorsquare").dependsOn(pure)
-
 lazy val `examples-fire` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "fire")
 
-lazy val `examples-snake` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "snake")
-
 lazy val `examples-mousePointer` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "mousepointer")
+
+lazy val `examples-pureColorSquare` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "purecolorsquare").dependsOn(pure)
+
+lazy val `examples-settings` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "settings")
+
+lazy val `examples-snake` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "snake")
 
 releaseCrossBuild := true
 releaseTagComment := s"Release ${(version in ThisBuild).value}"

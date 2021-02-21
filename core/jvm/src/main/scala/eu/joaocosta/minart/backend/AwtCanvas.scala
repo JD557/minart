@@ -10,6 +10,10 @@ import javax.swing.JFrame
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
+import java.awt.GraphicsDevice
+
+import java.awt.GraphicsEnvironment
+
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
 class AwtCanvas() extends LowLevelCanvas {
@@ -28,7 +32,8 @@ class AwtCanvas() extends LowLevelCanvas {
     pixelSize = (0 until newSettings.scale)
     lines = (0 until newSettings.height)
     columns = (0 until newSettings.width)
-    javaCanvas = new AwtCanvas.InnerCanvas(newSettings.scaledWidth, newSettings.scaledHeight, this)
+    javaCanvas =
+      new AwtCanvas.InnerCanvas(newSettings.scaledWidth, newSettings.scaledHeight, newSettings.fullScreen, this)
     keyListener = new AwtCanvas.KeyListener()
     mouseListener = new AwtCanvas.MouseListener(() =>
       for {
@@ -45,6 +50,7 @@ class AwtCanvas() extends LowLevelCanvas {
     javaCanvas.frame.dispose()
     javaCanvas = null
   }
+  def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
 
   private[this] def pack(r: Int, g: Int, b: Int): Int =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
@@ -111,7 +117,8 @@ class AwtCanvas() extends LowLevelCanvas {
 }
 
 object AwtCanvas {
-  private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, outerCanvas: AwtCanvas) extends JavaCanvas {
+  private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, fullScreen: Boolean, outerCanvas: AwtCanvas)
+      extends JavaCanvas {
 
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
@@ -121,6 +128,11 @@ object AwtCanvas {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     frame.pack()
     frame.setResizable(false)
+    GraphicsEnvironment
+      .getLocalGraphicsEnvironment()
+      .getScreenDevices()
+      .headOption
+      .foreach(_.setFullScreenWindow(if (fullScreen) frame else null))
 
     this.createBufferStrategy(2)
     val buffStrategy = getBufferStrategy

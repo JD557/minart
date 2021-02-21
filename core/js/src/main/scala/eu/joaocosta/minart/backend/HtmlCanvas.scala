@@ -2,11 +2,9 @@ package eu.joaocosta.minart.backend
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
-import org.scalajs.dom.raw.{MouseEvent, KeyboardEvent, TouchEvent}
+import org.scalajs.dom.raw.{ImageData, MouseEvent, KeyboardEvent, TouchEvent}
 
 import eu.joaocosta.minart.core._
-
-import org.scalajs.dom.raw.ImageData
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
@@ -17,7 +15,8 @@ class HtmlCanvas() extends LowLevelCanvas {
   private[this] var keyboardInput: KeyboardInput      = KeyboardInput(Set(), Set(), Set())
   private[this] var pointerInput: PointerInput        = PointerInput(None, Nil, Nil, false)
 
-  private[this] var buffer: ImageData = _
+  private[this] var buffer: ImageData     = _
+  private[this] var listenersSet: Boolean = false
 
   private[this] var allPixels: Range = _
   private[this] var pixelSize: Range = _
@@ -36,56 +35,68 @@ class HtmlCanvas() extends LowLevelCanvas {
     lines = (0 until newSettings.height)
     columns = (0 until newSettings.width)
 
-    dom.document.addEventListener[KeyboardEvent](
-      "keydown",
-      (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k))
-    )
-    dom.document.addEventListener[KeyboardEvent](
-      "keyup",
-      (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
-    )
-
-    val canvasRect = canvas.getBoundingClientRect();
-    def handlePress() = { pointerInput = pointerInput.press }
-    def handleRelease() = { pointerInput = pointerInput.release }
-    def handleMove(x: Int, y: Int) = {
-      if (x >= 0 && y >= 0 && x < newSettings.scaledWidth && y < newSettings.scaledHeight) {
-        pointerInput = pointerInput.move(Some(PointerInput.Position(x / newSettings.scale, y / newSettings.scale)))
-      } else {
-        pointerInput = pointerInput.move(None)
-      }
+    if (newSettings.fullScreen) {
+      canvas.requestFullscreen()
+    } else {
+      dom.document.exitFullscreen()
     }
-    dom.document.addEventListener[MouseEvent]("mousedown", (_: MouseEvent) => handlePress())
-    dom.document.addEventListener[MouseEvent]("mouseup", (_: MouseEvent) => handleRelease())
-    canvas.addEventListener[MouseEvent](
-      "mousemove",
-      (ev: MouseEvent) => {
-        val x = (ev.clientX - canvasRect.left).toInt
-        val y = (ev.clientY - canvasRect.top).toInt
-        handleMove(x, y)
+
+    if (!listenersSet) {
+      dom.document.addEventListener[KeyboardEvent](
+        "keydown",
+        (ev: KeyboardEvent) => {
+          JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k))
+          println("keydown")
+        }
+      )
+      dom.document.addEventListener[KeyboardEvent](
+        "keyup",
+        (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
+      )
+
+      val canvasRect = canvas.getBoundingClientRect();
+      def handlePress() = { pointerInput = pointerInput.press }
+      def handleRelease() = { pointerInput = pointerInput.release }
+      def handleMove(x: Int, y: Int) = {
+        if (x >= 0 && y >= 0 && x < newSettings.scaledWidth && y < newSettings.scaledHeight) {
+          pointerInput = pointerInput.move(Some(PointerInput.Position(x / newSettings.scale, y / newSettings.scale)))
+        } else {
+          pointerInput = pointerInput.move(None)
+        }
       }
-    )
-    dom.document.addEventListener[TouchEvent](
-      "touchstart",
-      (ev: TouchEvent) => {
-        val touch = ev.changedTouches(0)
-        val x     = (touch.clientX - canvasRect.left).toInt
-        val y     = (touch.clientY - canvasRect.top).toInt
-        handleMove(x, y)
-        handlePress()
-      }
-    )
-    dom.document.addEventListener[TouchEvent]("touchend", (_: TouchEvent) => handleRelease())
-    dom.document.addEventListener[TouchEvent]("touchcancel", (_: TouchEvent) => handleRelease())
-    canvas.addEventListener[TouchEvent](
-      "touchmove",
-      (ev: TouchEvent) => {
-        val touch = ev.changedTouches(0)
-        val x     = (touch.clientX - canvasRect.left).toInt
-        val y     = (touch.clientY - canvasRect.top).toInt
-        handleMove(x, y)
-      }
-    )
+      dom.document.addEventListener[MouseEvent]("mousedown", (_: MouseEvent) => handlePress())
+      dom.document.addEventListener[MouseEvent]("mouseup", (_: MouseEvent) => handleRelease())
+      canvas.addEventListener[MouseEvent](
+        "mousemove",
+        (ev: MouseEvent) => {
+          val x = (ev.clientX - canvasRect.left).toInt
+          val y = (ev.clientY - canvasRect.top).toInt
+          handleMove(x, y)
+        }
+      )
+      dom.document.addEventListener[TouchEvent](
+        "touchstart",
+        (ev: TouchEvent) => {
+          val touch = ev.changedTouches(0)
+          val x     = (touch.clientX - canvasRect.left).toInt
+          val y     = (touch.clientY - canvasRect.top).toInt
+          handleMove(x, y)
+          handlePress()
+        }
+      )
+      dom.document.addEventListener[TouchEvent]("touchend", (_: TouchEvent) => handleRelease())
+      dom.document.addEventListener[TouchEvent]("touchcancel", (_: TouchEvent) => handleRelease())
+      canvas.addEventListener[TouchEvent](
+        "touchmove",
+        (ev: TouchEvent) => {
+          val touch = ev.changedTouches(0)
+          val x     = (touch.clientX - canvasRect.left).toInt
+          val y     = (touch.clientY - canvasRect.top).toInt
+          handleMove(x, y)
+        }
+      )
+      listenersSet = true
+    }
     currentSettings = newSettings
     clear(Set(Canvas.Resource.Backbuffer)) // Sets the clear color and the alpha to 255
   }
@@ -93,6 +104,7 @@ class HtmlCanvas() extends LowLevelCanvas {
     dom.document.body.removeChild(childNode)
     childNode = null
   }
+  def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
     pixelSize.foreach { dy =>

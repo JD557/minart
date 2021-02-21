@@ -44,6 +44,7 @@ class SdlCanvas() extends LowLevelCanvas {
       newSettings.scaledHeight,
       SDL_WINDOW_SHOWN
     )
+    SDL_SetWindowFullscreen(window, if (newSettings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP.toUInt else 0.toUInt)
     surface = SDL_GetWindowSurface(window)
     renderer = SDL_CreateSoftwareRenderer(surface)
     keyboardInput = KeyboardInput(Set(), Set(), Set())
@@ -52,6 +53,7 @@ class SdlCanvas() extends LowLevelCanvas {
   def unsafeDestroy() = {
     SDL_Quit()
   }
+  def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
     pixelSize.foreach { dy =>
