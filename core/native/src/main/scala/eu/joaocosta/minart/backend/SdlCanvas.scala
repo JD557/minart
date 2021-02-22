@@ -51,9 +51,9 @@ class SdlCanvas() extends LowLevelCanvas {
       SDL_WINDOWPOS_CENTERED,
       newSettings.scaledWidth,
       newSettings.scaledHeight,
-      SDL_WINDOW_SHOWN
+      if (newSettings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
+      else SDL_WINDOW_SHOWN
     )
-    SDL_SetWindowFullscreen(window, if (newSettings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP.toUInt else 0.toUInt)
     surface = SDL_GetWindowSurface(window)
     windowWidth = surface.w
     renderer = SDL_CreateSoftwareRenderer(surface)
