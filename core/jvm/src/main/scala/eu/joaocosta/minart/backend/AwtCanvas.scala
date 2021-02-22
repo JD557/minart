@@ -28,29 +28,34 @@ class AwtCanvas() extends LowLevelCanvas {
   private[this] var columns: Range   = _
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
-    allPixels = (0 until (newSettings.scaledHeight * newSettings.scaledWidth))
-    pixelSize = (0 until newSettings.scale)
-    lines = (0 until newSettings.height)
-    columns = (0 until newSettings.width)
-    javaCanvas =
-      new AwtCanvas.InnerCanvas(newSettings.scaledWidth, newSettings.scaledHeight, newSettings.fullScreen, this)
-    keyListener = new AwtCanvas.KeyListener()
-    mouseListener = new AwtCanvas.MouseListener(() =>
-      for {
-        point <- Option(javaCanvas.getMousePosition())
-        x     <- Option(point.getX())
-        y     <- Option(point.getY())
-      } yield PointerInput.Position(x.toInt / newSettings.scale, y.toInt / newSettings.scale)
-    )
-    javaCanvas.addKeyListener(keyListener)
-    javaCanvas.addMouseListener(mouseListener)
-    currentSettings = newSettings
+    changeSettings(newSettings)
   }
-  def unsafeDestroy(): Unit = {
+  def unsafeDestroy(): Unit = if (javaCanvas != null) {
     javaCanvas.frame.dispose()
     javaCanvas = null
   }
-  def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
+  def changeSettings(newSettings: Canvas.Settings) = {
+    if (newSettings != currentSettings) {
+      if (javaCanvas != null) javaCanvas.frame.dispose()
+      allPixels = (0 until (newSettings.scaledHeight * newSettings.scaledWidth))
+      pixelSize = (0 until newSettings.scale)
+      lines = (0 until newSettings.height)
+      columns = (0 until newSettings.width)
+      javaCanvas =
+        new AwtCanvas.InnerCanvas(newSettings.scaledWidth, newSettings.scaledHeight, newSettings.fullScreen, this)
+      keyListener = new AwtCanvas.KeyListener()
+      mouseListener = new AwtCanvas.MouseListener(() =>
+        for {
+          point <- Option(javaCanvas.getMousePosition())
+          x     <- Option(point.getX())
+          y     <- Option(point.getY())
+        } yield PointerInput.Position(x.toInt / newSettings.scale, y.toInt / newSettings.scale)
+      )
+      javaCanvas.addKeyListener(keyListener)
+      javaCanvas.addMouseListener(mouseListener)
+      currentSettings = newSettings
+    }
+  }
 
   private[this] def pack(r: Int, g: Int, b: Int): Int =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)

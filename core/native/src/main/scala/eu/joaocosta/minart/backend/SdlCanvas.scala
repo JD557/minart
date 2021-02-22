@@ -31,13 +31,20 @@ class SdlCanvas() extends LowLevelCanvas {
   private[this] var windowWidth: Int = _
 
   def unsafeInit(newSettings: Canvas.Settings) = {
+    SDL_Init(SDL_INIT_VIDEO)
+    changeSettings(newSettings)
+  }
+  def unsafeDestroy() = {
+    SDL_Quit()
+  }
+  def changeSettings(newSettings: Canvas.Settings) = if (newSettings != currentSettings) {
+    SDL_DestroyWindow(window)
     pixelSize = (0 until newSettings.scale)
     lines = (0 until newSettings.height)
     columns = (0 until newSettings.width)
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
     ubyteClearB = newSettings.clearColor.b.toUByte
-    SDL_Init(SDL_INIT_VIDEO)
     window = SDL_CreateWindow(
       c"Minart",
       SDL_WINDOWPOS_CENTERED,
@@ -53,10 +60,6 @@ class SdlCanvas() extends LowLevelCanvas {
     keyboardInput = KeyboardInput(Set(), Set(), Set())
     currentSettings = newSettings
   }
-  def unsafeDestroy() = {
-    SDL_Quit()
-  }
-  def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
     pixelSize.foreach { dy =>
