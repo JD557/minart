@@ -28,6 +28,8 @@ class SdlCanvas() extends LowLevelCanvas {
   private[this] var ubyteClearG: UByte = _
   private[this] var ubyteClearB: UByte = _
 
+  private[this] var windowWidth: Int = _
+
   def unsafeInit(newSettings: Canvas.Settings) = {
     pixelSize = (0 until newSettings.scale)
     lines = (0 until newSettings.height)
@@ -44,8 +46,9 @@ class SdlCanvas() extends LowLevelCanvas {
       newSettings.scaledHeight,
       SDL_WINDOW_SHOWN
     )
-    SDL_SetWindowFullscreen(window, if (newSettings.fullScreen) SDL_WINDOW_FULLSCREEN.toUInt else 0.toUInt)
+    SDL_SetWindowFullscreen(window, if (newSettings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP.toUInt else 0.toUInt)
     surface = SDL_GetWindowSurface(window)
+    windowWidth = surface.w
     renderer = SDL_CreateSoftwareRenderer(surface)
     keyboardInput = KeyboardInput(Set(), Set(), Set())
     currentSettings = newSettings
@@ -57,7 +60,7 @@ class SdlCanvas() extends LowLevelCanvas {
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
     pixelSize.foreach { dy =>
-      val lineBase = (y * currentSettings.scale + dy) * currentSettings.scaledWidth
+      val lineBase = (y * currentSettings.scale + dy) * windowWidth
       pixelSize.foreach { dx =>
         val baseAddr = 4 * (lineBase + (x * currentSettings.scale + dx))
         surface.pixels(baseAddr + 0) = c.b.toByte
@@ -69,7 +72,7 @@ class SdlCanvas() extends LowLevelCanvas {
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
     // Assuming a BGRA surface
-    val lineBase = y * currentSettings.scaledWidth
+    val lineBase = y * windowWidth
     val baseAddr = 4 * (lineBase + x)
     surface.pixels(baseAddr + 0) = c.b.toByte
     surface.pixels(baseAddr + 1) = c.g.toByte
@@ -83,7 +86,7 @@ class SdlCanvas() extends LowLevelCanvas {
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     // Assuming a BGRA surface
-    val baseAddr = 4 * (y * currentSettings.scale * currentSettings.scaledWidth + (x * currentSettings.scale))
+    val baseAddr = 4 * (y * currentSettings.scale * windowWidth + (x * currentSettings.scale))
     Color(
       (surface.pixels(baseAddr + 2) & 0xff),
       (surface.pixels(baseAddr + 1) & 0xff),
@@ -93,7 +96,7 @@ class SdlCanvas() extends LowLevelCanvas {
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     lines.map { y =>
-      val lineBase = y * currentSettings.scale * currentSettings.scaledWidth
+      val lineBase = y * currentSettings.scale * windowWidth
       columns.map { x =>
         val baseAddr = 4 * (lineBase + (x * currentSettings.scale))
         Color(
