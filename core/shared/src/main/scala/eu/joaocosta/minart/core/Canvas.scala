@@ -97,12 +97,16 @@ object Canvas {
       scale: Int = 1,
       fullScreen: Boolean = false,
       clearColor: Color = Color(255, 255, 255)
-  ) {
+  )
 
-    /** The canvas width with the integer scaling applied. */
-    lazy val scaledWidth = width * scale
-
-    /** The canvas height with the integer scaling applied. */
-    lazy val scaledHeight = height * scale
+  /** Internal data structure containing canvas settings and precomputed values.
+    */
+  case class ExtendedSettings(settings: Settings) {
+    val scaledWidth  = settings.width * settings.scale
+    val scaledHeight = settings.height * settings.scale
+    val allPixels    = (0 until scaledHeight * scaledWidth)
+    val pixelSize    = (0 until settings.scale)
+    val lines        = (0 until settings.height)
+    val columns      = (0 until settings.width)
   }
 }

@@ -22,11 +22,6 @@ class AwtCanvas() extends LowLevelCanvas {
   private[this] var keyListener: AwtCanvas.KeyListener     = _
   private[this] var mouseListener: AwtCanvas.MouseListener = _
 
-  private[this] var allPixels: Range = _
-  private[this] var pixelSize: Range = _
-  private[this] var lines: Range     = _
-  private[this] var columns: Range   = _
-
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     changeSettings(newSettings)
   }
@@ -35,14 +30,15 @@ class AwtCanvas() extends LowLevelCanvas {
     javaCanvas = null
   }
   def changeSettings(newSettings: Canvas.Settings) = {
-    if (newSettings != currentSettings) {
+    if (currentSettings == null || newSettings != currentSettings.settings) {
+      val extendedSettings = Canvas.ExtendedSettings(newSettings)
       if (javaCanvas != null) javaCanvas.frame.dispose()
-      allPixels = (0 until (newSettings.scaledHeight * newSettings.scaledWidth))
-      pixelSize = (0 until newSettings.scale)
-      lines = (0 until newSettings.height)
-      columns = (0 until newSettings.width)
-      javaCanvas =
-        new AwtCanvas.InnerCanvas(newSettings.scaledWidth, newSettings.scaledHeight, newSettings.fullScreen, this)
+      javaCanvas = new AwtCanvas.InnerCanvas(
+        extendedSettings.scaledWidth,
+        extendedSettings.scaledHeight,
+        newSettings.fullScreen,
+        this
+      )
       keyListener = new AwtCanvas.KeyListener()
       mouseListener = new AwtCanvas.MouseListener(() =>
         for {
@@ -53,7 +49,7 @@ class AwtCanvas() extends LowLevelCanvas {
       )
       javaCanvas.addKeyListener(keyListener)
       javaCanvas.addMouseListener(mouseListener)
-      currentSettings = newSettings
+      currentSettings = extendedSettings
     }
   }
 
@@ -61,10 +57,10 @@ class AwtCanvas() extends LowLevelCanvas {
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    pixelSize.foreach { dy =>
-      val lineBase = (y * currentSettings.scale + dy) * currentSettings.scaledWidth
-      pixelSize.foreach { dx =>
-        val baseAddr = lineBase + (x * currentSettings.scale + dx)
+    currentSettings.pixelSize.foreach { dy =>
+      val lineBase = (y * currentSettings.settings.scale + dy) * currentSettings.scaledWidth
+      currentSettings.pixelSize.foreach { dx =>
+        val baseAddr = lineBase + (x * currentSettings.settings.scale + dx)
         javaCanvas.imagePixels
           .setElem(baseAddr, c.argb)
       }
@@ -75,24 +71,24 @@ class AwtCanvas() extends LowLevelCanvas {
       .setElem(y * currentSettings.scaledWidth + x % currentSettings.scaledWidth, c.argb)
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (currentSettings.scale == 1) putPixelUnscaled(x, y, color)
+    if (currentSettings.settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     Color.fromRGB(
       javaCanvas.imagePixels.getElem(
-        y * currentSettings.scale * currentSettings.scaledWidth + (x * currentSettings.scale)
+        y * currentSettings.settings.scale * currentSettings.scaledWidth + (x * currentSettings.settings.scale)
       )
     )
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val flatData = javaCanvas.imagePixels.getData()
-    lines.map { y =>
-      val lineBase = y * currentSettings.scale * currentSettings.scaledWidth
-      columns.map { x =>
-        val baseAddr = (lineBase + (x * currentSettings.scale))
+    currentSettings.lines.map { y =>
+      val lineBase = y * currentSettings.settings.scale * currentSettings.scaledWidth
+      currentSettings.columns.map { x =>
+        val baseAddr = (lineBase + (x * currentSettings.settings.scale))
         Color.fromRGB(flatData(baseAddr))
       }.toVector
     }.toVector
@@ -100,7 +96,9 @@ class AwtCanvas() extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, currentSettings.clearColor.argb))
+      currentSettings.allPixels.foreach(i =>
+        javaCanvas.imagePixels.setElem(i, currentSettings.settings.clearColor.argb)
+      )
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()

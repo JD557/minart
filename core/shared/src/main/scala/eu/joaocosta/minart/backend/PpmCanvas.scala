@@ -12,7 +12,7 @@ class PpmCanvas() extends LowLevelCanvas {
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     buffer = Array.fill(newSettings.height)(Array.fill(newSettings.width)(newSettings.clearColor))
-    currentSettings = newSettings
+    currentSettings = Canvas.ExtendedSettings(newSettings)
   }
   def unsafeDestroy(): Unit                        = ()
   def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
@@ -25,7 +25,7 @@ class PpmCanvas() extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      buffer.foreach(_.transform(_ => currentSettings.clearColor))
+      buffer.foreach(_.transform(_ => currentSettings.settings.clearColor))
     }
   }
 
@@ -35,9 +35,9 @@ class PpmCanvas() extends LowLevelCanvas {
     println("255")
     for {
       line           <- buffer
-      _              <- (0 until currentSettings.scale)
+      _              <- currentSettings.pixelSize
       Color(r, g, b) <- line
-      _              <- (0 until currentSettings.scale)
+      _              <- currentSettings.pixelSize
     } println(s"$r $g $b")
   }
 

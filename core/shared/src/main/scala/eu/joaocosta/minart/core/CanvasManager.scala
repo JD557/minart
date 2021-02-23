@@ -7,7 +7,7 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
   */
 trait CanvasManager { canvas: Canvas =>
 
-  protected[this] var currentSettings: Canvas.Settings = null
+  protected[this] var currentSettings: Canvas.ExtendedSettings = null
 
   protected def unsafeInit(settings: Canvas.Settings): Unit
   protected def unsafeDestroy(): Unit
@@ -23,7 +23,7 @@ trait CanvasManager { canvas: Canvas =>
     * @return canvas object linked to the created window
     */
   def init(settings: Canvas.Settings): Canvas = {
-    if (isCreated && settings != currentSettings) {
+    if (isCreated) {
       destroy()
     }
     if (!isCreated) {

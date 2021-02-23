@@ -5,7 +5,7 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
 /** A low-level version of a canvas that provides its own canvas manager.
   */
 trait LowLevelCanvas extends Canvas with CanvasManager {
-  def settings: Option[Canvas.Settings] = Option(currentSettings)
+  def settings: Option[Canvas.Settings] = Option(currentSettings).map(_.settings)
 }
 
 object LowLevelCanvas {

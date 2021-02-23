@@ -20,10 +20,6 @@ class SdlCanvas() extends LowLevelCanvas {
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   private[this] var mouseInput: PointerInput     = PointerInput(None, Nil, Nil, false)
 
-  private[this] var pixelSize: Range = _
-  private[this] var lines: Range     = _
-  private[this] var columns: Range   = _
-
   private[this] var ubyteClearR: UByte = _
   private[this] var ubyteClearG: UByte = _
   private[this] var ubyteClearB: UByte = _
@@ -37,11 +33,11 @@ class SdlCanvas() extends LowLevelCanvas {
   def unsafeDestroy() = {
     SDL_Quit()
   }
-  def changeSettings(newSettings: Canvas.Settings) = if (newSettings != currentSettings) {
+  def changeSettings(newSettings: Canvas.Settings) = if (
+    currentSettings == null || newSettings != currentSettings.settings
+  ) {
+    val extendedSettings = Canvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
-    pixelSize = (0 until newSettings.scale)
-    lines = (0 until newSettings.height)
-    columns = (0 until newSettings.width)
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
     ubyteClearB = newSettings.clearColor.b.toUByte
@@ -49,23 +45,23 @@ class SdlCanvas() extends LowLevelCanvas {
       c"Minart",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
-      newSettings.scaledWidth,
-      newSettings.scaledHeight,
-      if (newSettings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
+      extendedSettings.scaledWidth,
+      extendedSettings.scaledHeight,
+      if (extendedSettings.settings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
       else SDL_WINDOW_SHOWN
     )
     surface = SDL_GetWindowSurface(window)
     windowWidth = surface.w
     renderer = SDL_CreateSoftwareRenderer(surface)
     keyboardInput = KeyboardInput(Set(), Set(), Set())
-    currentSettings = newSettings
+    currentSettings = extendedSettings
   }
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
-    pixelSize.foreach { dy =>
-      val lineBase = (y * currentSettings.scale + dy) * windowWidth
-      pixelSize.foreach { dx =>
-        val baseAddr = 4 * (lineBase + (x * currentSettings.scale + dx))
+    currentSettings.pixelSize.foreach { dy =>
+      val lineBase = (y * currentSettings.settings.scale + dy) * windowWidth
+      currentSettings.pixelSize.foreach { dx =>
+        val baseAddr = 4 * (lineBase + (x * currentSettings.settings.scale + dx))
         surface.pixels(baseAddr + 0) = c.b.toByte
         surface.pixels(baseAddr + 1) = c.g.toByte
         surface.pixels(baseAddr + 2) = c.r.toByte
@@ -83,13 +79,13 @@ class SdlCanvas() extends LowLevelCanvas {
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (currentSettings.scale == 1) putPixelUnscaled(x, y, color)
+    if (currentSettings.settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     // Assuming a BGRA surface
-    val baseAddr = 4 * (y * currentSettings.scale * windowWidth + (x * currentSettings.scale))
+    val baseAddr = 4 * (y * currentSettings.settings.scale * windowWidth + (x * currentSettings.settings.scale))
     Color(
       (surface.pixels(baseAddr + 2) & 0xff),
       (surface.pixels(baseAddr + 1) & 0xff),
@@ -98,10 +94,10 @@ class SdlCanvas() extends LowLevelCanvas {
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
-    lines.map { y =>
-      val lineBase = y * currentSettings.scale * windowWidth
-      columns.map { x =>
-        val baseAddr = 4 * (lineBase + (x * currentSettings.scale))
+    currentSettings.lines.map { y =>
+      val lineBase = y * currentSettings.settings.scale * windowWidth
+      currentSettings.columns.map { x =>
+        val baseAddr = 4 * (lineBase + (x * currentSettings.settings.scale))
         Color(
           (surface.pixels(baseAddr + 2) & 0xff),
           (surface.pixels(baseAddr + 1) & 0xff),
@@ -128,7 +124,10 @@ class SdlCanvas() extends LowLevelCanvas {
         case SDL_MOUSEMOTION =>
           mouseInput = mouseInput.move(
             Option(
-              PointerInput.Position(event.motion.x / currentSettings.scale, event.motion.y / currentSettings.scale)
+              PointerInput.Position(
+                event.motion.x / currentSettings.settings.scale,
+                event.motion.y / currentSettings.settings.scale
+              )
             )
           )
           true
