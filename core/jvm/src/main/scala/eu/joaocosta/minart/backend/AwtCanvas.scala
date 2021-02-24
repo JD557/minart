@@ -49,7 +49,10 @@ class AwtCanvas() extends LowLevelCanvas {
       )
       javaCanvas.addKeyListener(keyListener)
       javaCanvas.addMouseListener(mouseListener)
-      currentSettings = extendedSettings
+      currentSettings = extendedSettings.copy(
+        windowWidth = javaCanvas.getWidth,
+        windowHeight = javaCanvas.getHeight
+      )
     }
   }
 
@@ -110,7 +113,14 @@ class AwtCanvas() extends LowLevelCanvas {
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
-    g.drawImage(javaCanvas.image, 0, 0, currentSettings.scaledWidth, currentSettings.scaledHeight, javaCanvas)
+    g.drawImage(
+      javaCanvas.image,
+      currentSettings.canvasX,
+      currentSettings.canvasY,
+      currentSettings.scaledWidth,
+      currentSettings.scaledHeight,
+      javaCanvas
+    )
     g.dispose()
     javaCanvas.buffStrategy.show()
   } catch { case _: Throwable => () }
