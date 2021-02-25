@@ -14,6 +14,8 @@ import java.awt.GraphicsDevice
 
 import java.awt.GraphicsEnvironment
 
+import eu.joaocosta.minart.core.Canvas.Resource
+
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
 class AwtCanvas() extends LowLevelCanvas {
@@ -53,6 +55,7 @@ class AwtCanvas() extends LowLevelCanvas {
         windowWidth = javaCanvas.getWidth,
         windowHeight = javaCanvas.getHeight
       )
+      clear(Set(Resource.Backbuffer))
     }
   }
 
@@ -97,7 +100,7 @@ class AwtCanvas() extends LowLevelCanvas {
     }.toVector
   }
 
-  def clear(resources: Set[Canvas.Resource]): Unit = {
+  def clear(resources: Set[Canvas.Resource]): Unit = try {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
       currentSettings.allPixels.foreach(i =>
         javaCanvas.imagePixels.setElem(i, currentSettings.settings.clearColor.argb)
@@ -109,7 +112,7 @@ class AwtCanvas() extends LowLevelCanvas {
     if (resources.contains(Canvas.Resource.Pointer)) {
       mouseListener.clearPressRelease()
     }
-  }
+  } catch { case _: Throwable => () }
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()

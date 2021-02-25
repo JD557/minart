@@ -82,7 +82,6 @@ class HtmlCanvas() extends LowLevelCanvas {
         handleMove(x, y)
       }
     )
-    clear(Set(Canvas.Resource.Backbuffer)) // Sets the clear color and the alpha to 255
   }
   def unsafeDestroy(): Unit = if (childNode != null) {
     dom.document.body.removeChild(childNode)
@@ -103,6 +102,7 @@ class HtmlCanvas() extends LowLevelCanvas {
       dom.document.exitFullscreen()
     }
     currentSettings = extendedSettings
+    clear(Set(Canvas.Resource.Backbuffer))
   }
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =

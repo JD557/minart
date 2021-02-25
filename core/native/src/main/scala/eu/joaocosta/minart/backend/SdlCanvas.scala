@@ -55,6 +55,7 @@ class SdlCanvas() extends LowLevelCanvas {
       windowWidth = surface.w,
       windowHeight = surface.h
     )
+    clear(Set(Canvas.Resource.Backbuffer))
   }
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
