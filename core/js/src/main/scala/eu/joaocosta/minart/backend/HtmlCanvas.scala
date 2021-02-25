@@ -6,6 +6,8 @@ import org.scalajs.dom.raw.{ImageData, MouseEvent, KeyboardEvent, TouchEvent}
 
 import eu.joaocosta.minart.core._
 
+import org.scalajs.dom.raw.Event
+
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
 class HtmlCanvas() extends LowLevelCanvas {
@@ -22,6 +24,11 @@ class HtmlCanvas() extends LowLevelCanvas {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     changeSettings(newSettings)
+    dom.document.addEventListener[Event](
+      "fullscreenchange",
+      (_: Event) =>
+        if (dom.document.fullscreenElement == null) changeSettings(currentSettings.settings.copy(fullScreen = false))
+    )
     dom.document.addEventListener[KeyboardEvent](
       "keydown",
       (ev: KeyboardEvent) => {
