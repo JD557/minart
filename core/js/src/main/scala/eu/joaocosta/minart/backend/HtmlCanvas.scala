@@ -90,18 +90,21 @@ class HtmlCanvas() extends LowLevelCanvas {
   def changeSettings(newSettings: Canvas.Settings) = if (
     currentSettings == null || newSettings != currentSettings.settings
   ) {
-    val extendedSettings = Canvas.ExtendedSettings(newSettings)
-    canvas.width = extendedSettings.scaledWidth
-    canvas.height = extendedSettings.scaledHeight
+    val extendedSettings =
+      Canvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
+    canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else extendedSettings.scaledWidth
+    canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else extendedSettings.scaledHeight
     childNode = dom.document.body.appendChild(canvas)
     buffer = ctx.getImageData(0, 0, extendedSettings.scaledWidth, extendedSettings.scaledHeight)
 
     if (newSettings.fullScreen) {
       canvas.requestFullscreen()
-    } else {
+    } else if (dom.document.fullscreenElement != null) {
       dom.document.exitFullscreen()
     }
     currentSettings = extendedSettings
+    ctx.fillStyle = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
+    ctx.fillRect(0, 0, currentSettings.windowWidth, currentSettings.windowHeight)
     clear(Set(Canvas.Resource.Backbuffer))
   }
 
@@ -165,7 +168,10 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
 
   def redraw(): Unit = {
-    ctx.putImageData(buffer, 0, 0)
+    if (currentSettings.settings.fullScreen)
+      ctx.putImageData(buffer, currentSettings.canvasX, currentSettings.canvasY)
+    else
+      ctx.putImageData(buffer, 0, 0)
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput

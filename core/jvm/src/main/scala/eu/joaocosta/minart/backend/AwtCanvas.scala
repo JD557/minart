@@ -116,6 +116,13 @@ class AwtCanvas() extends LowLevelCanvas {
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
+    g.setColor(new JavaColor(currentSettings.settings.clearColor.rgb))
+    g.fillRect(
+      0,
+      0,
+      javaCanvas.getWidth,
+      javaCanvas.getHeight
+    )
     g.drawImage(
       javaCanvas.image,
       currentSettings.canvasX,

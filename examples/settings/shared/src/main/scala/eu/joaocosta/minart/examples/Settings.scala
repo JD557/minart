@@ -5,8 +5,9 @@ import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
 object Settings {
-  val settingsA = Canvas.Settings(width = 128, height = 128, scale = 4)
-  val settingsB = Canvas.Settings(width = 640, height = 480, scale = 1, fullScreen = true)
+  val settingsA = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(128, 255, 128))
+  val settingsB =
+    Canvas.Settings(width = 640, height = 480, scale = 1, fullScreen = true, clearColor = Color(128, 255, 128))
 
   def main(args: Array[String]): Unit = {
     RenderLoop
