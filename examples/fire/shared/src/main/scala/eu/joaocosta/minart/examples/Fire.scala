@@ -10,17 +10,11 @@ object Fire {
 
   def main(args: Array[String]): Unit = {
 
-    val canvas = LowLevelCanvas.default()
-
-    canvas.init(canvasSettings)
-    canvas.clear()
-    canvas.redraw()
-
     var temperatureMod = 1.0
 
-    def automata(backbuffer: Vector[Vector[Color]], x: Int, y: Int): Color = {
+    def automata(backbuffer: Vector[Vector[Color]], x: Int, y: Int, w: Int): Color = {
       val neighbors =
-        (math.max(0, x - 1) to math.min(x + 1, canvas.settings.get.width - 1)).toList.map { xx =>
+        (math.max(0, x - 1) to math.min(x + 1, w - 1)).toList.map { xx =>
           backbuffer(y + 1)(xx)
         }
       val randomLoss  = 0.8 + (scala.util.Random.nextDouble() / 5)
@@ -35,11 +29,11 @@ object Fire {
     RenderLoop
       .default()
       .infiniteRenderLoop(
-        canvas,
+        CanvasManager.default(),
         canvasSettings,
-        safeCanvas => {
-          val keys            = safeCanvas.getKeyboardInput()
-          val (width, height) = safeCanvas.settings.map(s => (s.width, s.height)).getOrElse((0, 0))
+        canvas => {
+          val keys            = canvas.getKeyboardInput()
+          val (width, height) = (canvas.settings.width, canvas.settings.height)
           if (keys.isDown(KeyboardInput.Key.Up)) temperatureMod = math.min(temperatureMod + 0.1, 1.0)
           else if (keys.isDown(KeyboardInput.Key.Down)) temperatureMod = math.max(0.1, temperatureMod - 0.1)
           // Add bottom fire root
@@ -65,7 +59,7 @@ object Fire {
             x <- (0 until width)
             y <- (0 until (height - 1)).reverse
           } {
-            val color = automata(backbuffer, x, y)
+            val color = automata(backbuffer, x, y, canvas.settings.width)
             canvas.putPixel(x, y, color)
           }
           canvas.redraw()

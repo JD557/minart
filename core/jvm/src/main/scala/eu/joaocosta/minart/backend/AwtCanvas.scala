@@ -32,8 +32,8 @@ class AwtCanvas() extends LowLevelCanvas {
     javaCanvas = null
   }
   def changeSettings(newSettings: Canvas.Settings) = {
-    if (currentSettings == null || newSettings != currentSettings.settings) {
-      val extendedSettings = Canvas.ExtendedSettings(newSettings)
+    if (extendedSettings == null || newSettings != settings) {
+      extendedSettings = Canvas.ExtendedSettings(newSettings)
       if (javaCanvas != null) javaCanvas.frame.dispose()
       javaCanvas = new AwtCanvas.InnerCanvas(
         extendedSettings.scaledWidth,
@@ -51,7 +51,7 @@ class AwtCanvas() extends LowLevelCanvas {
       )
       javaCanvas.addKeyListener(keyListener)
       javaCanvas.addMouseListener(mouseListener)
-      currentSettings = extendedSettings.copy(
+      extendedSettings = extendedSettings.copy(
         windowWidth = javaCanvas.getWidth,
         windowHeight = javaCanvas.getHeight
       )
@@ -63,10 +63,10 @@ class AwtCanvas() extends LowLevelCanvas {
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    currentSettings.pixelSize.foreach { dy =>
-      val lineBase = (y * currentSettings.settings.scale + dy) * currentSettings.scaledWidth
-      currentSettings.pixelSize.foreach { dx =>
-        val baseAddr = lineBase + (x * currentSettings.settings.scale + dx)
+    extendedSettings.pixelSize.foreach { dy =>
+      val lineBase = (y * settings.scale + dy) * extendedSettings.scaledWidth
+      extendedSettings.pixelSize.foreach { dx =>
+        val baseAddr = lineBase + (x * settings.scale + dx)
         javaCanvas.imagePixels
           .setElem(baseAddr, c.argb)
       }
@@ -74,27 +74,27 @@ class AwtCanvas() extends LowLevelCanvas {
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit =
     javaCanvas.imagePixels
-      .setElem(y * currentSettings.scaledWidth + x % currentSettings.scaledWidth, c.argb)
+      .setElem(y * extendedSettings.scaledWidth + x % extendedSettings.scaledWidth, c.argb)
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (currentSettings.settings.scale == 1) putPixelUnscaled(x, y, color)
+    if (settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     Color.fromRGB(
       javaCanvas.imagePixels.getElem(
-        y * currentSettings.settings.scale * currentSettings.scaledWidth + (x * currentSettings.settings.scale)
+        y * settings.scale * extendedSettings.scaledWidth + (x * settings.scale)
       )
     )
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val flatData = javaCanvas.imagePixels.getData()
-    currentSettings.lines.map { y =>
-      val lineBase = y * currentSettings.settings.scale * currentSettings.scaledWidth
-      currentSettings.columns.map { x =>
-        val baseAddr = (lineBase + (x * currentSettings.settings.scale))
+    extendedSettings.lines.map { y =>
+      val lineBase = y * settings.scale * extendedSettings.scaledWidth
+      extendedSettings.columns.map { x =>
+        val baseAddr = (lineBase + (x * settings.scale))
         Color.fromRGB(flatData(baseAddr))
       }.toVector
     }.toVector
@@ -102,9 +102,7 @@ class AwtCanvas() extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = try {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      currentSettings.allPixels.foreach(i =>
-        javaCanvas.imagePixels.setElem(i, currentSettings.settings.clearColor.argb)
-      )
+      extendedSettings.allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
@@ -116,7 +114,7 @@ class AwtCanvas() extends LowLevelCanvas {
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
-    g.setColor(new JavaColor(currentSettings.settings.clearColor.rgb))
+    g.setColor(new JavaColor(settings.clearColor.rgb))
     g.fillRect(
       0,
       0,
@@ -125,10 +123,10 @@ class AwtCanvas() extends LowLevelCanvas {
     )
     g.drawImage(
       javaCanvas.image,
-      currentSettings.canvasX,
-      currentSettings.canvasY,
-      currentSettings.scaledWidth,
-      currentSettings.scaledHeight,
+      extendedSettings.canvasX,
+      extendedSettings.canvasY,
+      extendedSettings.scaledWidth,
+      extendedSettings.scaledHeight,
       javaCanvas
     )
     g.dispose()

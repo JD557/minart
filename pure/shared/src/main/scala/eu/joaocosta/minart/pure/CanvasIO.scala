@@ -25,7 +25,7 @@ object CanvasIO {
   def pollFuture[A](future: Future[A]): CanvasIO[Option[Try[A]]] = RIO.pollFuture(future)
 
   /** Fetches the canvas settings. */
-  val getSettings: CanvasIO[Option[Canvas.Settings]] = accessCanvas(_.settings)
+  val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
 
   /** Puts a pixel in the back buffer with a certain color.
     *

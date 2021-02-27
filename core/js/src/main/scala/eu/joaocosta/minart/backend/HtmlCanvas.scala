@@ -26,8 +26,7 @@ class HtmlCanvas() extends LowLevelCanvas {
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
       "fullscreenchange",
-      (_: Event) =>
-        if (dom.document.fullscreenElement == null) changeSettings(currentSettings.settings.copy(fullScreen = false))
+      (_: Event) => if (dom.document.fullscreenElement == null) changeSettings(settings.copy(fullScreen = false))
     )
     dom.document.addEventListener[KeyboardEvent](
       "keydown",
@@ -45,7 +44,7 @@ class HtmlCanvas() extends LowLevelCanvas {
     def handlePress() = { pointerInput = pointerInput.press }
     def handleRelease() = { pointerInput = pointerInput.release }
     def handleMove(x: Int, y: Int) = {
-      if (x >= 0 && y >= 0 && x < currentSettings.scaledWidth && y < currentSettings.scaledHeight) {
+      if (x >= 0 && y >= 0 && x < extendedSettings.scaledWidth && y < extendedSettings.scaledHeight) {
         pointerInput = pointerInput.move(Some(PointerInput.Position(x / newSettings.scale, y / newSettings.scale)))
       } else {
         pointerInput = pointerInput.move(None)
@@ -87,10 +86,8 @@ class HtmlCanvas() extends LowLevelCanvas {
     dom.document.body.removeChild(childNode)
     childNode = null
   }
-  def changeSettings(newSettings: Canvas.Settings) = if (
-    currentSettings == null || newSettings != currentSettings.settings
-  ) {
-    val extendedSettings =
+  def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
+    extendedSettings =
       Canvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
     canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else extendedSettings.scaledWidth
     canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else extendedSettings.scaledHeight
@@ -102,17 +99,16 @@ class HtmlCanvas() extends LowLevelCanvas {
     } else if (dom.document.fullscreenElement != null) {
       dom.document.exitFullscreen()
     }
-    currentSettings = extendedSettings
     ctx.fillStyle = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
-    ctx.fillRect(0, 0, currentSettings.windowWidth, currentSettings.windowHeight)
+    ctx.fillRect(0, 0, extendedSettings.windowWidth, extendedSettings.windowHeight)
     clear(Set(Canvas.Resource.Backbuffer))
   }
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    currentSettings.pixelSize.foreach { dy =>
-      val lineBase = (y * currentSettings.settings.scale + dy) * currentSettings.scaledWidth
-      currentSettings.pixelSize.foreach { dx =>
-        val baseAddr = 4 * (lineBase + (x * currentSettings.settings.scale + dx))
+    extendedSettings.pixelSize.foreach { dy =>
+      val lineBase = (y * settings.scale + dy) * extendedSettings.scaledWidth
+      extendedSettings.pixelSize.foreach { dx =>
+        val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
         buffer.data(baseAddr + 0) = c.r
         buffer.data(baseAddr + 1) = c.g
         buffer.data(baseAddr + 2) = c.b
@@ -120,7 +116,7 @@ class HtmlCanvas() extends LowLevelCanvas {
     }
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
-    val lineBase = y * currentSettings.scaledWidth
+    val lineBase = y * extendedSettings.scaledWidth
     val baseAddr = 4 * (lineBase + x)
     buffer.data(baseAddr + 0) = c.r
     buffer.data(baseAddr + 1) = c.g
@@ -128,22 +124,22 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (currentSettings.settings.scale == 1) putPixelUnscaled(x, y, color)
+    if (settings.scale == 1) putPixelUnscaled(x, y, color)
     else putPixelScaled(x, y, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     val baseAddr =
-      4 * (y * currentSettings.settings.scale * currentSettings.scaledWidth + (x * currentSettings.settings.scale))
+      4 * (y * settings.scale * extendedSettings.scaledWidth + (x * settings.scale))
     Color(buffer.data(baseAddr + 0), buffer.data(baseAddr + 1), buffer.data(baseAddr + 2))
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val imgData = buffer.data
-    currentSettings.lines.map { y =>
-      val lineBase = y * currentSettings.settings.scale * currentSettings.scaledWidth
-      currentSettings.columns.map { x =>
-        val baseAddr = 4 * (lineBase + (x * currentSettings.settings.scale))
+    extendedSettings.lines.map { y =>
+      val lineBase = y * settings.scale * extendedSettings.scaledWidth
+      extendedSettings.columns.map { x =>
+        val baseAddr = 4 * (lineBase + (x * settings.scale))
         Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
       }.toVector
     }.toVector
@@ -151,11 +147,11 @@ class HtmlCanvas() extends LowLevelCanvas {
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      currentSettings.allPixels.foreach { i =>
+      extendedSettings.allPixels.foreach { i =>
         val base = 4 * i
-        buffer.data(base + 0) = currentSettings.settings.clearColor.r
-        buffer.data(base + 1) = currentSettings.settings.clearColor.g
-        buffer.data(base + 2) = currentSettings.settings.clearColor.b
+        buffer.data(base + 0) = settings.clearColor.r
+        buffer.data(base + 1) = settings.clearColor.g
+        buffer.data(base + 2) = settings.clearColor.b
         buffer.data(base + 3) = 255
       }
     }
@@ -168,8 +164,8 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
 
   def redraw(): Unit = {
-    if (currentSettings.settings.fullScreen)
-      ctx.putImageData(buffer, currentSettings.canvasX, currentSettings.canvasY)
+    if (settings.fullScreen)
+      ctx.putImageData(buffer, extendedSettings.canvasX, extendedSettings.canvasY)
     else
       ctx.putImageData(buffer, 0, 0)
   }

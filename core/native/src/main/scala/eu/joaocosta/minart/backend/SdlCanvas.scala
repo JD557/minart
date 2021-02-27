@@ -31,10 +31,8 @@ class SdlCanvas() extends LowLevelCanvas {
   def unsafeDestroy() = {
     SDL_Quit()
   }
-  def changeSettings(newSettings: Canvas.Settings) = if (
-    currentSettings == null || newSettings != currentSettings.settings
-  ) {
-    val extendedSettings = Canvas.ExtendedSettings(newSettings)
+  def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
+    extendedSettings = Canvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
@@ -51,7 +49,7 @@ class SdlCanvas() extends LowLevelCanvas {
     surface = SDL_GetWindowSurface(window)
     renderer = SDL_CreateSoftwareRenderer(surface)
     keyboardInput = KeyboardInput(Set(), Set(), Set())
-    currentSettings = extendedSettings.copy(
+    extendedSettings = extendedSettings.copy(
       windowWidth = surface.w,
       windowHeight = surface.h
     )
@@ -59,10 +57,10 @@ class SdlCanvas() extends LowLevelCanvas {
   }
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit = {
-    currentSettings.pixelSize.foreach { dy =>
-      val lineBase = (y * currentSettings.settings.scale + dy) * currentSettings.windowWidth
-      currentSettings.pixelSize.foreach { dx =>
-        val baseAddr = 4 * (lineBase + (x * currentSettings.settings.scale + dx))
+    extendedSettings.pixelSize.foreach { dy =>
+      val lineBase = (y * settings.scale + dy) * extendedSettings.windowWidth
+      extendedSettings.pixelSize.foreach { dx =>
+        val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
         surface.pixels(baseAddr + 0) = c.b.toByte
         surface.pixels(baseAddr + 1) = c.g.toByte
         surface.pixels(baseAddr + 2) = c.r.toByte
@@ -72,7 +70,7 @@ class SdlCanvas() extends LowLevelCanvas {
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
     // Assuming a BGRA surface
-    val lineBase = y * currentSettings.windowWidth
+    val lineBase = y * extendedSettings.windowWidth
     val baseAddr = 4 * (lineBase + x)
     surface.pixels(baseAddr + 0) = c.b.toByte
     surface.pixels(baseAddr + 1) = c.g.toByte
@@ -80,17 +78,17 @@ class SdlCanvas() extends LowLevelCanvas {
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (currentSettings.settings.scale == 1)
-      putPixelUnscaled(x + currentSettings.canvasX, y + currentSettings.canvasY, color)
-    else putPixelScaled(x + currentSettings.canvasX, y + currentSettings.canvasY, color)
+    if (settings.scale == 1)
+      putPixelUnscaled(x + extendedSettings.canvasX, y + extendedSettings.canvasY, color)
+    else putPixelScaled(x + extendedSettings.canvasX, y + extendedSettings.canvasY, color)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    val xx = currentSettings.canvasX + x
-    val yy = currentSettings.canvasY + y
+    val xx = extendedSettings.canvasX + x
+    val yy = extendedSettings.canvasY + y
     // Assuming a BGRA surface
     val baseAddr =
-      4 * (yy * currentSettings.settings.scale * currentSettings.windowWidth + (xx * currentSettings.settings.scale))
+      4 * (yy * settings.scale * extendedSettings.windowWidth + (xx * settings.scale))
     Color(
       (surface.pixels(baseAddr + 2) & 0xff),
       (surface.pixels(baseAddr + 1) & 0xff),
@@ -99,12 +97,12 @@ class SdlCanvas() extends LowLevelCanvas {
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
-    currentSettings.lines.map { y =>
-      val yy       = currentSettings.canvasY + y
-      val lineBase = yy * currentSettings.settings.scale * currentSettings.windowWidth
-      currentSettings.columns.map { x =>
-        val xx       = currentSettings.canvasX + x
-        val baseAddr = 4 * (lineBase + (xx * currentSettings.settings.scale))
+    extendedSettings.lines.map { y =>
+      val yy       = extendedSettings.canvasY + y
+      val lineBase = yy * settings.scale * extendedSettings.windowWidth
+      extendedSettings.columns.map { x =>
+        val xx       = extendedSettings.canvasX + x
+        val baseAddr = 4 * (lineBase + (xx * settings.scale))
         Color(
           (surface.pixels(baseAddr + 2) & 0xff),
           (surface.pixels(baseAddr + 1) & 0xff),
@@ -132,8 +130,8 @@ class SdlCanvas() extends LowLevelCanvas {
           mouseInput = mouseInput.move(
             Option(
               PointerInput.Position(
-                event.motion.x / currentSettings.settings.scale,
-                event.motion.y / currentSettings.settings.scale
+                event.motion.x / settings.scale,
+                event.motion.y / settings.scale
               )
             )
           )

@@ -23,7 +23,7 @@ object JavaRenderLoop extends ImpureRenderLoop {
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState  = renderFrame(canvas, state)
-      if (!terminateWhen(newState) && canvasManager.isCreated()) {
+      if (!terminateWhen(newState) && canvas.isCreated()) {
         val endTime  = System.currentTimeMillis()
         val waitTime = frameMillis - (endTime - startTime)
         if (waitTime > 0) Thread.sleep(waitTime)
@@ -31,7 +31,7 @@ object JavaRenderLoop extends ImpureRenderLoop {
       } else ()
     }
     finiteRenderLoopAux(initialState)
-    if (canvasManager.isCreated()) canvasManager.destroy()
+    if (canvas.isCreated()) canvas.destroy()
   }
 
   def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: Canvas => Unit): Unit = {

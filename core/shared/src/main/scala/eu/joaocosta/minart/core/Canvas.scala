@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.core
 
+import eu.joaocosta.minart.backend.defaults.DefaultBackend
+
 /** Canvas that can be painted.
   *
   * The Canvas is the main concept behind minart.
@@ -12,7 +14,7 @@ trait Canvas {
 
   /** The settings applied to this canvas.
     */
-  def settings: Option[Canvas.Settings]
+  def settings: Canvas.Settings
 
   /** Changes the settings applied to this canvas
     *
@@ -71,6 +73,17 @@ trait Canvas {
 }
 
 object Canvas {
+
+  implicit def defaultCanvas(implicit d: DefaultBackend[Any, CanvasManager]): DefaultBackend[Canvas.Settings, Canvas] =
+    DefaultBackend.fromFunction((settings) => d.defaultValue(()).init(settings))
+
+  /** Returns [[Canvas]] for the default backend for the target platform.
+    *
+    * @return [[Canvas]] using the default backend for the target platform
+    */
+  def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Any, CanvasManager]): Canvas = {
+    d.defaultValue().init(settings)
+  }
 
   /** A system resource used by the Canvas.
     */

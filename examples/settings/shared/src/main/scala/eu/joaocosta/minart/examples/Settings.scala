@@ -20,7 +20,7 @@ object Settings {
           c.clear()
           if (keyboardInput.keysPressed(Key.A)) c.changeSettings(settingsA)
           else if (keyboardInput.keysPressed(Key.B)) c.changeSettings(settingsB)
-          val (width, height) = c.settings.map(s => (s.width, s.height)).getOrElse(0, 0)
+          val (width, height) = (c.settings.width, c.settings.height)
           for {
             x <- (0 until width)
             y <- (0 until height)
