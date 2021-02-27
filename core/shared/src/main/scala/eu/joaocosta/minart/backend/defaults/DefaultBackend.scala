@@ -6,6 +6,7 @@ package eu.joaocosta.minart.backend.defaults
   */
 trait DefaultBackend[-A, +B] {
   def defaultValue(params: A): B
+  def defaultValue()(implicit ev: Any <:< A): B = defaultValue(ev(()))
 }
 
 object DefaultBackend {
