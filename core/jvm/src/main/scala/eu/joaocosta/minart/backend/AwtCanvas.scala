@@ -20,6 +20,11 @@ import eu.joaocosta.minart.core.Canvas.Resource
   */
 class AwtCanvas() extends LowLevelCanvas {
 
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
+
   private[this] var javaCanvas: AwtCanvas.InnerCanvas      = _
   private[this] var keyListener: AwtCanvas.KeyListener     = _
   private[this] var mouseListener: AwtCanvas.MouseListener = _

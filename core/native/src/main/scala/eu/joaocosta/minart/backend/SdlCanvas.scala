@@ -13,6 +13,11 @@ import eu.joaocosta.minart.core._
   */
 class SdlCanvas() extends LowLevelCanvas {
 
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
+
   private[this] var window: Ptr[SDL_Window]      = _
   private[this] var surface: Ptr[SDL_Surface]    = _
   private[this] var buffer: Ptr[SDL_Surface]     = _

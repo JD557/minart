@@ -11,6 +11,12 @@ import org.scalajs.dom.raw.Event
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
 class HtmlCanvas() extends LowLevelCanvas {
+
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
+
   private[this] var canvas: JsCanvas                  = _
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _

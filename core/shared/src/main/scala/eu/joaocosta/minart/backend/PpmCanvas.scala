@@ -6,6 +6,12 @@ import eu.joaocosta.minart.core._
   * This canvas doesn't support fetching the keyboard input.
   */
 class PpmCanvas() extends LowLevelCanvas {
+
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
+
   private[this] var buffer: Array[Array[Color]]  = _
   private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())  // Keyboard input not supported
   private[this] val pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false) // Pointer input not supported
