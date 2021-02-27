@@ -5,7 +5,7 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
 /** A low-level version of a canvas that provides its own canvas manager.
   */
 trait LowLevelCanvas extends Canvas {
-  protected[this] var extendedSettings: Canvas.ExtendedSettings = _
+  protected[this] var extendedSettings: LowLevelCanvas.ExtendedSettings = _
   def settings: Canvas.Settings =
     if (extendedSettings == null) Canvas.Settings(0, 0)
     else extendedSettings.settings
@@ -50,4 +50,26 @@ object LowLevelCanvas {
     */
   def default()(implicit d: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
     d.defaultValue()
+
+  /** Internal data structure containing canvas settings and precomputed values.
+    */
+  case class ExtendedSettings(
+      settings: Canvas.Settings,
+      windowWidth: Int,
+      windowHeight: Int
+  ) {
+    val scaledWidth  = settings.width * settings.scale
+    val scaledHeight = settings.height * settings.scale
+    val allPixels    = (0 until scaledHeight * scaledWidth)
+    val pixelSize    = (0 until settings.scale)
+    val lines        = (0 until settings.height)
+    val columns      = (0 until settings.width)
+    val canvasX      = (windowWidth - scaledWidth) / 2
+    val canvasY      = (windowHeight - scaledHeight) / 2
+  }
+
+  object ExtendedSettings {
+    def apply(settings: Canvas.Settings): ExtendedSettings =
+      ExtendedSettings(settings, settings.width * settings.scale, settings.height * settings.scale)
+  }
 }

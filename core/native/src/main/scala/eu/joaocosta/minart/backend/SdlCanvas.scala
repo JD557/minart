@@ -32,7 +32,7 @@ class SdlCanvas() extends LowLevelCanvas {
     SDL_Quit()
   }
   def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
-    extendedSettings = Canvas.ExtendedSettings(newSettings)
+    extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte

@@ -12,7 +12,7 @@ class PpmCanvas() extends LowLevelCanvas {
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     buffer = Array.fill(newSettings.height)(Array.fill(newSettings.width)(newSettings.clearColor))
-    extendedSettings = Canvas.ExtendedSettings(newSettings)
+    extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
   }
   def unsafeDestroy(): Unit                        = ()
   def changeSettings(newSettings: Canvas.Settings) = init(newSettings)

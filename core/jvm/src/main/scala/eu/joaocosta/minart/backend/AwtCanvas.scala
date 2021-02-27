@@ -33,7 +33,7 @@ class AwtCanvas() extends LowLevelCanvas {
   }
   def changeSettings(newSettings: Canvas.Settings) = {
     if (extendedSettings == null || newSettings != settings) {
-      extendedSettings = Canvas.ExtendedSettings(newSettings)
+      extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
       if (javaCanvas != null) javaCanvas.frame.dispose()
       javaCanvas = new AwtCanvas.InnerCanvas(
         extendedSettings.scaledWidth,

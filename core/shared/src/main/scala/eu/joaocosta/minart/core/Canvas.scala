@@ -112,21 +112,4 @@ object Canvas {
       clearColor: Color = Color(255, 255, 255)
   )
 
-  /** Internal data structure containing canvas settings and precomputed values.
-    */
-  case class ExtendedSettings(settings: Settings, windowWidth: Int, windowHeight: Int) {
-    val scaledWidth  = settings.width * settings.scale
-    val scaledHeight = settings.height * settings.scale
-    val allPixels    = (0 until scaledHeight * scaledWidth)
-    val pixelSize    = (0 until settings.scale)
-    val lines        = (0 until settings.height)
-    val columns      = (0 until settings.width)
-    val canvasX      = (windowWidth - scaledWidth) / 2
-    val canvasY      = (windowHeight - scaledHeight) / 2
-  }
-
-  object ExtendedSettings {
-    def apply(settings: Settings): ExtendedSettings =
-      ExtendedSettings(settings, settings.width * settings.scale, settings.height * settings.scale)
-  }
 }
