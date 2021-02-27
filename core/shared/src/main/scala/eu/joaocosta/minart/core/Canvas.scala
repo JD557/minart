@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.core
 
+import eu.joaocosta.minart.backend.defaults.DefaultBackend
+
 /** Canvas that can be painted.
   *
   * The Canvas is the main concept behind minart.
@@ -10,9 +12,15 @@ package eu.joaocosta.minart.core
   */
 trait Canvas {
 
-  /** The settings used to create this canvas
+  /** The settings applied to this canvas.
     */
   def settings: Canvas.Settings
+
+  /** Changes the settings applied to this canvas.
+    *
+    *  @param newSettings new canvas settings
+    */
+  def changeSettings(newSettings: Canvas.Settings): Unit
 
   /** Puts a pixel in the back buffer with a certain color.
     *
@@ -66,6 +74,17 @@ trait Canvas {
 
 object Canvas {
 
+  implicit def defaultCanvas(implicit d: DefaultBackend[Any, CanvasManager]): DefaultBackend[Canvas.Settings, Canvas] =
+    DefaultBackend.fromFunction((settings) => d.defaultValue(()).init(settings))
+
+  /** Returns [[Canvas]] for the default backend for the target platform.
+    *
+    * @return [[Canvas]] using the default backend for the target platform
+    */
+  def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Any, CanvasManager]): Canvas = {
+    d.defaultValue().init(settings)
+  }
+
   /** A system resource used by the Canvas.
     */
   sealed trait Resource
@@ -82,14 +101,15 @@ object Canvas {
     * @param width The canvas width
     * @param height The canvas height
     * @param scale The canvas integer scaling factor
+    * @param fullscreen Whether the canvas should be rendered in a full screen window
     * @param clearColor The color to be used when the canvas is cleared
     */
-  case class Settings(width: Int, height: Int, scale: Int = 1, clearColor: Color = Color(255, 255, 255)) {
+  case class Settings(
+      width: Int,
+      height: Int,
+      scale: Int = 1,
+      fullScreen: Boolean = false,
+      clearColor: Color = Color(255, 255, 255)
+  )
 
-    /** The canvas width with the integer scaling applied. */
-    lazy val scaledWidth = width * scale
-
-    /** The canvas height with the integer scaling applied. */
-    lazy val scaledHeight = height * scale
-  }
 }

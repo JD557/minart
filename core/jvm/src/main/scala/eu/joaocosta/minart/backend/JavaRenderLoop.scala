@@ -8,6 +8,7 @@ import eu.joaocosta.minart.core._
 object JavaRenderLoop extends ImpureRenderLoop {
   def finiteRenderLoop[S](
       canvasManager: CanvasManager,
+      canvasSettings: Canvas.Settings,
       initialState: S,
       renderFrame: (Canvas, S) => S,
       terminateWhen: S => Boolean,
@@ -17,12 +18,12 @@ object JavaRenderLoop extends ImpureRenderLoop {
       case FrameRate.Uncapped          => 0
       case FrameRate.FrameDuration(ms) => ms
     }
-    val canvas = canvasManager.init()
+    val canvas = canvasManager.init(canvasSettings)
     @tailrec
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState  = renderFrame(canvas, state)
-      if (!terminateWhen(newState) && canvasManager.isCreated()) {
+      if (!terminateWhen(newState) && canvas.isCreated()) {
         val endTime  = System.currentTimeMillis()
         val waitTime = frameMillis - (endTime - startTime)
         if (waitTime > 0) Thread.sleep(waitTime)
@@ -30,11 +31,11 @@ object JavaRenderLoop extends ImpureRenderLoop {
       } else ()
     }
     finiteRenderLoopAux(initialState)
-    if (canvasManager.isCreated()) canvasManager.destroy()
+    if (canvas.isCreated()) canvas.destroy()
   }
 
-  def singleFrame(canvasManager: CanvasManager, renderFrame: Canvas => Unit): Unit = {
-    val canvas = canvasManager.init()
+  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: Canvas => Unit): Unit = {
+    val canvas = canvasManager.init(canvasSettings)
     renderFrame(canvas)
   }
 }

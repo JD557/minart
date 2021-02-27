@@ -5,48 +5,35 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
 /** Abstraction that provides `init` and `destroy` operations to
   * create and destroy canvas windows.
   */
-trait CanvasManager { canvas: Canvas =>
+trait CanvasManager {
 
-  private[this] var created = false
-
-  protected def unsafeInit(): Unit
-  protected def unsafeDestroy(): Unit
-
-  /** Checks if the window is created or if it has been destroyed
-    */
-  def isCreated(): Boolean = created
-
-  /** Creates the canvas window.
+  /** Creates the canvas window and returns a low-level canvas object.
     *
-    * Rendering operations can only be called after calling this.
-    *
-    * @return canvas object linked to the created window
+    * @return low-level canvas object linked to the created window
     */
-  def init(): Canvas = {
-    if (!created) {
-      unsafeInit()
-      created = true
-    }
-    canvas
-  }
-
-  /** Destroys the canvas window.
-    *
-    * Rendering operations cannot be called after calling this
-    */
-  def destroy(): Unit = if (created) {
-    unsafeDestroy()
-    created = false
-  }
+  def init(settings: Canvas.Settings): LowLevelCanvas
 }
 
 object CanvasManager {
 
+  def apply(canvasBuilder: () => LowLevelCanvas): CanvasManager = new CanvasManager {
+    def init(settings: Canvas.Settings): LowLevelCanvas = {
+      val canvas = canvasBuilder()
+      canvas.init(settings)
+      canvas
+    }
+  }
+
+  implicit def defaultCanvasManager(implicit
+      d: DefaultBackend[Any, LowLevelCanvas]
+  ): DefaultBackend[Any, CanvasManager] = DefaultBackend.fromConstant(
+    CanvasManager(() => d.defaultValue())
+  )
+
   /** Returns [[CanvasManager]] for the default backend for the target platform.
     *
-    * @param settings Settings used to create the new canvas
     * @return [[CanvasManager]] using the default backend for the target platform
     */
-  def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Canvas.Settings, CanvasManager]): CanvasManager =
-    d.defaultValue(settings)
+  def default()(implicit d: DefaultBackend[Any, CanvasManager]): CanvasManager =
+    d.defaultValue()
 }

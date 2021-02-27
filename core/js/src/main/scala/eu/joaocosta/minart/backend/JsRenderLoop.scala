@@ -13,12 +13,13 @@ object JsRenderLoop extends ImpureRenderLoop {
 
   def finiteRenderLoop[S](
       canvasManager: CanvasManager,
+      canvasSettings: Canvas.Settings,
       initialState: S,
       renderFrame: (Canvas, S) => S,
       terminateWhen: S => Boolean,
       frameRate: FrameRate
   ): Unit = {
-    val canvas = canvasManager.init()
+    val canvas = canvasManager.init(canvasSettings)
     val frameMillis = frameRate match {
       case FrameRate.Uncapped          => 0
       case FrameRate.FrameDuration(ms) => ms
@@ -26,18 +27,18 @@ object JsRenderLoop extends ImpureRenderLoop {
     def finiteRenderLoopAux(state: S): Unit = {
       val startTime = System.currentTimeMillis()
       val newState  = renderFrame(canvas, state)
-      if (!terminateWhen(newState) && canvasManager.isCreated()) {
+      if (!terminateWhen(newState) && canvas.isCreated()) {
         val endTime  = System.currentTimeMillis()
         val waitTime = frameMillis - (endTime - startTime)
         if (waitTime > 0 || !hasWindow) timers.setTimeout(waitTime.toDouble)(finiteRenderLoopAux(newState))
         else dom.window.requestAnimationFrame((_: Double) => finiteRenderLoopAux(newState))
-      } else if (canvasManager.isCreated()) canvasManager.destroy()
+      } else if (canvas.isCreated()) canvas.destroy()
     }
     finiteRenderLoopAux(initialState)
   }
 
-  def singleFrame(canvasManager: CanvasManager, renderFrame: Canvas => Unit): Unit = {
-    val canvas = canvasManager.init()
+  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: Canvas => Unit): Unit = {
+    val canvas = canvasManager.init(canvasSettings)
     renderFrame(canvas)
   }
 }

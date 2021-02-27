@@ -10,7 +10,8 @@ object MousePointer {
     RenderLoop
       .default()
       .infiniteRenderLoop(
-        CanvasManager.default(canvasSettings),
+        CanvasManager.default(),
+        canvasSettings,
         c => {
           c.clear()
           val mouse = c.getPointerInput()

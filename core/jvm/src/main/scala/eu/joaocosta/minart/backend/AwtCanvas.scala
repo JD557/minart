@@ -10,44 +10,67 @@ import javax.swing.JFrame
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
+import java.awt.GraphicsDevice
+
+import java.awt.GraphicsEnvironment
+
+import eu.joaocosta.minart.core.Canvas.Resource
+
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
-class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
+class AwtCanvas() extends LowLevelCanvas {
+
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas      = _
   private[this] var keyListener: AwtCanvas.KeyListener     = _
   private[this] var mouseListener: AwtCanvas.MouseListener = _
 
-  def unsafeInit(): Unit = {
-    javaCanvas = new AwtCanvas.InnerCanvas(settings.scaledWidth, settings.scaledHeight, this)
-    keyListener = new AwtCanvas.KeyListener()
-    mouseListener = new AwtCanvas.MouseListener(() =>
-      for {
-        point <- Option(javaCanvas.getMousePosition())
-        x     <- Option(point.getX())
-        y     <- Option(point.getY())
-      } yield PointerInput.Position(x.toInt / settings.scale, y.toInt / settings.scale)
-    )
-    javaCanvas.addKeyListener(keyListener)
-    javaCanvas.addMouseListener(mouseListener)
+  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+    changeSettings(newSettings)
   }
-  def unsafeDestroy(): Unit = {
+  def unsafeDestroy(): Unit = if (javaCanvas != null) {
     javaCanvas.frame.dispose()
     javaCanvas = null
+  }
+  def changeSettings(newSettings: Canvas.Settings) = {
+    if (extendedSettings == null || newSettings != settings) {
+      extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+      if (javaCanvas != null) javaCanvas.frame.dispose()
+      javaCanvas = new AwtCanvas.InnerCanvas(
+        extendedSettings.scaledWidth,
+        extendedSettings.scaledHeight,
+        newSettings.fullScreen,
+        this
+      )
+      keyListener = new AwtCanvas.KeyListener()
+      mouseListener = new AwtCanvas.MouseListener(() =>
+        for {
+          point <- Option(javaCanvas.getMousePosition())
+          x     <- Option(point.getX())
+          y     <- Option(point.getY())
+        } yield PointerInput.Position(x.toInt / newSettings.scale, y.toInt / newSettings.scale)
+      )
+      javaCanvas.addKeyListener(keyListener)
+      javaCanvas.addMouseListener(mouseListener)
+      extendedSettings = extendedSettings.copy(
+        windowWidth = javaCanvas.getWidth,
+        windowHeight = javaCanvas.getHeight
+      )
+      clear(Set(Resource.Backbuffer))
+    }
   }
 
   private[this] def pack(r: Int, g: Int, b: Int): Int =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
-  private[this] val allPixels = (0 until (settings.scaledHeight * settings.scaledWidth))
-  private[this] val pixelSize = (0 until settings.scale)
-  private[this] val lines     = (0 until settings.height)
-  private[this] val columns   = (0 until settings.width)
-
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    pixelSize.foreach { dy =>
-      val lineBase = (y * settings.scale + dy) * settings.scaledWidth
-      pixelSize.foreach { dx =>
+    extendedSettings.pixelSize.foreach { dy =>
+      val lineBase = (y * settings.scale + dy) * extendedSettings.scaledWidth
+      extendedSettings.pixelSize.foreach { dx =>
         val baseAddr = lineBase + (x * settings.scale + dx)
         javaCanvas.imagePixels
           .setElem(baseAddr, c.argb)
@@ -56,7 +79,7 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 
   private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit =
     javaCanvas.imagePixels
-      .setElem(y * settings.scaledWidth + x % settings.scaledWidth, c.argb)
+      .setElem(y * extendedSettings.scaledWidth + x % extendedSettings.scaledWidth, c.argb)
 
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
     if (settings.scale == 1) putPixelUnscaled(x, y, color)
@@ -64,23 +87,27 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
-    Color.fromRGB(javaCanvas.imagePixels.getElem(y * settings.scale * settings.scaledWidth + (x * settings.scale)))
+    Color.fromRGB(
+      javaCanvas.imagePixels.getElem(
+        y * settings.scale * extendedSettings.scaledWidth + (x * settings.scale)
+      )
+    )
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val flatData = javaCanvas.imagePixels.getData()
-    lines.map { y =>
-      val lineBase = y * settings.scale * settings.scaledWidth
-      columns.map { x =>
+    extendedSettings.lines.map { y =>
+      val lineBase = y * settings.scale * extendedSettings.scaledWidth
+      extendedSettings.columns.map { x =>
         val baseAddr = (lineBase + (x * settings.scale))
         Color.fromRGB(flatData(baseAddr))
       }.toVector
     }.toVector
   }
 
-  def clear(resources: Set[Canvas.Resource]): Unit = {
+  def clear(resources: Set[Canvas.Resource]): Unit = try {
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
+      extendedSettings.allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
     }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
@@ -88,11 +115,25 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
     if (resources.contains(Canvas.Resource.Pointer)) {
       mouseListener.clearPressRelease()
     }
-  }
+  } catch { case _: Throwable => () }
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
-    g.drawImage(javaCanvas.image, 0, 0, settings.scaledWidth, settings.scaledHeight, javaCanvas)
+    g.setColor(new JavaColor(settings.clearColor.rgb))
+    g.fillRect(
+      0,
+      0,
+      javaCanvas.getWidth,
+      javaCanvas.getHeight
+    )
+    g.drawImage(
+      javaCanvas.image,
+      extendedSettings.canvasX,
+      extendedSettings.canvasY,
+      extendedSettings.scaledWidth,
+      extendedSettings.scaledHeight,
+      javaCanvas
+    )
     g.dispose()
     javaCanvas.buffStrategy.show()
   } catch { case _: Throwable => () }
@@ -102,7 +143,8 @@ class AwtCanvas(val settings: Canvas.Settings) extends LowLevelCanvas {
 }
 
 object AwtCanvas {
-  private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, outerCanvas: AwtCanvas) extends JavaCanvas {
+  private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, fullScreen: Boolean, outerCanvas: AwtCanvas)
+      extends JavaCanvas {
 
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
@@ -112,6 +154,11 @@ object AwtCanvas {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     frame.pack()
     frame.setResizable(false)
+    GraphicsEnvironment
+      .getLocalGraphicsEnvironment()
+      .getScreenDevices()
+      .headOption
+      .foreach(_.setFullScreenWindow(if (fullScreen) frame else null))
 
     this.createBufferStrategy(2)
     val buffStrategy = getBufferStrategy

@@ -8,7 +8,7 @@ object PureColorSquare extends MinartApp {
   type State = Unit
   val renderLoop                   = PureRenderLoop.default()
   val canvasSettings               = Canvas.Settings(width = 128, height = 128, scale = 4)
-  val canvasManager: CanvasManager = CanvasManager.default(canvasSettings)
+  val canvasManager: CanvasManager = CanvasManager.default()
   val initialState: State          = ()
   val frameRate                    = FrameRate.Uncapped
   val terminateWhen                = (_: State) => false

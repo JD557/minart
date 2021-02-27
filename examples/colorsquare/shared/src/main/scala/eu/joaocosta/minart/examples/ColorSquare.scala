@@ -10,7 +10,8 @@ object ColorSquare {
     RenderLoop
       .default()
       .singleFrame(
-        CanvasManager.default(canvasSettings),
+        CanvasManager.default(),
+        canvasSettings,
         c => {
           for {
             x <- (0 until c.settings.width)
