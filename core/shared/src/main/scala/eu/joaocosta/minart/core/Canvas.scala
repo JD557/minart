@@ -16,7 +16,7 @@ trait Canvas {
     */
   def settings: Canvas.Settings
 
-  /** Changes the settings applied to this canvas
+  /** Changes the settings applied to this canvas.
     *
     *  @param newSettings new canvas settings
     */

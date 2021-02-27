@@ -27,6 +27,12 @@ object CanvasIO {
   /** Fetches the canvas settings. */
   val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
 
+  /** Changes the settings applied to the canvas.
+    *
+    *  @param newSettings new canvas settings
+    */
+  def changeSettings(newSettings: Canvas.Settings): CanvasIO[Unit] = accessCanvas(_.changeSettings(newSettings))
+
   /** Puts a pixel in the back buffer with a certain color.
     *
     * @param x pixel x position
