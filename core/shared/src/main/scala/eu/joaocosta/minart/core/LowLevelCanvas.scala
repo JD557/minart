@@ -24,10 +24,10 @@ trait LowLevelCanvas extends Canvas {
     * @return canvas object linked to the created window
     */
   def init(settings: Canvas.Settings): Unit = {
-    if (isCreated) {
+    if (isCreated()) {
       destroy()
     }
-    if (!isCreated) {
+    if (!isCreated()) {
       unsafeInit(settings)
     }
   }
@@ -36,7 +36,7 @@ trait LowLevelCanvas extends Canvas {
     *
     * Calling any operation on this canvas after calling destroy has an undefined behavior.
     */
-  def destroy(): Unit = if (isCreated) {
+  def destroy(): Unit = if (isCreated()) {
     unsafeDestroy()
     extendedSettings = null
   }

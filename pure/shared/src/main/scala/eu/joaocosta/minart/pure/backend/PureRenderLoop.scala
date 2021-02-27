@@ -63,5 +63,5 @@ object PureRenderLoop {
   /** Returns [[PureRenderLoop]] for the default backend for the target platform.
     */
   def default()(implicit d: DefaultBackend[Any, ImpureRenderLoop]): PureRenderLoop =
-    new PureRenderLoop(d.defaultValue(()))
+    new PureRenderLoop(d.defaultValue())
 }

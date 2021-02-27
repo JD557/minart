@@ -27,5 +27,5 @@ object ImpureRenderLoop {
   /** Returns an [[ImpureRenderLoop]] for the default backend for the target platform.
     */
   def default()(implicit d: DefaultBackend[Any, ImpureRenderLoop]): ImpureRenderLoop =
-    d.defaultValue(())
+    d.defaultValue()
 }

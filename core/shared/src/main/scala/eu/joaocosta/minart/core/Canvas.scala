@@ -75,7 +75,7 @@ trait Canvas {
 object Canvas {
 
   implicit def defaultCanvas(implicit d: DefaultBackend[Any, CanvasManager]): DefaultBackend[Canvas.Settings, Canvas] =
-    DefaultBackend.fromFunction((settings) => d.defaultValue(()).init(settings))
+    DefaultBackend.fromFunction((settings) => d.defaultValue().init(settings))
 
   /** Returns [[Canvas]] for the default backend for the target platform.
     *

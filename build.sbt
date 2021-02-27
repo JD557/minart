@@ -28,7 +28,7 @@ val sharedSettings = Seq(
     )
   ),
   autoAPIMappings := true,
-  scalacOptions in Test ++= Seq("-unchecked", "-deprecation"),
+  scalacOptions ++= Seq("-unchecked", "-deprecation"),
   scalafmtOnCompile := true
 )
 
