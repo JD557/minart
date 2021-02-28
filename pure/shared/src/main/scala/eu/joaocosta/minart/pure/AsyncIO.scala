@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.pure
 
-import scala.concurrent.Future
+import scala.concurrent._
 import scala.util.{Try, Failure, Success}
 
 import eu.joaocosta.minart.core._
@@ -56,6 +56,12 @@ object AsyncIO {
   /** Builds an [[AsyncIO]] from a running future */
   def fromFuture[A](future: Future[A]): AsyncIO[A] =
     AsyncIO(RIO.suspend(future.value))
+
+  /** Builds an [[AsyncIO]] from a function that receives a callback */
+  def fromCallback[A](operation: (Try[A] => Unit) => Unit): RIO[Any, AsyncIO[A]] = {
+    val promise = Promise[A]()
+    RIO.suspend(operation(promise.complete)).as(AsyncIO.fromFuture(promise.future))
+  }
 
   /** Converts an `Iterable[AsyncIO[A]]` into a `AsyncIO[List[A]]`. */
   def sequence[A](it: Iterable[AsyncIO[A]]): AsyncIO[List[A]] =

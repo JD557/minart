@@ -7,7 +7,6 @@ import verify._
 
 import eu.joaocosta.minart.core._
 
-
 object AsyncSpec extends BasicTestSuite {
   test("store pure results") {
     val error = new Exception("error")
@@ -21,6 +20,18 @@ object AsyncSpec extends BasicTestSuite {
     val io      = AsyncIO.fromFuture(promise.future)
     assert(io.poll.run(()) == None)
     promise.complete(scala.util.Success(0))
+    assert(io.poll.run(()) == Some(Success(0)))
+  }
+
+  test("allow polling async operations") {
+    var completer: Int => Unit = _ => ()
+    val io = AsyncIO
+      .fromCallback[Int] { cb =>
+        completer = (x: Int) => cb(Success(x))
+      }
+      .run(())
+    assert(io.poll.run(()) == None)
+    completer(0)
     assert(io.poll.run(()) == Some(Success(0)))
   }
 
