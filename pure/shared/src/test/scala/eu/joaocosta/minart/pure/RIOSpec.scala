@@ -19,14 +19,6 @@ object RIOSpec extends BasicTestSuite {
     assert(hasRun == true)
   }
 
-  test("allow polling Futures") {
-    val promise = Promise[Int]()
-    val io      = RIO.pollFuture(promise.future)
-    assert(io.run(()) == None)
-    promise.complete(scala.util.Success(0))
-    assert(io.run(()) == Some(scala.util.Success(0)))
-  }
-
   test("provide a stack-safe map operation") {
     val io = (1 to 1000).foldLeft[RIO[Any, Int]](RIO.pure(0)) { case (acc, _) => acc.map(_ + 1) }
     assert(io.run(()) == 1000)
