@@ -65,6 +65,12 @@ object RIO {
   /** Returns a operation that requires some resource. */
   def access[R, A](f: R => A): RIO[R, A] = Suspend[R, A](f)
 
+  /** Returns a [[Poll]] from a function that receives a callback */
+  def fromCallback[A](operation: (Try[A] => Unit) => Unit): RIO[Any, Poll[A]] = {
+    val promise = scala.concurrent.Promise[A]()
+    RIO.suspend(operation(promise.complete)).as(Poll.fromFuture(promise.future))
+  }
+
   /** Converts an `Iterable[RIO[R, A]]` into a `RIO[R, List[A]]`. */
   def sequence[R, A](it: Iterable[RIO[R, A]]): RIO[R, List[A]] =
     access(res => it.map(_.run(res)).toList)

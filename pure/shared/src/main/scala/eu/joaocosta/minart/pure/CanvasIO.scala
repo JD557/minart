@@ -21,6 +21,10 @@ object CanvasIO {
   /** Store an unsafe canvas operation in a [[CanvasIO]]. */
   def accessCanvas[A](f: Canvas => A): CanvasIO[A] = RIO.access[Canvas, A](f)
 
+  /** Returns a [[Poll]] from a function that receives a callback */
+  def fromCallback[A](operation: (Try[A] => Unit) => Unit): CanvasIO[Poll[A]] =
+    RIO.fromCallback(operation)
+
   /** Fetches the canvas settings. */
   val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
 
