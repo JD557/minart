@@ -20,7 +20,7 @@ object RIOSpec extends BasicTestSuite {
   }
 
   test("allow polling async operations") {
-    var completer: Int => Unit = _ => ()
+    var completer: Int => Unit = (_) => ()
     val io = RIO
       .fromCallback[Int] { cb =>
         completer = (x: Int) => cb(scala.util.Success(x))

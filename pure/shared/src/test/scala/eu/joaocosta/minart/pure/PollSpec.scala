@@ -25,7 +25,7 @@ object PollSpec extends BasicTestSuite {
 
   test("provide a stack-safe transform operation") {
     val io = (1 to 1000).foldLeft[Poll[Int]](Poll.failed(new Exception("error"))) { case (acc, _) =>
-      acc.transform(_.recover(_ => 0).map(_ + 1))
+      acc.transform(_.recover { case _ => 0 }.map(_ + 1))
     }
     assert(io.poll.run(()) == Some(Success(1000)))
   }
