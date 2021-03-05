@@ -38,7 +38,6 @@ class HtmlCanvas() extends LowLevelCanvas {
       "keydown",
       (ev: KeyboardEvent) => {
         JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k))
-        println("keydown")
       }
     )
     dom.document.addEventListener[KeyboardEvent](
