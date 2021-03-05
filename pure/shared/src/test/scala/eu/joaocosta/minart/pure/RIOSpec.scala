@@ -19,12 +19,16 @@ object RIOSpec extends BasicTestSuite {
     assert(hasRun == true)
   }
 
-  test("allow polling Futures") {
-    val promise = Promise[Int]()
-    val io      = RIO.pollFuture(promise.future)
-    assert(io.run(()) == None)
-    promise.complete(scala.util.Success(0))
-    assert(io.run(()) == Some(scala.util.Success(0)))
+  test("allow polling async operations") {
+    var completer: Int => Unit = (_) => ()
+    val io = RIO
+      .fromCallback[Int] { cb =>
+        completer = (x: Int) => cb(scala.util.Success(x))
+      }
+      .run(())
+    assert(io.poll.run(()) == None)
+    completer(0)
+    assert(io.poll.run(()) == Some(scala.util.Success(0)))
   }
 
   test("provide a stack-safe map operation") {
