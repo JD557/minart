@@ -23,7 +23,11 @@ class SdlCanvas() extends LowLevelCanvas {
   private[this] var buffer: Ptr[SDL_Surface]     = _
   private[this] var renderer: Ptr[SDL_Renderer]  = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
-  private[this] var mouseInput: PointerInput     = PointerInput(None, Nil, Nil, false)
+  private[this] var rawMousePos: (Int, Int)      = _
+  private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
+    PointerInput.Position(x / settings.scale, y / settings.scale)
+  }
+  private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
   private[this] var ubyteClearR: UByte = _
   private[this] var ubyteClearG: UByte = _
@@ -132,20 +136,13 @@ class SdlCanvas() extends LowLevelCanvas {
           SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
           true
         case SDL_MOUSEMOTION =>
-          mouseInput = mouseInput.move(
-            Option(
-              PointerInput.Position(
-                event.motion.x / settings.scale,
-                event.motion.y / settings.scale
-              )
-            )
-          )
+          rawMousePos = (event.motion.x, event.motion.y)
           true
         case SDL_MOUSEBUTTONDOWN =>
-          mouseInput = mouseInput.press
+          mouseInput = mouseInput.move(cleanMousePos).press
           true
         case SDL_MOUSEBUTTONUP =>
-          mouseInput = mouseInput.release
+          mouseInput = mouseInput.move(cleanMousePos).release
           true
         case _ =>
           true
@@ -173,5 +170,5 @@ class SdlCanvas() extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-  def getPointerInput(): PointerInput   = mouseInput
+  def getPointerInput(): PointerInput   = mouseInput.move(cleanMousePos)
 }
