@@ -2,11 +2,9 @@ package eu.joaocosta.minart.backend
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
-import org.scalajs.dom.raw.{ImageData, MouseEvent, KeyboardEvent, TouchEvent}
+import org.scalajs.dom.raw.{Event, ImageData, KeyboardEvent, PointerEvent}
 
 import eu.joaocosta.minart.core._
-
-import org.scalajs.dom.raw.Event
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
@@ -23,7 +21,8 @@ class HtmlCanvas() extends LowLevelCanvas {
   private[this] var keyboardInput: KeyboardInput      = KeyboardInput(Set(), Set(), Set())
   private[this] var rawMousePos: (Int, Int)           = _
   private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
-    PointerInput.Position(x / settings.scale, y / settings.scale)
+    val canvasRect = canvas.getBoundingClientRect()
+    PointerInput.Position((x - canvasRect.left.toInt) / settings.scale, (y - canvasRect.top.toInt) / settings.scale)
   }
   private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
@@ -49,7 +48,6 @@ class HtmlCanvas() extends LowLevelCanvas {
       (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
     )
 
-    val canvasRect = canvas.getBoundingClientRect();
     def handlePress() = { pointerInput = pointerInput.move(cleanMousePos).press }
     def handleRelease() = { pointerInput = pointerInput.move(cleanMousePos).release }
     def handleMove(x: Int, y: Int) = {
@@ -59,35 +57,25 @@ class HtmlCanvas() extends LowLevelCanvas {
         rawMousePos = null
       }
     }
-    dom.document.addEventListener[MouseEvent]("mousedown", (_: MouseEvent) => handlePress())
-    dom.document.addEventListener[MouseEvent]("mouseup", (_: MouseEvent) => handleRelease())
-    canvas.addEventListener[MouseEvent](
-      "mousemove",
-      (ev: MouseEvent) => {
-        val x = (ev.clientX - canvasRect.left).toInt
-        val y = (ev.clientY - canvasRect.top).toInt
-        handleMove(x, y)
-      }
-    )
-    dom.document.addEventListener[TouchEvent](
-      "touchstart",
-      (ev: TouchEvent) => {
-        val touch = ev.changedTouches(0)
-        val x     = (touch.clientX - canvasRect.left).toInt
-        val y     = (touch.clientY - canvasRect.top).toInt
-        handleMove(x, y)
+    dom.document.addEventListener[PointerEvent](
+      "pointerdown",
+      (ev: PointerEvent) => {
+        handleMove(ev.clientX.toInt, ev.clientY.toInt)
         handlePress()
       }
     )
-    dom.document.addEventListener[TouchEvent]("touchend", (_: TouchEvent) => handleRelease())
-    dom.document.addEventListener[TouchEvent]("touchcancel", (_: TouchEvent) => handleRelease())
-    canvas.addEventListener[TouchEvent](
-      "touchmove",
-      (ev: TouchEvent) => {
-        val touch = ev.changedTouches(0)
-        val x     = (touch.clientX - canvasRect.left).toInt
-        val y     = (touch.clientY - canvasRect.top).toInt
-        handleMove(x, y)
+    dom.document.addEventListener[PointerEvent](
+      "pointerup",
+      (ev: PointerEvent) => {
+        handleMove(ev.clientX.toInt, ev.clientY.toInt)
+        handleRelease()
+      }
+    )
+    dom.document.addEventListener[PointerEvent]("pointercancel", (_: PointerEvent) => handleRelease())
+    canvas.addEventListener[PointerEvent](
+      "pointermove",
+      (ev: PointerEvent) => {
+        handleMove(ev.clientX.toInt, ev.clientY.toInt)
       }
     )
   }
