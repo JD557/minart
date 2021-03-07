@@ -25,7 +25,10 @@ class SdlCanvas() extends LowLevelCanvas {
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   private[this] var rawMousePos: (Int, Int)      = _
   private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
-    PointerInput.Position(x / settings.scale, y / settings.scale)
+    PointerInput.Position(
+      (x - extendedSettings.canvasX) / settings.scale,
+      (y - extendedSettings.canvasY) / settings.scale
+    )
   }
   private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
 

@@ -23,8 +23,13 @@ class HtmlCanvas() extends LowLevelCanvas {
   private[this] var keyboardInput: KeyboardInput      = KeyboardInput(Set(), Set(), Set())
   private[this] var rawMousePos: (Int, Int)           = _
   private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
-    val canvasRect = canvas.getBoundingClientRect()
-    PointerInput.Position((x - canvasRect.left.toInt) / settings.scale, (y - canvasRect.top.toInt) / settings.scale)
+    val (offsetX, offsetY) =
+      if (settings.fullScreen) (extendedSettings.canvasX, extendedSettings.canvasY)
+      else {
+        val canvasRect = canvas.getBoundingClientRect()
+        (canvasRect.left.toInt, canvasRect.top.toInt)
+      }
+    PointerInput.Position((x - offsetX) / settings.scale, (y - offsetY) / settings.scale)
   }
   private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
@@ -53,7 +58,13 @@ class HtmlCanvas() extends LowLevelCanvas {
     def handlePress() = { pointerInput = pointerInput.move(cleanMousePos).press }
     def handleRelease() = { pointerInput = pointerInput.move(cleanMousePos).release }
     def handleMove(x: Int, y: Int) = {
-      if (x >= 0 && y >= 0 && x < extendedSettings.scaledWidth && y < extendedSettings.scaledHeight) {
+      val (offsetX, offsetY) =
+        if (settings.fullScreen) (extendedSettings.canvasX, extendedSettings.canvasY)
+        else (0, 0)
+      if (
+        x >= offsetX && y >= offsetY &&
+        x < extendedSettings.scaledWidth + offsetX && y < extendedSettings.scaledHeight + offsetY
+      ) {
         rawMousePos = (x, y)
       } else {
         rawMousePos = null
