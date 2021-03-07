@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.backend
 
+import scala.scalajs.js
+
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
 import org.scalajs.dom.raw.{Event, ImageData, KeyboardEvent, PointerEvent}
@@ -93,7 +95,7 @@ class HtmlCanvas() extends LowLevelCanvas {
 
     if (newSettings.fullScreen) {
       canvas.requestFullscreen()
-    } else if (dom.document.fullscreenElement != null) {
+    } else if (dom.document.fullscreenElement != null && !js.isUndefined(dom.document.fullscreenElement)) {
       dom.document.exitFullscreen()
     }
     ctx.fillStyle = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
