@@ -21,7 +21,11 @@ class HtmlCanvas() extends LowLevelCanvas {
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _
   private[this] var keyboardInput: KeyboardInput      = KeyboardInput(Set(), Set(), Set())
-  private[this] var pointerInput: PointerInput        = PointerInput(None, Nil, Nil, false)
+  private[this] var rawMousePos: (Int, Int)           = _
+  private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
+    PointerInput.Position(x / settings.scale, y / settings.scale)
+  }
+  private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
   private[this] var buffer: ImageData     = _
   private[this] var listenersSet: Boolean = false
@@ -46,13 +50,13 @@ class HtmlCanvas() extends LowLevelCanvas {
     )
 
     val canvasRect = canvas.getBoundingClientRect();
-    def handlePress() = { pointerInput = pointerInput.press }
-    def handleRelease() = { pointerInput = pointerInput.release }
+    def handlePress() = { pointerInput = pointerInput.move(cleanMousePos).press }
+    def handleRelease() = { pointerInput = pointerInput.move(cleanMousePos).release }
     def handleMove(x: Int, y: Int) = {
       if (x >= 0 && y >= 0 && x < extendedSettings.scaledWidth && y < extendedSettings.scaledHeight) {
-        pointerInput = pointerInput.move(Some(PointerInput.Position(x / newSettings.scale, y / newSettings.scale)))
+        rawMousePos = (x, y)
       } else {
-        pointerInput = pointerInput.move(None)
+        rawMousePos = null
       }
     }
     dom.document.addEventListener[MouseEvent]("mousedown", (_: MouseEvent) => handlePress())
@@ -151,6 +155,12 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
+    if (resources.contains(Canvas.Resource.Keyboard)) {
+      keyboardInput = keyboardInput.clearPressRelease()
+    }
+    if (resources.contains(Canvas.Resource.Pointer)) {
+      pointerInput = pointerInput.clearPressRelease()
+    }
     if (resources.contains(Canvas.Resource.Backbuffer)) {
       extendedSettings.allPixels.foreach { i =>
         val base = 4 * i
@@ -159,12 +169,6 @@ class HtmlCanvas() extends LowLevelCanvas {
         buffer.data(base + 2) = settings.clearColor.b
         buffer.data(base + 3) = 255
       }
-    }
-    if (resources.contains(Canvas.Resource.Keyboard)) {
-      keyboardInput = keyboardInput.clearPressRelease()
-    }
-    if (resources.contains(Canvas.Resource.Pointer)) {
-      pointerInput = pointerInput.clearPressRelease()
     }
   }
 
@@ -176,5 +180,5 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-  def getPointerInput(): PointerInput   = pointerInput
+  def getPointerInput(): PointerInput   = pointerInput.move(cleanMousePos)
 }

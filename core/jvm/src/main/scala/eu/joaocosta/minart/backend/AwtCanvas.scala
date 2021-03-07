@@ -106,14 +106,14 @@ class AwtCanvas() extends LowLevelCanvas {
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = try {
-    if (resources.contains(Canvas.Resource.Backbuffer)) {
-      extendedSettings.allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
-    }
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Pointer)) {
       mouseListener.clearPressRelease()
+    }
+    if (resources.contains(Canvas.Resource.Backbuffer)) {
+      extendedSettings.allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
     }
   } catch { case _: Throwable => () }
 
@@ -178,22 +178,38 @@ object AwtCanvas {
   private class KeyListener extends JavaKeyListener {
     private[this] var state = KeyboardInput(Set(), Set(), Set())
 
-    def keyPressed(ev: KeyEvent): Unit    = AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.press(key))
-    def keyReleased(ev: KeyEvent): Unit   = AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.release(key))
-    def keyTyped(ev: KeyEvent): Unit      = ()
-    def clearPressRelease(): Unit         = state = state.clearPressRelease()
-    def getKeyboardInput(): KeyboardInput = state
+    def keyPressed(ev: KeyEvent): Unit = synchronized {
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.press(key))
+    }
+    def keyReleased(ev: KeyEvent): Unit = synchronized {
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.release(key))
+    }
+    def keyTyped(ev: KeyEvent): Unit = ()
+    def clearPressRelease(): Unit = synchronized {
+      state = state.clearPressRelease()
+    }
+    def getKeyboardInput(): KeyboardInput = synchronized {
+      state
+    }
   }
 
   private class MouseListener(getMousePos: () => Option[PointerInput.Position]) extends JavaMouseListener {
     private[this] var state = PointerInput(None, Nil, Nil, false)
 
-    def mousePressed(ev: MouseEvent): Unit  = state = state.move(getMousePos()).press
-    def mouseReleased(ev: MouseEvent): Unit = state = state.move(getMousePos()).release
-    def mouseClicked(ev: MouseEvent): Unit  = ()
-    def mouseEntered(ev: MouseEvent): Unit  = ()
-    def mouseExited(ev: MouseEvent): Unit   = ()
-    def clearPressRelease(): Unit           = state = state.clearPressRelease()
-    def getPointerInput(): PointerInput     = state.move(getMousePos())
+    def mousePressed(ev: MouseEvent): Unit = synchronized {
+      state = state.move(getMousePos()).press
+    }
+    def mouseReleased(ev: MouseEvent): Unit = synchronized {
+      state = state.move(getMousePos()).release
+    }
+    def mouseClicked(ev: MouseEvent): Unit = ()
+    def mouseEntered(ev: MouseEvent): Unit = ()
+    def mouseExited(ev: MouseEvent): Unit  = ()
+    def clearPressRelease(): Unit = synchronized {
+      state = state.clearPressRelease()
+    }
+    def getPointerInput(): PointerInput = synchronized {
+      state.move(getMousePos())
+    }
   }
 }
