@@ -89,4 +89,8 @@ object CanvasIO {
   /** Applies an operation to each element of a `Iterable[A]` and discards the result. */
   def foreach[A](it: Iterable[A])(f: A => CanvasIO[Any]): CanvasIO[Unit] =
     RIO.foreach[Canvas, A](it)(f)
+
+  /** Applies an operation to each element of a `Iterator[A]` and discards the result. */
+  def foreach[A](it: () => Iterator[A])(f: A => CanvasIO[Any]): CanvasIO[Unit] =
+    RIO.foreach[Canvas, A](it)(f)
 }

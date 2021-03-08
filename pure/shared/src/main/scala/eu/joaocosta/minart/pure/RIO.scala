@@ -86,4 +86,8 @@ object RIO {
   /** Applies an operation to each element of a `Iterable[A]` and discards the result. */
   def foreach[R, A](it: Iterable[A])(f: A => RIO[R, Any]): RIO[R, Unit] =
     access(res => it.foreach(x => f(x).run(res)))
+
+  /** Applies an operation to each element of a `Iterator[A]` and discards the result. */
+  def foreach[R, A](it: () => Iterator[A])(f: A => RIO[R, Any]): RIO[R, Unit] =
+    access(res => it().foreach(x => f(x).run(res)))
 }
