@@ -4,17 +4,13 @@ import java.awt.event.{KeyEvent, KeyListener => JavaKeyListener}
 import java.awt.event.{MouseEvent, MouseListener => JavaMouseListener}
 import java.awt.event.{WindowAdapter, WindowEvent}
 import java.awt.image.{DataBufferInt, BufferedImage}
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Graphics, Dimension}
+import java.awt.{Canvas => JavaCanvas, Color => JavaColor}
+import java.awt.{Dimension, Graphics, GraphicsDevice, GraphicsEnvironment, MouseInfo}
 import javax.swing.JFrame
 
+import eu.joaocosta.minart.core.Canvas.Resource
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
-
-import java.awt.GraphicsDevice
-
-import java.awt.GraphicsEnvironment
-
-import eu.joaocosta.minart.core.Canvas.Resource
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
@@ -46,20 +42,25 @@ class AwtCanvas() extends LowLevelCanvas {
         newSettings.fullScreen,
         this
       )
-      keyListener = new AwtCanvas.KeyListener()
-      mouseListener = new AwtCanvas.MouseListener(() =>
-        for {
-          point <- Option(javaCanvas.getMousePosition())
-          x     <- Option(point.getX())
-          y     <- Option(point.getY())
-        } yield PointerInput.Position(x.toInt / newSettings.scale, y.toInt / newSettings.scale)
-      )
-      javaCanvas.addKeyListener(keyListener)
-      javaCanvas.addMouseListener(mouseListener)
       extendedSettings = extendedSettings.copy(
         windowWidth = javaCanvas.getWidth,
         windowHeight = javaCanvas.getHeight
       )
+      keyListener = new AwtCanvas.KeyListener()
+      mouseListener = new AwtCanvas.MouseListener(() =>
+        for {
+          point <-
+            if (newSettings.fullScreen) Option(MouseInfo.getPointerInfo().getLocation())
+            else Option(javaCanvas.getMousePosition())
+          x <- Option(point.getX())
+          y <- Option(point.getY())
+        } yield PointerInput.Position(
+          (x - extendedSettings.canvasX).toInt / newSettings.scale,
+          (y - extendedSettings.canvasY).toInt / newSettings.scale
+        )
+      )
+      javaCanvas.addKeyListener(keyListener)
+      javaCanvas.addMouseListener(mouseListener)
       clear(Set(Resource.Backbuffer))
     }
   }
