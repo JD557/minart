@@ -12,6 +12,8 @@ import eu.joaocosta.minart.core.Canvas.Resource
 import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
+import eu.joaocosta.minart.core.LowLevelCanvas.ExtendedSettings
+
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
 class AwtCanvas() extends LowLevelCanvas {
@@ -47,18 +49,7 @@ class AwtCanvas() extends LowLevelCanvas {
         windowHeight = javaCanvas.getHeight
       )
       keyListener = new AwtCanvas.KeyListener()
-      mouseListener = new AwtCanvas.MouseListener(() =>
-        for {
-          point <-
-            if (newSettings.fullScreen) Option(MouseInfo.getPointerInfo().getLocation())
-            else Option(javaCanvas.getMousePosition())
-          x <- Option(point.getX())
-          y <- Option(point.getY())
-        } yield PointerInput.Position(
-          (x - extendedSettings.canvasX).toInt / newSettings.scale,
-          (y - extendedSettings.canvasY).toInt / newSettings.scale
-        )
-      )
+      mouseListener = new AwtCanvas.MouseListener(javaCanvas, extendedSettings)
       javaCanvas.addKeyListener(keyListener)
       javaCanvas.addMouseListener(mouseListener)
       clear(Set(Resource.Backbuffer))
@@ -194,8 +185,20 @@ object AwtCanvas {
     }
   }
 
-  private class MouseListener(getMousePos: () => Option[PointerInput.Position]) extends JavaMouseListener {
+  private class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
     private[this] var state = PointerInput(None, Nil, Nil, false)
+
+    def getMousePos(): Option[PointerInput.Position] = {
+      val point =
+        if (extendedSettings.settings.fullScreen) MouseInfo.getPointerInfo().getLocation()
+        else canvas.getMousePosition()
+      Option(point).map { p =>
+        PointerInput.Position(
+          (p.x - extendedSettings.canvasX) / extendedSettings.settings.scale,
+          (p.y - extendedSettings.canvasY) / extendedSettings.settings.scale
+        )
+      }
+    }
 
     def mousePressed(ev: MouseEvent): Unit = synchronized {
       state = state.move(getMousePos()).press
