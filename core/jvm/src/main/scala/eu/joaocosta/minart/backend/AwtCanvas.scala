@@ -6,7 +6,9 @@ import java.awt.event.{WindowAdapter, WindowEvent}
 import java.awt.image.{DataBufferInt, BufferedImage}
 import java.awt.{Canvas => JavaCanvas, Color => JavaColor}
 import java.awt.{Dimension, Graphics, GraphicsDevice, GraphicsEnvironment, MouseInfo}
+import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.JFrame
+import scala.collection.JavaConverters._
 
 import eu.joaocosta.minart.core.Canvas.Resource
 import eu.joaocosta.minart.core.KeyboardInput.Key
@@ -186,7 +188,24 @@ object AwtCanvas {
   }
 
   private class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
-    private[this] var state = PointerInput(None, Nil, Nil, false)
+    private[this] val events          = new ConcurrentLinkedQueue[MouseListener.MouseEvent]()
+    @volatile private[this] var state = PointerInput(None, Nil, Nil, false)
+
+    private[this] def computeState(): PointerInput = synchronized {
+      state = events.asScala.foldLeft(state) {
+        case (st, MouseListener.MouseEvent.Pressed(pos)) =>
+          st.move(pos).press
+        case (st, MouseListener.MouseEvent.Released(pos)) =>
+          st.move(pos).release
+      }
+      events.clear()
+      state
+    }
+
+    private[this] def pushEvent(ev: MouseListener.MouseEvent): Unit = {
+      events.add(ev)
+      if (events.size > 20) computeState()
+    }
 
     def getMousePos(): Option[PointerInput.Position] = {
       val point =
@@ -200,20 +219,22 @@ object AwtCanvas {
       }
     }
 
-    def mousePressed(ev: MouseEvent): Unit = synchronized {
-      state = state.move(getMousePos()).press
-    }
-    def mouseReleased(ev: MouseEvent): Unit = synchronized {
-      state = state.move(getMousePos()).release
-    }
-    def mouseClicked(ev: MouseEvent): Unit = ()
-    def mouseEntered(ev: MouseEvent): Unit = ()
-    def mouseExited(ev: MouseEvent): Unit  = ()
+    def mousePressed(ev: MouseEvent): Unit  = pushEvent(MouseListener.MouseEvent.Pressed(getMousePos()))
+    def mouseReleased(ev: MouseEvent): Unit = pushEvent(MouseListener.MouseEvent.Released(getMousePos()))
+    def mouseClicked(ev: MouseEvent): Unit  = ()
+    def mouseEntered(ev: MouseEvent): Unit  = ()
+    def mouseExited(ev: MouseEvent): Unit   = ()
     def clearPressRelease(): Unit = synchronized {
       state = state.clearPressRelease()
     }
-    def getPointerInput(): PointerInput = synchronized {
-      state.move(getMousePos())
+    def getPointerInput(): PointerInput = computeState().move(getMousePos())
+  }
+
+  private object MouseListener {
+    sealed trait MouseEvent
+    object MouseEvent {
+      case class Pressed(pos: Option[PointerInput.Position])  extends MouseEvent
+      case class Released(pos: Option[PointerInput.Position]) extends MouseEvent
     }
   }
 }
