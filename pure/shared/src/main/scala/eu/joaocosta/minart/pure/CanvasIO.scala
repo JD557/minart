@@ -25,6 +25,10 @@ object CanvasIO {
   def fromCallback[A](operation: (Try[A] => Unit) => Unit): CanvasIO[Poll[A]] =
     RIO.fromCallback(operation)
 
+  /** Runs a computation only if the predicate is true, otherwise does nothing */
+  def when(predicate: Boolean)(io: => CanvasIO[Unit]): CanvasIO[Unit] =
+    RIO.when(predicate)(io)
+
   /** Fetches the canvas settings. */
   val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
 
