@@ -71,6 +71,10 @@ object RIO {
     RIO.suspend(operation(promise.complete)).as(Poll.fromFuture(promise.future))
   }
 
+  /** Runs a computation only if the predicate is true, otherwise does nothing */
+  def when[R](predicate: Boolean)(io: => RIO[R, Unit]): RIO[R, Unit] =
+    if (predicate) io else RIO.noop
+
   /** Converts an `Iterable[RIO[R, A]]` into a `RIO[R, List[A]]`. */
   def sequence[R, A](it: Iterable[RIO[R, A]]): RIO[R, List[A]] =
     access(res => it.map(_.run(res)).toList)
