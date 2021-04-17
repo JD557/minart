@@ -1,4 +1,4 @@
-pomExtra in ThisBuild := {
+ThisBuild / pomExtra := {
   <developers>
     <developer>
       <id>JD557</id>
