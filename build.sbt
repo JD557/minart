@@ -3,12 +3,12 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 name := "minart"
 
-organization in ThisBuild := "eu.joaocosta"
-publishTo in ThisBuild := sonatypePublishToBundle.value
-scalaVersion in ThisBuild := "2.13.4"
-licenses in ThisBuild := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
-homepage in ThisBuild := Some(url("https://github.com/JD557/minart"))
-scmInfo in ThisBuild := Some(
+ThisBuild / organization := "eu.joaocosta"
+ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / scalaVersion := "2.13.4"
+ThisBuild / licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / homepage := Some(url("https://github.com/JD557/minart"))
+ThisBuild / scmInfo := Some(
   ScmInfo(
     url("https://github.com/JD557/minart"),
     "scm:git@github.com:JD557/minart.git"
@@ -37,17 +37,17 @@ val testSettings = Seq(
     "com.eed3si9n.verify" %%% "verify" % "1.0.0" % Test
   ),
   testFrameworks += new TestFramework("verify.runner.Framework"),
-  scalacOptions in Test ++= Seq("-Yrangepos")
+  Test / scalacOptions ++= Seq("-Yrangepos")
 )
 
 val publishSettings = Seq(
   publishMavenStyle := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   pomIncludeRepository := { _ => false }
 )
 
 val noPublishSettings = Seq(
-  skip in publish := true,
+  publish / skip := true,
   publish := (()),
   publishLocal := (()),
   publishArtifact := false,
@@ -62,8 +62,8 @@ val jsSettings = Seq(
 
 val nativeSettings = Seq(
   nativeLinkStubs := true,
-  nativeMode in Compile := "release",
-  nativeMode in Test := "debug",
+  Compile / nativeMode := "release",
+  Test / nativeMode := "debug",
   nativeLTO := "thin"
 )
 
@@ -143,8 +143,8 @@ lazy val `examples-snake` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "snake")
 
 releaseCrossBuild := true
-releaseTagComment := s"Release ${(version in ThisBuild).value}"
-releaseCommitMessage := s"Set version to ${(version in ThisBuild).value}"
+releaseTagComment := s"Release ${(ThisBuild / version).value}"
+releaseCommitMessage := s"Set version to ${(ThisBuild / version).value}"
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
