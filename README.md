@@ -75,7 +75,7 @@ Note that `clear`/`redraw` still need to be called manually (since in some cases
 To include minart, simply add `minart-core` to your project:
 
 ```scala
-libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.2.1"
+libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.2.2"
 ```
 
 The `examples` folder contains some sample code.
