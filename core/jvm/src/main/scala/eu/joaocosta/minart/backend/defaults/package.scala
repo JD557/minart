@@ -6,6 +6,6 @@ package object defaults {
   implicit val defaultCanvas: DefaultBackend[Any, AwtCanvas] =
     DefaultBackend.fromFunction((_) => new AwtCanvas())
 
-  implicit val defaultRenderLoop: DefaultBackend[Any, JavaRenderLoop.type] =
-    DefaultBackend.fromConstant(JavaRenderLoop)
+  implicit val defaultLoopRunner: DefaultBackend[Any, JavaLoopRunner.type] =
+    DefaultBackend.fromConstant(JavaLoopRunner)
 }

@@ -6,19 +6,19 @@ import eu.joaocosta.minart.backend._
 
 trait RenderLoopTests extends BasicTestSuite {
 
-  def renderLoop: ImpureRenderLoop
+  def loopRunner: LoopRunner
 
   def singleFrameTest() = test("Have a singleFrame operation that runs only once") {
     var renderCount: Int = 0
-    renderLoop.singleFrame(
+    ImpureRenderLoop.singleFrame(
       renderFrame = (canvas: Canvas) => renderCount += 1
-    )(canvasManager = CanvasManager(() => new PpmCanvas()), canvasSettings = Canvas.Settings(4, 4))
+    )(runner = loopRunner, canvasManager = CanvasManager(() => new PpmCanvas()), canvasSettings = Canvas.Settings(4, 4))
     assert(renderCount == 1)
   }
 
   def loopTest() = test("Have a finiteRenderLoop operation that ends when a certain state is reached") {
     var renderCount: Int = 0
-    renderLoop.finiteRenderLoop[Int](
+    ImpureRenderLoop.finiteRenderLoop[Int](
       renderFrame = (canvas: Canvas, state: Int) => {
         renderCount += 1
         state + 1
@@ -26,6 +26,7 @@ trait RenderLoopTests extends BasicTestSuite {
       terminateWhen = _ >= 5,
       frameRate = FrameRate.Uncapped
     )(
+      runner = loopRunner,
       canvasManager = CanvasManager(() => new PpmCanvas()),
       canvasSettings = Canvas.Settings(4, 4),
       initialState = 0

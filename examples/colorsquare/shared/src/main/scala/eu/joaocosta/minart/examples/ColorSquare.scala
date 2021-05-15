@@ -7,8 +7,7 @@ object ColorSquare {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
 
   def main(args: Array[String]): Unit = {
-    RenderLoop
-      .default()
+    ImpureRenderLoop
       .singleFrame(c => {
         for {
           x <- (0 until c.settings.width)
@@ -19,6 +18,6 @@ object ColorSquare {
           c.putPixel(x, y, color)
         }
         c.redraw()
-      })(CanvasManager.default(), canvasSettings)
+      })(canvasSettings)
   }
 }

@@ -61,8 +61,7 @@ object Snake {
   def main(args: Array[String]): Unit = {
     val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canvasSettings.width)(0)))
 
-    RenderLoop
-      .default()
+    ImpureRenderLoop
       .infiniteRenderLoop[GameState](
         (c, state) => {
           c.clear()
@@ -82,7 +81,6 @@ object Snake {
         },
         FrameRate.fromFps(15)
       )(
-        CanvasManager.default(),
         canvasSettings,
         initialState
       )

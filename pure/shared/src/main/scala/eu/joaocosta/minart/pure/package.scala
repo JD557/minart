@@ -4,4 +4,6 @@ import eu.joaocosta.minart.core.Canvas
 
 package object pure {
   type CanvasIO[+A] = RIO[Canvas, A]
+
+  type StateCanvasIO[-Canvas, -State, +A] = Function1[State, RIO[Canvas, A]]
 }

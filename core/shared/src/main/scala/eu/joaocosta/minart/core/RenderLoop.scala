@@ -64,14 +64,22 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
 object RenderLoop {
 
   trait StatelessRenderLoop {
-    def apply(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
+    def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
+    def apply(canvasSettings: Canvas.Settings)(implicit
+        runner: DefaultBackend[Any, LoopRunner],
+        canvasManager: DefaultBackend[Any, CanvasManager]
+    ): Unit = apply(runner.defaultValue(()), canvasManager.defaultValue(()), canvasSettings)
   }
 
   trait StatefulRenderLoop[S] { self =>
-    def apply(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+    def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+    def apply(canvasSettings: Canvas.Settings, initialState: S)(implicit
+        runner: DefaultBackend[Any, LoopRunner],
+        canvasManager: DefaultBackend[Any, CanvasManager]
+    ): Unit = apply(runner.defaultValue(()), canvasManager.defaultValue(()), canvasSettings, initialState)
     def withInitialState(initialState: S): StatelessRenderLoop = new StatelessRenderLoop {
-      def apply(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
-        self.apply(canvasManager, canvasSettings, initialState)
+      def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
+        self.apply(runner, canvasManager, canvasSettings, initialState)
     }
   }
 
