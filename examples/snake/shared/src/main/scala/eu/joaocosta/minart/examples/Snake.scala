@@ -64,9 +64,6 @@ object Snake {
     RenderLoop
       .default()
       .infiniteRenderLoop[GameState](
-        CanvasManager.default(),
-        canvasSettings,
-        initialState,
         (c, state) => {
           c.clear()
 
@@ -84,6 +81,10 @@ object Snake {
           else state.updateSnakeDir(c.getKeyboardInput()).nextState
         },
         FrameRate.fromFps(15)
+      )(
+        CanvasManager.default(),
+        canvasSettings,
+        initialState
       )
   }
 }

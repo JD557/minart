@@ -19,13 +19,10 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     * @param frameRate Frame rate limit
     */
   def finiteRenderLoop[S](
-      canvasManager: CanvasManager,
-      canvasSettings: Canvas.Settings,
-      initialState: S,
       renderFrame: F2[Canvas, S, S],
       terminateWhen: S => Boolean,
       frameRate: FrameRate
-  ): Unit
+  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
 
   /** Creates a render loop that never terminates.
     *
@@ -38,12 +35,9 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     * @param frameRate Frame rate limit
     */
   def infiniteRenderLoop[S](
-      canvasManager: CanvasManager,
-      canvasSettings: Canvas.Settings,
-      initialState: S,
       renderFrame: F2[Canvas, S, S],
       frameRate: FrameRate
-  ): Unit
+  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
 
   /** Creates a render loop that never terminates.
     *
@@ -53,11 +47,9 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     * @param frameRate Frame rate limit
     */
   def infiniteRenderLoop(
-      canvasManager: CanvasManager,
-      canvasSettings: Canvas.Settings,
       renderFrame: F1[Canvas, Unit],
       frameRate: FrameRate
-  ): Unit
+  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
 
   /** Renders a single frame
     *
@@ -65,7 +57,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     * @param canvasSettings The canvas settings to use
     * @param renderFrame Operation to render the frame and update the state
     */
-  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: F1[Canvas, Unit]): Unit
+  def singleFrame(renderFrame: F1[Canvas, Unit])(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
 }
 
 object RenderLoop {

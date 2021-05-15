@@ -29,8 +29,6 @@ object Fire {
     RenderLoop
       .default()
       .infiniteRenderLoop(
-        CanvasManager.default(),
-        canvasSettings,
         canvas => {
           val keys            = canvas.getKeyboardInput()
           val (width, height) = (canvas.settings.width, canvas.settings.height)
@@ -65,6 +63,9 @@ object Fire {
           canvas.redraw()
         },
         FrameRate.fps60
+      )(
+        CanvasManager.default(),
+        canvasSettings
       )
   }
 }

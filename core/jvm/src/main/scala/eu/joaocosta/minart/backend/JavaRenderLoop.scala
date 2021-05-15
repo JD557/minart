@@ -7,13 +7,10 @@ import eu.joaocosta.minart.core._
 
 object JavaRenderLoop extends ImpureRenderLoop {
   def finiteRenderLoop[S](
-      canvasManager: CanvasManager,
-      canvasSettings: Canvas.Settings,
-      initialState: S,
       renderFrame: (Canvas, S) => S,
       terminateWhen: S => Boolean,
       frameRate: FrameRate
-  ): Unit = {
+  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit = {
     val frameMillis = frameRate match {
       case FrameRate.Uncapped          => 0
       case FrameRate.FrameDuration(ms) => ms
@@ -34,7 +31,7 @@ object JavaRenderLoop extends ImpureRenderLoop {
     if (canvas.isCreated()) canvas.destroy()
   }
 
-  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: Canvas => Unit): Unit = {
+  def singleFrame(renderFrame: Canvas => Unit)(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit = {
     val canvas = canvasManager.init(canvasSettings)
     renderFrame(canvas)
   }

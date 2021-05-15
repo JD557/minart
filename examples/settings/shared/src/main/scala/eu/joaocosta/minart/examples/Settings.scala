@@ -13,8 +13,6 @@ object Settings {
     RenderLoop
       .default()
       .infiniteRenderLoop(
-        CanvasManager.default(),
-        settingsA,
         c => {
           val keyboardInput = c.getKeyboardInput()
           c.clear()
@@ -32,6 +30,6 @@ object Settings {
           c.redraw()
         },
         FrameRate.Uncapped
-      )
+      )(CanvasManager.default(), settingsA)
   }
 }

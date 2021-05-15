@@ -12,13 +12,10 @@ object JsRenderLoop extends ImpureRenderLoop {
   lazy val hasWindow = !isUndefined(dom.window)
 
   def finiteRenderLoop[S](
-      canvasManager: CanvasManager,
-      canvasSettings: Canvas.Settings,
-      initialState: S,
       renderFrame: (Canvas, S) => S,
       terminateWhen: S => Boolean,
       frameRate: FrameRate
-  ): Unit = {
+  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit = {
     val canvas = canvasManager.init(canvasSettings)
     val frameMillis = frameRate match {
       case FrameRate.Uncapped          => 0
@@ -37,7 +34,7 @@ object JsRenderLoop extends ImpureRenderLoop {
     finiteRenderLoopAux(initialState)
   }
 
-  def singleFrame(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, renderFrame: Canvas => Unit): Unit = {
+  def singleFrame(renderFrame: Canvas => Unit)(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit = {
     val canvas = canvasManager.init(canvasSettings)
     renderFrame(canvas)
   }
