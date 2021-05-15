@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.core
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.core.RenderLoop._
 
 /** The `RenderLoop` contains a set of helpful methods to implement basic render
   * loops in a platform agonstic way.
@@ -22,7 +23,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
       renderFrame: F2[Canvas, S, S],
       terminateWhen: S => Boolean,
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+  ): StatefulRenderLoop[S]
 
   /** Creates a render loop that never terminates.
     *
@@ -37,7 +38,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
   def infiniteRenderLoop[S](
       renderFrame: F2[Canvas, S, S],
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+  ): StatefulRenderLoop[S]
 
   /** Creates a render loop that never terminates.
     *
@@ -49,7 +50,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
   def infiniteRenderLoop(
       renderFrame: F1[Canvas, Unit],
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
+  ): StatelessRenderLoop
 
   /** Renders a single frame
     *
@@ -57,10 +58,22 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     * @param canvasSettings The canvas settings to use
     * @param renderFrame Operation to render the frame and update the state
     */
-  def singleFrame(renderFrame: F1[Canvas, Unit])(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
+  def singleFrame(renderFrame: F1[Canvas, Unit]): StatelessRenderLoop
 }
 
 object RenderLoop {
+
+  trait StatelessRenderLoop {
+    def apply(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
+  }
+
+  trait StatefulRenderLoop[S] { self =>
+    def apply(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+    def withInitialState(initialState: S): StatelessRenderLoop = new StatelessRenderLoop {
+      def apply(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
+        self.apply(canvasManager, canvasSettings, initialState)
+    }
+  }
 
   /** Returns a [[RenderLoop]] for the default backend for the target platform.
     */

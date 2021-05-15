@@ -2,19 +2,20 @@ package eu.joaocosta.minart.backend
 
 import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.core.RenderLoop._
 
 trait ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   override def infiniteRenderLoop[S](
       renderFrame: Function2[Canvas, S, S],
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit =
-    finiteRenderLoop(renderFrame, (_: S) => false, frameRate)(canvasManager, canvasSettings, initialState)
+  ): StatefulRenderLoop[S] =
+    finiteRenderLoop(renderFrame, (_: S) => false, frameRate)
 
   def infiniteRenderLoop(
       renderFrame: Canvas => Unit,
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
-    infiniteRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate)(canvasManager, canvasSettings, ())
+  ): StatelessRenderLoop =
+    infiniteRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate).withInitialState(())
 }
 
 object ImpureRenderLoop {

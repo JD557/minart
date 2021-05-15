@@ -4,6 +4,7 @@ import eu.joaocosta.minart.backend.ImpureRenderLoop
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.pure._
+import eu.joaocosta.minart.core.RenderLoop._
 
 class PureRenderLoop(impureRenderLoop: ImpureRenderLoop) extends RenderLoop[RIO, PureRenderLoop.StateCanvasIO] {
 
@@ -11,34 +12,34 @@ class PureRenderLoop(impureRenderLoop: ImpureRenderLoop) extends RenderLoop[RIO,
       renderFrame: S => CanvasIO[S],
       terminateWhen: S => Boolean,
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit =
+  ): StatefulRenderLoop[S] =
     impureRenderLoop.finiteRenderLoop[S](
       (canvas, state) => renderFrame(state).run(canvas),
       terminateWhen,
       frameRate
-    )(canvasManager, canvasSettings, initialState)
+    )
 
   def infiniteRenderLoop[S](
       renderFrame: S => CanvasIO[S],
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit =
+  ): StatefulRenderLoop[S] =
     impureRenderLoop
       .infiniteRenderLoop[S](
         (canvas, state) => renderFrame(state).run(canvas),
         frameRate
-      )(canvasManager, canvasSettings, initialState)
+      )
 
   def infiniteRenderLoop(
       renderFrame: CanvasIO[Unit],
       frameRate: FrameRate
-  )(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
+  ): StatelessRenderLoop =
     impureRenderLoop.infiniteRenderLoop(
       canvas => renderFrame.run(canvas),
       frameRate
-    )(canvasManager, canvasSettings)
+    )
 
-  def singleFrame(renderFrame: CanvasIO[Unit])(canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
-    impureRenderLoop.singleFrame(canvas => renderFrame.run(canvas))(canvasManager, canvasSettings)
+  def singleFrame(renderFrame: CanvasIO[Unit]): StatelessRenderLoop =
+    impureRenderLoop.singleFrame(canvas => renderFrame.run(canvas))
 }
 
 object PureRenderLoop {
