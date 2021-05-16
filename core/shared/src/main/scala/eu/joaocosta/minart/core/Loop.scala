@@ -1,8 +1,10 @@
 package eu.joaocosta.minart.core
 
 object Loop {
-  trait StatelessLoop {
+  trait StatelessLoop extends StatefulLoop[Unit] {
     def apply(): Unit
+    def apply(initialState: Unit): Unit                          = apply()
+    override def withInitialState(initialState: Unit): this.type = this
   }
 
   trait StatefulLoop[S] { self =>
