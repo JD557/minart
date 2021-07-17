@@ -8,6 +8,7 @@ import java.awt.{Canvas => JavaCanvas, Color => JavaColor}
 import java.awt.{Dimension, Graphics, GraphicsDevice, GraphicsEnvironment, MouseInfo}
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.JFrame
+import javax.swing.WindowConstants
 import scala.collection.JavaConverters._
 
 import eu.joaocosta.minart.core.Canvas.Resource
@@ -145,7 +146,7 @@ object AwtCanvas {
 
     val frame = new JFrame()
     frame.add(this)
-    frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     frame.pack()
     frame.setResizable(false)
     GraphicsEnvironment
