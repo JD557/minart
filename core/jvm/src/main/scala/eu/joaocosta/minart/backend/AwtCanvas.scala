@@ -145,7 +145,7 @@ object AwtCanvas {
 
     val frame = new JFrame()
     frame.add(this)
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
     frame.pack()
     frame.setResizable(false)
     GraphicsEnvironment
