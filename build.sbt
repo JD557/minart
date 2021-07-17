@@ -5,7 +5,7 @@ name := "minart"
 
 ThisBuild / organization := "eu.joaocosta"
 ThisBuild / publishTo := sonatypePublishToBundle.value
-ThisBuild / scalaVersion := "2.13.4"
+ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
@@ -17,8 +17,8 @@ ThisBuild / scmInfo := Some(
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
-  scalaVersion := "2.13.4",
-  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.4"),
+  scalaVersion := "2.13.6",
+  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
   licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
   homepage := Some(url("https://github.com/JD557/minart")),
   scmInfo := Some(
