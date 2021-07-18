@@ -129,8 +129,8 @@ class AwtCanvas() extends LowLevelCanvas {
       extendedSettings.scaledHeight,
       javaCanvas
     )
-    g.dispose()
     javaCanvas.buffStrategy.show()
+    g.dispose()
   } catch { case _: Throwable => () }
 
   def getKeyboardInput(): KeyboardInput = keyListener.getKeyboardInput()
