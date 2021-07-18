@@ -148,7 +148,6 @@ object AwtCanvas {
     frame.add(this)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     frame.pack()
-    frame.setResizable(false)
     GraphicsEnvironment
       .getLocalGraphicsEnvironment()
       .getScreenDevices()
@@ -163,6 +162,7 @@ object AwtCanvas {
     override def repaint() = outerCanvas.redraw()
 
     frame.setVisible(true)
+    frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
       override def windowClosing(e: WindowEvent): Unit = {
         outerCanvas.destroy()
