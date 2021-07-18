@@ -144,7 +144,7 @@ object AwtCanvas {
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
 
-    val frame = new JFrame()
+    val frame = new JFrame("Minart")
     frame.add(this)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     frame.pack()
