@@ -129,8 +129,8 @@ class AwtCanvas() extends LowLevelCanvas {
       extendedSettings.scaledHeight,
       javaCanvas
     )
-    g.dispose()
     javaCanvas.buffStrategy.show()
+    g.dispose()
   } catch { case _: Throwable => () }
 
   def getKeyboardInput(): KeyboardInput = keyListener.getKeyboardInput()
@@ -144,11 +144,10 @@ object AwtCanvas {
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
 
-    val frame = new JFrame()
+    val frame = new JFrame("Minart")
     frame.add(this)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     frame.pack()
-    frame.setResizable(false)
     GraphicsEnvironment
       .getLocalGraphicsEnvironment()
       .getScreenDevices()
@@ -163,6 +162,7 @@ object AwtCanvas {
     override def repaint() = outerCanvas.redraw()
 
     frame.setVisible(true)
+    frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
       override def windowClosing(e: WindowEvent): Unit = {
         outerCanvas.destroy()
