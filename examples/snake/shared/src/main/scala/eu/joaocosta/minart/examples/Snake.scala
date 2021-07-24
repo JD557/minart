@@ -4,6 +4,8 @@ import scala.util.Random
 
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.input._
 
 object Snake {
 

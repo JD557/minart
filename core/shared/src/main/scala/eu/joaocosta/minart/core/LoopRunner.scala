@@ -2,6 +2,7 @@ package eu.joaocosta.minart.core
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.core.Loop._
+import eu.joaocosta.minart.graphics.FrameRate
 
 trait LoopRunner {
   def finiteLoop[S](

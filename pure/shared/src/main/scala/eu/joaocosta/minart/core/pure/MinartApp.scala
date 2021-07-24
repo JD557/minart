@@ -1,6 +1,9 @@
-package eu.joaocosta.minart.pure
+package eu.joaocosta.minart.core.pure
 
 import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.core.pure._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.pure._
 
 /** Entrypoint for pure Minart applications. */
 trait MinartApp {

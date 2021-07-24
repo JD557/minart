@@ -1,9 +1,10 @@
-package eu.joaocosta.minart.pure
+package eu.joaocosta.minart.graphics.pure
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.pure._
-import eu.joaocosta.minart.core.RenderLoop._
+import eu.joaocosta.minart.core.pure._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.RenderLoop._
 
 object PureRenderLoop extends RenderLoop[RIO, StateCanvasIO] {
   def finiteRenderLoop[S](

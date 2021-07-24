@@ -1,6 +1,6 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.input
 
-import eu.joaocosta.minart.core.KeyboardInput.Key
+import eu.joaocosta.minart.input.KeyboardInput.Key
 
 /** The keyboard input stores the state of the keyboard at a certain point in time.
   * It also accumulates keys that have been pressed and released.

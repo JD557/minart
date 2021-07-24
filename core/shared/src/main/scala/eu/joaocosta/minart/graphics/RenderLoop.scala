@@ -1,7 +1,8 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.core.RenderLoop._
+import eu.joaocosta.minart.core.LoopRunner
+import eu.joaocosta.minart.graphics.RenderLoop._
 
 /** The `RenderLoop` contains a set of helpful methods to implement basic render
   * loops in a platform agonstic way.
@@ -90,9 +91,4 @@ object RenderLoop {
         self.apply(runner, canvasManager, canvasSettings, initialState)
     }
   }
-
-  /** Returns a [[RenderLoop]] for the default backend for the target platform.
-    */
-  def default()(implicit d: DefaultBackend[Any, RenderLoop[Function1, Function2]]): RenderLoop[Function1, Function2] =
-    d.defaultValue(())
 }

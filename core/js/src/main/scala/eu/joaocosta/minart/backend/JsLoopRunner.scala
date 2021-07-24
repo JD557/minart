@@ -8,6 +8,7 @@ import scala.scalajs.js.{isUndefined, timers}
 
 import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.core.Loop._
+import eu.joaocosta.minart.graphics.FrameRate
 
 object JsLoopRunner extends LoopRunner {
   lazy val hasWindow = !isUndefined(dom.window)

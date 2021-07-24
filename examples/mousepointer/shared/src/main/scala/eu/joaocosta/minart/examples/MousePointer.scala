@@ -2,6 +2,7 @@ package eu.joaocosta.minart.examples
 
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.graphics._
 
 object MousePointer {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)

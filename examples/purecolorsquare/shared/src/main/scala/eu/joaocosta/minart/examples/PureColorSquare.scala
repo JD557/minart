@@ -1,7 +1,9 @@
 package eu.joaocosta.minart.examples
 
 import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.pure._
+import eu.joaocosta.minart.core.pure._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.pure._
 
 object PureColorSquare extends MinartApp {
   type State = Unit

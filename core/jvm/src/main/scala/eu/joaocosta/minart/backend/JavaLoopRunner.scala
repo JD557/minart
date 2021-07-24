@@ -5,6 +5,7 @@ import scala.concurrent.duration.FiniteDuration
 
 import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.core.Loop._
+import eu.joaocosta.minart.graphics.FrameRate
 
 object JavaLoopRunner extends LoopRunner {
   def finiteLoop[S](

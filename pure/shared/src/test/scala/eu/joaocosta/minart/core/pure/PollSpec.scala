@@ -1,4 +1,4 @@
-package eu.joaocosta.minart.pure
+package eu.joaocosta.minart.core.pure
 
 import scala.concurrent._
 import scala.util.{Success, Failure}

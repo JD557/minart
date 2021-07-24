@@ -1,8 +1,9 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.graphics
 
 import verify._
 
 import eu.joaocosta.minart.backend._
+import eu.joaocosta.minart.core._
 
 trait RenderLoopTests extends BasicTestSuite {
 
