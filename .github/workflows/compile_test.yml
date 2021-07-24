@@ -1,6 +1,6 @@
 name: Compile and Test
 
-on: [push, pull_request]
+on: [push]
 
 env:
   CI: true # disables SBT super shell which has problems with CI environments
