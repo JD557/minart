@@ -40,6 +40,11 @@ val testSettings = Seq(
   Test / scalacOptions ++= Seq("-Yrangepos")
 )
 
+val noTestSettings = Seq(
+  test := (()),
+  Test / test := (())
+)
+
 val publishSettings = Seq(
   publishMavenStyle := true,
   Test / publishArtifact := false,
@@ -100,6 +105,7 @@ lazy val pure =
 lazy val examples = (project in file("examples"))
   .settings(sharedSettings)
   .settings(name := "minart-examples")
+  .settings(noTestSettings)
   .settings(noPublishSettings)
   .aggregate(
     Seq(
@@ -118,6 +124,7 @@ def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) 
     .dependsOn(core)
     .settings(sharedSettings)
     .settings(name := s"minart-examples-${exampleName}")
+    .settings(noTestSettings)
     .settings(noPublishSettings)
     .jsSettings(jsSettings)
     .jsSettings(scalaJSUseMainModuleInitializer := true)
