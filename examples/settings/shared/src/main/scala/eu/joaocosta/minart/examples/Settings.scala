@@ -10,11 +10,8 @@ object Settings {
     Canvas.Settings(width = 640, height = 480, scale = 1, fullScreen = true, clearColor = Color(128, 255, 128))
 
   def main(args: Array[String]): Unit = {
-    RenderLoop
-      .default()
+    ImpureRenderLoop
       .infiniteRenderLoop(
-        CanvasManager.default(),
-        settingsA,
         c => {
           val keyboardInput = c.getKeyboardInput()
           c.clear()
@@ -32,6 +29,6 @@ object Settings {
           c.redraw()
         },
         FrameRate.Uncapped
-      )
+      )(settingsA)
   }
 }

@@ -7,11 +7,8 @@ object MousePointer {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
 
   def main(args: Array[String]): Unit = {
-    RenderLoop
-      .default()
+    ImpureRenderLoop
       .infiniteRenderLoop(
-        CanvasManager.default(),
-        canvasSettings,
         c => {
           c.clear()
           val mouse = c.getPointerInput()
@@ -22,6 +19,6 @@ object MousePointer {
           c.redraw()
         },
         FrameRate.Uncapped
-      )
+      )(canvasSettings)
   }
 }

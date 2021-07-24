@@ -4,7 +4,7 @@ import eu.joaocosta.minart.backend._
 import eu.joaocosta.minart.core._
 
 object JavaRenderLoopSpec extends RenderLoopTests {
-  lazy val renderLoop: ImpureRenderLoop = JavaRenderLoop
+  lazy val loopRunner: LoopRunner = JavaLoopRunner
 
   singleFrameTest()
   loopTest()
