@@ -8,6 +8,7 @@ import java.awt.{Canvas => JavaCanvas, Color => JavaColor}
 import java.awt.{Dimension, Graphics, GraphicsDevice, GraphicsEnvironment, MouseInfo}
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.JFrame
+import javax.swing.WindowConstants
 import scala.collection.JavaConverters._
 
 import eu.joaocosta.minart.core.Canvas.Resource
@@ -128,8 +129,8 @@ class AwtCanvas() extends LowLevelCanvas {
       extendedSettings.scaledHeight,
       javaCanvas
     )
-    g.dispose()
     javaCanvas.buffStrategy.show()
+    g.dispose()
   } catch { case _: Throwable => () }
 
   def getKeyboardInput(): KeyboardInput = keyListener.getKeyboardInput()
@@ -143,11 +144,10 @@ object AwtCanvas {
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
 
-    val frame = new JFrame()
+    val frame = new JFrame("Minart")
     frame.add(this)
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     frame.pack()
-    frame.setResizable(false)
     GraphicsEnvironment
       .getLocalGraphicsEnvironment()
       .getScreenDevices()
@@ -162,6 +162,7 @@ object AwtCanvas {
     override def repaint() = outerCanvas.redraw()
 
     frame.setVisible(true)
+    frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
       override def windowClosing(e: WindowEvent): Unit = {
         outerCanvas.destroy()
