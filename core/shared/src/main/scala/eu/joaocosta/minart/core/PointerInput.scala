@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.core
 
-import eu.joaocosta.minart.core.KeyboardInput.Key
-
 /** The pointer input stores the state of the mouse (or similar device) at a certain point in time.
   * It also accumulates points that have been pressed and released.
   *

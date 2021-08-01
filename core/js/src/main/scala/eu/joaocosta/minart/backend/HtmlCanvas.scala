@@ -33,8 +33,7 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
   private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
-  private[this] var buffer: ImageData     = _
-  private[this] var listenersSet: Boolean = false
+  private[this] var buffer: ImageData = _
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]

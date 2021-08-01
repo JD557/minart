@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.pure
 
-import scala.concurrent.Future
 import scala.util.Try
 
 import eu.joaocosta.minart.core._

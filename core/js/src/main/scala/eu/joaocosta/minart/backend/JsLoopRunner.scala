@@ -1,13 +1,11 @@
 package eu.joaocosta.minart.backend
 
-import org.scalajs.dom
-
-import scala.annotation.tailrec
-import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js.{isUndefined, timers}
 
-import eu.joaocosta.minart.core._
+import org.scalajs.dom
+
 import eu.joaocosta.minart.core.Loop._
+import eu.joaocosta.minart.core._
 
 object JsLoopRunner extends LoopRunner {
   lazy val hasWindow = !isUndefined(dom.window)

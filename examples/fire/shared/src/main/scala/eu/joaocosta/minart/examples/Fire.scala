@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.examples
 
-import scala.concurrent.duration._
-
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.core._
 

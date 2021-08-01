@@ -1,11 +1,9 @@
 package eu.joaocosta.minart.pure
 
 import scala.concurrent._
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success}
 
 import verify._
-
-import eu.joaocosta.minart.core._
 
 object PollSpec extends BasicTestSuite {
   test("store pure results") {

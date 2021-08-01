@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.core
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.core.RenderLoop._
 
 object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
