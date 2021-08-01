@@ -1,7 +1,6 @@
 package eu.joaocosta.minart.backend
 
 import scala.annotation.tailrec
-import scala.concurrent.duration.FiniteDuration
 
 import eu.joaocosta.minart.core._
 

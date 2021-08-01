@@ -1,9 +1,6 @@
 package eu.joaocosta.minart.pure
 
-import scala.concurrent.Future
 import scala.util.Try
-
-import eu.joaocosta.minart.core._
 
 /** Representation of an effectful operation, based on Haskell's RIO Monad.
   */

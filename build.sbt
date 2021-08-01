@@ -14,6 +14,7 @@ ThisBuild / scmInfo := Some(
     "scm:git@github.com:JD557/minart.git"
   )
 )
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 val sharedSettings = Seq(
   organization := "eu.joaocosta",
@@ -28,8 +29,14 @@ val sharedSettings = Seq(
     )
   ),
   autoAPIMappings := true,
-  scalacOptions ++= Seq("-unchecked", "-deprecation"),
-  scalafmtOnCompile := true
+  scalacOptions ++= Seq(
+    "-unchecked",
+    "-deprecation"
+    ),
+  scalafmtOnCompile := true,
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision,
+  scalafixOnCompile := true
 )
 
 val testSettings = Seq(

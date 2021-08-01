@@ -1,12 +1,11 @@
 package eu.joaocosta.minart.backend
 
-import scalanative.unsafe._
-import scalanative.unsigned._
+import scala.scalanative.unsafe._
+import scala.scalanative.unsigned._
 
 import sdl2.Extras._
 import sdl2.SDL._
 
-import eu.joaocosta.minart.core.KeyboardInput.Key
 import eu.joaocosta.minart.core._
 
 /** A low level Canvas implementation that shows the image in a SDL Window.
@@ -20,7 +19,6 @@ class SdlCanvas() extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window]      = _
   private[this] var surface: Ptr[SDL_Surface]    = _
-  private[this] var buffer: Ptr[SDL_Surface]     = _
   private[this] var renderer: Ptr[SDL_Renderer]  = _
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   private[this] var rawMousePos: (Int, Int)      = _

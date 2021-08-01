@@ -1,10 +1,8 @@
 package eu.joaocosta.minart.backend
 
-import org.scalajs.dom
-
-import scala.annotation.tailrec
-import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js.{isUndefined, timers}
+
+import org.scalajs.dom
 
 import eu.joaocosta.minart.core._
 

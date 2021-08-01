@@ -1,10 +1,6 @@
 package eu.joaocosta.minart.pure
 
-import scala.concurrent._
-
 import verify._
-
-import eu.joaocosta.minart.core._
 
 object RIOSpec extends BasicTestSuite {
   test("store pure results") {

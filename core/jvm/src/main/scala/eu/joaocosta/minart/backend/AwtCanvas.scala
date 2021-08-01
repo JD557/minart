@@ -1,21 +1,24 @@
 package eu.joaocosta.minart.backend
 
-import java.awt.event.{KeyEvent, KeyListener => JavaKeyListener}
-import java.awt.event.{MouseEvent, MouseListener => JavaMouseListener}
-import java.awt.event.{WindowAdapter, WindowEvent}
-import java.awt.image.{DataBufferInt, BufferedImage}
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor}
-import java.awt.{Dimension, Graphics, GraphicsDevice, GraphicsEnvironment, MouseInfo}
+import java.awt.event.{
+  KeyEvent,
+  KeyListener => JavaKeyListener,
+  MouseEvent,
+  MouseListener => JavaMouseListener,
+  WindowAdapter,
+  WindowEvent
+}
+import java.awt.image.{BufferedImage, DataBufferInt}
+import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, GraphicsEnvironment, MouseInfo}
 import java.util.concurrent.ConcurrentLinkedQueue
-import javax.swing.JFrame
-import javax.swing.WindowConstants
+import javax.swing.{JFrame, WindowConstants}
+
 import scala.collection.JavaConverters._
 
 import eu.joaocosta.minart.core.Canvas.Resource
 import eu.joaocosta.minart.core.KeyboardInput.Key
-import eu.joaocosta.minart.core._
-
 import eu.joaocosta.minart.core.LowLevelCanvas.ExtendedSettings
+import eu.joaocosta.minart.core._
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
@@ -58,9 +61,6 @@ class AwtCanvas() extends LowLevelCanvas {
       clear(Set(Resource.Backbuffer))
     }
   }
-
-  private[this] def pack(r: Int, g: Int, b: Int): Int =
-    (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
     extendedSettings.pixelSize.foreach { dy =>

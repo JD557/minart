@@ -3,10 +3,10 @@
 
 package sdl2
 
-import scalanative.unsafe._
-import scalanative.unsigned._
+import scala.scalanative.unsafe._
+import scala.scalanative.unsigned._
 
-import SDL._
+import sdl2.SDL._
 
 object Extras {
 
