@@ -1,9 +1,8 @@
 package eu.joaocosta.minart.backend
 
 import scala.annotation.tailrec
-import scala.concurrent.duration.FiniteDuration
-import scalanative.unsafe._
-import scalanative.unsigned._
+import scala.scalanative.unsafe._
+import scala.scalanative.unsigned._
 
 import sdl2.Extras._
 import sdl2.SDL._

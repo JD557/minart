@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.backend
 
-import eu.joaocosta.minart.core._
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.core._
 
 trait ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   def infiniteRenderLoop[S](

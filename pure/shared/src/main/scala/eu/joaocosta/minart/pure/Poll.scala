@@ -1,9 +1,7 @@
 package eu.joaocosta.minart.pure
 
 import scala.concurrent._
-import scala.util.{Try, Failure, Success}
-
-import eu.joaocosta.minart.core._
+import scala.util.{Failure, Success, Try}
 
 /** Representation of a running asyncronous computation that can be polled.
   *
