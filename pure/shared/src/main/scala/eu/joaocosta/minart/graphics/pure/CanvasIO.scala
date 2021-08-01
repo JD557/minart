@@ -3,8 +3,8 @@ package eu.joaocosta.minart.graphics.pure
 import scala.concurrent.Future
 import scala.util.Try
 
-import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.core.pure._
+import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.pure._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 

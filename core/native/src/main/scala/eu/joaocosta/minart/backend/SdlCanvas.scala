@@ -6,7 +6,7 @@ import scalanative.unsigned._
 import sdl2.Extras._
 import sdl2.SDL._
 
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input.KeyboardInput.Key
 import eu.joaocosta.minart.input._

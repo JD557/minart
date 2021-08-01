@@ -1,14 +1,14 @@
 package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.core.LoopRunner
+import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics.RenderLoop._
 
 object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   def finiteRenderLoop[S](
       renderFrame: (Canvas, S) => S,
       terminateWhen: S => Boolean,
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatefulRenderLoop[S] = {
     new StatefulRenderLoop[S] {
       def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S) = {
@@ -25,13 +25,13 @@ object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
 
   def infiniteRenderLoop[S](
       renderFrame: Function2[Canvas, S, S],
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatefulRenderLoop[S] =
     finiteRenderLoop(renderFrame, (_: S) => false, frameRate)
 
   def infiniteRenderLoop(
       renderFrame: Canvas => Unit,
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatelessRenderLoop =
     infiniteRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate).withInitialState(())
 

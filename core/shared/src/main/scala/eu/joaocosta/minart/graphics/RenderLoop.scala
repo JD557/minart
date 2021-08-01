@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.core.LoopRunner
+import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics.RenderLoop._
 
 /** The `RenderLoop` contains a set of helpful methods to implement basic render
@@ -23,7 +23,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
   def finiteRenderLoop[S](
       renderFrame: F2[Canvas, S, S],
       terminateWhen: S => Boolean,
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatefulRenderLoop[S]
 
   /** Creates a render loop that never terminates.
@@ -38,7 +38,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     */
   def infiniteRenderLoop[S](
       renderFrame: F2[Canvas, S, S],
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatefulRenderLoop[S]
 
   /** Creates a render loop that never terminates.
@@ -50,7 +50,7 @@ trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
     */
   def infiniteRenderLoop(
       renderFrame: F1[Canvas, Unit],
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatelessRenderLoop
 
   /** Renders a single frame

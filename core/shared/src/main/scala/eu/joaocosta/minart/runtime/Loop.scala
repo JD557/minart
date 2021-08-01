@@ -1,4 +1,4 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.runtime
 
 object Loop {
   trait StatelessLoop extends StatefulLoop[Unit] {

@@ -3,20 +3,19 @@ package eu.joaocosta.minart.backend
 import scala.annotation.tailrec
 import scala.concurrent.duration.FiniteDuration
 
-import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.core.Loop._
-import eu.joaocosta.minart.graphics.FrameRate
+import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.Loop._
 
 object JavaLoopRunner extends LoopRunner {
   def finiteLoop[S](
       operation: S => S,
       terminateWhen: S => Boolean,
-      frameRate: FrameRate,
+      frequency: LoopFrequency,
       cleanup: () => Unit
   ): StatefulLoop[S] = {
-    val frameMillis = frameRate match {
-      case FrameRate.Uncapped          => 0
-      case FrameRate.FrameDuration(ms) => ms
+    val iterationMillis = frequency match {
+      case LoopFrequency.Uncapped         => 0
+      case LoopFrequency.LoopDuration(ms) => ms
     }
     new StatefulLoop[S] {
       def apply(initialState: S) = {
@@ -26,7 +25,7 @@ object JavaLoopRunner extends LoopRunner {
           val newState  = operation(state)
           if (!terminateWhen(newState)) {
             val endTime  = System.currentTimeMillis()
-            val waitTime = frameMillis - (endTime - startTime)
+            val waitTime = iterationMillis - (endTime - startTime)
             if (waitTime > 0) Thread.sleep(waitTime)
             finiteLoopAux(newState)
           } else ()

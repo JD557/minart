@@ -2,7 +2,7 @@ package eu.joaocosta.minart.examples
 
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.input.KeyboardInput.Key
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics._
 
 object Settings {
@@ -29,7 +29,7 @@ object Settings {
           }
           c.redraw()
         },
-        FrameRate.Uncapped
+        LoopFrequency.Uncapped
       )(settingsA)
   }
 }

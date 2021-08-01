@@ -11,7 +11,7 @@ import javax.swing.JFrame
 import javax.swing.WindowConstants
 import scala.collection.JavaConverters._
 
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics.Canvas.Resource
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.graphics._
