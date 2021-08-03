@@ -6,7 +6,6 @@ import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
 import org.scalajs.dom.raw.{Event, ImageData, KeyboardEvent, PointerEvent}
 
-import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 
@@ -35,8 +34,7 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
   private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
-  private[this] var buffer: ImageData     = _
-  private[this] var listenersSet: Boolean = false
+  private[this] var buffer: ImageData = _
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]

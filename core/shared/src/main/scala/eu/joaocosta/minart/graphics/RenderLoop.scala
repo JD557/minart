@@ -1,8 +1,8 @@
 package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics.RenderLoop._
+import eu.joaocosta.minart.runtime._
 
 /** The `RenderLoop` contains a set of helpful methods to implement basic render
   * loops in a platform agonstic way.

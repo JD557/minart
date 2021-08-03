@@ -1,8 +1,8 @@
 package eu.joaocosta.minart.runtime.pure
 
-import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.pure._
+import eu.joaocosta.minart.runtime._
 
 /** Entrypoint for pure Minart applications. */
 trait MinartApp {

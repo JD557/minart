@@ -1,8 +1,7 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics.RenderLoop._
+import eu.joaocosta.minart.runtime._
 
 object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   def finiteRenderLoop[S](
