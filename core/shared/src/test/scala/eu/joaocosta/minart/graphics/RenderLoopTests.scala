@@ -1,8 +1,9 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.graphics
 
 import verify._
 
 import eu.joaocosta.minart.backend._
+import eu.joaocosta.minart.runtime._
 
 trait RenderLoopTests extends BasicTestSuite {
 
@@ -24,7 +25,7 @@ trait RenderLoopTests extends BasicTestSuite {
         state + 1
       },
       terminateWhen = _ >= 5,
-      frameRate = FrameRate.Uncapped
+      frameRate = LoopFrequency.Uncapped
     )(
       runner = loopRunner,
       canvasManager = CanvasManager(() => new PpmCanvas()),

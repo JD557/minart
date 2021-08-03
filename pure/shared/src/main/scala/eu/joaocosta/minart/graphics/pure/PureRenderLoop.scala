@@ -1,14 +1,15 @@
-package eu.joaocosta.minart.pure
+package eu.joaocosta.minart.graphics.pure
 
-import eu.joaocosta.minart.core.RenderLoop._
-import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.pure._
+import eu.joaocosta.minart.graphics.RenderLoop._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.pure._
 
 object PureRenderLoop extends RenderLoop[RIO, StateCanvasIO] {
   def finiteRenderLoop[S](
       renderFrame: S => CanvasIO[S],
       terminateWhen: S => Boolean,
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatefulRenderLoop[S] =
     ImpureRenderLoop.finiteRenderLoop[S](
       (canvas, state) => renderFrame(state).run(canvas),
@@ -18,7 +19,7 @@ object PureRenderLoop extends RenderLoop[RIO, StateCanvasIO] {
 
   def infiniteRenderLoop[S](
       renderFrame: S => CanvasIO[S],
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatefulRenderLoop[S] =
     ImpureRenderLoop
       .infiniteRenderLoop[S](
@@ -28,7 +29,7 @@ object PureRenderLoop extends RenderLoop[RIO, StateCanvasIO] {
 
   def infiniteRenderLoop(
       renderFrame: CanvasIO[Unit],
-      frameRate: FrameRate
+      frameRate: LoopFrequency
   ): StatelessRenderLoop =
     ImpureRenderLoop.infiniteRenderLoop(
       canvas => renderFrame.run(canvas),

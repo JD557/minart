@@ -1,4 +1,4 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 

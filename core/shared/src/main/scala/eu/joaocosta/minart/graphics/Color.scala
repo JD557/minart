@@ -1,4 +1,4 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.graphics
 
 /** RGB Color */
 final class Color private (val argb: Int) extends AnyVal {

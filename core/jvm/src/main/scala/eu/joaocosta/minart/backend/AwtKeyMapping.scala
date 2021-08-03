@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import java.awt.event.KeyEvent
 
-import eu.joaocosta.minart.core.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput._
 
 object AwtKeyMapping extends KeyMapping[Int] {
   protected final val mappings: Map[Int, Key] = Map(

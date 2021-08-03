@@ -1,6 +1,6 @@
-package eu.joaocosta.minart
+package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.core.Canvas
+import eu.joaocosta.minart.runtime.pure.RIO
 
 package object pure {
   type CanvasIO[+A] = RIO[Canvas, A]

@@ -1,7 +1,9 @@
 package eu.joaocosta.minart.examples
 
 import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.runtime._
 
 object Fire {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
@@ -59,7 +61,7 @@ object Fire {
           }
           canvas.redraw()
         },
-        FrameRate.fps60
+        LoopFrequency.hz60
       )(canvasSettings)
   }
 }

@@ -1,7 +1,9 @@
 package eu.joaocosta.minart.examples
 
-import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.pure._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.pure._
+import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.pure._
 
 object PureColorSquare extends MinartApp {
   type State = Unit
@@ -9,7 +11,7 @@ object PureColorSquare extends MinartApp {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
   val canvasManager  = CanvasManager.default()
   val initialState   = ()
-  val frameRate      = FrameRate.Uncapped
+  val frameRate      = LoopFrequency.Uncapped
   val terminateWhen  = (_: State) => false
   val renderFrame = (_: State) => {
     CanvasIO.getSettings

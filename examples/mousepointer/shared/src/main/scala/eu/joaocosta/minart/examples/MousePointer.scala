@@ -1,7 +1,8 @@
 package eu.joaocosta.minart.examples
 
 import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.runtime._
 
 object MousePointer {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
@@ -18,7 +19,7 @@ object MousePointer {
           mouse.position.foreach(pos => c.putPixel(pos.x, pos.y, mouseColor))
           c.redraw()
         },
-        FrameRate.Uncapped
+        LoopFrequency.Uncapped
       )(canvasSettings)
   }
 }

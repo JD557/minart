@@ -6,7 +6,8 @@ import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
 import org.scalajs.dom.raw.{Event, ImageData, KeyboardEvent, PointerEvent}
 
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */

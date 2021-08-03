@@ -1,13 +1,13 @@
-package eu.joaocosta.minart.core
+package eu.joaocosta.minart.runtime
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.core.Loop._
+import eu.joaocosta.minart.runtime.Loop._
 
 trait LoopRunner {
   def finiteLoop[S](
       operation: S => S,
       terminateWhen: S => Boolean,
-      frameRate: FrameRate,
+      frequency: LoopFrequency,
       cleanup: () => Unit
   ): StatefulLoop[S]
 

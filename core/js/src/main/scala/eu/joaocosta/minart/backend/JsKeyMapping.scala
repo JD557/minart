@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.backend
 
-import eu.joaocosta.minart.core.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput._
 
 object JsKeyMapping extends KeyMapping[Int] {
   protected final val mappings: Map[Int, Key] = Map(

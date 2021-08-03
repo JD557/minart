@@ -7,19 +7,19 @@ import scala.scalanative.unsigned._
 import sdl2.Extras._
 import sdl2.SDL._
 
-import eu.joaocosta.minart.core.Loop._
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.runtime.Loop._
+import eu.joaocosta.minart.runtime._
 
 object SdlLoopRunner extends LoopRunner {
   def finiteLoop[S](
       operation: S => S,
       terminateWhen: S => Boolean,
-      frameRate: FrameRate,
+      frequency: LoopFrequency,
       cleanup: () => Unit
   ): StatefulLoop[S] = {
-    val frameMillis = frameRate match {
-      case FrameRate.Uncapped          => 0
-      case FrameRate.FrameDuration(ms) => ms
+    val iterationMillis = frequency match {
+      case LoopFrequency.Uncapped         => 0
+      case LoopFrequency.LoopDuration(ms) => ms
     }
     new StatefulLoop[S] {
       def apply(initialState: S) = {
@@ -29,7 +29,7 @@ object SdlLoopRunner extends LoopRunner {
           val newState  = operation(state)
           if (!terminateWhen(newState)) {
             val endTime  = SDL_GetTicks()
-            val waitTime = frameMillis - (endTime - startTime).toInt
+            val waitTime = iterationMillis - (endTime - startTime).toInt
             if (waitTime > 0) SDL_Delay(waitTime.toUInt)
             finiteLoopAux(newState)
           } else ()
