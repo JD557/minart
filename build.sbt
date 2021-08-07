@@ -30,8 +30,10 @@ val sharedSettings = Seq(
   ),
   autoAPIMappings := true,
   scalacOptions ++= Seq(
-    "-unchecked",
-    "-deprecation"
+    "-deprecation",
+    "-feature",
+    "-language:higherKinds",
+    "-unchecked"
     ),
   scalafmtOnCompile := true,
   semanticdbEnabled := true,

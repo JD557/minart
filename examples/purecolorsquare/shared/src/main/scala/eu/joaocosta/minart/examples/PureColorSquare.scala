@@ -7,9 +7,9 @@ import eu.joaocosta.minart.runtime.pure._
 
 object PureColorSquare extends MinartApp {
   type State = Unit
-  val loopRunner     = LoopRunner.default()
+  val loopRunner     = LoopRunner()
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
-  val canvasManager  = CanvasManager.default()
+  val canvasManager  = CanvasManager()
   val initialState   = ()
   val frameRate      = LoopFrequency.Uncapped
   val terminateWhen  = (_: State) => false

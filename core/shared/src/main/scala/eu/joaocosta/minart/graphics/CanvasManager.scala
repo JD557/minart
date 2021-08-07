@@ -24,16 +24,10 @@ object CanvasManager {
     }
   }
 
-  implicit def defaultCanvasManager(implicit
-      d: DefaultBackend[Any, LowLevelCanvas]
-  ): DefaultBackend[Any, CanvasManager] = DefaultBackend.fromConstant(
-    CanvasManager(() => d.defaultValue())
-  )
-
   /** Returns [[CanvasManager]] for the default backend for the target platform.
     *
     * @return [[CanvasManager]] using the default backend for the target platform
     */
-  def default()(implicit d: DefaultBackend[Any, CanvasManager]): CanvasManager =
-    d.defaultValue()
+  def apply(): CanvasManager =
+    CanvasManager(() => LowLevelCanvas.create())
 }

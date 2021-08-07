@@ -44,12 +44,12 @@ trait LowLevelCanvas extends Canvas {
 
 object LowLevelCanvas {
 
-  /** Returns [[LowLevelCanvas]] for the default backend for the target platform.
+  /** Returns a new [[LowLevelCanvas]] for the default backend for the target platform.
     *
     * @return [[LowLevelCanvas]] using the default backend for the target platform
     */
-  def default()(implicit d: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
-    d.defaultValue()
+  def create(): LowLevelCanvas =
+    DefaultBackend[Any, LowLevelCanvas].defaultValue()
 
   /** Internal data structure containing canvas settings and precomputed values.
     */

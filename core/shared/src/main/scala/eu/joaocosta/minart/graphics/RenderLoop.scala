@@ -66,10 +66,7 @@ object RenderLoop {
 
   trait StatelessRenderLoop extends StatefulRenderLoop[Unit] {
     def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
-    def apply(canvasSettings: Canvas.Settings)(implicit
-        runner: DefaultBackend[Any, LoopRunner],
-        canvasManager: DefaultBackend[Any, CanvasManager]
-    ): Unit = apply(runner.defaultValue(()), canvasManager.defaultValue(()), canvasSettings)
+    def apply(canvasSettings: Canvas.Settings): Unit = apply(LoopRunner(), CanvasManager(), canvasSettings)
     def apply(
         runner: LoopRunner,
         canvasManager: CanvasManager,
@@ -82,10 +79,8 @@ object RenderLoop {
 
   trait StatefulRenderLoop[S] { self =>
     def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
-    def apply(canvasSettings: Canvas.Settings, initialState: S)(implicit
-        runner: DefaultBackend[Any, LoopRunner],
-        canvasManager: DefaultBackend[Any, CanvasManager]
-    ): Unit = apply(runner.defaultValue(()), canvasManager.defaultValue(()), canvasSettings, initialState)
+    def apply(canvasSettings: Canvas.Settings, initialState: S): Unit =
+      apply(LoopRunner(), CanvasManager(), canvasSettings, initialState)
     def withInitialState(initialState: S): StatelessRenderLoop = new StatelessRenderLoop {
       def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
         self.apply(runner, canvasManager, canvasSettings, initialState)

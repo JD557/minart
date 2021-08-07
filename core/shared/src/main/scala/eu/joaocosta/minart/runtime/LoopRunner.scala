@@ -15,6 +15,6 @@ trait LoopRunner {
 }
 
 object LoopRunner {
-  def default()(implicit d: DefaultBackend[Any, LoopRunner]): LoopRunner =
-    d.defaultValue(())
+  def apply(): LoopRunner =
+    DefaultBackend[Any, LoopRunner].defaultValue()
 }
