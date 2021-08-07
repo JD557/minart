@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.backend.defaults
 
 /** Typeclass to fetch an implicit default backend (e.g. Canvas or RenderLoop) for a cetain platform.
-  * This is used to power the `Backend.default()` implementations.
+  * This is used to power the `Backend.apply()` implementations.
   * Ideally, an end user of the library should not need to implement this.
   */
 trait DefaultBackend[-A, +B] {
@@ -10,6 +10,8 @@ trait DefaultBackend[-A, +B] {
 }
 
 object DefaultBackend {
+  def apply[A, B](implicit backend: DefaultBackend[A, B]) = backend
+
   def fromFunction[A, B](f: A => B): DefaultBackend[A, B] = new DefaultBackend[A, B] {
     def defaultValue(params: A): B = f(params)
   }
