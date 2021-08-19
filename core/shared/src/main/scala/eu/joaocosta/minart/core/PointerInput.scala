@@ -1,12 +1,16 @@
 package eu.joaocosta.minart.core
 
-/** The pointer input stores the state of the mouse (or similar device) at a certain point in time.
-  * It also accumulates points that have been pressed and released.
+/** The pointer input stores the state of the mouse (or similar device) at a certain point in time. It also accumulates
+  * points that have been pressed and released.
   *
-  * @param position the current pointer position
-  * @param pointsPressed points where the pointer pressed
-  * @param keysReleased points where the pointer was released
-  * @param isPressed true if the pointer is currently pressed
+  * @param position
+  *   the current pointer position
+  * @param pointsPressed
+  *   points where the pointer pressed
+  * @param keysReleased
+  *   points where the pointer was released
+  * @param isPressed
+  *   true if the pointer is currently pressed
   */
 case class PointerInput(
     position: Option[PointerInput.Position],

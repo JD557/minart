@@ -9,7 +9,8 @@ object FrameRate {
 
   /** Frame rate defined by a frame duration.
     *
-    * @param millis minimum frame duration
+    * @param millis
+    *   minimum frame duration
     */
   final case class FrameDuration(millis: Long) extends FrameRate
 
@@ -33,7 +34,8 @@ object FrameRate {
 
   /** Builds a [[FrameRate]] from a Scala duration.
     *
-    * @param duration minimum frame duration
+    * @param duration
+    *   minimum frame duration
     */
   def fromDuration(duration: FiniteDuration): FrameRate =
     if (duration.toMillis <= 0) Uncapped

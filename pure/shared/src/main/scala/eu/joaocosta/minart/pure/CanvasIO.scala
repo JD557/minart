@@ -33,31 +33,35 @@ object CanvasIO {
 
   /** Changes the settings applied to the canvas.
     *
-    *  @param newSettings new canvas settings
+    * @param newSettings
+    *   new canvas settings
     */
   def changeSettings(newSettings: Canvas.Settings): CanvasIO[Unit] = accessCanvas(_.changeSettings(newSettings))
 
   /** Puts a pixel in the back buffer with a certain color.
     *
-    * @param x pixel x position
-    * @param y pixel y position
-    * @param color `Color` to apply to the pixel
+    * @param x
+    *   pixel x position
+    * @param y
+    *   pixel y position
+    * @param color
+    *   `Color` to apply to the pixel
     */
   def putPixel(x: Int, y: Int, color: Color): CanvasIO[Unit] = accessCanvas(_.putPixel(x, y, color))
 
-  /** Gets the color from the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to either use `getBackbuffer` to fetch multiple pixels at the same time or
-    * to implement this operation on the application code.
+  /** Gets the color from the backbuffer. This operation can be perfomance intensive, so it might be worthwile to either
+    * use `getBackbuffer` to fetch multiple pixels at the same time or to implement this operation on the application
+    * code.
     *
-    * @param x pixel x position
-    * @param y pixel y position
+    * @param x
+    *   pixel x position
+    * @param y
+    *   pixel y position
     */
   def getBackbufferPixel(x: Int, y: Int): CanvasIO[Color] = accessCanvas(_.getBackbufferPixel(x, y))
 
-  /** Returns the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to implement this operation on the application code.
+  /** Returns the backbuffer. This operation can be perfomance intensive, so it might be worthwile to implement this
+    * operation on the application code.
     */
   val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = accessCanvas(_.getBackbuffer())
 
@@ -69,7 +73,8 @@ object CanvasIO {
 
   /** Clears resources, such as the backbuffer and keyboard inputs.
     *
-    * @param resources set of [[Canvas.Resource]]s to be cleared
+    * @param resources
+    *   set of [[Canvas.Resource]] s to be cleared
     */
   def clear(resources: Set[Canvas.Resource] = Canvas.Resource.all): CanvasIO[Unit] =
     accessCanvas(_.clear(resources))

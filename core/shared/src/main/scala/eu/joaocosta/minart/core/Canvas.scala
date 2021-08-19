@@ -6,9 +6,8 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
   *
   * The Canvas is the main concept behind minart.
   *
-  * A canvas represents a window with a `width * height` pixels.
-  * There's also a `scale` variable that controls the integer scaling
-  * and a `clearColor` that is applied to the whole canvas when it's cleared.
+  * A canvas represents a window with a `width * height` pixels. There's also a `scale` variable that controls the
+  * integer scaling and a `clearColor` that is applied to the whole canvas when it's cleared.
   */
 trait Canvas {
 
@@ -18,40 +17,47 @@ trait Canvas {
 
   /** Changes the settings applied to this canvas.
     *
-    *  @param newSettings new canvas settings
+    * @param newSettings
+    *   new canvas settings
     */
   def changeSettings(newSettings: Canvas.Settings): Unit
 
   /** Puts a pixel in the back buffer with a certain color.
     *
-    * @param x pixel x position
-    * @param y pixel y position
-    * @param color `Color` to apply to the pixel
+    * @param x
+    *   pixel x position
+    * @param y
+    *   pixel y position
+    * @param color
+    *   `Color` to apply to the pixel
     */
   def putPixel(x: Int, y: Int, color: Color): Unit
 
-  /** Gets the color from the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to either use `getBackbuffer` to fetch multiple pixels at the same time or
-    * to implement this operation on the application code.
+  /** Gets the color from the backbuffer. This operation can be perfomance intensive, so it might be worthwile to either
+    * use `getBackbuffer` to fetch multiple pixels at the same time or to implement this operation on the application
+    * code.
     *
-    * @param x pixel x position
-    * @param y pixel y position
-    * @return pixel color
+    * @param x
+    *   pixel x position
+    * @param y
+    *   pixel y position
+    * @return
+    *   pixel color
     */
   def getBackbufferPixel(x: Int, y: Int): Color
 
-  /** Returns the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to implement this operation on the application code.
+  /** Returns the backbuffer. This operation can be perfomance intensive, so it might be worthwile to implement this
+    * operation on the application code.
     *
-    * @return backbuffer
+    * @return
+    *   backbuffer
     */
   def getBackbuffer(): Vector[Vector[Color]]
 
   /** Clears resources, such as the backbuffer and keyboard inputs.
     *
-    * @param resources set of [[Canvas.Resource]]s to be cleared
+    * @param resources
+    *   set of [[Canvas.Resource]] s to be cleared
     */
   def clear(resources: Set[Canvas.Resource] = Canvas.Resource.all): Unit
 
@@ -61,13 +67,15 @@ trait Canvas {
 
   /** Gets the current keyboard input.
     *
-    * @return current keyboard input
+    * @return
+    *   current keyboard input
     */
   def getKeyboardInput(): KeyboardInput
 
   /** Gets the current pointer input.
     *
-    * @return current pointer input
+    * @return
+    *   current pointer input
     */
   def getPointerInput(): PointerInput
 }
@@ -79,7 +87,8 @@ object Canvas {
 
   /** Returns [[Canvas]] for the default backend for the target platform.
     *
-    * @return [[Canvas]] using the default backend for the target platform
+    * @return
+    *   [[Canvas]] using the default backend for the target platform
     */
   def default(settings: Canvas.Settings)(implicit d: DefaultBackend[Any, CanvasManager]): Canvas = {
     d.defaultValue().init(settings)
@@ -98,11 +107,16 @@ object Canvas {
 
   /** The canvas settings.
     *
-    * @param width The canvas width
-    * @param height The canvas height
-    * @param scale The canvas integer scaling factor
-    * @param fullscreen Whether the canvas should be rendered in a full screen window
-    * @param clearColor The color to be used when the canvas is cleared
+    * @param width
+    *   The canvas width
+    * @param height
+    *   The canvas height
+    * @param scale
+    *   The canvas integer scaling factor
+    * @param fullscreen
+    *   Whether the canvas should be rendered in a full screen window
+    * @param clearColor
+    *   The color to be used when the canvas is cleared
     */
   case class Settings(
       width: Int,

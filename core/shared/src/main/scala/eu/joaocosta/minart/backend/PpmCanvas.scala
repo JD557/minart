@@ -2,8 +2,8 @@ package eu.joaocosta.minart.backend
 
 import eu.joaocosta.minart.core._
 
-/** A low level Canvas implementation that outputs the image in the PPM format to the stdout.
-  * This canvas doesn't support fetching the keyboard input.
+/** A low level Canvas implementation that outputs the image in the PPM format to the stdout. This canvas doesn't
+  * support fetching the keyboard input.
   */
 class PpmCanvas() extends LowLevelCanvas {
 

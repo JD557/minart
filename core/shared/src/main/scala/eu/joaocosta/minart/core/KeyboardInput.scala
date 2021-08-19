@@ -2,12 +2,15 @@ package eu.joaocosta.minart.core
 
 import eu.joaocosta.minart.core.KeyboardInput.Key
 
-/** The keyboard input stores the state of the keyboard at a certain point in time.
-  * It also accumulates keys that have been pressed and released.
+/** The keyboard input stores the state of the keyboard at a certain point in time. It also accumulates keys that have
+  * been pressed and released.
   *
-  * @param keysDown keys that are pressed down
-  * @param keysPressed keys that have been pressed
-  * @param keysReleased keys that have been released
+  * @param keysDown
+  *   keys that are pressed down
+  * @param keysPressed
+  *   keys that have been pressed
+  * @param keysReleased
+  *   keys that have been released
   */
 case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased: Set[Key]) {
 
@@ -29,8 +32,8 @@ case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased
 
 object KeyboardInput {
 
-  /** Internal trait to store mappings from platform-specific key representations to a [[Key]].
-    * This should not have to be used in the application code.
+  /** Internal trait to store mappings from platform-specific key representations to a [[Key]]. This should not have to
+    * be used in the application code.
     */
   trait KeyMapping[A] {
     protected def mappings: Map[A, Key]

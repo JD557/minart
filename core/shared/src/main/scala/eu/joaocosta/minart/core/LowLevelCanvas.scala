@@ -21,7 +21,8 @@ trait LowLevelCanvas extends Canvas {
     *
     * Rendering operations can only be called after calling this.
     *
-    * @return canvas object linked to the created window
+    * @return
+    *   canvas object linked to the created window
     */
   def init(settings: Canvas.Settings): Unit = {
     if (isCreated()) {
@@ -46,7 +47,8 @@ object LowLevelCanvas {
 
   /** Returns [[LowLevelCanvas]] for the default backend for the target platform.
     *
-    * @return [[LowLevelCanvas]] using the default backend for the target platform
+    * @return
+    *   [[LowLevelCanvas]] using the default backend for the target platform
     */
   def default()(implicit d: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
     d.defaultValue()

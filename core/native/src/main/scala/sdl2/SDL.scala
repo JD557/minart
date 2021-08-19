@@ -32,9 +32,7 @@ object SDL {
   type _56 = Nat.Digit2[Nat._5, Nat._6]
   type _64 = Nat.Digit2[Nat._6, Nat._4]
 
-  /** ************************************
-    * *********** SDL_error.h ************
-    * ************************************
+  /** ************************************ *********** SDL_error.h ************ ************************************
     */
 
   //   def SDL_SetError(fmt: CString, args: CVararg*): CInt = extern
@@ -44,9 +42,7 @@ object SDL {
   type SDL_errorcode = UInt
   def SDL_Error(code: SDL_errorcode): CInt = extern
 
-  /** ************************************
-    * ********** SDL_atomic.h *************
-    * ************************************
+  /** ************************************ ********** SDL_atomic.h ************* ************************************
     */
 
   type SDL_SpinLock = CInt
@@ -69,9 +65,7 @@ object SDL {
   def SDL_AtomicSetPtr(a: Ptr[Ptr[Byte]], v: Ptr[Byte]): Ptr[Byte]                        = extern
   def SDL_AtomicGetPtr(a: Ptr[Ptr[Byte]]): Ptr[Byte]                                      = extern
 
-  /** ************************************
-    * *********** SDL_mutex.h *************
-    * ************************************
+  /** ************************************ *********** SDL_mutex.h ************* ************************************
     */
 
   type SDL_mutex = CStruct0
@@ -99,9 +93,7 @@ object SDL {
   def SDL_CondWait(cond: Ptr[SDL_cond], mutex: Ptr[SDL_mutex]): CInt                  = extern
   def SDL_CondWaitTimeout(cond: Ptr[SDL_cond], mutex: Ptr[SDL_mutex], ms: UInt): CInt = extern
 
-  /** ************************************
-    * ********** SDL_thread.h *************
-    * ************************************
+  /** ************************************ ********** SDL_thread.h ************* ************************************
     */
 
   type SDL_Thread         = CStruct0
@@ -121,9 +113,7 @@ object SDL {
   def SDL_TLSGet(id: SDL_TLSID): Ptr[Byte]                                                      = extern
   def SDL_TLSSet(id: SDL_TLSID, value: Ptr[Byte], destructor: CFuncPtr0[Unit]): CInt            = extern
 
-  /** ************************************
-    * *********** SDL_rwops.h *************
-    * ************************************
+  /** ************************************ *********** SDL_rwops.h ************* ************************************
     */
 
   //TODO: exact structure (with a lot of function pointers)
@@ -154,16 +144,12 @@ object SDL {
   def SDL_WriteLE64(dst: Ptr[SDL_RWops], value: ULong): CSize  = extern
   def SDL_WriteBE64(dst: Ptr[SDL_RWops], value: ULong): CSize  = extern
 
-  /** ************************************
-    * ********* SDL_blendmode.h ***********
-    * ************************************
+  /** ************************************ ********* SDL_blendmode.h *********** ************************************
     */
 
   type SDL_BlendMode = UInt
 
-  /** ************************************
-    * *********** SDL_events.h ************
-    * ************************************
+  /** ************************************ *********** SDL_events.h ************ ************************************
     */
 
   type SDL_CommonEvent = CStruct2[UInt, UInt]
@@ -246,17 +232,13 @@ object SDL {
 
   def SDL_RegisterEvents(numevents: CInt): UInt = extern
 
-  /** *************************************
-    * ********** SDL_keycode.h *************
-    * *************************************
+  /** ************************************* ********** SDL_keycode.h ************* *************************************
     */
 
   type SDL_Keycode = Int
   type SDL_Keymod  = UInt
 
-  /** *************************************
-    * ********** SDL_keyboard.h ************
-    * *************************************
+  /** ************************************* ********** SDL_keyboard.h ************ *************************************
     */
 
   type SDL_Keysym = CStruct4[SDL_Scancode, SDL_Keycode, UShort, UInt]
@@ -283,9 +265,7 @@ object SDL {
   def SDL_HasScreenKeyboardSupport(): SDL_bool                     = extern
   def SDL_IsScreenKeyboardShown(window: Ptr[SDL_Window]): SDL_bool = extern
 
-  /** ************************************
-    * *********** SDL_mouse.h *************
-    * ************************************
+  /** ************************************ *********** SDL_mouse.h ************* ************************************
     */
 
   type SDL_Cursor              = CStruct0
@@ -320,9 +300,7 @@ object SDL {
   def SDL_FreeCursor(cursor: Ptr[SDL_Cursor]): Unit                                               = extern
   def SDL_ShowCursor(toggle: CInt): CInt                                                          = extern
 
-  /** *************************************
-    * *********** SDL_pixels.h *************
-    * *************************************
+  /** ************************************* *********** SDL_pixels.h ************* *************************************
     */
 
   /*
@@ -397,9 +375,7 @@ object SDL {
 
   def SDL_CalculateGammaRamp(gamma: CFloat, ramp: Ptr[UShort]): Unit = extern
 
-  /** ************************************
-    * ************ SDL_rect.h *************
-    * ************************************
+  /** ************************************ ************ SDL_rect.h ************* ************************************
     */
 
   type SDL_Point = CStruct2[CInt, CInt]
@@ -418,9 +394,7 @@ object SDL {
       y2: Ptr[CInt]
   ): SDL_bool = extern
 
-  /** ************************************
-    * ********** SDL_surface.h ************
-    * ************************************
+  /** ************************************ ********** SDL_surface.h ************ ************************************
     */
 
   type SDL_BlitMap = CStruct0
@@ -431,9 +405,7 @@ object SDL {
   def SDL_LoadBMP_RW(src: Ptr[SDL_RWops], freesrc: CInt): Ptr[SDL_Surface] = extern
   def SDL_FreeSurface(surface: Ptr[SDL_Surface]): Unit                     = extern
 
-  /** ************************************
-    * *********** SDL_render.h *************
-    * ************************************
+  /** ************************************ *********** SDL_render.h ************* ************************************
     */
 
   type SDL_RendererFlags = UInt
@@ -567,23 +539,17 @@ object SDL {
   def SDL_GL_BindTexture(texture: Ptr[SDL_Texture], texw: Ptr[CFloat], texh: Ptr[CFloat]): CInt = extern
   def SDL_GL_UnbindTexture(texture: Ptr[SDL_Texture]): CInt                                     = extern
 
-  /** ************************************
-    * ********** SDL_scancode.h ***********
-    * ************************************
+  /** ************************************ ********** SDL_scancode.h *********** ************************************
     */
 
   type SDL_Scancode = Int
 
-  /** *************************************
-    * *********** SDL_stdinc.h *************
-    * *************************************
+  /** ************************************* *********** SDL_stdinc.h ************* *************************************
     */
 
   type SDL_bool = UInt
 
-  /** ************************************
-    * ********** SDL_version.h ************
-    * ************************************
+  /** ************************************ ********** SDL_version.h ************ ************************************
     */
 
   type SDL_version = CStruct3[UByte, UByte, UByte]
@@ -592,9 +558,7 @@ object SDL {
   def SDL_GetRevision(): CString                  = extern
   def SDL_GetRevisionNumber(): CInt               = extern
 
-  /** ************************************
-    * *********** SDL_video.h *************
-    * ************************************
+  /** ************************************ *********** SDL_video.h ************* ************************************
     */
 
   type SDL_DisplayMode = CStruct5[UInt, CInt, CInt, CInt, Ptr[Byte]]
@@ -713,9 +677,7 @@ object SDL {
 
   /* End OpenGl support functions */
 
-  /** ************************************
-    * ************** SDL.h ****************
-    * ************************************
+  /** ************************************ ************** SDL.h **************** ************************************
     */
 
   def SDL_Init(flags: UInt): CInt          = extern
