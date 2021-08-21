@@ -5,9 +5,9 @@ import scala.util.{Failure, Success, Try}
 
 /** Representation of a running asyncronous computation that can be polled.
   *
-  * Note that, unlike Futures, operations on an Poll don't require an execution context and might be applied
-  * sequentially every time `poll` is called. While this might be inneficient, this is by design, to simplify
-  * multiplatform development.
+  *  Note that, unlike Futures, operations on an Poll don't require an execution context and
+  *  might be applied sequentially every time `poll` is called.
+  *  While this might be inneficient, this is by design, to simplify multiplatform development.
   */
 case class Poll[+A](poll: RIO[Any, Option[Try[A]]]) extends AnyVal {
 

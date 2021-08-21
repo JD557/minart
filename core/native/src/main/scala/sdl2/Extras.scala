@@ -15,7 +15,9 @@ object Extras {
    * header files.
    */
 
-  /** ************************************* *********** SDL_stdinc.h ************* *************************************
+  /** *************************************
+    * *********** SDL_stdinc.h *************
+    * *************************************
     */
 
   //def SDL_reinterpret_cast[A,B](expression: A): B = expression.asInstanceOf[B]
@@ -34,7 +36,9 @@ object Extras {
   val SDL_TRUE  = 1.toUInt
   /* End SDL_bool */
 
-  /** ************************************ *********** SDL_error.h ************* ************************************
+  /** ************************************
+    * *********** SDL_error.h *************
+    * ************************************
     */
 
   /* Start enum SDL_errorcode */
@@ -50,7 +54,9 @@ object Extras {
   def SDL_Unsupported(): CInt = SDL_Error(SDL_UNSUPPORTED)
   // def SDL_InvalidParamError(param: CString): CInt = SDL_SetError(c"Parameter '%s' is invalid", param)
 
-  /** ************************************ ********** SDL_atomic.h ************* ************************************
+  /** ************************************
+    * ********** SDL_atomic.h *************
+    * ************************************
     */
 
   implicit class SDL_atomic_tOps(val self: Ptr[SDL_atomic_t]) extends AnyVal {
@@ -60,7 +66,9 @@ object Extras {
   def SDL_AtomicIncRef(a: Ptr[SDL_atomic_t]): CInt     = SDL_AtomicAdd(a, 1)
   def SDL_AtomicDecRef(a: Ptr[SDL_atomic_t]): SDL_bool = if (SDL_AtomicAdd(a, -1) == 1) SDL_TRUE else SDL_FALSE
 
-  /** ************************************ *********** SDL_mutex.h ************* ************************************
+  /** ************************************
+    * *********** SDL_mutex.h *************
+    * ************************************
     */
 
   val SDL_MUTEX_TIMEDOUT: CInt = 1
@@ -69,7 +77,9 @@ object Extras {
   def SDL_mutexP(m: Ptr[SDL_mutex]): CInt = SDL_LockMutex(m)
   def SDL_mutexV(m: Ptr[SDL_mutex]): CInt = SDL_UnlockMutex(m)
 
-  /** ************************************ ********** SDL_thread.h ************* ************************************
+  /** ************************************
+    * ********** SDL_thread.h *************
+    * ************************************
     */
 
   /* Start enum SDL_ThreadPriority */
@@ -78,7 +88,9 @@ object Extras {
   val SDL_THREAD_PRIORITY_HIGH: CInt   = 2
   /* End enum SDL_ThreadPriority */
 
-  /** ************************************ *********** SDL_rwops.h ************* ************************************
+  /** ************************************
+    * *********** SDL_rwops.h *************
+    * ************************************
     */
 
   val SDL_RWOPS_UNKNOWN: UByte   = 0.toUByte
@@ -103,7 +115,9 @@ object Extras {
   //#define SDL_RWwrite(ctx, ptr, size, n)  (ctx)->write(ctx, ptr, size, n)
   //#define SDL_RWclose(ctx)        (ctx)->close(ctx)
 
-  /** ************************************ ********* SDL_blendmode.h *********** ************************************
+  /** ************************************
+    * ********* SDL_blendmode.h ***********
+    * ************************************
     */
 
   /* Start enum SDL_BlendMode */
@@ -113,7 +127,9 @@ object Extras {
   val SDL_BLENDMODE_MOD: UInt   = 0x00000004.toUInt
   /* End enum SDL_BlendMode */
 
-  /** ************************************* *********** SDL_pixels.h ************* *************************************
+  /** *************************************
+    * *********** SDL_pixels.h *************
+    * *************************************
     */
 
   val SDL_ALPHA_OPAQUE: UByte      = 255.toUByte
@@ -317,7 +333,9 @@ object Extras {
     def next: Ptr[SDL_PixelFormat] = self._19.asInstanceOf[Ptr[SDL_PixelFormat]]
   }
 
-  /** ************************************ *********** SDL_events.h ************ ************************************
+  /** ************************************
+    * *********** SDL_events.h ************
+    * ************************************
     */
 
   val SDL_RELEASED: UByte = 0.toUByte
@@ -548,7 +566,8 @@ object Extras {
 
   def SDL_GetEventState(type_ : UInt): UByte = SDL_EventState(type_, SDL_QUERY)
 
-  /** ************************************* *********** SDL_scancode.h *************
+  /** *************************************
+    * *********** SDL_scancode.h *************
     * *************************************
     */
 
@@ -820,7 +839,9 @@ object Extras {
   val SDL_NUM_SCANCODES: Int = 512
   /* End SDL_Scancode */
 
-  /** ************************************* ********** SDL_keycode.h ************* *************************************
+  /** *************************************
+    * ********** SDL_keycode.h *************
+    * *************************************
     */
   //keycodes must be defined after scancodes as they use their values
 
@@ -1100,7 +1121,9 @@ object Extras {
   val KMOD_ALT   = KMOD_LALT | KMOD_RALT
   val KMOD_GUI   = KMOD_LGUI | KMOD_RGUI
 
-  /** ************************************* ********** SDL_keyboard.h ************ *************************************
+  /** *************************************
+    * ********** SDL_keyboard.h ************
+    * *************************************
     */
 
   implicit class SDL_KeysymOps(val self: Ptr[SDL_Keysym]) extends AnyVal {
@@ -1110,7 +1133,9 @@ object Extras {
     def unused: UInt           = self._4
   }
 
-  /** ************************************ *********** SDL_mouse.h ************* ************************************
+  /** ************************************
+    * *********** SDL_mouse.h *************
+    * ************************************
     */
 
   /* Start SDL_SystemCursor */
@@ -1146,7 +1171,9 @@ object Extras {
   val SDL_BUTTON_X1MASK: UInt    = SDL_BUTTON(SDL_BUTTON_X1)
   val SDL_BUTTON_X2MASK: UInt    = SDL_BUTTON(SDL_BUTTON_X2)
 
-  /** ************************************ ************ SDL_rect.h ************* ************************************
+  /** ************************************
+    * ************ SDL_rect.h *************
+    * ************************************
     */
 
   implicit class SDL_PointOps(val self: Ptr[SDL_Point]) extends AnyVal {
@@ -1190,7 +1217,9 @@ object Extras {
     ) SDL_TRUE
     else SDL_FALSE
 
-  /** ************************************ ********** SDL_surface.h ************ ************************************
+  /** ************************************
+    * ********** SDL_surface.h ************
+    * ************************************
     */
 
   val SDL_SWSURFACE: UInt = 0.toUInt
@@ -1215,7 +1244,9 @@ object Extras {
     def refcount: CInt               = self._12
   }
 
-  /** ************************************* *********** SDL_render.h ************* *************************************
+  /** *************************************
+    * *********** SDL_render.h *************
+    * *************************************
     */
 
   /* Start enum SDL_RendererFlags */
@@ -1252,7 +1283,9 @@ object Extras {
   val SDL_FLIP_VERTICAL   = 0x00000002.toUInt
   /* End SDL_RendererFlip */
 
-  /** ************************************ ********** SDL_version.h ************ ************************************
+  /** ************************************
+    * ********** SDL_version.h ************
+    * ************************************
     */
 
   implicit class SDL_versionOps(val self: Ptr[SDL_version]) extends AnyVal {
@@ -1284,7 +1317,9 @@ object Extras {
   def SDL_VERSION_ATLEAST(major: UByte, minor: UByte, patch: UByte): Boolean =
     SDL_COMPILEDVERSION >= SDL_VERSIONNUM(major, minor, patch)
 
-  /** ************************************ *********** SDL_video.h ************* ************************************
+  /** ************************************
+    * *********** SDL_video.h *************
+    * ************************************
     */
 
   implicit class SDL_DisplayModeOps(val self: Ptr[SDL_DisplayMode]) extends AnyVal {
@@ -1400,7 +1435,9 @@ object Extras {
   val SDL_HITTEST_RESIZE_LEFT: UInt        = 9.toUInt
   /* Start SDL_HitTestResult */
 
-  /** ************************************ ************** SDL.h **************** ************************************
+  /** ************************************
+    * ************** SDL.h ****************
+    * ************************************
     */
 
   /* Start Macros for subsystem IDs */
