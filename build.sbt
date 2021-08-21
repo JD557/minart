@@ -4,10 +4,10 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 name := "minart"
 
 ThisBuild / organization := "eu.joaocosta"
-ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / publishTo    := sonatypePublishToBundle.value
 ThisBuild / scalaVersion := "2.13.6"
-ThisBuild / licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
-ThisBuild / homepage := Some(url("https://github.com/JD557/minart"))
+ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / homepage     := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
     url("https://github.com/JD557/minart"),
@@ -17,11 +17,11 @@ ThisBuild / scmInfo := Some(
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 val sharedSettings = Seq(
-  organization := "eu.joaocosta",
-  scalaVersion := "2.13.6",
+  organization       := "eu.joaocosta",
+  scalaVersion       := "2.13.6",
   crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
-  licenses := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
-  homepage := Some(url("https://github.com/JD557/minart")),
+  licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
+  homepage           := Some(url("https://github.com/JD557/minart")),
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/JD557/minart"),
@@ -34,7 +34,7 @@ val sharedSettings = Seq(
     "-feature",
     "-language:higherKinds",
     "-unchecked"
-    ),
+  ),
   scalafmtOnCompile := true,
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision,
@@ -50,22 +50,22 @@ val testSettings = Seq(
 )
 
 val noTestSettings = Seq(
-  test := (()),
+  test        := (()),
   Test / test := (())
 )
 
 val publishSettings = Seq(
-  publishMavenStyle := true,
+  publishMavenStyle      := true,
   Test / publishArtifact := false,
-  pomIncludeRepository := { _ => false }
+  pomIncludeRepository   := { _ => false }
 )
 
 val noPublishSettings = Seq(
-  publish / skip := true,
-  publish := (()),
-  publishLocal := (()),
+  publish / skip  := true,
+  publish         := (()),
+  publishLocal    := (()),
   publishArtifact := false,
-  publishTo := None
+  publishTo       := None
 )
 
 val jsSettings = Seq(
@@ -75,10 +75,10 @@ val jsSettings = Seq(
 )
 
 val nativeSettings = Seq(
-  nativeLinkStubs := true,
+  nativeLinkStubs      := true,
   Compile / nativeMode := "release",
-  Test / nativeMode := "debug",
-  nativeLTO := "thin"
+  Test / nativeMode    := "debug",
+  nativeLTO            := "thin"
 )
 
 lazy val root =
@@ -158,8 +158,8 @@ lazy val `examples-settings` =
 lazy val `examples-snake` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "snake")
 
-releaseCrossBuild := true
-releaseTagComment := s"Release ${(ThisBuild / version).value}"
+releaseCrossBuild    := true
+releaseTagComment    := s"Release ${(ThisBuild / version).value}"
 releaseCommitMessage := s"Set version to ${(ThisBuild / version).value}"
 
 releaseProcess := Seq[ReleaseStep](
