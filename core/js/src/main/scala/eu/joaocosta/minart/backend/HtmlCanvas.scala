@@ -166,8 +166,8 @@ class HtmlCanvas() extends LowLevelCanvas {
     else {
       dom.window
         .createImageBitmap(buffer)
-        .`then`[js.Dynamic] { (bitmap: ImageBitmap) =>
-          if (settings.fullScreen)
+        .`then`[Unit] { (bitmap: ImageBitmap) =>
+          if (settings.fullScreen) {
             ctx
               .asInstanceOf[js.Dynamic]
               .drawImage(
@@ -177,10 +177,12 @@ class HtmlCanvas() extends LowLevelCanvas {
                 extendedSettings.scaledWidth,
                 extendedSettings.scaledHeight
               )
-          else
+          } else {
             ctx
               .asInstanceOf[js.Dynamic]
               .drawImage(bitmap, 0, 0, extendedSettings.scaledWidth, extendedSettings.scaledHeight)
+          }
+          js.|.from[Unit, Unit, js.Thenable[Unit]](())
         }
     }
   }
