@@ -4,7 +4,7 @@ import scala.scalajs.js
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
-import org.scalajs.dom.raw.{Event, ImageData, KeyboardEvent, PointerEvent}
+import org.scalajs.dom.raw.{Event, ImageBitmap, ImageData, KeyboardEvent, PointerEvent}
 
 import eu.joaocosta.minart.core._
 
@@ -38,6 +38,7 @@ class HtmlCanvas() extends LowLevelCanvas {
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    ctx.imageSmoothingEnabled = false
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
       "fullscreenchange",
@@ -101,7 +102,7 @@ class HtmlCanvas() extends LowLevelCanvas {
     canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else extendedSettings.scaledWidth
     canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else extendedSettings.scaledHeight
     childNode = dom.document.body.appendChild(canvas)
-    buffer = ctx.getImageData(0, 0, extendedSettings.scaledWidth, extendedSettings.scaledHeight)
+    buffer = ctx.getImageData(0, 0, newSettings.width, newSettings.height)
 
     if (newSettings.fullScreen) {
       canvas.requestFullscreen()
@@ -113,42 +114,26 @@ class HtmlCanvas() extends LowLevelCanvas {
     clear(Set(Canvas.Resource.Backbuffer))
   }
 
-  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    extendedSettings.pixelSize.foreach { dy =>
-      val lineBase = (y * settings.scale + dy) * extendedSettings.scaledWidth
-      extendedSettings.pixelSize.foreach { dx =>
-        val baseAddr = 4 * (lineBase + (x * settings.scale + dx))
-        buffer.data(baseAddr + 0) = c.r
-        buffer.data(baseAddr + 1) = c.g
-        buffer.data(baseAddr + 2) = c.b
-      }
-    }
-
-  private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit = {
-    val lineBase = y * extendedSettings.scaledWidth
-    val baseAddr = 4 * (lineBase + x)
-    buffer.data(baseAddr + 0) = c.r
-    buffer.data(baseAddr + 1) = c.g
-    buffer.data(baseAddr + 2) = c.b
-  }
-
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (settings.scale == 1) putPixelUnscaled(x, y, color)
-    else putPixelScaled(x, y, color)
+    val lineBase = y * extendedSettings.settings.width
+    val baseAddr = 4 * (lineBase + x)
+    buffer.data(baseAddr + 0) = color.r
+    buffer.data(baseAddr + 1) = color.g
+    buffer.data(baseAddr + 2) = color.b
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     val baseAddr =
-      4 * (y * settings.scale * extendedSettings.scaledWidth + (x * settings.scale))
+      4 * (y * extendedSettings.settings.width + x)
     Color(buffer.data(baseAddr + 0), buffer.data(baseAddr + 1), buffer.data(baseAddr + 2))
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
     val imgData = buffer.data
     extendedSettings.lines.map { y =>
-      val lineBase = y * settings.scale * extendedSettings.scaledWidth
+      val lineBase = y * extendedSettings.settings.width
       extendedSettings.columns.map { x =>
-        val baseAddr = 4 * (lineBase + (x * settings.scale))
+        val baseAddr = 4 * (lineBase + x)
         Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
       }.toVector
     }.toVector
@@ -162,7 +147,7 @@ class HtmlCanvas() extends LowLevelCanvas {
       pointerInput = pointerInput.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      extendedSettings.allPixels.foreach { i =>
+      (0 until extendedSettings.windowHeight * extendedSettings.windowWidth).foreach { i =>
         val base = 4 * i
         buffer.data(base + 0) = settings.clearColor.r
         buffer.data(base + 1) = settings.clearColor.g
@@ -173,10 +158,33 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
 
   def redraw(): Unit = {
-    if (settings.fullScreen)
-      ctx.putImageData(buffer, extendedSettings.canvasX, extendedSettings.canvasY)
-    else
-      ctx.putImageData(buffer, 0, 0)
+    if (settings.scale == 1)
+      if (settings.fullScreen)
+        ctx.putImageData(buffer, extendedSettings.canvasX, extendedSettings.canvasY)
+      else
+        ctx.putImageData(buffer, 0, 0)
+    else {
+      dom.window
+        .createImageBitmap(buffer)
+        .`then`[Unit] { (bitmap: ImageBitmap) =>
+          if (settings.fullScreen) {
+            ctx
+              .asInstanceOf[js.Dynamic]
+              .drawImage(
+                bitmap,
+                extendedSettings.canvasX,
+                extendedSettings.canvasY,
+                extendedSettings.scaledWidth,
+                extendedSettings.scaledHeight
+              )
+          } else {
+            ctx
+              .asInstanceOf[js.Dynamic]
+              .drawImage(bitmap, 0, 0, extendedSettings.scaledWidth, extendedSettings.scaledHeight)
+          }
+          js.|.from[Unit, Unit, js.Thenable[Unit]](())
+        }
+    }
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
