@@ -428,8 +428,24 @@ object SDL {
     Byte
   ], SDL_Rect, Ptr[SDL_BlitMap], CInt]
 
+  def SDL_CreateRGBSurface(
+      flags: UInt,
+      width: CInt,
+      height: CInt,
+      depth: CInt,
+      Rmask: UInt,
+      Gmask: UInt,
+      Bmask: UInt,
+      Amask: UInt
+  ): Ptr[SDL_Surface]                                                      = extern
   def SDL_LoadBMP_RW(src: Ptr[SDL_RWops], freesrc: CInt): Ptr[SDL_Surface] = extern
   def SDL_FreeSurface(surface: Ptr[SDL_Surface]): Unit                     = extern
+  def SDL_UpperBlitScaled(
+      src: Ptr[SDL_Surface],
+      srcrect: Ptr[SDL_Rect],
+      dst: Ptr[SDL_Surface],
+      dstrect: Ptr[SDL_Rect]
+  ): Int = extern
 
   /** ************************************
     * *********** SDL_render.h *************

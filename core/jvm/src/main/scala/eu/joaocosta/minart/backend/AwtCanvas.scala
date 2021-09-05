@@ -46,6 +46,8 @@ class AwtCanvas() extends LowLevelCanvas {
       extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
       if (javaCanvas != null) javaCanvas.frame.dispose()
       javaCanvas = new AwtCanvas.InnerCanvas(
+        newSettings.width,
+        newSettings.height,
         extendedSettings.scaledWidth,
         extendedSettings.scaledHeight,
         newSettings.fullScreen,
@@ -63,42 +65,21 @@ class AwtCanvas() extends LowLevelCanvas {
     }
   }
 
-  private[this] def putPixelScaled(x: Int, y: Int, c: Color): Unit =
-    extendedSettings.pixelSize.foreach { dy =>
-      val lineBase = (y * settings.scale + dy) * extendedSettings.scaledWidth
-      extendedSettings.pixelSize.foreach { dx =>
-        val baseAddr = lineBase + (x * settings.scale + dx)
-        javaCanvas.imagePixels
-          .setElem(baseAddr, c.argb)
-      }
-    }
-
-  private[this] def putPixelUnscaled(x: Int, y: Int, c: Color): Unit =
-    javaCanvas.imagePixels
-      .setElem(y * extendedSettings.scaledWidth + x % extendedSettings.scaledWidth, c.argb)
-
   def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    if (settings.scale == 1) putPixelUnscaled(x, y, color)
-    else putPixelScaled(x, y, color)
+    javaCanvas.imagePixels
+      .setElem(y * extendedSettings.settings.width + x, color.argb)
   } catch { case _: Throwable => () }
 
   def getBackbufferPixel(x: Int, y: Int): Color = {
     Color.fromRGB(
       javaCanvas.imagePixels.getElem(
-        y * settings.scale * extendedSettings.scaledWidth + (x * settings.scale)
+        y * extendedSettings.settings.width + x
       )
     )
   }
 
   def getBackbuffer(): Vector[Vector[Color]] = {
-    val flatData = javaCanvas.imagePixels.getData()
-    extendedSettings.lines.map { y =>
-      val lineBase = y * settings.scale * extendedSettings.scaledWidth
-      extendedSettings.columns.map { x =>
-        val baseAddr = (lineBase + (x * settings.scale))
-        Color.fromRGB(flatData(baseAddr))
-      }.toVector
-    }.toVector
+    javaCanvas.imagePixels.getData().iterator.map(Color.fromRGB).grouped(settings.width).map(_.toVector).toVector
   }
 
   def clear(resources: Set[Canvas.Resource]): Unit = try {
@@ -139,8 +120,14 @@ class AwtCanvas() extends LowLevelCanvas {
 }
 
 object AwtCanvas {
-  private class InnerCanvas(scaledWidth: Int, scaledHeight: Int, fullScreen: Boolean, outerCanvas: AwtCanvas)
-      extends JavaCanvas {
+  private class InnerCanvas(
+      unscaledWidth: Int,
+      unscaledHeight: Int,
+      scaledWidth: Int,
+      scaledHeight: Int,
+      fullScreen: Boolean,
+      outerCanvas: AwtCanvas
+  ) extends JavaCanvas {
 
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
@@ -157,7 +144,7 @@ object AwtCanvas {
 
     this.createBufferStrategy(2)
     val buffStrategy = getBufferStrategy
-    val image        = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB)
+    val image        = new BufferedImage(unscaledWidth, unscaledHeight, BufferedImage.TYPE_INT_ARGB)
     val imagePixels  = image.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
     override def repaint() = outerCanvas.redraw()
