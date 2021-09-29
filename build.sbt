@@ -118,6 +118,7 @@ lazy val examples = (project in file("examples"))
   .settings(noPublishSettings)
   .aggregate(
     Seq(
+      `examples-blitting`.componentProjects,
       `examples-colorSquare`.componentProjects,
       `examples-fire`.componentProjects,
       `examples-mousePointer`.componentProjects,
@@ -139,6 +140,9 @@ def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) 
     .jsSettings(scalaJSUseMainModuleInitializer := true)
     .nativeSettings(nativeSettings)
 }
+
+lazy val `examples-blitting` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "blitting")
 
 lazy val `examples-colorSquare` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "colorsquare")

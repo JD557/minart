@@ -11,7 +11,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in a SDL Window.
   */
-class SdlCanvas() extends LowLevelCanvas {
+class SdlCanvas() extends SurfaceBackedCanvas {
 
   def this(settings: Canvas.Settings) = {
     this()
@@ -20,8 +20,7 @@ class SdlCanvas() extends LowLevelCanvas {
 
   private[this] var window: Ptr[SDL_Window]         = _
   private[this] var windowSurface: Ptr[SDL_Surface] = _
-  private[this] var surface: Ptr[SDL_Surface]       = _
-  private[this] var renderer: Ptr[SDL_Renderer]     = _
+  protected var surface: SdlSurface                 = _
   private[this] var keyboardInput: KeyboardInput    = KeyboardInput(Set(), Set(), Set())
   private[this] var rawMousePos: (Int, Int)         = _
   private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
@@ -59,9 +58,9 @@ class SdlCanvas() extends LowLevelCanvas {
       else SDL_WINDOW_SHOWN
     )
     windowSurface = SDL_GetWindowSurface(window)
-    surface =
+    surface = new SdlSurface(
       SDL_CreateRGBSurface(0.toUInt, newSettings.width, newSettings.height, 32, 0.toUInt, 0.toUInt, 0.toUInt, 0.toUInt)
-    renderer = SDL_CreateSoftwareRenderer(surface)
+    )
     keyboardInput = KeyboardInput(Set(), Set(), Set())
     extendedSettings = extendedSettings.copy(
       windowWidth = windowSurface.w,
@@ -74,42 +73,7 @@ class SdlCanvas() extends LowLevelCanvas {
       windowSurface.pixels(baseAddr + 2) = ubyteClearR.toByte
       windowSurface.pixels(baseAddr + 3) = 255.toByte
     }
-    SDL_SetRenderDrawColor(renderer, ubyteClearR, ubyteClearG, ubyteClearB, 0.toUByte)
     clear(Set(Canvas.Resource.Backbuffer))
-  }
-
-  def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    // Assuming a BGRA surface
-    val lineBase = y * extendedSettings.settings.width
-    val baseAddr = 4 * (lineBase + x)
-    surface.pixels(baseAddr + 0) = color.b.toByte
-    surface.pixels(baseAddr + 1) = color.g.toByte
-    surface.pixels(baseAddr + 2) = color.r.toByte
-  } catch { case _: Throwable => () }
-
-  def getBackbufferPixel(x: Int, y: Int): Color = {
-    // Assuming a BGRA surface
-    val baseAddr =
-      4 * (y * extendedSettings.settings.width + x)
-    Color(
-      (surface.pixels(baseAddr + 2) & 0xff),
-      (surface.pixels(baseAddr + 1) & 0xff),
-      (surface.pixels(baseAddr + 0) & 0xff)
-    )
-  }
-
-  def getBackbuffer(): Vector[Vector[Color]] = {
-    extendedSettings.lines.map { y =>
-      val lineBase = y * extendedSettings.settings.width
-      extendedSettings.columns.map { x =>
-        val baseAddr = 4 * (lineBase + x)
-        Color(
-          (surface.pixels(baseAddr + 2) & 0xff),
-          (surface.pixels(baseAddr + 1) & 0xff),
-          (surface.pixels(baseAddr + 0) & 0xff)
-        )
-      }.toVector
-    }.toVector
   }
 
   private[this] def handleEvents(): Boolean = {
@@ -151,7 +115,7 @@ class SdlCanvas() extends LowLevelCanvas {
     }
     val keepGoing = handleEvents()
     if (resources.contains(Canvas.Resource.Backbuffer) && keepGoing) {
-      SDL_RenderClear(renderer)
+      fill(settings.clearColor)
     }
   }
 
@@ -163,7 +127,7 @@ class SdlCanvas() extends LowLevelCanvas {
         extendedSettings.scaledWidth,
         extendedSettings.scaledHeight
       )
-      SDL_UpperBlitScaled(surface, null, windowSurface, windowRect)
+      SDL_UpperBlitScaled(surface.data, null, windowSurface, windowRect)
       SDL_UpdateWindowSurface(window)
     }
   }
