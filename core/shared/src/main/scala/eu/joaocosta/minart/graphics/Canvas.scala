@@ -11,7 +11,7 @@ import eu.joaocosta.minart.input._
   * There's also a `scale` variable that controls the integer scaling
   * and a `clearColor` that is applied to the whole canvas when it's cleared.
   */
-trait Canvas {
+trait Canvas extends Surface.MutableSurface {
 
   /** The settings applied to this canvas.
     */
@@ -23,13 +23,8 @@ trait Canvas {
     */
   def changeSettings(newSettings: Canvas.Settings): Unit
 
-  /** Puts a pixel in the back buffer with a certain color.
-    *
-    * @param x pixel x position
-    * @param y pixel y position
-    * @param color `Color` to apply to the pixel
-    */
-  def putPixel(x: Int, y: Int, color: Color): Unit
+  def width: Int  = settings.width
+  def height: Int = settings.height
 
   /** Gets the color from the backbuffer.
     * This operation can be perfomance intensive, so it might be worthwile
@@ -40,7 +35,9 @@ trait Canvas {
     * @param y pixel y position
     * @return pixel color
     */
-  def getBackbufferPixel(x: Int, y: Int): Color
+  @deprecated("use getPixel(x, y) instead")
+  def getBackbufferPixel(x: Int, y: Int): Color =
+    getPixel(x, y).get
 
   /** Returns the backbuffer.
     * This operation can be perfomance intensive, so it might be worthwile
@@ -48,7 +45,9 @@ trait Canvas {
     *
     * @return backbuffer
     */
-  def getBackbuffer(): Vector[Vector[Color]]
+  @deprecated("use getPixels() instead")
+  def getBackbuffer(): Vector[Vector[Color]] =
+    getPixels().map(_.toVector).toVector
 
   /** Clears resources, such as the backbuffer and keyboard inputs.
     *

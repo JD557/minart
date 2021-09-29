@@ -23,7 +23,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
-class AwtCanvas() extends LowLevelCanvas {
+class AwtCanvas() extends SurfaceBackedCanvas {
 
   def this(settings: Canvas.Settings) = {
     this()
@@ -31,6 +31,7 @@ class AwtCanvas() extends LowLevelCanvas {
   }
 
   private[this] var javaCanvas: AwtCanvas.InnerCanvas      = _
+  protected var surface: BufferedImageSurface              = _
   private[this] var keyListener: AwtCanvas.KeyListener     = _
   private[this] var mouseListener: AwtCanvas.MouseListener = _
 
@@ -44,6 +45,8 @@ class AwtCanvas() extends LowLevelCanvas {
   def changeSettings(newSettings: Canvas.Settings) = {
     if (extendedSettings == null || newSettings != settings) {
       extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+      val image = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_ARGB)
+      surface = new BufferedImageSurface(image)
       if (javaCanvas != null) javaCanvas.frame.dispose()
       javaCanvas = new AwtCanvas.InnerCanvas(
         newSettings.width,
@@ -65,24 +68,7 @@ class AwtCanvas() extends LowLevelCanvas {
     }
   }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    javaCanvas.imagePixels
-      .setElem(y * extendedSettings.settings.width + x, color.argb)
-  } catch { case _: Throwable => () }
-
-  def getBackbufferPixel(x: Int, y: Int): Color = {
-    Color.fromRGB(
-      javaCanvas.imagePixels.getElem(
-        y * extendedSettings.settings.width + x
-      )
-    )
-  }
-
-  def getBackbuffer(): Vector[Vector[Color]] = {
-    javaCanvas.imagePixels.getData().iterator.map(Color.fromRGB).grouped(settings.width).map(_.toVector).toVector
-  }
-
-  def clear(resources: Set[Canvas.Resource]): Unit = try {
+  def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
     }
@@ -90,9 +76,9 @@ class AwtCanvas() extends LowLevelCanvas {
       mouseListener.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      extendedSettings.allPixels.foreach(i => javaCanvas.imagePixels.setElem(i, settings.clearColor.argb))
+      fill(settings.clearColor)
     }
-  } catch { case _: Throwable => () }
+  }
 
   def redraw(): Unit = try {
     val g = javaCanvas.buffStrategy.getDrawGraphics()
@@ -104,7 +90,7 @@ class AwtCanvas() extends LowLevelCanvas {
       javaCanvas.getHeight
     )
     g.drawImage(
-      javaCanvas.image,
+      surface.getBufferedImage(),
       extendedSettings.canvasX,
       extendedSettings.canvasY,
       extendedSettings.scaledWidth,
@@ -144,8 +130,6 @@ object AwtCanvas {
 
     this.createBufferStrategy(2)
     val buffStrategy = getBufferStrategy
-    val image        = new BufferedImage(unscaledWidth, unscaledHeight, BufferedImage.TYPE_INT_ARGB)
-    val imagePixels  = image.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
     override def repaint() = outerCanvas.redraw()
 
@@ -153,7 +137,7 @@ object AwtCanvas {
     frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
       override def windowClosing(e: WindowEvent): Unit = {
-        outerCanvas.destroy()
+        outerCanvas.close()
       }
     });
   }

@@ -11,7 +11,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
-class HtmlCanvas() extends LowLevelCanvas {
+class HtmlCanvas() extends SurfaceBackedCanvas {
 
   def this(settings: Canvas.Settings) = {
     this()
@@ -34,7 +34,7 @@ class HtmlCanvas() extends LowLevelCanvas {
   }
   private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
-  private[this] var buffer: ImageData = _
+  protected var surface: ImageDataSurface = _
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
@@ -103,7 +103,7 @@ class HtmlCanvas() extends LowLevelCanvas {
     canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else extendedSettings.scaledWidth
     canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else extendedSettings.scaledHeight
     childNode = dom.document.body.appendChild(canvas)
-    buffer = ctx.getImageData(0, 0, newSettings.width, newSettings.height)
+    surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
 
     if (newSettings.fullScreen) {
       canvas.requestFullscreen()
@@ -115,31 +115,6 @@ class HtmlCanvas() extends LowLevelCanvas {
     clear(Set(Canvas.Resource.Backbuffer))
   }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    val lineBase = y * extendedSettings.settings.width
-    val baseAddr = 4 * (lineBase + x)
-    buffer.data(baseAddr + 0) = color.r
-    buffer.data(baseAddr + 1) = color.g
-    buffer.data(baseAddr + 2) = color.b
-  } catch { case _: Throwable => () }
-
-  def getBackbufferPixel(x: Int, y: Int): Color = {
-    val baseAddr =
-      4 * (y * extendedSettings.settings.width + x)
-    Color(buffer.data(baseAddr + 0), buffer.data(baseAddr + 1), buffer.data(baseAddr + 2))
-  }
-
-  def getBackbuffer(): Vector[Vector[Color]] = {
-    val imgData = buffer.data
-    extendedSettings.lines.map { y =>
-      val lineBase = y * extendedSettings.settings.width
-      extendedSettings.columns.map { x =>
-        val baseAddr = 4 * (lineBase + x)
-        Color(imgData(baseAddr), imgData(baseAddr + 1), imgData(baseAddr + 2))
-      }.toVector
-    }.toVector
-  }
-
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyboardInput = keyboardInput.clearPressRelease()
@@ -148,25 +123,19 @@ class HtmlCanvas() extends LowLevelCanvas {
       pointerInput = pointerInput.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      (0 until extendedSettings.windowHeight * extendedSettings.windowWidth).foreach { i =>
-        val base = 4 * i
-        buffer.data(base + 0) = settings.clearColor.r
-        buffer.data(base + 1) = settings.clearColor.g
-        buffer.data(base + 2) = settings.clearColor.b
-        buffer.data(base + 3) = 255
-      }
+      surface.fill(settings.clearColor)
     }
   }
 
   def redraw(): Unit = {
     if (settings.scale == 1)
       if (settings.fullScreen)
-        ctx.putImageData(buffer, extendedSettings.canvasX, extendedSettings.canvasY)
+        ctx.putImageData(surface.data, extendedSettings.canvasX, extendedSettings.canvasY)
       else
-        ctx.putImageData(buffer, 0, 0)
+        ctx.putImageData(surface.data, 0, 0)
     else {
       dom.window
-        .createImageBitmap(buffer)
+        .createImageBitmap(surface.data)
         .`then`[Unit] { (bitmap: ImageBitmap) =>
           if (settings.fullScreen) {
             ctx
