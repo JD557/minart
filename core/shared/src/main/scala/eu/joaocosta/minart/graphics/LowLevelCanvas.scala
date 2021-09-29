@@ -4,7 +4,7 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
 
 /** A low-level version of a canvas that provides its own canvas manager.
   */
-trait LowLevelCanvas extends Canvas {
+trait LowLevelCanvas extends Canvas with AutoCloseable {
   protected[this] var extendedSettings: LowLevelCanvas.ExtendedSettings = _
   def settings: Canvas.Settings =
     if (extendedSettings == null) Canvas.Settings(0, 0)
@@ -25,7 +25,7 @@ trait LowLevelCanvas extends Canvas {
     */
   def init(settings: Canvas.Settings): Unit = {
     if (isCreated()) {
-      destroy()
+      close()
     }
     if (!isCreated()) {
       unsafeInit(settings)
@@ -34,9 +34,10 @@ trait LowLevelCanvas extends Canvas {
 
   /** Destroys the canvas window.
     *
-    * Calling any operation on this canvas after calling destroy has an undefined behavior.
+    * Calling any operation on this canvas after calling close without calling
+    * init() has an undefined behavior.
     */
-  def destroy(): Unit = if (isCreated()) {
+  def close(): Unit = if (isCreated()) {
     unsafeDestroy()
     extendedSettings = null
   }

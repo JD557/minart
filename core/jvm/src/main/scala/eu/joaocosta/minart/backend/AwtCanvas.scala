@@ -137,7 +137,7 @@ object AwtCanvas {
     frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
       override def windowClosing(e: WindowEvent): Unit = {
-        outerCanvas.destroy()
+        outerCanvas.close()
       }
     });
   }

@@ -82,7 +82,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     while (keepGoing && SDL_PollEvent(event) != 0) {
       keepGoing = event.type_ match {
         case SDL_QUIT =>
-          destroy()
+          close()
           false
         case SDL_KEYDOWN =>
           SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))

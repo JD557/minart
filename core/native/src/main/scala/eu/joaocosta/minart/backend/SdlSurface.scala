@@ -8,7 +8,7 @@ import sdl2.SDL._
 
 import eu.joaocosta.minart.graphics.{Color, Surface}
 
-final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurface {
+final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurface with AutoCloseable {
 
   val width: Int        = data.w
   val height: Int       = data.h
@@ -68,5 +68,9 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurfac
       SDL_UpperBlit(img.data, srcRect, this.data, dstRect)
     case _ =>
       super.blit(that)(x, y, cx, cy, cw, ch)
+  }
+
+  def close(): Unit = {
+    SDL_FreeSurface(data)
   }
 }
