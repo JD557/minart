@@ -7,6 +7,8 @@ import org.scalajs.dom
 import eu.joaocosta.minart.runtime.Loop._
 import eu.joaocosta.minart.runtime._
 
+/** Loop runner for the JavaScript backend.
+  */
 object JsLoopRunner extends LoopRunner {
   lazy val hasWindow = !isUndefined(dom.window)
 

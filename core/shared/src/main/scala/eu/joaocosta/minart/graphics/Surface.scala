@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.graphics
 
 /** A Surface is an object that contains a set of pixels.
-  *
-  * Depending on the implementation, the surface might be stored in VRAM.
   */
 trait Surface {
 
@@ -23,7 +21,7 @@ trait Surface {
     */
   def getPixel(x: Int, y: Int): Option[Color]
 
-  /** Returns the pixels from thissurface.
+  /** Returns the pixels from this surface.
     * This operation can be perfomance intensive, so it might be worthwile
     * to implement this operation on the application code.
     *
@@ -34,7 +32,7 @@ trait Surface {
 
 object Surface {
 
-  /** A surface that supports mutable operations.
+  /** A surface that can be drawn on using mutable operations.
     */
   trait MutableSurface extends Surface {
 

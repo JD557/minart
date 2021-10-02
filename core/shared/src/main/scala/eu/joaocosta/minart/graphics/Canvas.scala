@@ -3,9 +3,10 @@ package eu.joaocosta.minart.graphics
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.input._
 
-/** Canvas that can be painted.
+/** Window with a canvas that can be painted.
   *
-  * The Canvas is the main concept behind minart.
+  * The Canvas is the main concept behind minart, providing access to both
+  * rendering and input functionallity.
   *
   * A canvas represents a window with a `width * height` pixels.
   * There's also a `scale` variable that controls the integer scaling

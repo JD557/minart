@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent
 
 import eu.joaocosta.minart.input.KeyboardInput._
 
+/** Key mappings for the Java platform, backed by AWT.
+  */
 object AwtKeyMapping extends KeyMapping[Int] {
   protected final val mappings: Map[Int, Key] = Map(
     KeyEvent.VK_A          -> Key.A,

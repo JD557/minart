@@ -5,6 +5,8 @@ import scala.annotation.tailrec
 import eu.joaocosta.minart.runtime.Loop._
 import eu.joaocosta.minart.runtime._
 
+/** Loop Runner for the Java platform.
+  */
 object JavaLoopRunner extends LoopRunner {
   def finiteLoop[S](
       operation: S => S,

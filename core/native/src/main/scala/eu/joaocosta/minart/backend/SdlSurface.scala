@@ -8,6 +8,10 @@ import sdl2.SDL._
 
 import eu.joaocosta.minart.graphics.{Color, Surface}
 
+/** Mutabe surface backed by an SDL surface.
+  *
+  * This class assumes to be the only owner of the surface, and will free the surface when garbage collected.
+  */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurface with AutoCloseable {
 
   val width: Int        = data.w

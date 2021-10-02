@@ -3,6 +3,7 @@ package eu.joaocosta.minart.graphics
 import eu.joaocosta.minart.graphics.RenderLoop._
 import eu.joaocosta.minart.runtime._
 
+/** A render loop that takes a side-effectful renderFrame operation. */
 object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   def finiteRenderLoop[S](
       renderFrame: (Canvas, S) => S,

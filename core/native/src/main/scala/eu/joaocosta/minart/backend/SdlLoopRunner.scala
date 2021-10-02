@@ -10,6 +10,8 @@ import sdl2.SDL._
 import eu.joaocosta.minart.runtime.Loop._
 import eu.joaocosta.minart.runtime._
 
+/** Loop Runner for the native backend, backed by SDL.
+  */
 object SdlLoopRunner extends LoopRunner {
   def finiteLoop[S](
       operation: S => S,

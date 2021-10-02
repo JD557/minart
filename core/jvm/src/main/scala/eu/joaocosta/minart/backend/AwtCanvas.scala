@@ -49,8 +49,6 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       surface = new BufferedImageSurface(image)
       if (javaCanvas != null) javaCanvas.frame.dispose()
       javaCanvas = new AwtCanvas.InnerCanvas(
-        newSettings.width,
-        newSettings.height,
         extendedSettings.scaledWidth,
         extendedSettings.scaledHeight,
         newSettings.fullScreen,
@@ -90,7 +88,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       javaCanvas.getHeight
     )
     g.drawImage(
-      surface.getBufferedImage(),
+      surface.bufferedImage,
       extendedSettings.canvasX,
       extendedSettings.canvasY,
       extendedSettings.scaledWidth,
@@ -107,8 +105,6 @@ class AwtCanvas() extends SurfaceBackedCanvas {
 
 object AwtCanvas {
   private class InnerCanvas(
-      unscaledWidth: Int,
-      unscaledHeight: Int,
       scaledWidth: Int,
       scaledHeight: Int,
       fullScreen: Boolean,
