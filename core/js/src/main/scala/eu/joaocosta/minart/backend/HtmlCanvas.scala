@@ -56,7 +56,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
       (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
     )
 
-    def handlePress() = { pointerInput = pointerInput.move(cleanMousePos).press }
+    def handlePress()   = { pointerInput = pointerInput.move(cleanMousePos).press }
     def handleRelease() = { pointerInput = pointerInput.move(cleanMousePos).release }
     def handleMove(x: Int, y: Int) = {
       val (offsetX, offsetY) =

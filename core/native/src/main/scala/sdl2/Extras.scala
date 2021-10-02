@@ -1183,9 +1183,9 @@ object Extras {
       self
     }
 
-    def x: CInt = self._1
+    def x: CInt             = self._1
     def x_=(nx: CInt): Unit = { self._1 = nx }
-    def y: CInt = self._2
+    def y: CInt             = self._2
     def y_=(ny: CInt): Unit = { self._2 = ny }
   }
   implicit class SDL_RectOps(val self: Ptr[SDL_Rect]) extends AnyVal {
@@ -1197,13 +1197,13 @@ object Extras {
       self
     }
 
-    def x: CInt = self._1
+    def x: CInt             = self._1
     def x_=(nx: CInt): Unit = { self._1 = nx }
-    def y: CInt = self._2
+    def y: CInt             = self._2
     def y_=(ny: CInt): Unit = { self._2 = ny }
-    def w: CInt = self._3
+    def w: CInt             = self._3
     def w_=(nw: CInt): Unit = { self._3 = nw }
-    def h: CInt = self._4
+    def h: CInt             = self._4
     def h_=(nh: CInt): Unit = { self._4 = nh }
   }
 
@@ -1289,11 +1289,11 @@ object Extras {
     */
 
   implicit class SDL_versionOps(val self: Ptr[SDL_version]) extends AnyVal {
-    def major: UByte = self._1
+    def major: UByte            = self._1
     def major_=(v: UByte): Unit = { self._1 = v }
-    def minor: UByte = self._2
+    def minor: UByte            = self._2
     def minor_=(v: UByte): Unit = { self._2 = v }
-    def patch: UByte = self._3
+    def patch: UByte            = self._3
     def patch_=(v: UByte): Unit = { self._3 = v }
   }
 

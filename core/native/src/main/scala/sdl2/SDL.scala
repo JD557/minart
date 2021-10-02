@@ -311,7 +311,7 @@ object SDL {
       h: CInt,
       hot_x: CInt,
       hot_y: CInt
-  ): Ptr[SDL_Cursor]                                                                              = extern
+  ): Ptr[SDL_Cursor] = extern
   def SDL_CreateColorCursor(surface: Ptr[SDL_Surface], hot_x: CInt, hot_y: CInt): Ptr[SDL_Cursor] = extern
   def SDL_CreateSystemCursor(id: SDL_SystemCursor): Ptr[SDL_Cursor]                               = extern
   def SDL_SetCursor(cursor: Ptr[SDL_Cursor]): Unit                                                = extern
@@ -371,7 +371,7 @@ object SDL {
       Gmask: Ptr[UInt],
       Bmask: Ptr[UInt],
       Amask: Ptr[UInt]
-  ): SDL_bool                                                                                         = extern
+  ): SDL_bool = extern
   def SDL_MasksToPixelFormatEnum(bpp: CInt, Rmask: UInt, Gmask: UInt, Bmask: UInt, Amask: UInt): UInt = extern
 
   def SDL_AllocFormat(pixel_format: UInt): Ptr[SDL_PixelFormat] = extern
@@ -437,7 +437,7 @@ object SDL {
       Gmask: UInt,
       Bmask: UInt,
       Amask: UInt
-  ): Ptr[SDL_Surface]                                                      = extern
+  ): Ptr[SDL_Surface] = extern
   def SDL_LoadBMP_RW(src: Ptr[SDL_RWops], freesrc: CInt): Ptr[SDL_Surface] = extern
   def SDL_FreeSurface(surface: Ptr[SDL_Surface]): Unit                     = extern
   def SDL_SetClipRect(
@@ -482,7 +482,7 @@ object SDL {
       flags: UInt,
       window: Ptr[Ptr[SDL_Window]],
       renderer: Ptr[Ptr[SDL_Renderer]]
-  ): CInt                                                                                      = extern
+  ): CInt = extern
   def SDL_CreateRenderer(window: Ptr[SDL_Window], index: CInt, flags: UInt): Ptr[SDL_Renderer] = extern
   def SDL_CreateSoftwareRenderer(surface: Ptr[SDL_Surface]): Ptr[SDL_Renderer]                 = extern
   def SDL_GetRenderer(window: Ptr[SDL_Window]): Ptr[SDL_Renderer]                              = extern
