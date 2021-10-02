@@ -10,11 +10,11 @@ object ColorSquare {
     ImpureRenderLoop
       .singleFrame(c => {
         for {
-          x <- (0 until c.settings.width)
-          y <- (0 until c.settings.height)
+          x <- (0 until c.width)
+          y <- (0 until c.height)
         } {
           val color =
-            Color((255 * x.toDouble / c.settings.width).toInt, (255 * y.toDouble / c.settings.height).toInt, 255)
+            Color((255 * x.toDouble / c.width).toInt, (255 * y.toDouble / c.height).toInt, 255)
           c.putPixel(x, y, color)
         }
         c.redraw()

@@ -18,13 +18,12 @@ object Settings {
           c.clear()
           if (keyboardInput.keysPressed(Key.A)) c.changeSettings(settingsA)
           else if (keyboardInput.keysPressed(Key.B)) c.changeSettings(settingsB)
-          val (width, height) = (c.settings.width, c.settings.height)
           for {
-            x <- (0 until width)
-            y <- (0 until height)
+            x <- (0 until c.width)
+            y <- (0 until c.height)
           } {
             val color =
-              Color((255 * x.toDouble / width).toInt, (255 * y.toDouble / height).toInt, 255)
+              Color((255 * x.toDouble / c.width).toInt, (255 * y.toDouble / c.height).toInt, 255)
             c.putPixel(x, y, color)
           }
           c.redraw()

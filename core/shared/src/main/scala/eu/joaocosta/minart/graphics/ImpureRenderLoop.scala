@@ -24,7 +24,7 @@ object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   }
 
   def infiniteRenderLoop[S](
-      renderFrame: Function2[Canvas, S, S],
+      renderFrame: (Canvas, S) => S,
       frameRate: LoopFrequency
   ): StatefulRenderLoop[S] =
     finiteRenderLoop(renderFrame, (_: S) => false, frameRate)

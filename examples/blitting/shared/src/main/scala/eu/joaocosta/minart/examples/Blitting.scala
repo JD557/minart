@@ -18,11 +18,11 @@ object Blitting {
 
   def renderBackground(canvas: Canvas): Unit =
     for {
-      x <- (0 until canvas.settings.width)
-      y <- (0 until canvas.settings.height)
+      x <- (0 until canvas.width)
+      y <- (0 until canvas.height)
     } {
       val color =
-        Color((255 * x.toDouble / canvas.settings.width).toInt, (255 * y.toDouble / canvas.settings.height).toInt, 255)
+        Color((255 * x.toDouble / canvas.width).toInt, (255 * y.toDouble / canvas.height).toInt, 255)
       canvas.putPixel(x, y, color)
     }
 
