@@ -40,33 +40,18 @@ sealed trait RIO[-R, +A] {
   lazy val unit: RIO[R, Unit] = this.as(())
 }
 
-object RIO {
-  private final case class Suspend[R, A](thunk: R => A) extends RIO[R, A] {
+object RIO extends IOOps.IOBaseOps[Any] {
+  private[pure] final case class Suspend[R, A](thunk: R => A) extends RIO[R, A] {
     def run(resource: R): A          = thunk(resource)
     def map[B](f: A => B): RIO[R, B] = Suspend(thunk.andThen(f))
   }
-  private final case class FlatMap[R, A, B](io: RIO[R, A], andThen: A => RIO[R, B]) extends RIO[R, B] {
+  private[pure] final case class FlatMap[R, A, B](io: RIO[R, A], andThen: A => RIO[R, B]) extends RIO[R, B] {
     def run(resource: R): B          = andThen(io.run(resource)).run(resource)
     def map[C](f: B => C): RIO[R, C] = FlatMap[R, B, C](this, x => Suspend(_ => f(x)))
   }
 
-  /** An operation that does nothing. */
-  val noop: RIO[Any, Unit] = Suspend[Any, Unit](_ => ())
-
-  /** Lifts a value into a [[RIO]]. */
-  def pure[A](x: A): RIO[Any, A] = Suspend[Any, A](_ => x)
-
-  /** Suspends a computation into a [[RIO]]. */
-  def suspend[A](x: => A): RIO[Any, A] = Suspend[Any, A](_ => x)
-
   /** Returns a operation that requires some resource. */
-  def access[R, A](f: R => A): RIO[R, A] = Suspend[R, A](f)
-
-  /** Returns a [[Poll]] from a function that receives a callback */
-  def fromCallback[A](operation: (Try[A] => Unit) => Unit): RIO[Any, Poll[A]] = {
-    val promise = scala.concurrent.Promise[A]()
-    RIO.suspend(operation(promise.complete)).as(Poll.fromFuture(promise.future))
-  }
+  def access[R, A](f: R => A): RIO[R, A] = RIO.Suspend[R, A](f)
 
   /** Runs a computation only if the predicate is true, otherwise does nothing */
   def when[R](predicate: Boolean)(io: => RIO[R, Unit]): RIO[R, Unit] =
