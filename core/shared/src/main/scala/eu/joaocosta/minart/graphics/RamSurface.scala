@@ -4,7 +4,7 @@ import eu.joaocosta.minart.graphics.Surface._
 
 /** A mutable surface stored in RAM.
   *
-  *  @data the raw data that backs this surface
+  * @param data the raw data that backs this surface
   */
 class RamSurface(val data: Vector[Array[Int]]) extends MutableSurface {
   val width  = data.headOption.map(_.size).getOrElse(0)
