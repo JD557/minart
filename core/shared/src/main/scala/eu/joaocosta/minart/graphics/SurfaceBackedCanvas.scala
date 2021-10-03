@@ -29,4 +29,10 @@ trait SurfaceBackedCanvas extends LowLevelCanvas {
       that: Surface
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
     surface.blit(that)(x, y, cx, cy, cw, ch)
+
+  override def blitWithMask(
+      that: Surface,
+      mask: Color
+  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
+    surface.blitWithMask(that, mask)(x, y, cx, cy, cw, ch)
 }

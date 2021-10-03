@@ -4,7 +4,9 @@ import java.awt.image.{BufferedImage, DataBufferInt}
 
 import eu.joaocosta.minart.graphics.{Color, Surface}
 
-final class BufferedImageSurface(bufferedImage: BufferedImage) extends Surface.MutableSurface {
+/** Mutable image surface backed by an AWT Buffered Image.
+  */
+final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surface.MutableSurface {
   val width               = bufferedImage.getWidth()
   val height              = bufferedImage.getHeight()
   private val imagePixels = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
@@ -33,8 +35,6 @@ final class BufferedImageSurface(bufferedImage: BufferedImage) extends Surface.M
     allPixels.foreach(i => imagePixels.setElem(i, color.argb))
   } catch { case _: Throwable => () }
 
-  def getBufferedImage(): BufferedImage = bufferedImage
-
   override def blit(
       that: Surface
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = try {
@@ -42,7 +42,7 @@ final class BufferedImageSurface(bufferedImage: BufferedImage) extends Surface.M
       case img: BufferedImageSurface =>
         val g = bufferedImage.getGraphics()
         g.drawImage(
-          img.getBufferedImage(),
+          img.bufferedImage,
           x,
           y,
           x + cw,

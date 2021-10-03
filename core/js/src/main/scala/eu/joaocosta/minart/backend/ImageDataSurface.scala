@@ -5,6 +5,10 @@ import org.scalajs.dom.raw.ImageData
 
 import eu.joaocosta.minart.graphics.{Color, Surface}
 
+/** A mutable surface backed by an ImageData.
+  *
+  *  @param imageData imageData that backs this surface
+  */
 final class ImageDataSurface(val data: ImageData) extends Surface.MutableSurface {
 
   val width: Int        = data.width

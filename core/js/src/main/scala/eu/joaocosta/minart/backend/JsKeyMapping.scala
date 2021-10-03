@@ -2,6 +2,8 @@ package eu.joaocosta.minart.backend
 
 import eu.joaocosta.minart.input.KeyboardInput._
 
+/** Key mappings for the JavaScript backend.
+  */
 object JsKeyMapping extends KeyMapping[Int] {
   protected final val mappings: Map[Int, Key] = Map(
     65  -> Key.A,

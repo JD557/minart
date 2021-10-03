@@ -2,8 +2,10 @@ package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 
-/** Abstraction that provides `init` and `destroy` operations to
-  * create and destroy canvas windows.
+/** Abstraction that provides an `init` operation to create a new canvas.
+  *
+  * This is helpful to deal with the fact that creating a new canvas is a
+  * side-effectful operation.
   */
 trait CanvasManager {
 
