@@ -10,7 +10,6 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
   val width               = bufferedImage.getWidth()
   val height              = bufferedImage.getHeight()
   private val imagePixels = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
-  private val allPixels   = 0 until height * width
 
   def getPixel(x: Int, y: Int): Option[Color] = try {
     Some(
@@ -32,7 +31,11 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
   } catch { case _: Throwable => () }
 
   def fill(color: Color): Unit = try {
-    allPixels.foreach(i => imagePixels.setElem(i, color.argb))
+    var i = 0
+    while (i < height * width) {
+      imagePixels.setElem(i, color.argb)
+      i += 1
+    }
   } catch { case _: Throwable => () }
 
   override def blit(

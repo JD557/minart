@@ -11,11 +11,10 @@ import eu.joaocosta.minart.graphics.{Color, Surface}
   */
 final class ImageDataSurface(val data: ImageData) extends Surface.MutableSurface {
 
-  val width: Int        = data.width
-  val height: Int       = data.height
-  private val lines     = 0 until height
-  private val columns   = 0 until width
-  private val allPixels = 0 until height * width
+  val width: Int      = data.width
+  val height: Int     = data.height
+  private val lines   = 0 until height
+  private val columns = 0 until width
 
   def getPixel(x: Int, y: Int): Option[Color] = {
     val baseAddr =
@@ -44,12 +43,14 @@ final class ImageDataSurface(val data: ImageData) extends Surface.MutableSurface
     data.data(baseAddr + 2) = color.b
   } catch { case _: Throwable => () }
 
-  def fill(color: Color): Unit =
-    allPixels.foreach { i =>
-      val base = 4 * i
+  def fill(color: Color): Unit = {
+    var base = 0
+    while (base < 4 * height * width) {
       data.data(base + 0) = color.r
       data.data(base + 1) = color.g
       data.data(base + 2) = color.b
       data.data(base + 3) = 255
+      base += 4
     }
+  }
 }

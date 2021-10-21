@@ -32,12 +32,13 @@ class PpmCanvas() extends SurfaceBackedCanvas {
     println("P3")
     println(s"${extendedSettings.scaledWidth} ${extendedSettings.scaledHeight}")
     println("255")
+    val pixelSize = (0 until settings.scale)
     for {
       line  <- surface.data
-      _     <- extendedSettings.pixelSize
+      _     <- pixelSize
       color <- line
       Color(r, g, b) = Color.fromRGB(color)
-      _ <- extendedSettings.pixelSize
+      _ <- pixelSize
     } println(s"$r $g $b")
   }
 

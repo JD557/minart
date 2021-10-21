@@ -14,12 +14,11 @@ import eu.joaocosta.minart.graphics.{Color, Surface}
   */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurface with AutoCloseable {
 
-  val width: Int        = data.w
-  val height: Int       = data.h
-  private val lines     = 0 until height
-  private val columns   = 0 until width
-  private val allPixels = 0 until height * width
-  private val renderer  = SDL_CreateSoftwareRenderer(data)
+  val width: Int       = data.w
+  val height: Int      = data.h
+  private val lines    = 0 until height
+  private val columns  = 0 until width
+  private val renderer = SDL_CreateSoftwareRenderer(data)
 
   def getPixel(x: Int, y: Int): Option[Color] = try {
     // Assuming a BGRA surface

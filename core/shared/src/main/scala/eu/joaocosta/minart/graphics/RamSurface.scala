@@ -13,9 +13,6 @@ class RamSurface(val data: Vector[Array[Int]]) extends MutableSurface {
   def this(colors: Seq[Seq[Color]]) =
     this(colors.map(_.map(_.argb).toArray).toVector)
 
-  private[this] val lines   = (0 until height)
-  private[this] val columns = (0 until width)
-
   def getPixel(x: Int, y: Int): Option[Color] = {
     if (x < 0 || y < 0 || x >= width || y >= height) None
     else Some(Color.fromRGB(data(y)(x)))
@@ -28,10 +25,16 @@ class RamSurface(val data: Vector[Array[Int]]) extends MutableSurface {
     if (x < 0 || y < 0 || x >= width || y >= height)
       data(y)(x) = color.argb
 
-  def fill(color: Color): Unit =
-    for {
-      y <- lines
-      x <- columns
-    } data(y)(x) = color.argb
+  def fill(color: Color): Unit = {
+    var y = 0
+    while (y < height) {
+      var x = 0
+      while (x < width) {
+        data(y)(x) = color.argb
+        x += 1
+      }
+      y += 1
+    }
+  }
 
 }

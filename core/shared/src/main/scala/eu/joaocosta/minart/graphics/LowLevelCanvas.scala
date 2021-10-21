@@ -61,10 +61,6 @@ object LowLevelCanvas {
   ) {
     val scaledWidth  = settings.width * settings.scale
     val scaledHeight = settings.height * settings.scale
-    val allPixels    = (0 until scaledHeight * scaledWidth)
-    val pixelSize    = (0 until settings.scale)
-    val lines        = (0 until settings.height)
-    val columns      = (0 until settings.width)
     val canvasX      = (windowWidth - scaledWidth) / 2
     val canvasY      = (windowHeight - scaledHeight) / 2
   }
