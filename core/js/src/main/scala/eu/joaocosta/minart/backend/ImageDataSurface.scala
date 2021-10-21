@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.backend
 
-import org.scalajs.dom
 import org.scalajs.dom.raw.ImageData
 
 import eu.joaocosta.minart.graphics.{Color, Surface}

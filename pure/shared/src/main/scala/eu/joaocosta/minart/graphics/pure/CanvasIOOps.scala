@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.graphics.pure
 
-import scala.util.Try
-
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime.pure._

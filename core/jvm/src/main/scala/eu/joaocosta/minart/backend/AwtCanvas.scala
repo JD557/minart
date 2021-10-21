@@ -8,7 +8,7 @@ import java.awt.event.{
   WindowAdapter,
   WindowEvent
 }
-import java.awt.image.{BufferedImage, DataBufferInt}
+import java.awt.image.BufferedImage
 import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, GraphicsEnvironment, MouseInfo}
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.{JFrame, WindowConstants}
