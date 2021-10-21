@@ -56,7 +56,8 @@ trait MSurfaceIOOps extends SurfaceIOOps {
   def blitWithMask(
       that: Surface,
       mask: Color
-  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = accessMSurface(
-    _.blitWithMask(that, mask)(x, y, cx, cy, cw, ch)
-  )
+  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): MSurfaceIO[Unit] =
+    accessMSurface(
+      _.blitWithMask(that, mask)(x, y, cx, cy, cw, ch)
+    )
 }

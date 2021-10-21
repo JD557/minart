@@ -63,22 +63,31 @@ object Surface {
     def blit(
         that: Surface
     )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-      val minYClip   = -y
-      val minXClip   = -x
-      val maxYClip   = this.height - y
-      val maxXClip   = this.width - x
-      val yRange     = (math.max(0, minYClip) until math.min(ch, maxYClip))
-      val xRange     = (math.max(0, minXClip) until math.min(cw, maxXClip))
+      val minYClip = -y
+      val minXClip = -x
+      val maxYClip = this.height - y
+      val maxXClip = this.width - x
+
+      val minY = math.max(0, minYClip)
+      val maxY = math.min(ch, maxYClip)
+      val minX = math.max(0, minXClip)
+      val maxX = math.min(cw, maxXClip)
+
       val thatPixels = that.getPixels()
-      for {
-        dy <- yRange
-        sourceY = dy + cy
-        destY   = dy + y
-        dx <- xRange
-        sourceX = dx + cx
-        destX   = dx + x
-        color   = thatPixels(sourceY)(sourceX)
-      } putPixel(destX, destY, color)
+
+      var dy = minY
+      while (dy < maxY) {
+        val line  = thatPixels(dy + cy)
+        val destY = dy + y
+        var dx    = minX
+        while (dx < maxX) {
+          val destX = dx + x
+          val color = line(dx + cx)
+          putPixel(destX, destY, color)
+          dx += 1
+        }
+        dy += 1
+      }
     }
 
     /** Draws a surface on top of this surface and masks the pixels with a certain color.
@@ -96,23 +105,31 @@ object Surface {
         that: Surface,
         mask: Color
     )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-      val minYClip   = -y
-      val minXClip   = -x
-      val maxYClip   = this.height - y
-      val maxXClip   = this.width - x
-      val yRange     = (math.max(0, minYClip) until math.min(ch, maxYClip))
-      val xRange     = (math.max(0, minXClip) until math.min(cw, maxXClip))
+      val minYClip = -y
+      val minXClip = -x
+      val maxYClip = this.height - y
+      val maxXClip = this.width - x
+
+      val minY = math.max(0, minYClip)
+      val maxY = math.min(ch, maxYClip)
+      val minX = math.max(0, minXClip)
+      val maxX = math.min(cw, maxXClip)
+
       val thatPixels = that.getPixels()
-      for {
-        dy <- yRange
-        sourceY = dy + cy
-        destY   = dy + y
-        dx <- xRange
-        sourceX = dx + cx
-        destX   = dx + x
-        color   = thatPixels(sourceY)(sourceX)
-        if color != mask
-      } putPixel(destX, destY, color)
+
+      var dy = minY
+      while (dy < maxY) {
+        val line  = thatPixels(dy + cy)
+        val destY = dy + y
+        var dx    = minX
+        while (dx < maxX) {
+          val destX = dx + x
+          val color = line(dx + cx)
+          if (color != mask) putPixel(destX, destY, color)
+          dx += 1
+        }
+        dy += 1
+      }
     }
   }
 }
