@@ -39,7 +39,6 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-    ctx.imageSmoothingEnabled = false
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
       "fullscreenchange",
@@ -102,6 +101,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
     canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else extendedSettings.scaledWidth
     canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else extendedSettings.scaledHeight
+    ctx.imageSmoothingEnabled = false
     childNode = dom.document.body.appendChild(canvas)
     surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
 
