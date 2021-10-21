@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.runtime.pure
 
-import scala.util.Try
-
 /** Representation of an effectful operation, based on Haskell's RIO Monad.
   */
 sealed trait RIO[-R, +A] {

@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.input._
 
 /** Window with a canvas that can be painted.

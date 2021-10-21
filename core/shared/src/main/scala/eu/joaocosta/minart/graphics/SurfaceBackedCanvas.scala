@@ -1,8 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
-import eu.joaocosta.minart.input._
-
 /** Canvas backed by a mutable surface.
   */
 trait SurfaceBackedCanvas extends LowLevelCanvas {
