@@ -133,7 +133,7 @@ object ColorSquare {
 ## Multiplatform support
 
 To compile for different platforms, one needs to either use import `eu.joaocosta.minart.backend.defaults._`
-package and use the `default` method or use the correct `Canvas` and `RenderLoop`.
+package and use the `apply` method or use the correct `Canvas` and `RenderLoop`.
 
 The following canvas and render loops are available:
 * All: `PpmCanvas`
