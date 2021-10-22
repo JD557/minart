@@ -2,8 +2,9 @@ package eu.joaocosta.minart.examples
 
 import scala.util.Random
 
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.core._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.runtime._
 
 object Snake {
 
@@ -61,12 +62,8 @@ object Snake {
   def main(args: Array[String]): Unit = {
     val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canvasSettings.width)(0)))
 
-    RenderLoop
-      .default()
+    ImpureRenderLoop
       .infiniteRenderLoop[GameState](
-        CanvasManager.default(),
-        canvasSettings,
-        initialState,
         (c, state) => {
           c.clear()
 
@@ -83,7 +80,10 @@ object Snake {
           if (state.gameOver) initialState
           else state.updateSnakeDir(c.getKeyboardInput()).nextState
         },
-        FrameRate.fromFps(15)
+        LoopFrequency.fromHz(15)
+      )(
+        canvasSettings,
+        initialState
       )
   }
 }

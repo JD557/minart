@@ -440,6 +440,16 @@ object SDL {
   ): Ptr[SDL_Surface] = extern
   def SDL_LoadBMP_RW(src: Ptr[SDL_RWops], freesrc: CInt): Ptr[SDL_Surface] = extern
   def SDL_FreeSurface(surface: Ptr[SDL_Surface]): Unit                     = extern
+  def SDL_SetClipRect(
+      surface: Ptr[SDL_Surface],
+      rect: Ptr[SDL_Rect]
+  ): Int = extern
+  def SDL_UpperBlit(
+      src: Ptr[SDL_Surface],
+      srcrect: Ptr[SDL_Rect],
+      dst: Ptr[SDL_Surface],
+      dstrect: Ptr[SDL_Rect]
+  ): Int = extern
   def SDL_UpperBlitScaled(
       src: Ptr[SDL_Surface],
       srcrect: Ptr[SDL_Rect],

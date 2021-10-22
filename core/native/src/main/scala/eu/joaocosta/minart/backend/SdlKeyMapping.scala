@@ -3,8 +3,10 @@ package eu.joaocosta.minart.backend
 import sdl2.Extras._
 import sdl2.SDL._
 
-import eu.joaocosta.minart.core.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput._
 
+/** Key mappings for the Native platform, backed by SDL.
+  */
 object SdlKeyMapping extends KeyMapping[SDL_Keycode] {
   protected final val mappings: Map[Int, Key] = Map(
     SDLK_a            -> Key.A,
