@@ -126,11 +126,11 @@ object SDL {
     * ************************************
     */
 
-  //TODO: exact structure (with a lot of function pointers)
+  // TODO: exact structure (with a lot of function pointers)
   type SDL_RWops = CStruct0
 
   def SDL_RWFromFile(file: CString, mode: CString): Ptr[SDL_RWops] = extern
-  //TODO: fp should be Ptr[FILE], from stdio
+  // TODO: fp should be Ptr[FILE], from stdio
   def SDL_RWFromFP(fp: Ptr[Byte], autoclose: SDL_bool): Ptr[SDL_RWops] = extern
   def SDL_RWFromMem(mem: Ptr[Byte], size: CInt): Ptr[SDL_RWops]        = extern
   def SDL_RWFromConstMem(mem: Ptr[Byte], size: CInt): Ptr[SDL_RWops]   = extern
@@ -168,7 +168,7 @@ object SDL {
 
   type SDL_CommonEvent = CStruct2[UInt, UInt]
 
-  //TODO: confirm that Sint32 is Int in scala-native
+  // TODO: confirm that Sint32 is Int in scala-native
   type SDL_WindowEvent = CStruct9[UInt, UInt, UInt, UByte, UByte, UByte, UByte, Int, Int]
 
   type SDL_KeyboardEvent = CStruct8[UInt, UInt, UInt, UByte, UByte, UByte, UByte, SDL_Keysym]
@@ -181,24 +181,24 @@ object SDL {
 
   type SDL_MouseButtonEvent = CStruct10[UInt, UInt, UInt, UInt, UByte, UByte, UByte, UByte, Int, Int]
 
-  //TODO:
-  //type SDL_MouseWheelEvent
-  //type SDL_JoyAxisEvent
-  //type SDL_JoyBallEvent
-  //type SDL_JoyHatEvent
-  //type SDL_JoyButtonEvent
-  //type SDL_JoyDeviceEvent
-  //type SDL_ControllerAxisEvent
-  //type SDL_ControllerButtonEvent
-  //type SDL_ControllerDeviceEvent
-  //type SDL_AudioDeviceEvent
+  // TODO:
+  // type SDL_MouseWheelEvent
+  // type SDL_JoyAxisEvent
+  // type SDL_JoyBallEvent
+  // type SDL_JoyHatEvent
+  // type SDL_JoyButtonEvent
+  // type SDL_JoyDeviceEvent
+  // type SDL_ControllerAxisEvent
+  // type SDL_ControllerButtonEvent
+  // type SDL_ControllerDeviceEvent
+  // type SDL_AudioDeviceEvent
 
-  //TODO: for iOS
-  //type SDL_TouchFingerEvent
+  // TODO: for iOS
+  // type SDL_TouchFingerEvent
 
-  //type SDL_MultiGestureEvent
-  //type SDL_DollarGestureEvent
-  //type SDL_DropEvent
+  // type SDL_MultiGestureEvent
+  // type SDL_DollarGestureEvent
+  // type SDL_DropEvent
 
   type SDL_QuitEvent = CStruct2[UInt, UInt]
   type SDL_OSEvent   = CStruct2[UInt, UInt]
@@ -209,18 +209,18 @@ object SDL {
 
   type SDL_SysWMEvent = CStruct3[UInt, UInt, Ptr[SDL_SysWMmsg]]
 
-  //SDL_Event is a union of all events defined above
-  //SDL defines the padding to be an array of size 56 bytes, we describe
-  //a two element struct, with the first element being the type UInt shared
-  //by all members of the union, and the second element completes the padding
-  //with 52 bytes (to reach 56).
+  // SDL_Event is a union of all events defined above
+  // SDL defines the padding to be an array of size 56 bytes, we describe
+  // a two element struct, with the first element being the type UInt shared
+  // by all members of the union, and the second element completes the padding
+  // with 52 bytes (to reach 56).
   type SDL_Event = CStruct2[UInt, CArray[Byte, _52]]
 
   def SDL_PumpEvents(): Unit = extern
 
   def SDL_PeepEvents(events: Ptr[SDL_Event], numevents: CInt, action: UInt, minType: UInt, maxType: UInt): Unit = extern
 
-  //TODO: is it fine to have param name differ? should be "type"
+  // TODO: is it fine to have param name differ? should be "type"
   def SDL_HasEvent(type_ : UInt): SDL_bool                  = extern
   def SDL_HasEvents(minType: UInt, maxType: UInt): SDL_bool = extern
 
@@ -234,13 +234,13 @@ object SDL {
 
   def SDL_PushEvent(event: Ptr[SDL_Event]): CInt = extern
 
-  //TODO:
-  //typedef int (SDLCALL * SDL_EventFilter) (void *userdata, SDL_Event * event);
-  //def SDL_SetEventFilter(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
-  //def SDL_GetEventFilter(filter: Ptr[SDL_EventFilter], userdata: Ptr[Ptr[Byte]]): Unit = extern
-  //def SDL_AddEventWatch(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
-  //def SDL_DelEventWatch(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
-  //def SDL_FilterEvents(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
+  // TODO:
+  // typedef int (SDLCALL * SDL_EventFilter) (void *userdata, SDL_Event * event);
+  // def SDL_SetEventFilter(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
+  // def SDL_GetEventFilter(filter: Ptr[SDL_EventFilter], userdata: Ptr[Ptr[Byte]]): Unit = extern
+  // def SDL_AddEventWatch(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
+  // def SDL_DelEventWatch(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
+  // def SDL_FilterEvents(filter: SDL_EventFilter, userdata: Ptr[Byte]): Unit = extern
 
   def SDL_EventState(type_ : UInt, state: CInt): UByte = extern
 
@@ -700,11 +700,11 @@ object SDL {
     extern
 
   type SDL_HitTestResult = UInt
-  //TODO:
-  //typedef SDL_HitTestResult (SDLCALL *SDL_HitTest)(SDL_Window *win,
+  // TODO:
+  // typedef SDL_HitTestResult (SDLCALL *SDL_HitTest)(SDL_Window *win,
   //                                               const SDL_Point *area,
   //                                               void *data);
-  //extern DECLSPEC int SDLCALL SDL_SetWindowHitTest(SDL_Window * window,
+  // extern DECLSPEC int SDLCALL SDL_SetWindowHitTest(SDL_Window * window,
   //                                                 SDL_HitTest callback,
   //                                                 void *callback_data);
 
