@@ -9,10 +9,10 @@ object Blitting {
   val image = new RamSurface(
     (0 until 16).map { y =>
       (0 until 16).map { x =>
-        if ((x + y) < 16) Color(0, 0, 0).argb
-        else Color((16 * x.toDouble).toInt, (16 * y.toDouble).toInt, 255).argb
-      }.toArray
-    }.toVector
+        if ((x + y) < 16) Color(0, 0, 0)
+        else Color((16 * x.toDouble).toInt, (16 * y.toDouble).toInt, 255)
+      }
+    }
   )
 
   def renderBackground(canvas: Canvas): Unit =
