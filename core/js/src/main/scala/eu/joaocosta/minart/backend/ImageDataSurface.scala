@@ -15,13 +15,11 @@ final class ImageDataSurface(val data: ImageData) extends Surface.MutableSurface
   private val lines   = 0 until height
   private val columns = 0 until width
 
-  def getPixel(x: Int, y: Int): Option[Color] = {
-    val baseAddr =
-      4 * (y * width + x)
-    try {
+  def getPixel(x: Int, y: Int): Option[Color] =
+    if (x >= 0 && y >= 0 && x < width && y < height) {
+      val baseAddr = 4 * (y * width + x)
       Some(Color(data.data(baseAddr + 0), data.data(baseAddr + 1), data.data(baseAddr + 2)))
-    } catch { case _: Throwable => None }
-  }
+    } else None
 
   def getPixels(): Vector[Array[Color]] = {
     val imgData = data.data
@@ -34,13 +32,14 @@ final class ImageDataSurface(val data: ImageData) extends Surface.MutableSurface
     }.toVector
   }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    val lineBase = y * width
-    val baseAddr = 4 * (lineBase + x)
-    data.data(baseAddr + 0) = color.r
-    data.data(baseAddr + 1) = color.g
-    data.data(baseAddr + 2) = color.b
-  } catch { case _: Throwable => () }
+  def putPixel(x: Int, y: Int, color: Color): Unit =
+    if (x >= 0 && y >= 0 && x < width && y < height) {
+      val lineBase = y * width
+      val baseAddr = 4 * (lineBase + x)
+      data.data(baseAddr + 0) = color.r
+      data.data(baseAddr + 1) = color.g
+      data.data(baseAddr + 2) = color.b
+    }
 
   def fill(color: Color): Unit = {
     var base = 0
