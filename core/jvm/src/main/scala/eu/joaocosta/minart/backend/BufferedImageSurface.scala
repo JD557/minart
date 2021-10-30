@@ -11,39 +11,39 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
   val height              = bufferedImage.getHeight()
   private val imagePixels = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
-  def getPixel(x: Int, y: Int): Option[Color] = try {
-    Some(
-      Color.fromRGB(
-        imagePixels.getElem(
-          y * width + x
+  def getPixel(x: Int, y: Int): Option[Color] =
+    if (x >= 0 && y >= 0 && x < width && y < height)
+      Some(
+        Color.fromRGB(
+          imagePixels.getElem(
+            y * width + x
+          )
         )
       )
-    )
-  } catch { case _: Throwable => None }
+    else None
 
-  def getPixels(): Vector[Array[Color]] = try {
+  def getPixels(): Vector[Array[Color]] =
     imagePixels.getData().iterator.map(Color.fromRGB).grouped(width).map(_.toArray).toVector
-  } catch { case _: Throwable => Vector.empty }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    imagePixels
-      .setElem(y * width + x, color.argb)
-  } catch { case _: Throwable => () }
+  def putPixel(x: Int, y: Int, color: Color): Unit =
+    if (x >= 0 && y >= 0 && x < width && y < height)
+      imagePixels
+        .setElem(y * width + x, color.argb)
 
-  def fill(color: Color): Unit = try {
+  def fill(color: Color): Unit = {
     var i = 0
     while (i < height * width) {
       imagePixels.setElem(i, color.argb)
       i += 1
     }
-  } catch { case _: Throwable => () }
+  }
 
   override def blit(
       that: Surface
-  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = try {
+  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
     that match {
       case img: BufferedImageSurface =>
-        val g = bufferedImage.getGraphics()
+        val g = bufferedImage.createGraphics()
         g.drawImage(
           img.bufferedImage,
           x,
@@ -60,5 +60,4 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
       case _ =>
         super.blit(that)(x, y, cx, cy, cw, ch)
     }
-  } catch { case _: Throwable => () }
 }

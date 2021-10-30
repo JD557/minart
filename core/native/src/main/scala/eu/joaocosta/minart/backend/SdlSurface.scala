@@ -20,18 +20,19 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurfac
   private val columns  = 0 until width
   private val renderer = SDL_CreateSoftwareRenderer(data)
 
-  def getPixel(x: Int, y: Int): Option[Color] = try {
-    // Assuming a BGRA surface
-    val baseAddr =
-      4 * (y * width + x)
-    Some(
-      Color(
-        (data.pixels(baseAddr + 2) & 0xff),
-        (data.pixels(baseAddr + 1) & 0xff),
-        (data.pixels(baseAddr + 0) & 0xff)
+  def getPixel(x: Int, y: Int): Option[Color] =
+    if (data.pixels != null && x >= 0 && y >= 0 && x < width && y < height) {
+      // Assuming a BGRA surface
+      val baseAddr =
+        4 * (y * width + x)
+      Some(
+        Color(
+          (data.pixels(baseAddr + 2) & 0xff),
+          (data.pixels(baseAddr + 1) & 0xff),
+          (data.pixels(baseAddr + 0) & 0xff)
+        )
       )
-    )
-  } catch { case _: Throwable => None }
+    } else None
 
   def getPixels(): Vector[Array[Color]] = {
     lines.map { y =>
@@ -47,15 +48,16 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurfac
     }.toVector
   }
 
-  def putPixel(x: Int, y: Int, color: Color): Unit = try {
-    // Assuming a BGRA surface
-    val lineBase = y * width
-    val baseAddr = 4 * (lineBase + x)
-    data.pixels(baseAddr + 0) = color.b.toByte
-    data.pixels(baseAddr + 1) = color.g.toByte
-    data.pixels(baseAddr + 2) = color.r.toByte
-    data.pixels(baseAddr + 3) = 255.toByte
-  } catch { case _: Throwable => () }
+  def putPixel(x: Int, y: Int, color: Color): Unit =
+    if (data.pixels != null && x >= 0 && y >= 0 && x < width && y < height) {
+      // Assuming a BGRA surface
+      val lineBase = y * width
+      val baseAddr = 4 * (lineBase + x)
+      data.pixels(baseAddr + 0) = color.b.toByte
+      data.pixels(baseAddr + 1) = color.g.toByte
+      data.pixels(baseAddr + 2) = color.r.toByte
+      data.pixels(baseAddr + 3) = 255.toByte
+    }
 
   def fill(color: Color): Unit = {
     SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, 0.toUByte)
