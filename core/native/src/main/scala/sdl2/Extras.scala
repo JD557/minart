@@ -20,9 +20,9 @@ object Extras {
     * *************************************
     */
 
-  //def SDL_reinterpret_cast[A,B](expression: A): B = expression.asInstanceOf[B]
-  //def SDL_static_cast[A,B](expression: A): B = expression.asInstanceOf[B]
-  //def SDL_const_cast[A,B](expression: A): B = expression.asInstanceOf[B]
+  // def SDL_reinterpret_cast[A,B](expression: A): B = expression.asInstanceOf[B]
+  // def SDL_static_cast[A,B](expression: A): B = expression.asInstanceOf[B]
+  // def SDL_const_cast[A,B](expression: A): B = expression.asInstanceOf[B]
 
   /* Define a four character code as a Uint32 */
   def SDL_FOURCC(a: CChar, b: CChar, c: CChar, d: CChar): UInt =
@@ -100,20 +100,20 @@ object Extras {
   val SDL_RWOPS_MEMORY: UByte    = 4.toUByte
   val SDL_RWOPS_MEMORY_RO: UByte = 5.toUByte
 
-  //TODO
-  //implicit class SDL_RWopsOps(val self: Ptr[SDL_RWops]) extends AnyVal
+  // TODO
+  // implicit class SDL_RWopsOps(val self: Ptr[SDL_RWops]) extends AnyVal
 
   val RW_SEEK_SET: UByte = 0.toUByte
   val RW_SEEK_CUR: UByte = 1.toUByte
   val RW_SEEK_END: UByte = 2.toUByte
 
-  //TODO: macros with exact rwops structure
-  //#define SDL_RWsize(ctx)         (ctx)->size(ctx)
-  //#define SDL_RWseek(ctx, offset, whence) (ctx)->seek(ctx, offset, whence)
-  //#define SDL_RWtell(ctx)         (ctx)->seek(ctx, 0, RW_SEEK_CUR)
-  //#define SDL_RWread(ctx, ptr, size, n)   (ctx)->read(ctx, ptr, size, n)
-  //#define SDL_RWwrite(ctx, ptr, size, n)  (ctx)->write(ctx, ptr, size, n)
-  //#define SDL_RWclose(ctx)        (ctx)->close(ctx)
+  // TODO: macros with exact rwops structure
+  // #define SDL_RWsize(ctx)         (ctx)->size(ctx)
+  // #define SDL_RWseek(ctx, offset, whence) (ctx)->seek(ctx, offset, whence)
+  // #define SDL_RWtell(ctx)         (ctx)->seek(ctx, 0, RW_SEEK_CUR)
+  // #define SDL_RWread(ctx, ptr, size, n)   (ctx)->read(ctx, ptr, size, n)
+  // #define SDL_RWwrite(ctx, ptr, size, n)  (ctx)->write(ctx, ptr, size, n)
+  // #define SDL_RWclose(ctx)        (ctx)->close(ctx)
 
   /** ************************************
     * ********* SDL_blendmode.h ***********
@@ -442,10 +442,10 @@ object Extras {
     def padding2: UByte = self._6
     def padding3: UByte = self._7
 
-    //TODO: trigger unreachable exception with NirNameEncoding.printGlobal in scala-native
+    // TODO: trigger unreachable exception with NirNameEncoding.printGlobal in scala-native
     def keysym: Ptr[SDL_Keysym] = self._8.toPtr
 
-    //def keycode: SDL_Keycode = !(self._8._2)
+    // def keycode: SDL_Keycode = !(self._8._2)
   }
 
   val SDL_TEXTEDITINGEVENT_TEXT_SIZE = 32
@@ -497,14 +497,14 @@ object Extras {
    * which is the same type (CStruct2). If we provide them as below, they would
    * create ambiguous implicit conversions!
    */
-  //implicit class SDL_QuitEventOps(val self: Ptr[SDL_QuitEvent]) extends AnyVal {
+  // implicit class SDL_QuitEventOps(val self: Ptr[SDL_QuitEvent]) extends AnyVal {
   //  def type_ : UInt = self._1
   //  def timestamp: UInt = self._2
-  //}
-  //implicit class SDL_OSEventOps(val self: Ptr[SDL_OSEvent]) extends AnyVal {
+  // }
+  // implicit class SDL_OSEventOps(val self: Ptr[SDL_OSEvent]) extends AnyVal {
   //  def type_ : UInt = self._1
   //  def timestamp: UInt = self._2
-  //}
+  // }
 
   implicit class SDL_UserEventOps(val self: Ptr[SDL_UserEvent]) extends AnyVal {
     def type_ : UInt     = self._1
@@ -531,23 +531,23 @@ object Extras {
     def text: Ptr[SDL_TextInputEvent]     = self.asInstanceOf[Ptr[SDL_TextInputEvent]]
     def motion: Ptr[SDL_MouseMotionEvent] = self.asInstanceOf[Ptr[SDL_MouseMotionEvent]]
     def button: Ptr[SDL_MouseButtonEvent] = self.asInstanceOf[Ptr[SDL_MouseButtonEvent]]
-    //def wheel: Ptr[SDL_MouseWheelEvent] = self.asInstanceOf[Ptr[SDL_MouseWheelEvent]]
-    //def jaxis: Ptr[SDL_JoyAxisEvent] = self.asInstanceOf[Ptr[SDL_JoyAxisEvent]]
-    //def jball: Ptr[SDL_JoyBallEvent] = self.asInstanceOf[Ptr[SDL_JoyBallEvent]]
-    //def jhat: Ptr[SDL_JoyHatEvent] = self.asInstanceOf[Ptr[SDL_JoyHatEvent]]
-    //def jbutton: Ptr[SDL_JoyButtonEvent] = self.asInstanceOf[Ptr[SDL_JoyButtonEvent]]
-    //def jdevice: Ptr[SDL_JoyDeviceEvent] = self.asInstanceOf[Ptr[SDL_JoyDeviceEvent]]
-    //def caxis: Ptr[SDL_ControllerAxisEvent] = self.asInstanceOf[Ptr[SDL_ControllerAxisEvent]]
-    //def cbutton: Ptr[SDL_ControllerButtonEvent] = self.asInstanceOf[Ptr[SDL_ControllerButtonEvent]]
-    //def cdevice: Ptr[SDL_ControllerDeviceEvent] = self.asInstanceOf[Ptr[SDL_ControllerDeviceEvent]]
-    //def adevice: Ptr[SDL_AudioDeviceEvent] = self.asInstanceOf[Ptr[SDL_AudioDeviceEvent]]
+    // def wheel: Ptr[SDL_MouseWheelEvent] = self.asInstanceOf[Ptr[SDL_MouseWheelEvent]]
+    // def jaxis: Ptr[SDL_JoyAxisEvent] = self.asInstanceOf[Ptr[SDL_JoyAxisEvent]]
+    // def jball: Ptr[SDL_JoyBallEvent] = self.asInstanceOf[Ptr[SDL_JoyBallEvent]]
+    // def jhat: Ptr[SDL_JoyHatEvent] = self.asInstanceOf[Ptr[SDL_JoyHatEvent]]
+    // def jbutton: Ptr[SDL_JoyButtonEvent] = self.asInstanceOf[Ptr[SDL_JoyButtonEvent]]
+    // def jdevice: Ptr[SDL_JoyDeviceEvent] = self.asInstanceOf[Ptr[SDL_JoyDeviceEvent]]
+    // def caxis: Ptr[SDL_ControllerAxisEvent] = self.asInstanceOf[Ptr[SDL_ControllerAxisEvent]]
+    // def cbutton: Ptr[SDL_ControllerButtonEvent] = self.asInstanceOf[Ptr[SDL_ControllerButtonEvent]]
+    // def cdevice: Ptr[SDL_ControllerDeviceEvent] = self.asInstanceOf[Ptr[SDL_ControllerDeviceEvent]]
+    // def adevice: Ptr[SDL_AudioDeviceEvent] = self.asInstanceOf[Ptr[SDL_AudioDeviceEvent]]
     def quit: Ptr[SDL_QuitEvent]   = self.asInstanceOf[Ptr[SDL_QuitEvent]]
     def user: Ptr[SDL_UserEvent]   = self.asInstanceOf[Ptr[SDL_UserEvent]]
     def syswm: Ptr[SDL_SysWMEvent] = self.asInstanceOf[Ptr[SDL_SysWMEvent]]
-    //def tfinger: Ptr[SDL_TouchFingerEvent] = self.asInstanceOf[Ptr[SDL_TouchFingerEvent]]
-    //def mgesture: Ptr[SDL_MultiGestureEvent] = self.asInstanceOf[Ptr[SDL_MultiGestureEvent]]
-    //def dgesture: Ptr[SDL_DollarGestureEvent] = self.asInstanceOf[Ptr[SDL_DollarGestureEvent]]
-    //def drop: Ptr[SDL_DropEvent] = self.asInstanceOf[Ptr[SDL_DropEvent]]
+    // def tfinger: Ptr[SDL_TouchFingerEvent] = self.asInstanceOf[Ptr[SDL_TouchFingerEvent]]
+    // def mgesture: Ptr[SDL_MultiGestureEvent] = self.asInstanceOf[Ptr[SDL_MultiGestureEvent]]
+    // def dgesture: Ptr[SDL_DollarGestureEvent] = self.asInstanceOf[Ptr[SDL_DollarGestureEvent]]
+    // def drop: Ptr[SDL_DropEvent] = self.asInstanceOf[Ptr[SDL_DropEvent]]
 
     def padding: Ptr[Byte] = self.asInstanceOf[Ptr[Byte]]
 
@@ -843,7 +843,7 @@ object Extras {
     * ********** SDL_keycode.h *************
     * *************************************
     */
-  //keycodes must be defined after scancodes as they use their values
+  // keycodes must be defined after scancodes as they use their values
 
   val SDLK_SCANCODE_MASK: Int                                      = 1 << 30
   def SDL_SCANCODE_TO_KEYCODE(scancode: SDL_Scancode): SDL_Keycode = scancode | SDLK_SCANCODE_MASK
@@ -1297,7 +1297,7 @@ object Extras {
     def patch_=(v: UByte): Unit = { self._3 = v }
   }
 
-  //TODO: these should use some @extern annotation (is that @name?)
+  // TODO: these should use some @extern annotation (is that @name?)
   //      because their definitions varies from installation to installation
   val SDL_MAJOR_VERSION: UByte = 2.toUByte
   val SDL_MINOR_VERSION: UByte = 0.toUByte
@@ -1448,7 +1448,7 @@ object Extras {
   val SDL_INIT_HAPTIC         = 0x00001000.toUInt
   val SDL_INIT_GAMECONTROLLER = 0x00002000.toUInt
   val SDL_INIT_EVENTS         = 0x00004000.toUInt
-  val SDL_INIT_NOPARACHUTE    = 0x00100000.toUInt //only there for compatibility, maybe we could drop it?
+  val SDL_INIT_NOPARACHUTE    = 0x00100000.toUInt // only there for compatibility, maybe we could drop it?
   val SDL_INIT_EVERYTHING = (SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS |
     SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_GAMECONTROLLER)
   /* End Macros for subsystem IDs */
