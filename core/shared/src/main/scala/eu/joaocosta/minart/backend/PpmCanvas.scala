@@ -37,7 +37,7 @@ class PpmCanvas() extends SurfaceBackedCanvas {
       line  <- surface.data
       _     <- pixelSize
       color <- line
-      Color(r, g, b) = Color.fromRGB(color)
+      Color(r, g, b) = color
       _ <- pixelSize
     } println(s"$r $g $b")
   }
