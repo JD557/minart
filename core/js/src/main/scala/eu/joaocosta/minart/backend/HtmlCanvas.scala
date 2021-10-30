@@ -4,7 +4,7 @@ import scala.scalajs.js
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
-import org.scalajs.dom.{Event, ImageBitmap, KeyboardEvent, PointerEvent}
+import org.scalajs.dom.{CanvasRenderingContext2D, Event, ImageBitmap, KeyboardEvent, PointerEvent}
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
@@ -38,7 +38,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
-    ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
       "fullscreenchange",
