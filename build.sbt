@@ -14,7 +14,7 @@ ThisBuild / scmInfo := Some(
     "scm:git@github.com:JD557/minart.git"
   )
 )
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
 val sharedSettings = Seq(
   organization       := "eu.joaocosta",
