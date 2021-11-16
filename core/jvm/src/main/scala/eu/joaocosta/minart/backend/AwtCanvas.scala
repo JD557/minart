@@ -9,7 +9,7 @@ import java.awt.event.{
   WindowEvent
 }
 import java.awt.image.BufferedImage
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, GraphicsEnvironment, MouseInfo}
+import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.{JFrame, WindowConstants}
 
@@ -78,8 +78,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
     }
   }
 
-  def redraw(): Unit = try {
-    val g = javaCanvas.buffStrategy.getDrawGraphics()
+  def javaRedraw(g: Graphics): Unit = {
     g.setColor(new JavaColor(settings.clearColor.rgb))
     g.fillRect(
       0,
@@ -96,6 +95,11 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       javaCanvas
     )
     javaCanvas.buffStrategy.show()
+  }
+
+  def redraw(): Unit = try {
+    val g = javaCanvas.buffStrategy.getDrawGraphics()
+    javaRedraw(g)
     g.dispose()
   } catch { case _: Throwable => () }
 
@@ -127,7 +131,7 @@ object AwtCanvas {
     this.createBufferStrategy(2)
     val buffStrategy = getBufferStrategy
 
-    override def repaint() = outerCanvas.redraw()
+    override def paint(g: Graphics) = outerCanvas.javaRedraw(g)
 
     frame.setVisible(true)
     frame.setResizable(false)
