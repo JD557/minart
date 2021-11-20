@@ -8,21 +8,33 @@ import eu.joaocosta.minart.input._
   */
 class PpmCanvas() extends SurfaceBackedCanvas {
 
+  // Rendering resources
+
+  protected var surface: RamSurface = _
+
+  // Input resources
+  private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())  // Keyboard input not supported
+  private[this] val pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false) // Pointer input not supported
+
+  // Initialization
+
   def this(settings: Canvas.Settings) = {
     this()
     this.init(settings)
   }
 
-  protected var surface: RamSurface              = _
-  private[this] val keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())  // Keyboard input not supported
-  private[this] val pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false) // Pointer input not supported
-
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     surface = new RamSurface(Vector.fill(newSettings.height)(Vector.fill(newSettings.width)(newSettings.clearColor)))
     extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
   }
-  def unsafeDestroy(): Unit                        = ()
+
   def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
+
+  // Cleanup
+
+  def unsafeDestroy(): Unit = ()
+
+  // Canvas operations
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Backbuffer)) { fill(settings.clearColor) }

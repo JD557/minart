@@ -25,23 +25,46 @@ import eu.joaocosta.minart.input._
   */
 class AwtCanvas() extends SurfaceBackedCanvas {
 
+  // Rendering resources
+
+  private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
+  protected var surface: BufferedImageSurface         = _
+
+  private[AwtCanvas] def javaRedraw(g: Graphics): Unit = {
+    g.setColor(new JavaColor(settings.clearColor.rgb))
+    g.fillRect(
+      0,
+      0,
+      javaCanvas.getWidth,
+      javaCanvas.getHeight
+    )
+    g.drawImage(
+      surface.bufferedImage,
+      extendedSettings.canvasX,
+      extendedSettings.canvasY,
+      extendedSettings.scaledWidth,
+      extendedSettings.scaledHeight,
+      javaCanvas
+    )
+    javaCanvas.buffStrategy.show()
+  }
+
+  // Input resources
+
+  private[this] var keyListener: AwtCanvas.KeyListener     = _
+  private[this] var mouseListener: AwtCanvas.MouseListener = _
+
+  // Initialization
+
   def this(settings: Canvas.Settings) = {
     this()
     this.init(settings)
   }
 
-  private[this] var javaCanvas: AwtCanvas.InnerCanvas      = _
-  protected var surface: BufferedImageSurface              = _
-  private[this] var keyListener: AwtCanvas.KeyListener     = _
-  private[this] var mouseListener: AwtCanvas.MouseListener = _
-
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     changeSettings(newSettings)
   }
-  def unsafeDestroy(): Unit = if (javaCanvas != null) {
-    javaCanvas.frame.dispose()
-    javaCanvas = null
-  }
+
   def changeSettings(newSettings: Canvas.Settings) = {
     if (extendedSettings == null || newSettings != settings) {
       extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
@@ -66,6 +89,15 @@ class AwtCanvas() extends SurfaceBackedCanvas {
     }
   }
 
+  // Cleanup
+
+  def unsafeDestroy(): Unit = if (javaCanvas != null) {
+    javaCanvas.frame.dispose()
+    javaCanvas = null
+  }
+
+  // Canvas operations
+
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyListener.clearPressRelease()
@@ -74,27 +106,8 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       mouseListener.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Backbuffer)) {
-      fill(settings.clearColor)
+      surface.fill(settings.clearColor)
     }
-  }
-
-  def javaRedraw(g: Graphics): Unit = {
-    g.setColor(new JavaColor(settings.clearColor.rgb))
-    g.fillRect(
-      0,
-      0,
-      javaCanvas.getWidth,
-      javaCanvas.getHeight
-    )
-    g.drawImage(
-      surface.bufferedImage,
-      extendedSettings.canvasX,
-      extendedSettings.canvasY,
-      extendedSettings.scaledWidth,
-      extendedSettings.scaledHeight,
-      javaCanvas
-    )
-    javaCanvas.buffStrategy.show()
   }
 
   def redraw(): Unit = try {

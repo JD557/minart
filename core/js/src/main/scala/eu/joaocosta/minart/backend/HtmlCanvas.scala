@@ -13,17 +13,19 @@ import eu.joaocosta.minart.input._
   */
 class HtmlCanvas() extends SurfaceBackedCanvas {
 
-  def this(settings: Canvas.Settings) = {
-    this()
-    this.init(settings)
-  }
+  // Rendering resources
 
   private[this] var canvas: JsCanvas                  = _
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _
-  private[this] var keyboardInput: KeyboardInput      = KeyboardInput(Set(), Set(), Set())
-  private[this] var rawMousePos: (Int, Int)           = _
-  private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
+  protected var surface: ImageDataSurface             = _
+
+  // Input resources
+
+  private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
+  private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
+  private[this] var rawPointerPos: (Int, Int)    = _
+  private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).map { case (x, y) =>
     val (offsetX, offsetY) =
       if (settings.fullScreen) (extendedSettings.canvasX, extendedSettings.canvasY)
       else {
@@ -32,9 +34,13 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
       }
     PointerInput.Position((x - offsetX) / settings.scale, (y - offsetY) / settings.scale)
   }
-  private[this] var pointerInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
-  protected var surface: ImageDataSurface = _
+  // Initialization
+
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
@@ -55,8 +61,8 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
       (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
     )
 
-    def handlePress()   = { pointerInput = pointerInput.move(cleanMousePos).press }
-    def handleRelease() = { pointerInput = pointerInput.move(cleanMousePos).release }
+    def handlePress()   = { pointerInput = pointerInput.move(cleanPointerPos).press }
+    def handleRelease() = { pointerInput = pointerInput.move(cleanPointerPos).release }
     def handleMove(x: Int, y: Int) = {
       val (offsetX, offsetY) =
         if (settings.fullScreen) (extendedSettings.canvasX, extendedSettings.canvasY)
@@ -65,9 +71,9 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
         x >= offsetX && y >= offsetY &&
         x < extendedSettings.scaledWidth + offsetX && y < extendedSettings.scaledHeight + offsetY
       ) {
-        rawMousePos = (x, y)
+        rawPointerPos = (x, y)
       } else {
-        rawMousePos = null
+        rawPointerPos = null
       }
     }
     dom.document.addEventListener[PointerEvent](
@@ -92,10 +98,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
       }
     )
   }
-  def unsafeDestroy(): Unit = if (childNode != null) {
-    dom.document.body.removeChild(childNode)
-    childNode = null
-  }
+
   def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
     extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
@@ -114,6 +117,15 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
     ctx.fillRect(0, 0, extendedSettings.windowWidth, extendedSettings.windowHeight)
     clear(Set(Canvas.Resource.Backbuffer))
   }
+
+  // Cleanup
+
+  def unsafeDestroy(): Unit = if (childNode != null) {
+    dom.document.body.removeChild(childNode)
+    childNode = null
+  }
+
+  // Canvas operations
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Keyboard)) {
@@ -158,5 +170,5 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-  def getPointerInput(): PointerInput   = pointerInput.move(cleanMousePos)
+  def getPointerInput(): PointerInput   = pointerInput.move(cleanPointerPos)
 }
