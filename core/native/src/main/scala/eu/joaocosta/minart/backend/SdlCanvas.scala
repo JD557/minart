@@ -36,7 +36,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
 
   private[this] def handleEvents(): Boolean = {
     val event              = stackalloc[SDL_Event]
-    var keepGoing: Boolean = true
+    var keepGoing: Boolean = isCreated()
     while (keepGoing && SDL_PollEvent(event) != 0) {
       event.type_ match {
         case SDL_KEYDOWN =>
@@ -119,8 +119,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     if (resources.contains(Canvas.Resource.Pointer)) {
       pointerInput = pointerInput.clearPressRelease()
     }
-    val keepGoing = handleEvents()
-    if (resources.contains(Canvas.Resource.Backbuffer) && keepGoing) {
+    if (handleEvents() && resources.contains(Canvas.Resource.Backbuffer)) {
       surface.fill(settings.clearColor)
     }
   }
