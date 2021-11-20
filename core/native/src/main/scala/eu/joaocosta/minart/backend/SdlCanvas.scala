@@ -13,35 +13,63 @@ import eu.joaocosta.minart.input._
   */
 class SdlCanvas() extends SurfaceBackedCanvas {
 
-  def this(settings: Canvas.Settings) = {
-    this()
-    this.init(settings)
-  }
+  // Rendering resources
 
+  private[this] var ubyteClearR: UByte              = _
+  private[this] var ubyteClearG: UByte              = _
+  private[this] var ubyteClearB: UByte              = _
   private[this] var window: Ptr[SDL_Window]         = _
   private[this] var windowSurface: Ptr[SDL_Surface] = _
   protected var surface: SdlSurface                 = _
-  private[this] var keyboardInput: KeyboardInput    = KeyboardInput(Set(), Set(), Set())
-  private[this] var rawMousePos: (Int, Int)         = _
-  private[this] def cleanMousePos: Option[PointerInput.Position] = Option(rawMousePos).map { case (x, y) =>
+
+  // Input resources
+
+  private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
+  private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
+  private[this] var rawPointerPos: (Int, Int)    = _
+  private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).map { case (x, y) =>
     PointerInput.Position(
       (x - extendedSettings.canvasX) / settings.scale,
       (y - extendedSettings.canvasY) / settings.scale
     )
   }
-  private[this] var mouseInput: PointerInput = PointerInput(None, Nil, Nil, false)
 
-  private[this] var ubyteClearR: UByte = _
-  private[this] var ubyteClearG: UByte = _
-  private[this] var ubyteClearB: UByte = _
+  private[this] def handleEvents(): Boolean = {
+    val event              = stackalloc[SDL_Event]
+    var keepGoing: Boolean = true
+    while (keepGoing && SDL_PollEvent(event) != 0) {
+      event.type_ match {
+        case SDL_KEYDOWN =>
+          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
+        case SDL_KEYUP =>
+          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
+        case SDL_MOUSEMOTION =>
+          rawPointerPos = (event.motion.x, event.motion.y)
+        case SDL_MOUSEBUTTONDOWN =>
+          pointerInput = pointerInput.move(cleanPointerPos).press
+        case SDL_MOUSEBUTTONUP =>
+          pointerInput = pointerInput.move(cleanPointerPos).release
+        case SDL_QUIT =>
+          close()
+          keepGoing = false
+        case _ =>
+      }
+    }
+    keepGoing
+  }
+
+  // Initialization
+
+  def this(settings: Canvas.Settings) = {
+    this()
+    this.init(settings)
+  }
 
   def unsafeInit(newSettings: Canvas.Settings) = {
     SDL_Init(SDL_INIT_VIDEO)
     changeSettings(newSettings)
   }
-  def unsafeDestroy() = {
-    SDL_Quit()
-  }
+
   def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
     extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
@@ -76,46 +104,24 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     clear(Set(Canvas.Resource.Backbuffer))
   }
 
-  private[this] def handleEvents(): Boolean = {
-    val event              = stackalloc[SDL_Event]
-    var keepGoing: Boolean = true
-    while (keepGoing && SDL_PollEvent(event) != 0) {
-      keepGoing = event.type_ match {
-        case SDL_QUIT =>
-          close()
-          false
-        case SDL_KEYDOWN =>
-          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
-          true
-        case SDL_KEYUP =>
-          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
-          true
-        case SDL_MOUSEMOTION =>
-          rawMousePos = (event.motion.x, event.motion.y)
-          true
-        case SDL_MOUSEBUTTONDOWN =>
-          mouseInput = mouseInput.move(cleanMousePos).press
-          true
-        case SDL_MOUSEBUTTONUP =>
-          mouseInput = mouseInput.move(cleanMousePos).release
-          true
-        case _ =>
-          true
-      }
-    }
-    keepGoing
+  // Cleanup
+
+  def unsafeDestroy() = {
+    SDL_Quit()
   }
+
+  // Canvas operations
 
   def clear(resources: Set[Canvas.Resource]): Unit = {
     if (resources.contains(Canvas.Resource.Keyboard)) {
       keyboardInput = keyboardInput.clearPressRelease()
     }
     if (resources.contains(Canvas.Resource.Pointer)) {
-      mouseInput = mouseInput.clearPressRelease()
+      pointerInput = pointerInput.clearPressRelease()
     }
     val keepGoing = handleEvents()
     if (resources.contains(Canvas.Resource.Backbuffer) && keepGoing) {
-      fill(settings.clearColor)
+      surface.fill(settings.clearColor)
     }
   }
 
@@ -133,5 +139,5 @@ class SdlCanvas() extends SurfaceBackedCanvas {
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
-  def getPointerInput(): PointerInput   = mouseInput.move(cleanMousePos)
+  def getPointerInput(): PointerInput   = pointerInput.move(cleanPointerPos)
 }
