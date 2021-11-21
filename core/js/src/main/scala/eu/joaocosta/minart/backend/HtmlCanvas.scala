@@ -102,8 +102,10 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
     extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
-    canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else extendedSettings.scaledWidth
-    canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else extendedSettings.scaledHeight
+    canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else newSettings.width
+    canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else newSettings.height
+    canvas.style =
+      s"width:${extendedSettings.scaledWidth}px;height:${extendedSettings.scaledHeight}px;image-rendering:pixelated;"
     ctx.imageSmoothingEnabled = false
     childNode = dom.document.body.appendChild(canvas)
     surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
@@ -140,30 +142,21 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def redraw(): Unit = {
-    if (settings.scale == 1)
-      if (settings.fullScreen)
-        ctx.putImageData(surface.data, extendedSettings.canvasX, extendedSettings.canvasY)
-      else
-        ctx.putImageData(surface.data, 0, 0)
+    if (!settings.fullScreen)
+      ctx.putImageData(surface.data, 0, 0)
     else {
       dom.window
         .createImageBitmap(surface.data)
         .`then`[Unit] { (bitmap: ImageBitmap) =>
-          if (settings.fullScreen) {
-            ctx
-              .asInstanceOf[js.Dynamic]
-              .drawImage(
-                bitmap,
-                extendedSettings.canvasX,
-                extendedSettings.canvasY,
-                extendedSettings.scaledWidth,
-                extendedSettings.scaledHeight
-              )
-          } else {
-            ctx
-              .asInstanceOf[js.Dynamic]
-              .drawImage(bitmap, 0, 0, extendedSettings.scaledWidth, extendedSettings.scaledHeight)
-          }
+          ctx
+            .asInstanceOf[js.Dynamic]
+            .drawImage(
+              bitmap,
+              extendedSettings.canvasX,
+              extendedSettings.canvasY,
+              extendedSettings.scaledWidth,
+              extendedSettings.scaledHeight
+            )
           js.|.from[Unit, Unit, js.Thenable[Unit]](())
         }
     }
