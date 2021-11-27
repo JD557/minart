@@ -5,6 +5,7 @@ import java.io.{ByteArrayInputStream, InputStream}
 import scala.concurrent.{Future, Promise}
 import scala.io.Source
 import scala.scalajs.js
+import scala.util.Try
 
 import org.scalajs.dom.{ProgressEvent, XMLHttpRequest}
 
@@ -16,11 +17,11 @@ object JsResourceLoader extends ResourceLoader {
   def createResource(resourcePath: String): Resource = new Resource {
     def path = "./" + resourcePath
 
-    def asSource(): Source = {
+    def withSource[A](f: Source => A): Try[A] = Try {
       val xhr = new XMLHttpRequest()
       xhr.open("GET", path, false)
       xhr.send()
-      Source.fromString(xhr.responseText)
+      f(Source.fromString(xhr.responseText))
     }
 
     def withSourceAsync[A](f: Source => A): Future[A] = {
@@ -29,18 +30,18 @@ object JsResourceLoader extends ResourceLoader {
       xhr.open("GET", path)
       xhr.onloadend = (event: ProgressEvent) => {
         if (xhr.status != 200) promise.failure(new Exception(xhr.statusText))
-        else promise.success(f(Source.fromString(xhr.responseText)))
+        else promise.complete(Try(f(Source.fromString(xhr.responseText))))
       }
       xhr.send()
       promise.future
     }
 
-    def asInputStream(): InputStream = {
+    def withInputStream[A](f: InputStream => A): Try[A] = Try {
       val xhr = new XMLHttpRequest()
       xhr.open("GET", path, false)
       xhr.overrideMimeType("text/plain; charset=x-user-defined")
       xhr.send()
-      new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte));
+      f(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte)))
     }
 
     def withInputStreamAsync[A](f: InputStream => A): Future[A] = {
@@ -50,7 +51,7 @@ object JsResourceLoader extends ResourceLoader {
       xhr.overrideMimeType("text/plain; charset=x-user-defined")
       xhr.onloadend = (event: ProgressEvent) => {
         if (xhr.status != 200) promise.failure(new Exception(xhr.statusText))
-        else promise.success(f(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte))))
+        else promise.complete(Try(f(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte)))))
       }
       xhr.send()
       promise.future

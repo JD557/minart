@@ -4,6 +4,7 @@ import java.io.InputStream
 
 import scala.concurrent.Future
 import scala.io.Source
+import scala.util.Try
 
 /** Resource that can be loaded
   */
@@ -13,34 +14,25 @@ trait Resource {
     */
   def path: String
 
-  /** Loads the resource synchronously and returns the contents as a [[scala.io.Source]].
-    * For working with binary files, it is recommended to use [[asInputStream]] instead.
+  /** Loads the resource synchronously, processes the contents using a [[scala.io.Source]] and returns the result.
+    *  The Source is closed in the end, so it should not escape this call.
+    * For working with binary files, it is recommended to use [[withInputStream]] instead.
     */
-  def asSource(): Source
-
-  /** Loads the resource asynchronously and returns the contents as a [[scala.io.Source]].
-    * For working with binary files, it is recommended to use [[asInputStreamAsync]] instead.
-    * On environments with limited execution contexts, it is recommended to use [[withSourceAsync]] instead.
-    */
-  def asSourceAsync(): Future[Source] = withSourceAsync(identity)
+  def withSource[A](f: Source => A): Try[A]
 
   /** Loads the resource asynchronously, processes the contents using a [[scala.io.Source]] and returns the result.
+    * The Source is closed in the end, so it should not escape this call.
     * For working with binary files, it is recommended to use [[withInputStreamAsync]] instead.
-    * This can be more helpful than [[asSourceAsync]] in platforms with limited execution contexts.
     */
   def withSourceAsync[A](f: Source => A): Future[A]
 
-  /** Loads the resource synchronously and returns the contents as a [[java.io.InputStream]].
+  /** Loads the resource synchronously, processes the contents using a [[java.io.InputStream]] and returns the result.
+    *  The InputStream is closed in the end, so it should not escape this call.
     */
-  def asInputStream(): InputStream
-
-  /** Loads the resource asynchronously and returns the contents as a [[java.io.InputStream]].
-    * On environments with limited execution contexts, it is recommended to use [[withInputStreamAsync]] instead.
-    */
-  def asInputStreamAsync(): Future[InputStream] = withInputStreamAsync(identity)
+  def withInputStream[A](f: InputStream => A): Try[A]
 
   /** Loads the resource asynchronously, processes the contents using a [[java.io.InputStream]] and returns the result.
-    * This can be more helpful than [[asInputStreamAsync]] in platforms with limited execution contexts.
+    *  The InputStream is closed in the end, so it should not escape this call.
     */
   def withInputStreamAsync[A](f: InputStream => A): Future[A]
 }

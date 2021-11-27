@@ -4,7 +4,7 @@ import java.io.{FileInputStream, InputStream}
 
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.Try
+import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.runtime.{Resource, ResourceLoader}
 
@@ -14,12 +14,12 @@ import eu.joaocosta.minart.runtime.{Resource, ResourceLoader}
   */
 object NativeResourceLoader extends ResourceLoader {
   def createResource(resourcePath: String): Resource = new Resource {
-    def path               = "./" + resourcePath
-    def asSource(): Source = Source.fromFile(path)
+    def path                                  = "./" + resourcePath
+    def withSource[A](f: Source => A): Try[A] = Using(Source.fromFile(path))(f)
     def withSourceAsync[A](f: Source => A): Future[A] =
-      Future.fromTry(Try(f(asSource())))
-    def asInputStream(): InputStream = new FileInputStream(path)
+      Future.fromTry(withSource(f))
+    def withInputStream[A](f: InputStream => A): Try[A] = Using(new FileInputStream(path))(f)
     def withInputStreamAsync[A](f: InputStream => A): Future[A] =
-      Future.fromTry(Try(f(asInputStream())))
+      Future.fromTry(withInputStream(f))
   }
 }

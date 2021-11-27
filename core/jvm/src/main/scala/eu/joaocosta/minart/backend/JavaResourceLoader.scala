@@ -4,7 +4,7 @@ import java.io.{FileInputStream, InputStream}
 
 import scala.concurrent._
 import scala.io.Source
-import scala.util.Try
+import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.runtime.{Resource, ResourceLoader}
 
@@ -16,14 +16,15 @@ object JavaResourceLoader extends ResourceLoader {
     implicit val ec: ExecutionContext = ExecutionContext.global
     new Resource {
       def path = "./" + resourcePath
-      def asSource(): Source =
-        Try(Source.fromResource(resourcePath))
-          .getOrElse(Source.fromFile(path))
-      def withSourceAsync[A](f: Source => A): Future[A] = Future(f(blocking(asSource())))
-      def asInputStream(): InputStream =
-        Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)
-          .getOrElse(new FileInputStream(path))
-      def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(f(blocking(asInputStream())))
+      def withSource[A](f: Source => A): Try[A] = {
+        Using(Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)))(f)
+      }
+      def withSourceAsync[A](f: Source => A): Future[A] = Future(blocking(withSource(f)).get)
+      def withInputStream[A](f: InputStream => A): Try[A] =
+        Using(
+          Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get).getOrElse(new FileInputStream(path))
+        )(f)
+      def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(blocking(withInputStream(f)).get)
     }
   }
 }
