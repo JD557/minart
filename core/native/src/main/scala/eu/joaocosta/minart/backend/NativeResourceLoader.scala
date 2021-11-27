@@ -14,10 +14,12 @@ import eu.joaocosta.minart.runtime.{Resource, ResourceLoader}
   */
 object NativeResourceLoader extends ResourceLoader {
   def createResource(resourcePath: String): Resource = new Resource {
-    def path                                      = "./" + resourcePath
-    def asSource(): Source                        = Source.fromFile(path)
-    def asSourceAsync(): Future[Source]           = Future.fromTry(Try(asSource()))
-    def asInputStream(): InputStream              = new FileInputStream(path)
-    def asInputStreamAsync(): Future[InputStream] = Future.fromTry(Try(asInputStream()))
+    def path               = "./" + resourcePath
+    def asSource(): Source = Source.fromFile(path)
+    def withSourceAsync[A](f: Source => A): Future[A] =
+      Future.fromTry(Try(f(asSource())))
+    def asInputStream(): InputStream = new FileInputStream(path)
+    def withInputStreamAsync[A](f: InputStream => A): Future[A] =
+      Future.fromTry(Try(f(asInputStream())))
   }
 }

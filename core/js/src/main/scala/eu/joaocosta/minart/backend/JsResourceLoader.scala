@@ -23,13 +23,13 @@ object JsResourceLoader extends ResourceLoader {
       Source.fromString(xhr.responseText)
     }
 
-    def asSourceAsync(): Future[Source] = {
-      val promise = Promise[Source]()
+    def withSourceAsync[A](f: Source => A): Future[A] = {
+      val promise = Promise[A]()
       val xhr     = new XMLHttpRequest()
       xhr.open("GET", path)
       xhr.onloadend = (event: ProgressEvent) => {
         if (xhr.status != 200) promise.failure(new Exception(xhr.statusText))
-        else promise.success(Source.fromString(xhr.responseText))
+        else promise.success(f(Source.fromString(xhr.responseText)))
       }
       xhr.send()
       promise.future
@@ -43,14 +43,14 @@ object JsResourceLoader extends ResourceLoader {
       new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte));
     }
 
-    def asInputStreamAsync(): Future[InputStream] = {
-      val promise = Promise[InputStream]()
+    def withInputStreamAsync[A](f: InputStream => A): Future[A] = {
+      val promise = Promise[A]()
       val xhr     = new XMLHttpRequest()
       xhr.open("GET", path)
       xhr.overrideMimeType("text/plain; charset=x-user-defined")
       xhr.onloadend = (event: ProgressEvent) => {
         if (xhr.status != 200) promise.failure(new Exception(xhr.statusText))
-        else promise.success(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte)))
+        else promise.success(f(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte))))
       }
       xhr.send()
       promise.future

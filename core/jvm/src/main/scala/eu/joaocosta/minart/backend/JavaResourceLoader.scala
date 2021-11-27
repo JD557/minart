@@ -15,15 +15,15 @@ object JavaResourceLoader extends ResourceLoader {
   def createResource(resourcePath: String): Resource = {
     implicit val ec: ExecutionContext = ExecutionContext.global
     new Resource {
-      def path = "./" + path
+      def path = "./" + resourcePath
       def asSource(): Source =
         Try(Source.fromResource(resourcePath))
           .getOrElse(Source.fromFile(path))
-      def asSourceAsync(): Future[Source] = Future(blocking(asSource()))
+      def withSourceAsync[A](f: Source => A): Future[A] = Future(f(blocking(asSource())))
       def asInputStream(): InputStream =
         Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)
           .getOrElse(new FileInputStream(path))
-      def asInputStreamAsync(): Future[InputStream] = Future(blocking(asInputStream()))
+      def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(f(blocking(asInputStream())))
     }
   }
 }
