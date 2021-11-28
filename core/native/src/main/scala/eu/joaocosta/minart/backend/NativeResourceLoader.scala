@@ -28,8 +28,10 @@ object NativeResourceLoader extends ResourceLoader {
     def withSource[A](f: Source => A): Try[A] = using[Source, A](Source.fromFile(path), _.close())(f)
     def withSourceAsync[A](f: Source => A): Future[A] =
       Future.fromTry(withSource(f))
-    def withInputStream[A](f: InputStream => A): Try[A] = using[InputStream, A](new FileInputStream(path), _.close)(f)
+    def withInputStream[A](f: InputStream => A): Try[A] = using[InputStream, A](unsafeInputStream(), _.close)(f)
     def withInputStreamAsync[A](f: InputStream => A): Future[A] =
       Future.fromTry(withInputStream(f))
+    def unsafeInputStream(): InputStream =
+      new FileInputStream(path)
   }
 }

@@ -37,11 +37,7 @@ object JsResourceLoader extends ResourceLoader {
     }
 
     def withInputStream[A](f: InputStream => A): Try[A] = Try {
-      val xhr = new XMLHttpRequest()
-      xhr.open("GET", path, false)
-      xhr.overrideMimeType("text/plain; charset=x-user-defined")
-      xhr.send()
-      f(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte)))
+      f(unsafeInputStream())
     }
 
     def withInputStreamAsync[A](f: InputStream => A): Future[A] = {
@@ -55,6 +51,14 @@ object JsResourceLoader extends ResourceLoader {
       }
       xhr.send()
       promise.future
+    }
+
+    def unsafeInputStream(): InputStream = {
+      val xhr = new XMLHttpRequest()
+      xhr.open("GET", path, false)
+      xhr.overrideMimeType("text/plain; charset=x-user-defined")
+      xhr.send()
+      new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte))
     }
   }
 }

@@ -27,7 +27,6 @@ object JavaResourceLoader extends ResourceLoader {
 
       def path = "./" + resourcePath
       def withSource[A](f: Source => A): Try[A] = {
-        // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+
         using[Source, A](
           Source.fromInputStream(
             Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)
@@ -39,10 +38,14 @@ object JavaResourceLoader extends ResourceLoader {
       def withSourceAsync[A](f: Source => A): Future[A] = Future(blocking(withSource(f)).get)
       def withInputStream[A](f: InputStream => A): Try[A] =
         using[InputStream, A](
-          Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get).getOrElse(new FileInputStream(path)),
+          unsafeInputStream(),
           _.close()
         )(f)
       def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(blocking(withInputStream(f)).get)
+
+      // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+
+      def unsafeInputStream(): InputStream =
+        Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get).getOrElse(new FileInputStream(path))
     }
   }
 }

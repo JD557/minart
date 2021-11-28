@@ -35,4 +35,11 @@ trait Resource {
     *  The InputStream is closed in the end, so it should not escape this call.
     */
   def withInputStreamAsync[A](f: InputStream => A): Future[A]
+
+  /** Loads the resource synchronously, and returns an [[java.io.InputStream]].
+    * The InputStream is NOT closed in the end.
+    *
+    * This method should only be used if for some reason the input stream must stay open (e.g. for data streaming)
+    */
+  def unsafeInputStream(): InputStream
 }
