@@ -6,6 +6,8 @@ import scala.concurrent.Future
 import scala.io.Source
 import scala.util.Try
 
+import eu.joaocosta.minart.backend.defaults.DefaultBackend
+
 /** Resource that can be loaded
   */
 trait Resource {
@@ -42,4 +44,9 @@ trait Resource {
     * This method should only be used if for some reason the input stream must stay open (e.g. for data streaming)
     */
   def unsafeInputStream(): InputStream
+}
+
+object Resource {
+  def apply(resourcePath: String): Resource =
+    DefaultBackend[String, Resource].defaultValue(resourcePath)
 }

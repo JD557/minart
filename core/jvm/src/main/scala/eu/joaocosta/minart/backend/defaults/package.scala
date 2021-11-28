@@ -12,6 +12,6 @@ package object defaults {
   implicit val defaultPlatform: DefaultBackend[Any, Platform.JVM.type] =
     DefaultBackend.fromConstant(Platform.JVM)
 
-  implicit val defaultResourceLoader: DefaultBackend[Any, JavaResourceLoader.type] =
-    DefaultBackend.fromConstant(JavaResourceLoader)
+  implicit val defaultResource: DefaultBackend[String, JavaResource] =
+    DefaultBackend.fromFunction[String, JavaResource](JavaResource.apply)
 }
