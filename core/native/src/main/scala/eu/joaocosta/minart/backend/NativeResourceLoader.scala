@@ -4,7 +4,7 @@ import java.io.{FileInputStream, InputStream}
 
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.{Try, Using}
+import scala.util.Try
 
 import eu.joaocosta.minart.runtime.{Resource, ResourceLoader}
 
@@ -14,11 +14,21 @@ import eu.joaocosta.minart.runtime.{Resource, ResourceLoader}
   */
 object NativeResourceLoader extends ResourceLoader {
   def createResource(resourcePath: String): Resource = new Resource {
+
+    // TODO use scala.util.Using on scala 2.13+
+    // Or at least force R to be a Autocloseable on 2.12+
+    private[this] def using[R, A](open: => R, close: R => Unit)(f: R => A): Try[A] = {
+      Try(open).flatMap { resource =>
+        val result = Try(f(resource))
+        Try(close(resource)).flatMap(_ => result)
+      }
+    }
+
     def path                                  = "./" + resourcePath
-    def withSource[A](f: Source => A): Try[A] = Using(Source.fromFile(path))(f)
+    def withSource[A](f: Source => A): Try[A] = using[Source, A](Source.fromFile(path), _.close())(f)
     def withSourceAsync[A](f: Source => A): Future[A] =
       Future.fromTry(withSource(f))
-    def withInputStream[A](f: InputStream => A): Try[A] = Using(new FileInputStream(path))(f)
+    def withInputStream[A](f: InputStream => A): Try[A] = using[InputStream, A](new FileInputStream(path), _.close)(f)
     def withInputStreamAsync[A](f: InputStream => A): Future[A] =
       Future.fromTry(withInputStream(f))
   }
