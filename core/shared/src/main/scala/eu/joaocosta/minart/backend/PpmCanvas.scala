@@ -36,8 +36,8 @@ class PpmCanvas() extends SurfaceBackedCanvas {
 
   // Canvas operations
 
-  def clear(resources: Set[Canvas.Resource]): Unit = {
-    if (resources.contains(Canvas.Resource.Backbuffer)) { fill(settings.clearColor) }
+  def clear(buffers: Set[Canvas.Buffer]): Unit = {
+    if (buffers.contains(Canvas.Buffer.Backbuffer)) { fill(settings.clearColor) }
   }
 
   def redraw(): Unit = {

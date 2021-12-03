@@ -101,7 +101,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
       windowSurface.pixels(baseAddr + 2) = ubyteClearR.toByte
       windowSurface.pixels(baseAddr + 3) = 255.toByte
     }
-    clear(Set(Canvas.Resource.Backbuffer))
+    clear(Set(Canvas.Buffer.Backbuffer))
   }
 
   // Cleanup
@@ -112,14 +112,14 @@ class SdlCanvas() extends SurfaceBackedCanvas {
 
   // Canvas operations
 
-  def clear(resources: Set[Canvas.Resource]): Unit = {
-    if (resources.contains(Canvas.Resource.Keyboard)) {
+  def clear(buffers: Set[Canvas.Buffer]): Unit = {
+    if (buffers.contains(Canvas.Buffer.KeyboardBuffer)) {
       keyboardInput = keyboardInput.clearPressRelease()
     }
-    if (resources.contains(Canvas.Resource.Pointer)) {
+    if (buffers.contains(Canvas.Buffer.PointerBuffer)) {
       pointerInput = pointerInput.clearPressRelease()
     }
-    if (handleEvents() && resources.contains(Canvas.Resource.Backbuffer)) {
+    if (handleEvents() && buffers.contains(Canvas.Buffer.Backbuffer)) {
       surface.fill(settings.clearColor)
     }
   }
