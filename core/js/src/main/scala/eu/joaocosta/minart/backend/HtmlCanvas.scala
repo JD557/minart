@@ -117,7 +117,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
     }
     ctx.fillStyle = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
     ctx.fillRect(0, 0, extendedSettings.windowWidth, extendedSettings.windowHeight)
-    clear(Set(Canvas.Resource.Backbuffer))
+    clear(Set(Canvas.Buffer.Backbuffer))
   }
 
   // Cleanup
@@ -129,14 +129,14 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
 
   // Canvas operations
 
-  def clear(resources: Set[Canvas.Resource]): Unit = {
-    if (resources.contains(Canvas.Resource.Keyboard)) {
+  def clear(buffers: Set[Canvas.Buffer]): Unit = {
+    if (buffers.contains(Canvas.Buffer.KeyboardBuffer)) {
       keyboardInput = keyboardInput.clearPressRelease()
     }
-    if (resources.contains(Canvas.Resource.Pointer)) {
+    if (buffers.contains(Canvas.Buffer.PointerBuffer)) {
       pointerInput = pointerInput.clearPressRelease()
     }
-    if (resources.contains(Canvas.Resource.Backbuffer)) {
+    if (buffers.contains(Canvas.Buffer.Backbuffer)) {
       surface.fill(settings.clearColor)
     }
   }
