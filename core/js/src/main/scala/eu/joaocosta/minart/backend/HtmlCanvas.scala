@@ -142,9 +142,11 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def redraw(): Unit = {
-    if (!settings.fullScreen)
+    if (!settings.fullScreen) {
       ctx.putImageData(surface.data, 0, 0)
-    else {
+    } else if (settings.scale == 1) {
+      ctx.putImageData(surface.data, extendedSettings.canvasX, extendedSettings.canvasY)
+    } else {
       dom.window
         .createImageBitmap(surface.data)
         .`then`[Unit] { (bitmap: ImageBitmap) =>
