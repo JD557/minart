@@ -49,11 +49,11 @@ trait Canvas extends Surface.MutableSurface {
   def getBackbuffer(): Vector[Vector[Color]] =
     getPixels().map(_.toVector).toVector
 
-  /** Clears resources, such as the backbuffer and keyboard inputs.
+  /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
-    * @param resources set of [[Canvas.Resource]]s to be cleared
+    * @param buffers set of [[Canvas.Buffer]]s to be cleared
     */
-  def clear(resources: Set[Canvas.Resource] = Canvas.Resource.all): Unit
+  def clear(buffers: Set[Canvas.Buffer] = Canvas.Buffer.all): Unit
 
   /** Flips buffers and redraws the screen.
     */
@@ -83,13 +83,13 @@ object Canvas {
 
   /** A system resource used by the Canvas.
     */
-  sealed trait Resource
-  object Resource {
-    case object Backbuffer extends Resource
-    case object Keyboard   extends Resource
-    case object Pointer    extends Resource
+  sealed trait Buffer
+  object Buffer {
+    case object Backbuffer     extends Buffer
+    case object KeyboardBuffer extends Buffer
+    case object PointerBuffer  extends Buffer
 
-    val all: Set[Resource] = Set(Backbuffer, Keyboard, Pointer)
+    val all: Set[Buffer] = Set(Backbuffer, KeyboardBuffer, PointerBuffer)
   }
 
   /** The canvas settings.

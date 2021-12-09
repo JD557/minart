@@ -44,12 +44,12 @@ trait CanvasIOOps extends MSurfaceIOOps {
   /** Gets the current pointer input. */
   val getPointerInput: CanvasIO[PointerInput] = accessCanvas(_.getPointerInput())
 
-  /** Clears resources, such as the backbuffer and keyboard inputs.
+  /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
-    * @param resources set of [[Canvas.Resource]]s to be cleared
+    * @param buffers set of [[Canvas.Buffer]]s to be cleared
     */
-  def clear(resources: Set[Canvas.Resource] = Canvas.Resource.all): CanvasIO[Unit] =
-    accessCanvas(_.clear(resources))
+  def clear(buffers: Set[Canvas.Buffer] = Canvas.Buffer.all): CanvasIO[Unit] =
+    accessCanvas(_.clear(buffers))
 
   /** Flips buffers and redraws the screen. */
   val redraw: CanvasIO[Unit] = accessCanvas(_.redraw())

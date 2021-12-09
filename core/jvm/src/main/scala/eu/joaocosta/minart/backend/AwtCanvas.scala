@@ -15,7 +15,7 @@ import javax.swing.{JFrame, WindowConstants}
 
 import scala.collection.JavaConverters._
 
-import eu.joaocosta.minart.graphics.Canvas.Resource
+import eu.joaocosta.minart.graphics.Canvas.Buffer
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input.KeyboardInput.Key
@@ -85,7 +85,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       mouseListener = new AwtCanvas.MouseListener(javaCanvas, extendedSettings)
       javaCanvas.addKeyListener(keyListener)
       javaCanvas.addMouseListener(mouseListener)
-      clear(Set(Resource.Backbuffer))
+      clear(Set(Canvas.Buffer.Backbuffer))
     }
   }
 
@@ -98,14 +98,14 @@ class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Canvas operations
 
-  def clear(resources: Set[Canvas.Resource]): Unit = {
-    if (resources.contains(Canvas.Resource.Keyboard)) {
+  def clear(buffers: Set[Canvas.Buffer]): Unit = {
+    if (buffers.contains(Canvas.Buffer.KeyboardBuffer)) {
       keyListener.clearPressRelease()
     }
-    if (resources.contains(Canvas.Resource.Pointer)) {
+    if (buffers.contains(Canvas.Buffer.PointerBuffer)) {
       mouseListener.clearPressRelease()
     }
-    if (resources.contains(Canvas.Resource.Backbuffer)) {
+    if (buffers.contains(Canvas.Buffer.Backbuffer)) {
       surface.fill(settings.clearColor)
     }
   }
