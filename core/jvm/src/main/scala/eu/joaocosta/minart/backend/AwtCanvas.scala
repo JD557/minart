@@ -30,7 +30,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
   private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
   protected var surface: BufferedImageSurface         = _
 
-  private[AwtCanvas] def javaRedraw(g: Graphics): Unit = {
+  private[AwtCanvas] def javaRedraw(g: Graphics): Unit = if (javaCanvas != null) {
     g.setColor(new JavaColor(settings.clearColor.rgb))
     g.fillRect(
       0,
