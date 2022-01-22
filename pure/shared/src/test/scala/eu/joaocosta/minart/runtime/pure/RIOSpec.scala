@@ -38,9 +38,11 @@ object RIOSpec extends BasicTestSuite {
   }
 
   test("provide zip/zipWith operations") {
-    assert(RIO.pure(1).zip(RIO.pure(2)).run(()) == (1, 2))
+    val zipIo = RIO.pure(1).zip(RIO.pure(2))
+    assert(zipIo.run(()) == (1, 2))
 
-    assert(RIO.pure(1).zipWith(RIO.pure(2))(_ + _).run(()) == 3)
+    val zipWithIo = RIO.pure(1).zipWith(RIO.pure(2))(_ + _)
+    assert(zipWithIo.run(()) == 3)
   }
 
   test("provide andThen/andFinally operations") {
