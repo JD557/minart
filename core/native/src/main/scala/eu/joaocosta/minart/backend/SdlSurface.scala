@@ -68,8 +68,8 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurfac
       that: Surface
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = that match {
     case img: SdlSurface =>
-      val srcRect = stackalloc[SDL_Rect].init(cx, cy, cw, ch)
-      val dstRect = stackalloc[SDL_Rect].init(x, y, cw, ch)
+      val srcRect = stackalloc[SDL_Rect]().init(cx, cy, cw, ch)
+      val dstRect = stackalloc[SDL_Rect]().init(x, y, cw, ch)
       SDL_UpperBlit(img.data, srcRect, this.data, dstRect)
     case _ =>
       super.blit(that)(x, y, cx, cy, cw, ch)

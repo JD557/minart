@@ -41,9 +41,11 @@ object PollSpec extends BasicTestSuite {
   }
 
   test("provide zip/zipWith operations") {
-    assert(Poll.successful(1).zip(Poll.successful(2)).poll.run(()) == Some(Success((1, 2))))
+    val zipPoll = Poll.successful(1).zip(Poll.successful(2))
+    assert(zipPoll.poll.run(()) == Some(Success((1, 2))))
 
-    assert(Poll.successful(1).zipWith(Poll.successful(2))(_ + _).poll.run(()) == Some(Success(3)))
+    val zipWithPoll = Poll.successful(1).zipWith(Poll.successful(2))(_ + _)
+    assert(zipWithPoll.poll.run(()) == Some(Success(3)))
   }
 
   test("correctly sequence operations") {

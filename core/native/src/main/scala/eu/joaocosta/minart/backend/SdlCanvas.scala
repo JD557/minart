@@ -35,7 +35,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
   }
 
   private[this] def handleEvents(): Boolean = {
-    val event              = stackalloc[SDL_Event]
+    val event              = stackalloc[SDL_Event]()
     var keepGoing: Boolean = isCreated()
     while (keepGoing && SDL_PollEvent(event) != 0) {
       event.type_ match {
@@ -126,7 +126,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
 
   def redraw(): Unit = {
     if (handleEvents()) {
-      val windowRect = stackalloc[SDL_Rect].init(
+      val windowRect = stackalloc[SDL_Rect]().init(
         extendedSettings.canvasX,
         extendedSettings.canvasY,
         extendedSettings.scaledWidth,

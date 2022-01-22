@@ -6,7 +6,7 @@ import scala.concurrent.Future
 import scala.io.Source
 import scala.util.Try
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.backend.defaults._
 
 /** Resource that can be loaded
   */
