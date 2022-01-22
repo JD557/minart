@@ -14,7 +14,7 @@ object LoopFrequency {
   final case class LoopDuration(millis: Long) extends LoopFrequency
 
   /** Uncapped loop frequency. */
-  final case object Uncapped extends LoopFrequency
+  case object Uncapped extends LoopFrequency
 
   /** 60 Hz. */
   final val hz60 = fromHz(60)

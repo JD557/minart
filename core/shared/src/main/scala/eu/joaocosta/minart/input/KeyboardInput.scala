@@ -41,69 +41,69 @@ object KeyboardInput {
     */
   sealed trait Key
   object Key {
-    final case object A extends Key
-    final case object B extends Key
-    final case object C extends Key
-    final case object D extends Key
-    final case object E extends Key
-    final case object F extends Key
-    final case object G extends Key
-    final case object H extends Key
-    final case object I extends Key
-    final case object J extends Key
-    final case object K extends Key
-    final case object L extends Key
-    final case object M extends Key
-    final case object N extends Key
-    final case object O extends Key
-    final case object P extends Key
-    final case object Q extends Key
-    final case object R extends Key
-    final case object S extends Key
-    final case object T extends Key
-    final case object U extends Key
-    final case object V extends Key
-    final case object W extends Key
-    final case object X extends Key
-    final case object Y extends Key
-    final case object Z extends Key
+    case object A extends Key
+    case object B extends Key
+    case object C extends Key
+    case object D extends Key
+    case object E extends Key
+    case object F extends Key
+    case object G extends Key
+    case object H extends Key
+    case object I extends Key
+    case object J extends Key
+    case object K extends Key
+    case object L extends Key
+    case object M extends Key
+    case object N extends Key
+    case object O extends Key
+    case object P extends Key
+    case object Q extends Key
+    case object R extends Key
+    case object S extends Key
+    case object T extends Key
+    case object U extends Key
+    case object V extends Key
+    case object W extends Key
+    case object X extends Key
+    case object Y extends Key
+    case object Z extends Key
 
-    final case object Digit0 extends Key
-    final case object Digit1 extends Key
-    final case object Digit2 extends Key
-    final case object Digit3 extends Key
-    final case object Digit4 extends Key
-    final case object Digit5 extends Key
-    final case object Digit6 extends Key
-    final case object Digit7 extends Key
-    final case object Digit8 extends Key
-    final case object Digit9 extends Key
+    case object Digit0 extends Key
+    case object Digit1 extends Key
+    case object Digit2 extends Key
+    case object Digit3 extends Key
+    case object Digit4 extends Key
+    case object Digit5 extends Key
+    case object Digit6 extends Key
+    case object Digit7 extends Key
+    case object Digit8 extends Key
+    case object Digit9 extends Key
 
-    final case object NumPad0 extends Key
-    final case object NumPad1 extends Key
-    final case object NumPad2 extends Key
-    final case object NumPad3 extends Key
-    final case object NumPad4 extends Key
-    final case object NumPad5 extends Key
-    final case object NumPad6 extends Key
-    final case object NumPad7 extends Key
-    final case object NumPad8 extends Key
-    final case object NumPad9 extends Key
+    case object NumPad0 extends Key
+    case object NumPad1 extends Key
+    case object NumPad2 extends Key
+    case object NumPad3 extends Key
+    case object NumPad4 extends Key
+    case object NumPad5 extends Key
+    case object NumPad6 extends Key
+    case object NumPad7 extends Key
+    case object NumPad8 extends Key
+    case object NumPad9 extends Key
 
-    final case object Space     extends Key
-    final case object Tab       extends Key
-    final case object Enter     extends Key
-    final case object Backspace extends Key
+    case object Space     extends Key
+    case object Tab       extends Key
+    case object Enter     extends Key
+    case object Backspace extends Key
 
-    final case object Escape extends Key
-    final case object Shift  extends Key
-    final case object Ctrl   extends Key
-    final case object Alt    extends Key
-    final case object Meta   extends Key
+    case object Escape extends Key
+    case object Shift  extends Key
+    case object Ctrl   extends Key
+    case object Alt    extends Key
+    case object Meta   extends Key
 
-    final case object Up    extends Key
-    final case object Down  extends Key
-    final case object Left  extends Key
-    final case object Right extends Key
+    case object Up    extends Key
+    case object Down  extends Key
+    case object Left  extends Key
+    case object Right extends Key
   }
 }

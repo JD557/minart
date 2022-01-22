@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.runtime
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime.Loop._
 
 /** Abstraction that allows to run loops at a certain frequency in a platforrm agnostic way.

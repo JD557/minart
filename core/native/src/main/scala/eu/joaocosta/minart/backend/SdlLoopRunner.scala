@@ -46,7 +46,7 @@ object SdlLoopRunner extends LoopRunner {
     def apply() = {
       operation()
       var quit  = false
-      val event = stackalloc[SDL_Event]
+      val event = stackalloc[SDL_Event]()
       while (!quit) {
         while (SDL_PollEvent(event) != 0) {
           if (event.type_ == SDL_QUIT) { quit = true }

@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
+import eu.joaocosta.minart.backend.defaults._
 
 /** A low-level version of a canvas that provides its own canvas manager.
   */
