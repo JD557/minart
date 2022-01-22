@@ -93,7 +93,7 @@ The render loop definition might seem a bit complicated (since it attempts to be
 To include Minart, simply add `minart-core` to your project:
 
 ```scala
-libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.3.0-RC1"
+libraryDependencies += "eu.joaocosta" %% "minart-core" % "0.3.3"
 ```
 
 Or just create a new project using the provided giter8 template, with:
