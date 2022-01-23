@@ -1,5 +1,6 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.input._
 
 /** Window with a canvas that can be painted.
@@ -78,7 +79,7 @@ object Canvas {
     *
     * @return [[Canvas]] using the default backend for the target platform
     */
-  def create(settings: Canvas.Settings): Canvas =
+  def create(settings: Canvas.Settings)(implicit backend: DefaultBackend[Any, LowLevelCanvas]): Canvas =
     CanvasManager().init(settings)
 
   /** A system resource used by the Canvas.

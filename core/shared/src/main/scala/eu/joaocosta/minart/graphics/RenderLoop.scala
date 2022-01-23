@@ -1,5 +1,6 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics.RenderLoop._
 import eu.joaocosta.minart.runtime._
 
@@ -82,7 +83,10 @@ object RenderLoop {
       *
       * @param canvasSettings settings to use to build the canvas
       */
-    def apply(canvasSettings: Canvas.Settings): Unit = apply(LoopRunner(), CanvasManager(), canvasSettings)
+    def apply(
+        canvasSettings: Canvas.Settings
+    )(implicit lr: DefaultBackend[Any, LoopRunner], cm: DefaultBackend[Any, LowLevelCanvas]): Unit =
+      apply(LoopRunner(), CanvasManager(), canvasSettings)
     def apply(
         runner: LoopRunner,
         canvasManager: CanvasManager,
@@ -113,7 +117,10 @@ object RenderLoop {
       * @param canvasSettings settings to use to build the canvas
       * @param initalState initial render loop state
       */
-    def apply(canvasSettings: Canvas.Settings, initialState: S): Unit =
+    def apply(canvasSettings: Canvas.Settings, initialState: S)(implicit
+        lr: DefaultBackend[Any, LoopRunner],
+        cm: DefaultBackend[Any, LowLevelCanvas]
+    ): Unit =
       apply(LoopRunner(), CanvasManager(), canvasSettings, initialState)
 
     /** Converts this render loop to a stateless render loop, with a predefined initial state.
