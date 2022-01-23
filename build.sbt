@@ -101,6 +101,16 @@ lazy val core =
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
+lazy val backend =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-backend")
+    .settings(testSettings)
+    .settings(publishSettings)
+    .jsSettings(jsSettings)
+    .nativeSettings(nativeSettings)
+
 lazy val pure =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
@@ -132,6 +142,7 @@ def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) 
   project
     .in(file(s"examples/${exampleName}"))
     .dependsOn(core)
+    .dependsOn(backend)
     .settings(sharedSettings)
     .settings(name := s"minart-examples-${exampleName}")
     .settings(noTestSettings)

@@ -36,6 +36,6 @@ trait LoopRunner {
 object LoopRunner {
 
   /** Get the default loop runner */
-  def apply(): LoopRunner =
-    DefaultBackend[Any, LoopRunner].defaultValue()
+  def apply()(implicit backend: DefaultBackend[Any, LoopRunner]): LoopRunner =
+    backend.defaultValue()
 }
