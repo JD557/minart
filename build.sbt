@@ -89,8 +89,8 @@ lazy val root =
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
-    .dependsOn(core, pure)
-    .aggregate(core, pure)
+    .dependsOn(core, backend, pure, image)
+    .aggregate(core, backend, pure, image)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -121,6 +121,16 @@ lazy val pure =
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
+lazy val image =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .dependsOn(core)
+    .settings(sharedSettings)
+    .settings(name := "minart-image")
+    .settings(testSettings)
+    .settings(publishSettings)
+    .jsSettings(jsSettings)
+    .nativeSettings(nativeSettings)
+
 lazy val examples = (project in file("examples"))
   .settings(sharedSettings)
   .settings(name := "minart-examples")
@@ -131,6 +141,7 @@ lazy val examples = (project in file("examples"))
       `examples-blitting`.componentProjects,
       `examples-colorSquare`.componentProjects,
       `examples-fire`.componentProjects,
+      `examples-image`.componentProjects,
       `examples-mousePointer`.componentProjects,
       `examples-pureColorSquare`.componentProjects,
       `examples-settings`.componentProjects,
@@ -160,6 +171,9 @@ lazy val `examples-colorSquare` =
 
 lazy val `examples-fire` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "fire")
+
+lazy val `examples-image` =
+  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "image").dependsOn(image)
 
 lazy val `examples-mousePointer` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "mousepointer")
