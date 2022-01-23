@@ -20,16 +20,14 @@ object PpmImageLoader extends ImageLoader {
   }
   private def readString(bytes: LazyList[Int]): (String, LazyList[Int]) = {
     val (line, remaining) = readLine(bytes)
-    val chars         = line.map(_.toChar).takeWhile(c => c != ' ')
-    val remainingLine = line.drop(chars.size + 1)
-    lazy val string   = chars.mkString("").trim
+    val chars             = line.map(_.toChar).takeWhile(c => c != ' ')
+    val remainingLine     = line.drop(chars.size + 1)
+    lazy val string       = chars.mkString("").trim
     if (remainingLine.isEmpty)
       string -> remaining
     else
       string -> (remainingLine ++ ('\n'.toInt +: remaining))
   }
-
-  type ParseResult[T] = Either[String, (T, LazyList[Int])]
 
   case class Header(
       magic: String,

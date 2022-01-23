@@ -29,4 +29,15 @@ object Image {
         case Right(result) => Success(result)
       }
   }
+
+  def loadBmpImage(resource: Resource): Try[RamSurface] = {
+    resource
+      .withInputStream { inputStream =>
+        BmpImageLoader.loadImage(inputStream)
+      }
+      .flatMap {
+        case Left(error)   => Failure(new Exception(error))
+        case Right(result) => Success(result)
+      }
+  }
 }
