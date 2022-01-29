@@ -4,7 +4,8 @@ import java.io.{FileInputStream, InputStream}
 
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.Try
+import scala.util.Using.Releasable
+import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.runtime.Resource
 
@@ -14,20 +15,16 @@ import eu.joaocosta.minart.runtime.Resource
   */
 final case class NativeResource(resourcePath: String) extends Resource {
 
-  // TODO use scala.util.Using on scala 2.13+
-  // Or at least force R to be a Autocloseable on 2.12+
-  private[this] def using[R, A](open: => R, close: R => Unit)(f: R => A): Try[A] = {
-    Try(open).flatMap { resource =>
-      val result = Try(f(resource))
-      Try(close(resource)).flatMap(_ => result)
-    }
+  // Required for scala 2.11
+  private implicit val sourceReleasable: Releasable[Source] = new Releasable[Source] {
+    def release(source: Source) = source.close()
   }
 
   def path                                  = "./" + resourcePath
-  def withSource[A](f: Source => A): Try[A] = using[Source, A](Source.fromFile(path), _.close())(f)
+  def withSource[A](f: Source => A): Try[A] = Using[Source, A](Source.fromFile(path))(f)
   def withSourceAsync[A](f: Source => A): Future[A] =
     Future.fromTry(withSource(f))
-  def withInputStream[A](f: InputStream => A): Try[A] = using[InputStream, A](unsafeInputStream(), _.close)(f)
+  def withInputStream[A](f: InputStream => A): Try[A] = Using[InputStream, A](unsafeInputStream())(f)
   def withInputStreamAsync[A](f: InputStream => A): Future[A] =
     Future.fromTry(withInputStream(f))
   def unsafeInputStream(): InputStream =
