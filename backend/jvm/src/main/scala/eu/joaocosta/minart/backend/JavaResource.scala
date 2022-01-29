@@ -4,7 +4,8 @@ import java.io.{FileInputStream, InputStream}
 
 import scala.concurrent._
 import scala.io.Source
-import scala.util.Try
+import scala.util.Using.Releasable
+import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.runtime.Resource
 
@@ -12,33 +13,25 @@ import eu.joaocosta.minart.runtime.Resource
   * If that fail, it tries to fetch the data from a file.
   */
 final case class JavaResource(resourcePath: String) extends Resource {
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  // TODO use scala.util.Using on scala 2.13+
-  // Or at least force R to be a Autocloseable on 2.12+
-  private[this] def using[R, A](open: => R, close: R => Unit)(f: R => A): Try[A] = {
-    Try(open).flatMap { resource =>
-      val result = Try(f(resource))
-      Try(close(resource)).flatMap(_ => result)
-    }
+  // Required for scala 2.11
+  private implicit val sourceReleasable: Releasable[Source] = new Releasable[Source] {
+    def release(source: Source) = source.close()
   }
 
   def path = "./" + resourcePath
   def withSource[A](f: Source => A): Try[A] = {
-    using[Source, A](
+    Using[Source, A](
       Source.fromInputStream(
         Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)
           .getOrElse(new FileInputStream(path))
-      ),
-      _.close()
+      )
     )(f)
   }
   def withSourceAsync[A](f: Source => A): Future[A] = Future(blocking(withSource(f)).get)
   def withInputStream[A](f: InputStream => A): Try[A] =
-    using[InputStream, A](
-      unsafeInputStream(),
-      _.close()
-    )(f)
+    Using[InputStream, A](unsafeInputStream())(f)
   def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(blocking(withInputStream(f)).get)
 
   // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+

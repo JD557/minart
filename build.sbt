@@ -38,7 +38,14 @@ val sharedSettings = Seq(
   scalafmtOnCompile := true,
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision,
-  scalafixOnCompile := true
+  scalafixOnCompile := true,
+  libraryDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, n)) if n <= 12 =>
+        Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.6.0")
+      case _ => Nil
+    }
+  }
 )
 
 val testSettings = Seq(
