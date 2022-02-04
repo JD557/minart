@@ -5,16 +5,23 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.Helpers._
 
 object BmpImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("BM")
 
-  private def readString(bytes: LazyList[Int], n: Int): (String, LazyList[Int]) = {
-    bytes.take(n).map(_.toChar).mkString("") -> bytes.drop(n)
+  private def readString(n: Int): State[LazyList[Int], Nothing, String] = State { bytes =>
+    bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
   }
-  private def readNumber(bytes: LazyList[Int], n: Int): (Int, LazyList[Int]) =
-    bytes.take(n).zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum -> bytes.drop(n)
+
+  private def readNumber(n: Int): State[LazyList[Int], Nothing, Int] = State { bytes =>
+    bytes.drop(n) -> bytes.take(n).zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
+  }
+
+  private def skip(n: Int): State[LazyList[Int], Nothing, Unit] = State { bytes =>
+    bytes.drop(n) -> ()
+  }
 
   case class Header(
       magic: String,
@@ -26,33 +33,28 @@ object BmpImageLoader extends ImageLoader {
   )
 
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = {
-      lazy val magic             = readString(bytes, 2)._1
-      lazy val size              = readNumber(bytes.drop(2), 4)._1
-      lazy val offset            = readNumber(bytes.drop(10), 4)._1
-      lazy val dibHeaderSize     = readNumber(bytes.drop(14), 4)._1
-      lazy val width             = readNumber(bytes.drop(18), 4)._1
-      lazy val height            = readNumber(bytes.drop(22), 4)._1
-      lazy val colorPlanes       = readNumber(bytes.drop(26), 2)._1
-      lazy val bitsPerPixel      = readNumber(bytes.drop(28), 2)._1
-      lazy val compressionMethod = readNumber(bytes.drop(30), 4)._1
-
+    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
       for {
-        validatedMagic <- Either.cond(
-          supportedFormats(magic),
-          magic,
-          s"Unsupported format: $magic. Only windows BMPs are supported"
-        )
-        _ <- Either.cond(dibHeaderSize >= 40, (), s"Unsupported DIB header size: $dibHeaderSize")
-        _ <- Either.cond(colorPlanes == 1, (), s"Invalid number of color planes (must be 1): $colorPlanes")
-        validatedBpp <- Either.cond(
+        magic  <- readString(2)
+        _      <- State.check(supportedFormats(magic), s"Unsupported format: $magic. Only windows BMPs are supported")
+        size   <- readNumber(4)
+        _      <- skip(4)
+        offset <- readNumber(4)
+        dibHeaderSize <- readNumber(4)
+        _             <- State.check(dibHeaderSize >= 40, s"Unsupported DIB header size: $dibHeaderSize")
+        width         <- readNumber(4)
+        height        <- readNumber(4)
+        colorPlanes   <- readNumber(2)
+        _             <- State.check(colorPlanes == 1, s"Invalid number of color planes (must be 1): $colorPlanes")
+        bitsPerPixel  <- readNumber(2)
+        _ <- State.check(
           bitsPerPixel == 24 || bitsPerPixel == 32,
-          bitsPerPixel,
           s"Unsupported bits per pixel (must be 24 or 32): $bitsPerPixel"
         )
-        _ <- Either.cond(compressionMethod == 0, (), "Compression is not supported")
-      } yield Header(validatedMagic, size, offset, width, height, validatedBpp) -> bytes.drop(offset)
-    }
+        compressionMethod <- readNumber(4)
+        _                 <- State.check(compressionMethod == 0, "Compression is not supported")
+      } yield Header(magic, size, offset, width, height, bitsPerPixel)
+    ).run(bytes).map { case (_, header) => header -> bytes.drop(header.offset) }
   }
 
   @tailrec
