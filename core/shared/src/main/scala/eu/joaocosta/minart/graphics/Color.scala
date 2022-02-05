@@ -6,7 +6,9 @@ final class Color private (val argb: Int) extends AnyVal {
   @inline def g: Int = (argb & 0x0000ff00) >> 8
   @inline def b: Int = (argb & 0x000000ff)
 
-  @inline def rgb: Int  = (argb & 0x00ffffff)
+  @inline def rgb: Int = (argb & 0x00ffffff)
+
+  def invert: Color     = Color(255 - r, 255 - g, 255 - b)
   override def toString = s"Color($r,$g,$b)"
 }
 
