@@ -5,7 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image.Helpers._
+import eu.joaocosta.minart.graphics.image.helpers._
 
 object BmpImageLoader extends ImageLoader {
 
