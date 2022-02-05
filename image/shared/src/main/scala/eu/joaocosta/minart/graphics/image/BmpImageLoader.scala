@@ -7,6 +7,10 @@ import scala.annotation.tailrec
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image.helpers._
 
+/** Image loader for BMP files.
+  *
+  * Supports uncompressed 24/32bit Windows BMPs.
+  */
 object BmpImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("BM")

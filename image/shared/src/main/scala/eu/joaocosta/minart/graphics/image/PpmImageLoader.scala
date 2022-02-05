@@ -7,6 +7,10 @@ import scala.annotation.tailrec
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image.helpers._
 
+/** Image loader for PPM files.
+  *
+  * Supports P3/P6 PPM files with a 8 bit color range.
+  */
 object PpmImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("P3", "P6")

@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics.image.helpers
 
+/** State monad implementation to use when loading images.
+  */
 sealed trait State[S, +E, +A] {
   def run(initial: S): Either[E, (S, A)]
   def map[B](f: A => B): State[S, E, B]                             = flatMap(x => State.pure(f(x)))
