@@ -9,7 +9,7 @@ sealed trait State[S, +E, +A] {
   def validate[EE >: E](test: A => Boolean, failure: A => EE): State[S, EE, A] =
     flatMap(x => if (test(x)) State.pure(x) else State.error(failure(x)))
   def collect[EE >: E, B](f: PartialFunction[A, B], failure: A => EE): State[S, EE, B] =
-    flatMap(x => f.lift(x).map(State.pure).getOrElse(State.error(failure(x))))
+    flatMap(x => f.lift(x).map(State.pure[S, B]).getOrElse(State.error[S, EE](failure(x))))
 }
 object State {
   private final case class Point[S, +A](f: S => (S, A)) extends State[S, Nothing, A] {
