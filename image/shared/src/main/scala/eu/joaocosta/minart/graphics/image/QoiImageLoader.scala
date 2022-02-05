@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.Helpers._
 
 object QoiImageLoader extends ImageLoader {
 
@@ -19,6 +20,16 @@ object QoiImageLoader extends ImageLoader {
     (b(0) << 24) | (b(1) << 16) | (b(2) << 8) | b(3)
   private def hashColor(r: Int, g: Int, b: Int, a: Int): Int = (r * 3 + g * 5 + b * 7 + a * 11) % 64
 
+  private def readString(n: Int): State[LazyList[Int], Nothing, String] = State { bytes =>
+    bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
+  }
+  private def readBENumber(n: Int): State[LazyList[Int], Nothing, Int] = State { bytes =>
+    bytes.drop(n) -> bytes.take(n).reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
+  }
+  private val readByte: State[LazyList[Int], Nothing, Byte] = State { bytes =>
+    bytes.tail -> bytes.headOption.fold[Byte](0)(_.toByte)
+  }
+
   // Data formats
   case class Header(
       magic: String,
@@ -28,27 +39,22 @@ object QoiImageLoader extends ImageLoader {
       colorspace: Byte
   )
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = {
-      val data      = bytes.take(14).toArray
-      val remaining = bytes.drop(14)
-      if (data.size != 14) Left(s"Invalid header size: ${data.size}")
-      else {
-        lazy val magic = new String(data.take(4).map(_.toByte))
-        for {
-          validatedMagic <- Either.cond(
-            supportedFormats(magic),
-            magic,
-            s"Unsupported format: $magic"
-          )
-        } yield Header(
-          magic = validatedMagic,
-          width = load32Bits(data.slice(4, 8)),
-          height = load32Bits(data.slice(8, 12)),
-          channels = bytes(12).toByte,
-          colorspace = bytes(13).toByte
-        ) -> remaining
-      }
-    }
+    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
+      for {
+        magic      <- readString(4)
+        _          <- State.check(supportedFormats(magic), s"Unsupported format: $magic")
+        width      <- readBENumber(4)
+        height     <- readBENumber(4)
+        channels   <- readByte
+        colorspace <- readByte
+      } yield Header(
+        magic,
+        width,
+        height,
+        channels,
+        colorspace
+      )
+    ).run(bytes).map(_.swap)
   }
 
   sealed trait Op
@@ -110,14 +116,17 @@ object QoiImageLoader extends ImageLoader {
     def hash          = hashColor(r, g, b, a)
   }
 
-  case class State(imageAcc: List[QoiColor] = Nil, colorMap: Vector[QoiColor] = Vector.fill(64)(QoiColor(0, 0, 0, 0))) {
+  case class QoiState(
+      imageAcc: List[QoiColor] = Nil,
+      colorMap: Vector[QoiColor] = Vector.fill(64)(QoiColor(0, 0, 0, 0))
+  ) {
     lazy val previousColor = imageAcc.headOption.getOrElse(QoiColor(0, 0, 0, 255))
 
-    def addColor(color: QoiColor): State = {
-      State(color :: imageAcc, colorMap.updated(color.hash, color))
+    def addColor(color: QoiColor): QoiState = {
+      QoiState(color :: imageAcc, colorMap.updated(color.hash, color))
     }
 
-    def next(chunk: Op): State = {
+    def next(chunk: Op): QoiState = {
       import Op._
       chunk match {
         case OpRgb(red, green, blue) =>
@@ -127,7 +136,7 @@ object QoiImageLoader extends ImageLoader {
           val color = QoiColor(red, green, blue, alpha)
           addColor(color)
         case OpIndex(index) =>
-          State(colorMap(index) :: imageAcc, colorMap)
+          QoiState(colorMap(index) :: imageAcc, colorMap)
         case OpDiff(dr, dg, db) =>
           val color = QoiColor(
             wrapAround(previousColor.r + dr),
@@ -145,14 +154,14 @@ object QoiImageLoader extends ImageLoader {
           )
           addColor(color)
         case OpRun(run) =>
-          State(List.fill(run)(previousColor) ++ imageAcc, colorMap)
+          QoiState(List.fill(run)(previousColor) ++ imageAcc, colorMap)
       }
     }
   }
 
   def asSurface(ops: LazyList[Either[String, Op]], header: Header): Either[String, RamSurface] = {
     ops
-      .foldLeft[Either[String, State]](Right(State())) { case (eitherState, eitherOp) =>
+      .foldLeft[Either[String, QoiState]](Right(QoiState())) { case (eitherState, eitherOp) =>
         for {
           state <- eitherState
           op    <- eitherOp

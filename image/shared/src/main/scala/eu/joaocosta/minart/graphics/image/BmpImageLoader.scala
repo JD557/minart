@@ -15,7 +15,7 @@ object BmpImageLoader extends ImageLoader {
     bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
   }
 
-  private def readNumber(n: Int): State[LazyList[Int], Nothing, Int] = State { bytes =>
+  private def readLENumber(n: Int): State[LazyList[Int], Nothing, Int] = State { bytes =>
     bytes.drop(n) -> bytes.take(n).zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
 
@@ -37,21 +37,21 @@ object BmpImageLoader extends ImageLoader {
       for {
         magic  <- readString(2)
         _      <- State.check(supportedFormats(magic), s"Unsupported format: $magic. Only windows BMPs are supported")
-        size   <- readNumber(4)
+        size   <- readLENumber(4)
         _      <- skip(4)
-        offset <- readNumber(4)
-        dibHeaderSize <- readNumber(4)
+        offset <- readLENumber(4)
+        dibHeaderSize <- readLENumber(4)
         _             <- State.check(dibHeaderSize >= 40, s"Unsupported DIB header size: $dibHeaderSize")
-        width         <- readNumber(4)
-        height        <- readNumber(4)
-        colorPlanes   <- readNumber(2)
+        width         <- readLENumber(4)
+        height        <- readLENumber(4)
+        colorPlanes   <- readLENumber(2)
         _             <- State.check(colorPlanes == 1, s"Invalid number of color planes (must be 1): $colorPlanes")
-        bitsPerPixel  <- readNumber(2)
+        bitsPerPixel  <- readLENumber(2)
         _ <- State.check(
           bitsPerPixel == 24 || bitsPerPixel == 32,
           s"Unsupported bits per pixel (must be 24 or 32): $bitsPerPixel"
         )
-        compressionMethod <- readNumber(4)
+        compressionMethod <- readLENumber(4)
         _                 <- State.check(compressionMethod == 0, "Compression is not supported")
       } yield Header(magic, size, offset, width, height, bitsPerPixel)
     ).run(bytes).map { case (_, header) => header -> bytes.drop(header.offset) }
