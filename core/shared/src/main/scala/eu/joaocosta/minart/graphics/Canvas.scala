@@ -27,29 +27,6 @@ trait Canvas extends Surface.MutableSurface {
   def width: Int  = settings.width
   def height: Int = settings.height
 
-  /** Gets the color from the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to either use `getBackbuffer` to fetch multiple pixels at the same time or
-    * to implement this operation on the application code.
-    *
-    * @param x pixel x position
-    * @param y pixel y position
-    * @return pixel color
-    */
-  @deprecated("use getPixel(x, y) instead")
-  def getBackbufferPixel(x: Int, y: Int): Color =
-    getPixel(x, y).get
-
-  /** Returns the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to implement this operation on the application code.
-    *
-    * @return backbuffer
-    */
-  @deprecated("use getPixels() instead")
-  def getBackbuffer(): Vector[Vector[Color]] =
-    getPixels().map(_.toVector).toVector
-
   /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
     * @param buffers set of [[Canvas.Buffer]]s to be cleared
