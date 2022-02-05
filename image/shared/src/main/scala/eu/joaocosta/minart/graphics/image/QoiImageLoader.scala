@@ -20,13 +20,13 @@ object QoiImageLoader extends ImageLoader {
     (b(0) << 24) | (b(1) << 16) | (b(2) << 8) | b(3)
   private def hashColor(r: Int, g: Int, b: Int, a: Int): Int = (r * 3 + g * 5 + b * 7 + a * 11) % 64
 
-  private def readString(n: Int): State[LazyList[Int], Nothing, String] = State { bytes =>
+  private def readString(n: Int): ParseState[Nothing, String] = State { bytes =>
     bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
   }
-  private def readBENumber(n: Int): State[LazyList[Int], Nothing, Int] = State { bytes =>
+  private def readBENumber(n: Int): ParseState[Nothing, Int] = State { bytes =>
     bytes.drop(n) -> bytes.take(n).reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
-  private val readByte: State[LazyList[Int], Nothing, Byte] = State { bytes =>
+  private val readByte: ParseState[Nothing, Byte] = State { bytes =>
     bytes.tail -> bytes.headOption.fold[Byte](0)(_.toByte)
   }
 
@@ -54,7 +54,7 @@ object QoiImageLoader extends ImageLoader {
         channels,
         colorspace
       )
-    ).run(bytes).map(_.swap)
+    ).run(bytes)
   }
 
   sealed trait Op
@@ -76,27 +76,27 @@ object QoiImageLoader extends ImageLoader {
         (tag & 0xc0, tag & 0x3f) match {
           case (0xc0, 0x3e) =>
             val data = bytes.slice(1, 4).toArray
-            Either.cond(data.size == 3, OpRgb(data(0), data(1), data(2)) -> bytes.drop(4), "Not enough data for OP_RGB")
+            Either.cond(data.size == 3, bytes.drop(4) -> OpRgb(data(0), data(1), data(2)), "Not enough data for OP_RGB")
           case (0xc0, 0x3f) =>
             val data = bytes.slice(1, 5).toArray
             Either.cond(
               data.size == 4,
-              OpRgba(data(0), data(1), data(2), data(3)) -> bytes.drop(5),
+              bytes.drop(5) -> OpRgba(data(0), data(1), data(2), data(3)),
               "Not enough data for OP_RGBA"
             )
           case (0x00, index) =>
-            Right(OpIndex(index) -> bytes.tail)
+            Right(bytes.tail -> OpIndex(index))
           case (0x40, diffs) =>
-            Right(OpDiff(load2Bits(diffs >> 4), load2Bits(diffs >> 2), load2Bits(diffs)) -> bytes.tail)
+            Right(bytes.tail -> OpDiff(load2Bits(diffs >> 4), load2Bits(diffs >> 2), load2Bits(diffs)))
           case (0x80, dg) =>
             val data = bytes.slice(1, 2).toArray
             Either.cond(
               data.size == 1,
-              OpLuma(load6Bits(dg), load4Bits(data(0) >> 4), load4Bits(data(0))) -> bytes.drop(2),
+              bytes.drop(2) -> OpLuma(load6Bits(dg), load4Bits(data(0) >> 4), load4Bits(data(0))),
               "Not enough data for OP_LUMA"
             )
           case (0xc0, run) =>
-            Right(OpRun(run + 1) -> bytes.tail)
+            Right(bytes.tail -> OpRun(run + 1))
         }
       }
     }
@@ -106,7 +106,7 @@ object QoiImageLoader extends ImageLoader {
       else
         fromBytes(bytes) match {
           case Left(error)            => LazyList(Left(error))
-          case Right((op, remaining)) => Right(op) #:: loadOps(remaining)
+          case Right((remaining, op)) => Right(op) #:: loadOps(remaining)
         }
   }
 
@@ -182,7 +182,7 @@ object QoiImageLoader extends ImageLoader {
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val stream: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
-    Header.fromBytes(stream).flatMap { case (header, data) =>
+    Header.fromBytes(stream).flatMap { case (data, header) =>
       asSurface(Op.loadOps(data), header)
     }
   }

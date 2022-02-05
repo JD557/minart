@@ -11,15 +11,15 @@ object BmpImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("BM")
 
-  private def readString(n: Int): State[LazyList[Int], Nothing, String] = State { bytes =>
+  private def readString(n: Int): ParseState[Nothing, String] = State { bytes =>
     bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
   }
 
-  private def readLENumber(n: Int): State[LazyList[Int], Nothing, Int] = State { bytes =>
+  private def readLENumber(n: Int): ParseState[Nothing, Int] = State { bytes =>
     bytes.drop(n) -> bytes.take(n).zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
 
-  private def skip(n: Int): State[LazyList[Int], Nothing, Unit] = State { bytes =>
+  private def skip(n: Int): ParseState[Nothing, Unit] = State { bytes =>
     bytes.drop(n) -> ()
   }
 
@@ -54,7 +54,7 @@ object BmpImageLoader extends ImageLoader {
         compressionMethod <- readLENumber(4)
         _                 <- State.check(compressionMethod == 0, "Compression is not supported")
       } yield Header(magic, size, offset, width, height, bitsPerPixel)
-    ).run(bytes).map { case (_, header) => header -> bytes.drop(header.offset) }
+    ).run(bytes).map { case (_, header) => bytes.drop(header.offset) -> header }
   }
 
   @tailrec
@@ -63,11 +63,11 @@ object BmpImageLoader extends ImageLoader {
       data: LazyList[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
-    if (data.isEmpty) Right(acc.reverse -> data)
+    if (data.isEmpty) Right(data -> acc.reverse)
     else {
       loadColor(data) match {
         case Left(error)               => Left(error)
-        case Right((color, remaining)) => loadPixels(loadColor, remaining, color :: acc)
+        case Right((remaining, color)) => loadPixels(loadColor, remaining, color :: acc)
       }
     }
   }
@@ -76,7 +76,7 @@ object BmpImageLoader extends ImageLoader {
     val parsed = data.take(3).toVector
     Either.cond(
       parsed.size == 3,
-      Color(parsed(2), parsed(1), parsed(0)) -> data.drop(3),
+      data.drop(3) -> Color(parsed(2), parsed(1), parsed(0)),
       "Not enough data to fetch pixel"
     )
   }
@@ -85,14 +85,14 @@ object BmpImageLoader extends ImageLoader {
     val parsed = data.take(4).toVector
     Either.cond(
       parsed.size == 4,
-      Color(parsed(2), parsed(1), parsed(0)) -> data.drop(4),
+      data.drop(4) -> Color(parsed(2), parsed(1), parsed(0)),
       "Not enough data to fetch pixel"
     )
   }
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
-    Header.fromBytes(bytes).flatMap { case (header, data) =>
+    Header.fromBytes(bytes).flatMap { case (data, header) =>
       val pixels = header.bitsPerPixel match {
         case 24 =>
           loadPixels(loadRgbPixel _, data)
@@ -101,7 +101,7 @@ object BmpImageLoader extends ImageLoader {
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
-      pixels.map { case (flatPixels, _) =>
+      pixels.map { case (_, flatPixels) =>
         new RamSurface(flatPixels.take(header.width * header.height).sliding(header.width, header.width).toSeq.reverse)
       }
     }

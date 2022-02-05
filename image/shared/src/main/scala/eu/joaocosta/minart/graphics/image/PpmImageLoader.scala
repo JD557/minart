@@ -17,10 +17,10 @@ object PpmImageLoader extends ImageLoader {
     if (chars.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
       readLine(remaining)
     else
-      chars -> remaining
+      remaining -> chars
   }
-  private val readString: State[LazyList[Int], Nothing, String] = State { bytes =>
-    val (line, remaining) = readLine(bytes)
+  private val readString: ParseState[Nothing, String] = State { bytes =>
+    val (remaining, line) = readLine(bytes)
     val chars             = line.map(_.toChar).takeWhile(c => c != ' ')
     val remainingLine     = line.drop(chars.size + 1)
     lazy val string       = chars.mkString("").trim
@@ -29,7 +29,7 @@ object PpmImageLoader extends ImageLoader {
     else
       (remainingLine ++ ('\n'.toInt +: remaining)) -> string
   }
-  private def parseInt(errorMessage: String): State[LazyList[Int], String, Int] =
+  private def parseInt(errorMessage: String): ParseState[String, Int] =
     readString.flatMap { str =>
       State.fromEither(str.toIntOption.toRight(s"$errorMessage: $str"))
     }
@@ -51,7 +51,7 @@ object PpmImageLoader extends ImageLoader {
         colorRange <- parseInt(s"Invalid color range")
         _          <- State.check(colorRange == 255, s"Unsupported color range: $colorRange")
       } yield Header(magic, width, height, colorRange)
-    ).run(bytes).map(_.swap)
+    ).run(bytes)
   }
 
   @tailrec
@@ -60,11 +60,11 @@ object PpmImageLoader extends ImageLoader {
       data: LazyList[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
-    if (data.isEmpty) Right(acc.reverse -> data)
+    if (data.isEmpty) Right(data -> acc.reverse)
     else {
       loadColor(data) match {
         case Left(error)               => Left(error)
-        case Right((color, remaining)) => loadPixels(loadColor, remaining, color :: acc)
+        case Right((remaining, color)) => loadPixels(loadColor, remaining, color :: acc)
       }
     }
   }
@@ -75,20 +75,20 @@ object PpmImageLoader extends ImageLoader {
       green <- parseInt("Invalid green channel")
       blue  <- parseInt("Invalid blue channel")
     } yield Color(red, green, blue)
-  ).run(data).map(_.swap)
+  ).run(data)
 
   def loadBinaryPixel(data: LazyList[Int]): ParseResult[Color] = {
     val parsed = data.take(3).toVector
     Either.cond(
       parsed.size == 3,
-      Color(parsed(0), parsed(1), parsed(2)) -> data.drop(3),
+      data.drop(3) -> Color(parsed(0), parsed(1), parsed(2)),
       "Not enough data to fetch pixel"
     )
   }
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
-    Header.fromBytes(bytes).flatMap { case (header, data) =>
+    Header.fromBytes(bytes).flatMap { case (data, header) =>
       val pixels = header.magic match {
         case "P3" =>
           loadPixels(loadStringPixel _, data)
@@ -97,7 +97,7 @@ object PpmImageLoader extends ImageLoader {
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }
-      pixels.map { case (flatPixels, _) =>
+      pixels.map { case (_, flatPixels) =>
         new RamSurface(flatPixels.take(header.width * header.height).sliding(header.width, header.width).toSeq)
       }
     }
