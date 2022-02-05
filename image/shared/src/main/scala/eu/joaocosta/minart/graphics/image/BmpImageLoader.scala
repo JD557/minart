@@ -27,13 +27,16 @@ object BmpImageLoader extends ImageLoader {
           supportedFormats,
           m => s"Unsupported format: $m. Only windows BMPs are supported"
         )
-        size          <- readLENumber(4)
-        _             <- skipBytes(4)
-        offset        <- readLENumber(4)
-        dibHeaderSize <- readLENumber(4).validate[String](_ >= 40, dib => s"Unsupported DIB header size: $dib")
-        width         <- readLENumber(4)
-        height        <- readLENumber(4)
-        colorPlanes <- readLENumber(2).validate[String](
+        size   <- readLENumber(4)
+        _      <- skipBytes(4)
+        offset <- readLENumber(4)
+        dibHeaderSize <- readLENumber(4).validate(
+          dib => dib >= 40 && dib <= 124,
+          dib => s"Unsupported DIB header size: $dib"
+        )
+        width  <- readLENumber(4)
+        height <- readLENumber(4)
+        colorPlanes <- readLENumber(2).validate(
           _ == 1,
           planes => s"Invalid number of color planes (must be 1): $planes"
         )
@@ -42,8 +45,10 @@ object BmpImageLoader extends ImageLoader {
           bpp => s"Unsupported bits per pixel (must be 24 or 32): $bpp"
         )
         compressionMethod <- readLENumber(4).validate(_ == 0, _ => "Compression is not supported")
-      } yield Header(magic, size, offset, width, height, bitsPerPixel)
-    ).run(bytes).map { case (_, header) => bytes.drop(header.offset) -> header }
+        header = Header(magic, size, offset, width, height, bitsPerPixel)
+        _ <- State.set(bytes.drop(offset))
+      } yield header
+    ).run(bytes)
   }
 
   @tailrec
@@ -61,23 +66,21 @@ object BmpImageLoader extends ImageLoader {
     }
   }
 
-  def loadRgbPixel(data: LazyList[Int]): ParseResult[Color] = {
-    val parsed = data.take(3).toVector
-    Either.cond(
-      parsed.size == 3,
-      data.drop(3) -> Color(parsed(2), parsed(1), parsed(0)),
-      "Not enough data to fetch pixel"
-    )
-  }
+  def loadRgbPixel(data: LazyList[Int]): ParseResult[Color] =
+    readBytes(3)
+      .collect(
+        { case bytes if bytes.size == 3 => Color(bytes(2), bytes(1), bytes(0)) },
+        _ => "Not enough data to read RGB pixel"
+      )
+      .run(data)
 
-  def loadRgbaPixel(data: LazyList[Int]): ParseResult[Color] = {
-    val parsed = data.take(4).toVector
-    Either.cond(
-      parsed.size == 4,
-      data.drop(4) -> Color(parsed(2), parsed(1), parsed(0)),
-      "Not enough data to fetch pixel"
-    )
-  }
+  def loadRgbaPixel(data: LazyList[Int]): ParseResult[Color] =
+    readBytes(4)
+      .collect(
+        { case bytes if bytes.size == 4 => Color(bytes(2), bytes(1), bytes(0)) },
+        _ => "Not enough data to read RGBA pixel"
+      )
+      .run(data)
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)

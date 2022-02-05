@@ -78,14 +78,13 @@ object PpmImageLoader extends ImageLoader {
     } yield Color(red, green, blue)
   ).run(data)
 
-  def loadBinaryPixel(data: LazyList[Int]): ParseResult[Color] = {
-    val parsed = data.take(3).toVector
-    Either.cond(
-      parsed.size == 3,
-      data.drop(3) -> Color(parsed(0), parsed(1), parsed(2)),
-      "Not enough data to fetch pixel"
-    )
-  }
+  def loadBinaryPixel(data: LazyList[Int]): ParseResult[Color] =
+    readBytes(3)
+      .collect(
+        { case bytes if bytes.size == 3 => Color(bytes(0), bytes(1), bytes(2)) },
+        _ => "Not enough data to read RGB pixel"
+      )
+      .run(data)
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)

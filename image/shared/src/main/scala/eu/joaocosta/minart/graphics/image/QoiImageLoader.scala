@@ -29,11 +29,14 @@ object QoiImageLoader extends ImageLoader {
   object Header {
     def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
       for {
-        magic      <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
-        width      <- readBENumber(4)
-        height     <- readBENumber(4)
-        channels   <- readByte.map(_.toByte)
-        colorspace <- readByte.map(_.toByte)
+        magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
+        width    <- readBENumber(4)
+        height   <- readBENumber(4)
+        channels <- readByte.collect({ case Some(byte) => byte.toByte }, _ => "Incomplete header: no channel byte")
+        colorspace <- readByte.collect(
+          { case Some(byte) => byte.toByte },
+          _ => "Incomplete header: no color space byte"
+        )
       } yield Header(
         magic,
         width,
@@ -56,42 +59,39 @@ object QoiImageLoader extends ImageLoader {
     }
     case class OpRun(run: Int) extends Op
 
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Op] = {
-      if (bytes.isEmpty) Left("Can't read op from empty bytes")
-      else {
-        val tag = bytes.head
-        (tag & 0xc0, tag & 0x3f) match {
-          case (0xc0, 0x3e) =>
-            val data = bytes.slice(1, 4).toArray
-            Either.cond(data.size == 3, bytes.drop(4) -> OpRgb(data(0), data(1), data(2)), "Not enough data for OP_RGB")
-          case (0xc0, 0x3f) =>
-            val data = bytes.slice(1, 5).toArray
-            Either.cond(
-              data.size == 4,
-              bytes.drop(5) -> OpRgba(data(0), data(1), data(2), data(3)),
-              "Not enough data for OP_RGBA"
-            )
-          case (0x00, index) =>
-            Right(bytes.tail -> OpIndex(index))
-          case (0x40, diffs) =>
-            Right(bytes.tail -> OpDiff(load2Bits(diffs >> 4), load2Bits(diffs >> 2), load2Bits(diffs)))
-          case (0x80, dg) =>
-            val data = bytes.slice(1, 2).toArray
-            Either.cond(
-              data.size == 1,
-              bytes.drop(2) -> OpLuma(load6Bits(dg), load4Bits(data(0) >> 4), load4Bits(data(0))),
-              "Not enough data for OP_LUMA"
-            )
-          case (0xc0, run) =>
-            Right(bytes.tail -> OpRun(run + 1))
-        }
+    val fromBytes: ParseState[String, Op] = readByte
+      .collect(
+        { case Some(tag) =>
+          (tag & 0xc0, tag & 0x3f)
+        },
+        _ => "Corrupted file, expected a Op but got nothing"
+      )
+      .flatMap {
+        case (0xc0, 0x3e) =>
+          readBytes(3)
+            .validate(_.size == 3, _ => "Not enough data for OP_RGB")
+            .map(data => OpRgb(data(0), data(1), data(2)))
+        case (0xc0, 0x3f) =>
+          readBytes(4)
+            .validate(_.size == 4, _ => "Not enough data for OP_RGBA")
+            .map(data => OpRgba(data(0), data(1), data(2), data(3)))
+        case (0x00, index) =>
+          State.pure(OpIndex(index))
+        case (0x40, diffs) =>
+          State.pure(OpDiff(load2Bits(diffs >> 4), load2Bits(diffs >> 2), load2Bits(diffs)))
+        case (0x80, dg) =>
+          readByte.collect(
+            { case Some(byte) => OpLuma(load6Bits(dg), load4Bits(byte >> 4), load4Bits(byte)) },
+            _ => "Not enough data for OP_LUMA"
+          )
+        case (0xc0, run) =>
+          State.pure(OpRun(run + 1))
       }
-    }
 
     def loadOps(bytes: LazyList[Int]): LazyList[Either[String, Op]] =
       if (bytes.isEmpty) LazyList.empty
       else
-        fromBytes(bytes) match {
+        fromBytes.run(bytes) match {
           case Left(error)            => LazyList(Left(error))
           case Right((remaining, op)) => Right(op) #:: loadOps(remaining)
         }
