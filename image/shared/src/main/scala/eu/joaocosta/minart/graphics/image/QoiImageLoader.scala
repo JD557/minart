@@ -12,23 +12,11 @@ object QoiImageLoader extends ImageLoader {
   private val supportedFormats = Set("qoif")
 
   // Binary helpers
-  private def wrapAround(b: Int): Int                = if (b >= 0) b % 256 else 256 + b
-  private def load2Bits(b: Int, bias: Int = 2): Int  = (b & 0x03) - bias
-  private def load4Bits(b: Int, bias: Int = 8): Int  = (b & 0x0f) - bias
-  private def load6Bits(b: Int, bias: Int = 32): Int = (b & 0x3f) - bias
-  private def load32Bits(b: Array[Int]): Int =
-    (b(0) << 24) | (b(1) << 16) | (b(2) << 8) | b(3)
+  private def wrapAround(b: Int): Int                        = if (b >= 0) b % 256 else 256 + b
+  private def load2Bits(b: Int, bias: Int = 2): Int          = (b & 0x03) - bias
+  private def load4Bits(b: Int, bias: Int = 8): Int          = (b & 0x0f) - bias
+  private def load6Bits(b: Int, bias: Int = 32): Int         = (b & 0x3f) - bias
   private def hashColor(r: Int, g: Int, b: Int, a: Int): Int = (r * 3 + g * 5 + b * 7 + a * 11) % 64
-
-  private def readString(n: Int): ParseState[Nothing, String] = State { bytes =>
-    bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
-  }
-  private def readBENumber(n: Int): ParseState[Nothing, Int] = State { bytes =>
-    bytes.drop(n) -> bytes.take(n).reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
-  }
-  private val readByte: ParseState[Nothing, Byte] = State { bytes =>
-    bytes.tail -> bytes.headOption.fold[Byte](0)(_.toByte)
-  }
 
   // Data formats
   case class Header(
@@ -41,12 +29,11 @@ object QoiImageLoader extends ImageLoader {
   object Header {
     def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
       for {
-        magic      <- readString(4)
-        _          <- State.check(supportedFormats(magic), s"Unsupported format: $magic")
+        magic      <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
         width      <- readBENumber(4)
         height     <- readBENumber(4)
-        channels   <- readByte
-        colorspace <- readByte
+        channels   <- readByte.map(_.toByte)
+        colorspace <- readByte.map(_.toByte)
       } yield Header(
         magic,
         width,

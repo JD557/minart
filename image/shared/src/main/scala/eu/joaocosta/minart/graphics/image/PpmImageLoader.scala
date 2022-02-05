@@ -11,16 +11,16 @@ object PpmImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("P3", "P6")
 
-  private def readLine(bytes: LazyList[Int]): (LazyList[Int], LazyList[Int]) = {
+  private def readNextLine(bytes: LazyList[Int]): (LazyList[Int], LazyList[Int]) = {
     val chars     = bytes.takeWhile(_.toChar != '\n') :+ '\n'.toInt
     val remaining = bytes.drop(chars.size)
     if (chars.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
-      readLine(remaining)
+      readNextLine(remaining)
     else
       remaining -> chars
   }
-  private val readString: ParseState[Nothing, String] = State { bytes =>
-    val (remaining, line) = readLine(bytes)
+  private val readNextString: ParseState[Nothing, String] = State { bytes =>
+    val (remaining, line) = readNextLine(bytes)
     val chars             = line.map(_.toChar).takeWhile(c => c != ' ')
     val remainingLine     = line.drop(chars.size + 1)
     lazy val string       = chars.mkString("").trim
@@ -29,8 +29,8 @@ object PpmImageLoader extends ImageLoader {
     else
       (remainingLine ++ ('\n'.toInt +: remaining)) -> string
   }
-  private def parseInt(errorMessage: String): ParseState[String, Int] =
-    readString.flatMap { str =>
+  private def parseNextInt(errorMessage: String): ParseState[String, Int] =
+    readNextString.flatMap { str =>
       State.fromEither(str.toIntOption.toRight(s"$errorMessage: $str"))
     }
 
@@ -44,12 +44,13 @@ object PpmImageLoader extends ImageLoader {
   object Header {
     def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
       for {
-        magic      <- readString
-        _          <- State.check(supportedFormats(magic), s"Unsupported format: $magic")
-        width      <- parseInt(s"Invalid width")
-        height     <- parseInt(s"Invalid height")
-        colorRange <- parseInt(s"Invalid color range")
-        _          <- State.check(colorRange == 255, s"Unsupported color range: $colorRange")
+        magic  <- readNextString.validate(supportedFormats, m => s"Unsupported format: $m")
+        width  <- parseNextInt(s"Invalid width")
+        height <- parseNextInt(s"Invalid height")
+        colorRange <- parseNextInt(s"Invalid color range").validate(
+          _ == 255,
+          range => s"Unsupported color range: $range"
+        )
       } yield Header(magic, width, height, colorRange)
     ).run(bytes)
   }
@@ -71,9 +72,9 @@ object PpmImageLoader extends ImageLoader {
 
   def loadStringPixel(data: LazyList[Int]): ParseResult[Color] = (
     for {
-      red   <- parseInt("Invalid red channel")
-      green <- parseInt("Invalid green channel")
-      blue  <- parseInt("Invalid blue channel")
+      red   <- parseNextInt("Invalid red channel")
+      green <- parseNextInt("Invalid green channel")
+      blue  <- parseNextInt("Invalid blue channel")
     } yield Color(red, green, blue)
   ).run(data)
 

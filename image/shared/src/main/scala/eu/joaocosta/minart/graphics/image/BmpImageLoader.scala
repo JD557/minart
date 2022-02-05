@@ -11,18 +11,6 @@ object BmpImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("BM")
 
-  private def readString(n: Int): ParseState[Nothing, String] = State { bytes =>
-    bytes.drop(n) -> bytes.take(n).map(_.toChar).mkString("")
-  }
-
-  private def readLENumber(n: Int): ParseState[Nothing, Int] = State { bytes =>
-    bytes.drop(n) -> bytes.take(n).zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
-  }
-
-  private def skip(n: Int): ParseState[Nothing, Unit] = State { bytes =>
-    bytes.drop(n) -> ()
-  }
-
   case class Header(
       magic: String,
       size: Int,
@@ -35,24 +23,25 @@ object BmpImageLoader extends ImageLoader {
   object Header {
     def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
       for {
-        magic  <- readString(2)
-        _      <- State.check(supportedFormats(magic), s"Unsupported format: $magic. Only windows BMPs are supported")
-        size   <- readLENumber(4)
-        _      <- skip(4)
-        offset <- readLENumber(4)
-        dibHeaderSize <- readLENumber(4)
-        _             <- State.check(dibHeaderSize >= 40, s"Unsupported DIB header size: $dibHeaderSize")
+        magic <- readString(2).validate(
+          supportedFormats,
+          m => s"Unsupported format: $m. Only windows BMPs are supported"
+        )
+        size          <- readLENumber(4)
+        _             <- skipBytes(4)
+        offset        <- readLENumber(4)
+        dibHeaderSize <- readLENumber(4).validate[String](_ >= 40, dib => s"Unsupported DIB header size: $dib")
         width         <- readLENumber(4)
         height        <- readLENumber(4)
-        colorPlanes   <- readLENumber(2)
-        _             <- State.check(colorPlanes == 1, s"Invalid number of color planes (must be 1): $colorPlanes")
-        bitsPerPixel  <- readLENumber(2)
-        _ <- State.check(
-          bitsPerPixel == 24 || bitsPerPixel == 32,
-          s"Unsupported bits per pixel (must be 24 or 32): $bitsPerPixel"
+        colorPlanes <- readLENumber(2).validate[String](
+          _ == 1,
+          planes => s"Invalid number of color planes (must be 1): $planes"
         )
-        compressionMethod <- readLENumber(4)
-        _                 <- State.check(compressionMethod == 0, "Compression is not supported")
+        bitsPerPixel <- readLENumber(2).validate(
+          Set(24, 32),
+          bpp => s"Unsupported bits per pixel (must be 24 or 32): $bpp"
+        )
+        compressionMethod <- readLENumber(4).validate(_ == 0, _ => "Compression is not supported")
       } yield Header(magic, size, offset, width, height, bitsPerPixel)
     ).run(bytes).map { case (_, header) => bytes.drop(header.offset) -> header }
   }

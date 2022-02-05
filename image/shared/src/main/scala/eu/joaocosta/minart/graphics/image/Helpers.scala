@@ -2,10 +2,33 @@ package eu.joaocosta.minart.graphics.image
 
 object Helpers {
 
+  def skipBytes(n: Int): ParseState[Nothing, Unit] = State { bytes =>
+    bytes.drop(n) -> ()
+  }
+  val readByte: ParseState[String, Int] = State { bytes =>
+    bytes.tail -> bytes.headOption.getOrElse(0)
+  }
+  def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
+    bytes.drop(n) -> bytes.take(n).toArray
+  }
+  def readString(n: Int): ParseState[Nothing, String] =
+    readBytes(n).map { bytes => bytes.map(_.toChar).mkString("") }
+  def readLENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
+    bytes.reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
+  }
+  def readBENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
+    bytes.reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
+  }
+
+  type ParseResult[T]   = Either[String, (LazyList[Int], T)]
+  type ParseState[E, T] = State[LazyList[Int], E, T]
+
   sealed trait State[S, +E, +A] {
     def run(initial: S): Either[E, (S, A)]
     def map[B](f: A => B): State[S, E, B]                             = flatMap(x => State(s => (s, f(x))))
     def flatMap[EE >: E, B](f: A => State[S, EE, B]): State[S, EE, B] = State.FlatMap[S, EE, A, B](this, f)
+    def validate[EE >: E](test: A => Boolean, failure: A => EE): State[S, EE, A] =
+      flatMap(x => if (test(x)) State.pure(x) else State.error(failure(x)))
   }
   object State {
     private final case class Point[S, +A](f: S => (S, A)) extends State[S, Nothing, A] {
@@ -32,9 +55,8 @@ object Helpers {
       case Left(e)  => error[S, E](e)
     }
     def cond[S, A, E](test: Boolean, success: => A, failure: => E): State[S, E, A] =
-      pure(test).flatMap {
-        case true  => pure(success)
-        case false => error(failure)
+      pure(test).flatMap { result =>
+        if (result) pure(success) else error(failure)
       }
     def check[S, E](test: Boolean, failure: => E): State[S, E, Unit] = cond(test, (), failure)
   }
