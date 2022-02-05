@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.Helpers._
 
 object PpmImageLoader extends ImageLoader {
 
@@ -18,16 +19,20 @@ object PpmImageLoader extends ImageLoader {
     else
       chars -> remaining
   }
-  private def readString(bytes: LazyList[Int]): (String, LazyList[Int]) = {
+  private val readString: State[LazyList[Int], Nothing, String] = State { bytes =>
     val (line, remaining) = readLine(bytes)
     val chars             = line.map(_.toChar).takeWhile(c => c != ' ')
     val remainingLine     = line.drop(chars.size + 1)
     lazy val string       = chars.mkString("").trim
     if (remainingLine.isEmpty)
-      string -> remaining
+      remaining -> string
     else
-      string -> (remainingLine ++ ('\n'.toInt +: remaining))
+      (remainingLine ++ ('\n'.toInt +: remaining)) -> string
   }
+  private def parseInt(errorMessage: String): State[LazyList[Int], String, Int] =
+    readString.flatMap { str =>
+      State.fromEither(str.toIntOption.toRight(s"$errorMessage: $str"))
+    }
 
   case class Header(
       magic: String,
@@ -37,19 +42,16 @@ object PpmImageLoader extends ImageLoader {
   )
 
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = {
-      lazy val (magic, rem1)           = readString(bytes)
-      lazy val (width, rem2)           = readString(rem1)
-      lazy val (height, rem3)          = readString(rem2)
-      lazy val (colorRange, remaining) = readString(rem3)
-
+    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
       for {
-        validatedMagic <- Either.cond(supportedFormats(magic), magic, s"Unsupported format: $magic")
-        numWidth       <- width.toIntOption.toRight(s"Invalid width: $width")
-        numHeight      <- height.toIntOption.toRight(s"Invalid height: $height")
-        numColorRange  <- colorRange.toIntOption.filter(_ == 255).toRight(s"Invalid color range: $colorRange")
-      } yield Header(validatedMagic, numWidth, numHeight, numColorRange) -> remaining
-    }
+        magic      <- readString
+        _          <- State.check(supportedFormats(magic), s"Unsupported format: $magic")
+        width      <- parseInt(s"Invalid width")
+        height     <- parseInt(s"Invalid height")
+        colorRange <- parseInt(s"Invalid color range")
+        _          <- State.check(colorRange == 255, s"Unsupported color range: $colorRange")
+      } yield Header(magic, width, height, colorRange)
+    ).run(bytes).map(_.swap)
   }
 
   @tailrec
@@ -67,16 +69,13 @@ object PpmImageLoader extends ImageLoader {
     }
   }
 
-  def loadStringPixel(data: LazyList[Int]): ParseResult[Color] = {
-    lazy val (red, rem1)       = readString(data)
-    lazy val (green, rem2)     = readString(rem1)
-    lazy val (blue, remaining) = readString(rem2)
+  def loadStringPixel(data: LazyList[Int]): ParseResult[Color] = (
     for {
-      numRed   <- red.toIntOption.toRight(s"Invalid red channel: $red")
-      numGreen <- green.toIntOption.toRight(s"Invalid green channel: $green")
-      numBlue  <- blue.toIntOption.toRight(s"Invalid blue channel: $blue")
-    } yield Color(numRed, numGreen, numBlue) -> remaining
-  }
+      red   <- parseInt("Invalid red channel")
+      green <- parseInt("Invalid green channel")
+      blue  <- parseInt("Invalid blue channel")
+    } yield Color(red, green, blue)
+  ).run(data).map(_.swap)
 
   def loadBinaryPixel(data: LazyList[Int]): ParseResult[Color] = {
     val parsed = data.take(3).toVector

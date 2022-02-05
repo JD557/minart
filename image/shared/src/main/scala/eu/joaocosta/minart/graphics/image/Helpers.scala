@@ -27,6 +27,10 @@ object Helpers {
     def apply[S, A](f: S => (S, A)): State[S, Nothing, A] = Point(f)
     def pure[S, A](a: A): State[S, Nothing, A]            = Point(s => (s, a))
     def error[S, E](e: E): State[S, E, Nothing]           = Error(e)
+    def fromEither[S, A, E](either: Either[E, A]): State[S, E, A] = either match {
+      case Right(a) => pure[S, A](a)
+      case Left(e)  => error[S, E](e)
+    }
     def cond[S, A, E](test: Boolean, success: => A, failure: => E): State[S, E, A] =
       pure(test).flatMap {
         case true  => pure(success)
