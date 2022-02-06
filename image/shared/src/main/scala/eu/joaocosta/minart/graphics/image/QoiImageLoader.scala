@@ -14,11 +14,11 @@ object QoiImageLoader extends ImageLoader {
   private val supportedFormats = Set("qoif")
 
   // Binary helpers
-  private def wrapAround(b: Int): Int                        = if (b >= 0) b % 256 else 256 + b
-  private def load2Bits(b: Int, bias: Int = 2): Int          = (b & 0x03) - bias
-  private def load4Bits(b: Int, bias: Int = 8): Int          = (b & 0x0f) - bias
-  private def load6Bits(b: Int, bias: Int = 32): Int         = (b & 0x3f) - bias
-  private def hashColor(r: Int, g: Int, b: Int, a: Int): Int = (r * 3 + g * 5 + b * 7 + a * 11) % 64
+  def wrapAround(b: Int): Int                        = if (b >= 0) b % 256 else 256 + b
+  def load2Bits(b: Int, bias: Int = 2): Int          = (b & 0x03) - bias
+  def load4Bits(b: Int, bias: Int = 8): Int          = (b & 0x0f) - bias
+  def load6Bits(b: Int, bias: Int = 32): Int         = (b & 0x3f) - bias
+  def hashColor(r: Int, g: Int, b: Int, a: Int): Int = (r * 3 + g * 5 + b * 7 + a * 11) % 64
 
   // Data formats
   case class Header(
@@ -51,15 +51,15 @@ object QoiImageLoader extends ImageLoader {
 
   sealed trait Op
   object Op {
-    case class OpRgb(red: Int, green: Int, blue: Int)              extends Op
-    case class OpRgba(red: Int, green: Int, blue: Int, alpha: Int) extends Op
-    case class OpIndex(index: Int)                                 extends Op
-    case class OpDiff(dr: Int, dg: Int, db: Int)                   extends Op
-    case class OpLuma(dg: Int, drdg: Int, dbdg: Int) extends Op {
+    final case class OpRgb(red: Int, green: Int, blue: Int)              extends Op
+    final case class OpRgba(red: Int, green: Int, blue: Int, alpha: Int) extends Op
+    final case class OpIndex(index: Int)                                 extends Op
+    final case class OpDiff(dr: Int, dg: Int, db: Int)                   extends Op
+    final case class OpLuma(dg: Int, drdg: Int, dbdg: Int) extends Op {
       val dr = drdg + dg
       val db = dbdg + dg
     }
-    case class OpRun(run: Int) extends Op
+    final case class OpRun(run: Int) extends Op
 
     val fromBytes: ParseState[String, Op] = readByte
       .collect(
@@ -80,7 +80,11 @@ object QoiImageLoader extends ImageLoader {
         case (0x00, index) =>
           State.pure(OpIndex(index))
         case (0x40, diffs) =>
-          State.pure(OpDiff(load2Bits(diffs >> 4), load2Bits(diffs >> 2), load2Bits(diffs)))
+          // FIXME scala native doesn't like load2Bits here
+          val dr = ((diffs >> 4) & 0x03) - 2
+          val dg = ((diffs >> 2) & 0x03) - 2
+          val db = (diffs & 0x03) - 2
+          State.pure(OpDiff(dr, dg, db))
         case (0x80, dg) =>
           readByte.collect(
             { case Some(byte) => OpLuma(load6Bits(dg), load4Bits(byte >> 4), load4Bits(byte)) },
