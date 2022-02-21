@@ -85,7 +85,10 @@ val nativeSettings = Seq(
   nativeLinkStubs      := true,
   Compile / nativeMode := "release",
   Test / nativeMode    := "debug",
-  nativeLTO            := "thin"
+  nativeLTO            := "thin",
+  nativeConfig ~= {
+    _.withEmbedResources(true)
+  }
 )
 
 lazy val root =
