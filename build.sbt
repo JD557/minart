@@ -19,7 +19,7 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 val sharedSettings = Seq(
   organization       := "eu.joaocosta",
   scalaVersion       := "3.1.1",
-  crossScalaVersions := Seq("2.11.12", "2.12.15", "2.13.8", "3.1.1"),
+  crossScalaVersions := Seq(/*"2.11.12", "2.12.15", */"2.13.8", "3.1.1"),
   licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
   homepage           := Some(url("https://github.com/JD557/minart")),
   scmInfo := Some(
@@ -39,13 +39,8 @@ val sharedSettings = Seq(
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision,
   scalafixOnCompile := true,
-  libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, n)) if n <= 12 =>
-        Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.6.0")
-      case _ => Nil
-    }
-  }
+  libraryDependencies ++= 
+    Seq(/*"org.scala-lang.modules" %%% "scala-collection-compat" % "2.6.0+22-e211ba15+20220221-2045-SNAPSHOT"*/)
 )
 
 val testSettings = Seq(
@@ -85,7 +80,10 @@ val nativeSettings = Seq(
   nativeLinkStubs      := true,
   Compile / nativeMode := "release",
   Test / nativeMode    := "debug",
-  nativeLTO            := "thin"
+  nativeLTO            := "thin",
+  nativeConfig ~= {
+    _.withEmbedResources(true)
+  }
 )
 
 lazy val root =
@@ -96,8 +94,8 @@ lazy val root =
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
-    .dependsOn(core, backend, pure/*, image*/)
-    .aggregate(core, backend, pure/*, image*/)
+    .dependsOn(core, backend, pure, image)
+    .aggregate(core, backend, pure, image)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -131,8 +129,8 @@ lazy val pure =
 lazy val image =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
+    .dependsOn(backend % "test")
     .settings(sharedSettings)
-    .settings(crossScalaVersions := Seq("2.13.8", "3.1.1"))
     .settings(name := "minart-image")
     .settings(testSettings)
     .settings(publishSettings)
@@ -182,7 +180,6 @@ lazy val `examples-fire` =
 
 lazy val `examples-image` =
   example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "image")
-    .settings(crossScalaVersions := Seq("2.13.8", "3.1.1"))
     .dependsOn(image)
 
 lazy val `examples-mousePointer` =
