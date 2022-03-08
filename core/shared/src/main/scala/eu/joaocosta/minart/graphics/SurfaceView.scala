@@ -6,8 +6,9 @@ package eu.joaocosta.minart.graphics
   *  This can have a performance impact. However, a new RAM surface with the operations already applied can be constructed using `toRamSurface`
   */
 trait SurfaceView extends Surface {
-  def map(f: Color => Color): SurfaceView                 = new SurfaceView.MapView(this, f)
-  def contramap(f: (Int, Int) => (Int, Int)): SurfaceView = new SurfaceView.ContramapView(this, f)
+  def map(f: Color => Color): SurfaceView                             = new SurfaceView.MapView(this, f)
+  def contramap(f: (Int, Int) => (Int, Int)): SurfaceView             = new SurfaceView.ContramapView(this, f)
+  def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = new SurfaceView.ZipView(this, that, f)
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     new SurfaceView.ClippedView(this, cx, cy, cw, ch)
 
@@ -46,6 +47,19 @@ object SurfaceView {
       val (xx, yy) = f(x, y)
       inner.getPixel(xx, yy)
     }
+    def getPixels(): Vector[Array[Color]] =
+      Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
+  }
+
+  /** A view that combines two surfaces.
+    */
+  class ZipView(innerA: Surface, innerB: Surface, f: (Color, Color) => Color) extends SurfaceView {
+    def width: Int  = math.min(innerA.width, innerB.width)
+    def height: Int = math.min(innerA.height, innerB.height)
+    def getPixel(x: Int, y: Int): Option[Color] = for {
+      pixelA <- innerA.getPixel(x, y)
+      pixelB <- innerB.getPixel(x, y)
+    } yield f(pixelA, pixelB)
     def getPixels(): Vector[Array[Color]] =
       Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
   }
