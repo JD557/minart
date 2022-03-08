@@ -19,7 +19,7 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 val sharedSettings = Seq(
   organization       := "eu.joaocosta",
   scalaVersion       := "3.1.1",
-  crossScalaVersions := Seq(/*"2.11.12", */"2.12.15", "2.13.8", "3.1.1"),
+  crossScalaVersions := Seq(/*"2.11.12", "2.12.15", */"2.13.8", "3.1.1"),
   licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
   homepage           := Some(url("https://github.com/JD557/minart")),
   scmInfo := Some(
@@ -40,7 +40,7 @@ val sharedSettings = Seq(
   semanticdbVersion := scalafixSemanticdb.revision,
   scalafixOnCompile := true,
   libraryDependencies ++= 
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.6.0+22-e211ba15+20220221-2045-SNAPSHOT")
+    Seq(/*"org.scala-lang.modules" %%% "scala-collection-compat" % "2.6.0+22-e211ba15+20220221-2045-SNAPSHOT"*/)
 )
 
 val testSettings = Seq(

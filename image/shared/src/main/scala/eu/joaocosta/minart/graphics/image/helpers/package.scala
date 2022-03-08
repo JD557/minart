@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image
 
-import scala.collection.compat.immutable.LazyList
+//import scala.collection.compat.immutable.LazyList
 
 /** Common operations for image decoding
   */
