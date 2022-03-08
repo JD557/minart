@@ -12,23 +12,23 @@ object Image {
 
   /** Inverts an image color.
     */
-  def invert(surface: RamSurface): RamSurface =
-    new RamSurface(surface.data.map(_.map(_.invert)))
+  def invert(surface: Surface): SurfaceView =
+    surface.view.map(_.invert)
 
   /** Flips an image horizontally.
     */
-  def flipH(surface: RamSurface): RamSurface =
-    new RamSurface(surface.data.map(_.reverse))
+  def flipH(surface: Surface): SurfaceView =
+    surface.view.contramap((x, y) => (surface.width - x - 1, y), surface.width, surface.height)
 
   /** Flips an image vertically.
     */
-  def flipV(surface: RamSurface): RamSurface =
-    new RamSurface(surface.data.reverse)
+  def flipV(surface: Surface): SurfaceView =
+    surface.view.contramap((x, y) => (x, surface.height - y - 1), surface.width, surface.height)
 
   /** Transposes an image.
     */
-  def transpose(surface: RamSurface): RamSurface =
-    new RamSurface(surface.data.transpose.map(_.toArray))
+  def transpose(surface: Surface): SurfaceView =
+    surface.view.contramap((x, y) => (y, x), surface.height, surface.width)
 
   /** Loads an image using a custom ImageLoader.
     *
