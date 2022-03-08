@@ -10,6 +10,9 @@ trait Surface {
   /** The surface height */
   def height: Int
 
+  /** A view over this surface */
+  def view: SurfaceView = new SurfaceView.IdentityView(this)
+
   /** Gets the color from the this surface.
     * This operation can be perfomance intensive, so it might be worthwile
     * to either use `getPixels` to fetch multiple pixels at the same time or
@@ -28,6 +31,10 @@ trait Surface {
     * @return color matrix
     */
   def getPixels(): Vector[Array[Color]]
+
+  /** Copies this surface into a new surface stored in RAM */
+  def toRamSurface(): RamSurface =
+    new RamSurface(getPixels())
 }
 
 object Surface {
