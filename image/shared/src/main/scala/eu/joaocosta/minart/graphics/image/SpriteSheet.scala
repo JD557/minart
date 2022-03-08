@@ -8,9 +8,9 @@ class SpriteSheet(surface: Surface, spriteWidth: Int, spriteHeight: Int) {
 
   val spritesPerLine = surface.width / spriteWidth
 
-  def getSprite(column: Int, line: Int): Surface =
+  def getSprite(column: Int, line: Int): SurfaceView =
     surface.view.clip(line * spriteWidth, column * spriteHeight, spriteWidth, spriteHeight)
 
-  def getSprite(n: Int): Surface =
+  def getSprite(n: Int): SurfaceView =
     getSprite(n / spritesPerLine, n % spritesPerLine)
 }

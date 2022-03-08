@@ -18,12 +18,12 @@ object Image {
   /** Flips an image horizontally.
     */
   def flipH(surface: Surface): SurfaceView =
-    surface.view.contramap((x, y) => (surface.width - x - 1, y))
+    surface.view.contramap((x, y) => (surface.width - x - 1, y), surface.width, surface.height)
 
   /** Flips an image vertically.
     */
   def flipV(surface: Surface): SurfaceView =
-    surface.view.contramap((x, y) => (x, surface.height - y - 1))
+    surface.view.contramap((x, y) => (x, surface.height - y - 1), surface.width, surface.height)
 
   /** Transposes an image.
     */
