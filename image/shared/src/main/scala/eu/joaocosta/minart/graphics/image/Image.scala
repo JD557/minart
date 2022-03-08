@@ -28,7 +28,7 @@ object Image {
   /** Transposes an image.
     */
   def transpose(surface: Surface): SurfaceView =
-    surface.view.contramap((x, y) => (y, x))
+    surface.view.contramap((x, y) => (y, x), surface.height, surface.width)
 
   /** Loads an image using a custom ImageLoader.
     *

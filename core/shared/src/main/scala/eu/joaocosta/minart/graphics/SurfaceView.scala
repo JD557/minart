@@ -6,8 +6,9 @@ package eu.joaocosta.minart.graphics
   *  This can have a performance impact. However, a new RAM surface with the operations already applied can be constructed using `toRamSurface`
   */
 trait SurfaceView extends Surface {
-  def map(f: Color => Color): SurfaceView                             = new SurfaceView.MapView(this, f)
-  def contramap(f: (Int, Int) => (Int, Int)): SurfaceView             = new SurfaceView.ContramapView(this, f)
+  def map(f: Color => Color): SurfaceView = new SurfaceView.MapView(this, f)
+  def contramap(f: (Int, Int) => (Int, Int), width: Int, height: Int, fallback: Color = Color(0, 0, 0)): SurfaceView =
+    new SurfaceView.ContramapView(this, f, width, height, fallback)
   def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = new SurfaceView.ZipView(this, that, f)
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     new SurfaceView.ClippedView(this, cx, cy, cw, ch)
@@ -40,13 +41,12 @@ object SurfaceView {
 
   /** A view over a surface that contramaps the positions.
     */
-  class ContramapView(inner: Surface, f: (Int, Int) => (Int, Int)) extends SurfaceView {
-    def width: Int  = inner.width
-    def height: Int = inner.height
-    def getPixel(x: Int, y: Int): Option[Color] = {
+  class ContramapView(inner: Surface, f: (Int, Int) => (Int, Int), val width: Int, val height: Int, fallback: Color)
+      extends SurfaceView {
+    def getPixel(x: Int, y: Int): Option[Color] = if (x >= 0 && x < width && y >= 0 && y < height) {
       val (xx, yy) = f(x, y)
-      inner.getPixel(xx, yy)
-    }
+      Some(inner.getPixel(xx, yy).getOrElse(fallback))
+    } else None
     def getPixels(): Vector[Array[Color]] =
       Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
   }
