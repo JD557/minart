@@ -58,43 +58,41 @@ object BmpImageLoader extends ImageLoader {
 
   @tailrec
   def loadPixels(
-      loadColor: LazyList[Int] => ParseResult[Color],
+      loadColor: ParseState[String, Color],
       data: LazyList[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
     if (data.isEmpty) Right(data -> acc.reverse)
     else {
-      loadColor(data) match {
+      loadColor.run(data) match {
         case Left(error)               => Left(error)
         case Right((remaining, color)) => loadPixels(loadColor, remaining, color :: acc)
       }
     }
   }
 
-  def loadRgbPixel(data: LazyList[Int]): ParseResult[Color] =
+  val loadRgbPixel: ParseState[String, Color] =
     readBytes(3)
       .collect(
         { case bytes if bytes.size == 3 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGB pixel"
       )
-      .run(data)
 
-  def loadRgbaPixel(data: LazyList[Int]): ParseResult[Color] =
+  val loadRgbaPixel: ParseState[String, Color] =
     readBytes(4)
       .collect(
         { case bytes if bytes.size == 4 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGBA pixel"
       )
-      .run(data)
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
     Header.fromBytes(bytes).flatMap { case (data, header) =>
       val pixels = header.bitsPerPixel match {
         case 24 =>
-          loadPixels(loadRgbPixel _, data)
+          loadPixels(loadRgbPixel, data)
         case 32 =>
-          loadPixels(loadRgbaPixel _, data)
+          loadPixels(loadRgbaPixel, data)
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
