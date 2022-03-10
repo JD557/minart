@@ -19,12 +19,15 @@ object PpmImageLoader extends ImageLoader {
   private val readNextLine: ParseState[Nothing, List[Int]] = State[Iterator[Int], List[Int]] { bytes =>
     @tailrec
     def aux(b: Iterator[Int]): (Iterator[Int], List[Int]) = {
-      val chars = b.takeWhile(_.toChar != '\n').toList :+ '\n'.toInt
-      // val remaining = b.drop(chars.size)
-      if (chars.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
-        aux(b)
+      val (remaining, line) = (for {
+        chars <- readWhile(_.toChar != '\n')
+        fullChars = chars :+ '\n'.toInt
+        _ <- skipBytes(1)
+      } yield fullChars).run(b).merge
+      if (line.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
+        aux(remaining)
       else
-        b -> chars
+        remaining -> line
     }
     aux(bytes)
   }

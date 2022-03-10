@@ -19,6 +19,9 @@ package object helpers {
     /** Read N Byte */
     def readBytes(n: Int): ParseState[Nothing, Array[Int]]
 
+    /** Reads data while a predicate is true */
+    def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]]
+
     /** Read a String from N Bytes */
     def readString(n: Int): ParseState[Nothing, String] =
       readBytes(n).map { bytes => bytes.map(_.toChar).mkString("") }
@@ -45,11 +48,16 @@ package object helpers {
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
       bytes.drop(n) -> bytes.take(n).toArray
     }
+
+    def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
+      val (isTrue, isFalse) = bytes.span(p)
+      isFalse -> isTrue.toList
+    }
   }
 
   object IteratorHelpers extends HelpersF[Iterator] {
     def skipBytes(n: Int): ParseState[Nothing, Unit] =
-      State.modify { s => s.drop(n); s.isEmpty; s }
+      State.modify(_.drop(n))
 
     val readByte: ParseState[String, Option[Int]] = State { bytes =>
       val hd = bytes.nextOption
@@ -59,6 +67,16 @@ package object helpers {
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
       val hd = bytes.take(n).toArray
       bytes -> hd
+    }
+
+    def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
+      val buffer = List.newBuilder[Int]
+      var head   = bytes.nextOption
+      while (head.exists(p)) {
+        buffer += head.get
+        head = bytes.nextOption
+      }
+      (head.iterator ++ bytes) -> buffer.result()
     }
   }
 
