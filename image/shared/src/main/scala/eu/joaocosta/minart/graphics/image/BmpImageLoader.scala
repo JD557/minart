@@ -5,7 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image.helpers.LazyListHelpers._
+import eu.joaocosta.minart.graphics.image.helpers.IteratorHelpers._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for BMP files.
@@ -26,7 +26,7 @@ object BmpImageLoader extends ImageLoader {
   )
 
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
+    def fromBytes(bytes: Iterator[Int]): ParseResult[Header] = (
       for {
         magic <- readString(2).validate(
           supportedFormats,
@@ -51,7 +51,7 @@ object BmpImageLoader extends ImageLoader {
         )
         compressionMethod <- readLENumber(4).validate(_ == 0, _ => "Compression is not supported")
         header = Header(magic, size, offset, width, height, bitsPerPixel)
-        _ <- State.set(bytes.drop(offset))
+        _ <- skipBytes(offset - 34)
       } yield header
     ).run(bytes)
   }
@@ -59,7 +59,7 @@ object BmpImageLoader extends ImageLoader {
   @tailrec
   def loadPixels(
       loadColor: ParseState[String, Color],
-      data: LazyList[Int],
+      data: Iterator[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
     if (data.isEmpty) Right(data -> acc.reverse)
@@ -86,7 +86,7 @@ object BmpImageLoader extends ImageLoader {
       )
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
-    val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
+    val bytes: Iterator[Int] = Iterator.continually(is.read()).takeWhile(_ != -1)
     Header.fromBytes(bytes).flatMap { case (data, header) =>
       val pixels = header.bitsPerPixel match {
         case 24 =>
