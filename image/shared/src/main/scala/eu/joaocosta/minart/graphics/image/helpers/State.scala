@@ -8,8 +8,12 @@ sealed trait State[S, +E, +A] {
   def flatMap[EE >: E, B](f: A => State[S, EE, B]): State[S, EE, B] = State.FlatMap[S, EE, A, B](this, f)
   def validate[EE >: E](test: A => Boolean, failure: A => EE): State[S, EE, A] =
     flatMap(x => if (test(x)) State.pure(x) else State.error(failure(x)))
-  def collect[EE >: E, B](f: PartialFunction[A, B], failure: A => EE): State[S, EE, B] =
-    flatMap(x => f.lift(x).map(State.pure[S, B]).getOrElse(State.error[S, EE](failure(x))))
+  def collect[EE >: E, B](f: PartialFunction[A, B], failure: A => EE): State[S, EE, B] = {
+    val pf = f.andThen(State.pure[S, B]).orElse((x: A) => State.error[S, EE](failure(x)))
+    flatMap(pf)
+  }
+  def modify(f: S => S): State[S, E, A] =
+    flatMap(x => State(s => (f(s), x)))
 }
 object State {
   private final case class Point[S, +A](f: S => (S, A)) extends State[S, Nothing, A] {
@@ -32,6 +36,7 @@ object State {
   def pure[S, A](a: A): State[S, Nothing, A]            = Point(s => (s, a))
   def error[S, E](e: E): State[S, E, Nothing]           = Error(e)
   def modify[S](f: S => S): State[S, Nothing, Unit]     = Point(s => (f(s), ()))
+  def get[S]: State[S, Nothing, S]                      = Point(s => (s, s))
   def set[S](s: S): State[S, Nothing, Unit]             = Point(_ => (s, ()))
   def fromEither[S, A, E](either: Either[E, A]): State[S, E, A] = either match {
     case Right(a) => pure[S, A](a)
