@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.helpers.IteratorHelpers._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for PPM files.
@@ -15,15 +16,15 @@ object PpmImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("P3", "P6")
 
-  private val readNextLine: ParseState[Nothing, LazyList[Int]] = State[LazyList[Int], LazyList[Int]] { bytes =>
+  private val readNextLine: ParseState[Nothing, List[Int]] = State[Iterator[Int], List[Int]] { bytes =>
     @tailrec
-    def aux(b: LazyList[Int]): (LazyList[Int], LazyList[Int]) = {
-      val chars     = b.takeWhile(_.toChar != '\n') :+ '\n'.toInt
-      val remaining = b.drop(chars.size)
+    def aux(b: Iterator[Int]): (Iterator[Int], List[Int]) = {
+      val chars = b.takeWhile(_.toChar != '\n').toList :+ '\n'.toInt
+      // val remaining = b.drop(chars.size)
       if (chars.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
-        aux(remaining)
+        aux(b)
       else
-        remaining -> chars
+        b -> chars
     }
     aux(bytes)
   }
@@ -39,7 +40,7 @@ object PpmImageLoader extends ImageLoader {
         State
           .pure(string)
           .modify { remaining =>
-            (remainingLine ++ ('\n'.toInt +: remaining))
+            (remainingLine.iterator ++ Iterator('\n'.toInt) ++ remaining)
           }
     }
 
@@ -56,7 +57,7 @@ object PpmImageLoader extends ImageLoader {
   )
 
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
+    def fromBytes(bytes: Iterator[Int]): ParseResult[Header] = (
       for {
         magic  <- readNextString.validate(supportedFormats, m => s"Unsupported format: $m")
         width  <- parseNextInt(s"Invalid width")
@@ -72,7 +73,7 @@ object PpmImageLoader extends ImageLoader {
   @tailrec
   def loadPixels(
       loadColor: ParseState[String, Color],
-      data: LazyList[Int],
+      data: Iterator[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
     if (data.isEmpty) Right(data -> acc.reverse)
@@ -100,8 +101,7 @@ object PpmImageLoader extends ImageLoader {
     )
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
-    val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
-    Header.fromBytes(bytes).flatMap { case (data, header) =>
+    Header.fromBytes(Iterator.continually(is.read()).takeWhile(_ != -1)).flatMap { case (data, header) =>
       val pixels = header.magic match {
         case "P3" =>
           loadPixels(loadStringPixel, data)

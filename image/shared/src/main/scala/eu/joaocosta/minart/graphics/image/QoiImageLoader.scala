@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.helpers.LazyListHelpers._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for QOI files.
