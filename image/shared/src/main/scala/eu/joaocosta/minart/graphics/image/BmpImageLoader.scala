@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.helpers.IteratorHelpers._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for BMP files.
@@ -25,7 +26,7 @@ object BmpImageLoader extends ImageLoader {
   )
 
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
+    def fromBytes(bytes: Iterator[Int]): ParseResult[Header] = (
       for {
         magic <- readString(2).validate(
           supportedFormats,
@@ -50,50 +51,48 @@ object BmpImageLoader extends ImageLoader {
         )
         compressionMethod <- readLENumber(4).validate(_ == 0, _ => "Compression is not supported")
         header = Header(magic, size, offset, width, height, bitsPerPixel)
-        _ <- State.set(bytes.drop(offset))
+        _ <- skipBytes(offset - 34)
       } yield header
     ).run(bytes)
   }
 
   @tailrec
   def loadPixels(
-      loadColor: LazyList[Int] => ParseResult[Color],
-      data: LazyList[Int],
+      loadColor: ParseState[String, Color],
+      data: Iterator[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
     if (data.isEmpty) Right(data -> acc.reverse)
     else {
-      loadColor(data) match {
+      loadColor.run(data) match {
         case Left(error)               => Left(error)
         case Right((remaining, color)) => loadPixels(loadColor, remaining, color :: acc)
       }
     }
   }
 
-  def loadRgbPixel(data: LazyList[Int]): ParseResult[Color] =
+  val loadRgbPixel: ParseState[String, Color] =
     readBytes(3)
       .collect(
         { case bytes if bytes.size == 3 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGB pixel"
       )
-      .run(data)
 
-  def loadRgbaPixel(data: LazyList[Int]): ParseResult[Color] =
+  val loadRgbaPixel: ParseState[String, Color] =
     readBytes(4)
       .collect(
         { case bytes if bytes.size == 4 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGBA pixel"
       )
-      .run(data)
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
-    val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
+    val bytes: Iterator[Int] = Iterator.continually(is.read()).takeWhile(_ != -1)
     Header.fromBytes(bytes).flatMap { case (data, header) =>
       val pixels = header.bitsPerPixel match {
         case 24 =>
-          loadPixels(loadRgbPixel _, data)
+          loadPixels(loadRgbPixel, data)
         case 32 =>
-          loadPixels(loadRgbaPixel _, data)
+          loadPixels(loadRgbaPixel, data)
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }

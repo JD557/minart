@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.helpers.IteratorHelpers._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for PPM files.
@@ -15,24 +16,37 @@ object PpmImageLoader extends ImageLoader {
 
   private val supportedFormats = Set("P3", "P6")
 
-  private def readNextLine(bytes: LazyList[Int]): (LazyList[Int], LazyList[Int]) = {
-    val chars     = bytes.takeWhile(_.toChar != '\n') :+ '\n'.toInt
-    val remaining = bytes.drop(chars.size)
-    if (chars.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
-      readNextLine(remaining)
-    else
-      remaining -> chars
+  private val readNextLine: ParseState[Nothing, List[Int]] = State[Iterator[Int], List[Int]] { bytes =>
+    @tailrec
+    def aux(b: Iterator[Int]): (Iterator[Int], List[Int]) = {
+      val (remaining, line) = (for {
+        chars <- readWhile(_.toChar != '\n')
+        fullChars = chars :+ '\n'.toInt
+        _ <- skipBytes(1)
+      } yield fullChars).run(b).merge
+      if (line.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
+        aux(remaining)
+      else
+        remaining -> line
+    }
+    aux(bytes)
   }
-  private val readNextString: ParseState[Nothing, String] = State { bytes =>
-    val (remaining, line) = readNextLine(bytes)
-    val chars             = line.map(_.toChar).takeWhile(c => c != ' ')
-    val remainingLine     = line.drop(chars.size + 1)
-    lazy val string       = chars.mkString("").trim
-    if (remainingLine.isEmpty)
-      remaining -> string
-    else
-      (remainingLine ++ ('\n'.toInt +: remaining)) -> string
-  }
+
+  private val readNextString: ParseState[Nothing, String] =
+    readNextLine.flatMap { line =>
+      val chars         = line.map(_.toChar).takeWhile(c => c != ' ')
+      val remainingLine = line.drop(chars.size + 1)
+      lazy val string   = chars.mkString("").trim
+      if (remainingLine.isEmpty)
+        State.pure(string)
+      else
+        State
+          .pure(string)
+          .modify { remaining =>
+            (remainingLine.iterator ++ Iterator('\n'.toInt) ++ remaining)
+          }
+    }
+
   private def parseNextInt(errorMessage: String): ParseState[String, Int] =
     readNextString.flatMap { str =>
       State.fromEither(str.toIntOption.toRight(s"$errorMessage: $str"))
@@ -46,7 +60,7 @@ object PpmImageLoader extends ImageLoader {
   )
 
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
+    def fromBytes(bytes: Iterator[Int]): ParseResult[Header] = (
       for {
         magic  <- readNextString.validate(supportedFormats, m => s"Unsupported format: $m")
         width  <- parseNextInt(s"Invalid width")
@@ -61,43 +75,41 @@ object PpmImageLoader extends ImageLoader {
 
   @tailrec
   def loadPixels(
-      loadColor: LazyList[Int] => ParseResult[Color],
-      data: LazyList[Int],
+      loadColor: ParseState[String, Color],
+      data: Iterator[Int],
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
     if (data.isEmpty) Right(data -> acc.reverse)
     else {
-      loadColor(data) match {
+      loadColor.run(data) match {
         case Left(error)               => Left(error)
         case Right((remaining, color)) => loadPixels(loadColor, remaining, color :: acc)
       }
     }
   }
 
-  def loadStringPixel(data: LazyList[Int]): ParseResult[Color] = (
-    for {
-      red   <- parseNextInt("Invalid red channel")
-      green <- parseNextInt("Invalid green channel")
-      blue  <- parseNextInt("Invalid blue channel")
-    } yield Color(red, green, blue)
-  ).run(data)
+  val loadStringPixel: ParseState[String, Color] =
+    (
+      for {
+        red   <- parseNextInt("Invalid red channel")
+        green <- parseNextInt("Invalid green channel")
+        blue  <- parseNextInt("Invalid blue channel")
+      } yield Color(red, green, blue)
+    )
 
-  def loadBinaryPixel(data: LazyList[Int]): ParseResult[Color] =
-    readBytes(3)
-      .collect(
-        { case bytes if bytes.size == 3 => Color(bytes(0), bytes(1), bytes(2)) },
-        _ => "Not enough data to read RGB pixel"
-      )
-      .run(data)
+  val loadBinaryPixel: ParseState[String, Color] =
+    readBytes(3).collect(
+      { case bytes if bytes.size == 3 => Color(bytes(0), bytes(1), bytes(2)) },
+      _ => "Not enough data to read RGB pixel"
+    )
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
-    val bytes: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
-    Header.fromBytes(bytes).flatMap { case (data, header) =>
+    Header.fromBytes(Iterator.continually(is.read()).takeWhile(_ != -1)).flatMap { case (data, header) =>
       val pixels = header.magic match {
         case "P3" =>
-          loadPixels(loadStringPixel _, data)
+          loadPixels(loadStringPixel, data)
         case "P6" =>
-          loadPixels(loadBinaryPixel _, data)
+          loadPixels(loadBinaryPixel, data)
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }

@@ -22,7 +22,7 @@ object ImageSpec extends BasicTestSuite {
       assert(imageBin.isSuccess)
       assert(imageBin.get.width == 128)
       assert(imageBin.get.height == 128)
-      val imageTxt = Image.loadPpmImage(Resource("scala.ppm"))
+      val imageTxt = Image.loadPpmImage(Resource("scala2.ppm"))
       assert(imageTxt.isSuccess)
       assert(imageTxt.get.width == 128)
       assert(imageTxt.get.height == 128)

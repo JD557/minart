@@ -5,6 +5,7 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.helpers.IteratorHelpers._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for QOI files.
@@ -29,7 +30,7 @@ object QoiImageLoader extends ImageLoader {
       colorspace: Byte
   )
   object Header {
-    def fromBytes(bytes: LazyList[Int]): ParseResult[Header] = (
+    def fromBytes(bytes: Iterator[Int]): ParseResult[Header] = (
       for {
         magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
         width    <- readBENumber(4)
@@ -94,7 +95,7 @@ object QoiImageLoader extends ImageLoader {
           State.pure(OpRun(run + 1))
       }
 
-    def loadOps(bytes: LazyList[Int]): LazyList[Either[String, Op]] =
+    def loadOps(bytes: Iterator[Int]): LazyList[Either[String, Op]] =
       if (bytes.isEmpty) LazyList.empty
       else
         fromBytes.run(bytes) match {
@@ -174,7 +175,7 @@ object QoiImageLoader extends ImageLoader {
   }
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
-    val stream: LazyList[Int] = LazyList.continually(is.read()).takeWhile(_ != -1)
+    val stream: Iterator[Int] = Iterator.continually(is.read()).takeWhile(_ != -1)
     Header.fromBytes(stream).flatMap { case (data, header) =>
       asSurface(Op.loadOps(data), header)
     }
