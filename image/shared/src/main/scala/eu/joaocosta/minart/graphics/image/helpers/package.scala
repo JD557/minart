@@ -60,7 +60,7 @@ package object helpers {
       State.modify(_.drop(n))
 
     val readByte: ParseState[String, Option[Int]] = State { bytes =>
-      val hd = bytes.nextOption
+      val hd = bytes.nextOption()
       bytes -> hd
     }
 
@@ -71,10 +71,10 @@ package object helpers {
 
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
       val buffer = List.newBuilder[Int]
-      var head   = bytes.nextOption
+      var head   = bytes.nextOption()
       while (head.exists(p)) {
         buffer += head.get
-        head = bytes.nextOption
+        head = bytes.nextOption()
       }
       (head.iterator ++ bytes) -> buffer.result()
     }
