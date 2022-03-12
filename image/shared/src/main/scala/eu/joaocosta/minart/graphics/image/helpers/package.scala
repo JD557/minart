@@ -56,25 +56,40 @@ package object helpers {
   }
 
   object IteratorHelpers extends HelpersF[Iterator] {
+    private def nextOption(it: Iterator[Int]): Option[Int] =
+      if (it.hasNext) Some(it.next())
+      else None
+
     def skipBytes(n: Int): ParseState[Nothing, Unit] =
-      State.modify(_.drop(n))
+      State.modify { bytes =>
+        var count = n
+        while (count > 0 && bytes.hasNext) {
+          bytes.next()
+          count -= 1
+        }
+        bytes
+      }
 
     val readByte: ParseState[String, Option[Int]] = State { bytes =>
-      val hd = bytes.nextOption()
-      bytes -> hd
+      (bytes, nextOption(bytes))
     }
 
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
-      val hd = bytes.take(n).toArray
-      bytes -> hd
+      val buffer = Array.newBuilder[Int]
+      var count  = n
+      while (count > 0 && bytes.hasNext) {
+        buffer += bytes.next()
+        count -= 1
+      }
+      bytes -> buffer.result()
     }
 
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
       val buffer = List.newBuilder[Int]
-      var head   = bytes.nextOption()
+      var head   = nextOption(bytes)
       while (head.exists(p)) {
         buffer += head.get
-        head = bytes.nextOption()
+        head = nextOption(bytes)
       }
       (head.iterator ++ bytes) -> buffer.result()
     }
