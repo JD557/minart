@@ -27,12 +27,14 @@ class SdlCanvas() extends SurfaceBackedCanvas {
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
   private[this] var rawPointerPos: (Int, Int)    = _
-  private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).map { case (x, y) =>
-    PointerInput.Position(
-      (x - extendedSettings.canvasX) / settings.scale,
-      (y - extendedSettings.canvasY) / settings.scale
-    )
-  }
+  private[this] def cleanPointerPos: Option[PointerInput.Position] = if (isCreated())
+    Option(rawPointerPos).map { case (x, y) =>
+      PointerInput.Position(
+        (x - extendedSettings.canvasX) / settings.scale,
+        (y - extendedSettings.canvasY) / settings.scale
+      )
+    }
+  else None
 
   private[this] def handleEvents(): Boolean = {
     val event              = stackalloc[SDL_Event]()
