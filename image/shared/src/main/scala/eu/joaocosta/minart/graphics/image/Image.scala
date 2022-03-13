@@ -49,15 +49,15 @@ object Image {
   /** Loads an image in the PPM format.
     */
   def loadPpmImage(resource: Resource): Try[RamSurface] =
-    loadImage(PpmImageLoader, resource)
+    loadImage(PpmImageLoader.defaultLoader, resource)
 
   /** Loads an image in the BMP format.
     */
   def loadBmpImage(resource: Resource): Try[RamSurface] =
-    loadImage(BmpImageLoader, resource)
+    loadImage(BmpImageLoader.defaultLoader, resource)
 
   /** Loads an image in the QOI format.
     */
   def loadQoiImage(resource: Resource): Try[RamSurface] =
-    loadImage(QoiImageLoader, resource)
+    loadImage(QoiImageLoader.defaultLoader, resource)
 }
