@@ -43,4 +43,18 @@ trait MutableSurfaceTests extends BasicTestSuite {
     surface.fill(Color(3, 2, 1))
     assert(surface.getPixels().flatten.forall(_ == Color(3, 2, 1)))
   }
+
+  test("Combine two surfaces without blowing up") {
+    val source = surface.toRamSurface()
+
+    surface.blit(source)(0, 0)
+    surface.blit(source)(-1, -1)
+    surface.blit(source)(1, 1)
+
+    surface.blit(source)(0, 0, 1, 1)
+    surface.blit(source)(0, 0, -1, -1)
+
+    surface.blit(source)(0, 0, 0, 0, -1, -1)
+    surface.blit(source)(0, 0, 0, 0, 2 * source.width, 2 * source.height)
+  }
 }
