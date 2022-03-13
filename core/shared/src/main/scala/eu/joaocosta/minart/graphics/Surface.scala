@@ -70,30 +70,37 @@ object Surface {
     def blit(
         that: Surface
     )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-      val minYClip = -y
-      val minXClip = -x
-      val maxYClip = this.height - y
-      val maxXClip = this.width - x
+      // Handle clips with a negative origin
+      if (cx < 0) blit(that)(x - cx, y, 0, cy, cw + cx, ch)
+      else if (cy < 0) blit(that)(x, y - cy, cx, 0, cw, ch + cy)
+      else {
+        // Where can we start reading the source (handle cases where x or y are negative)
+        val minX = math.max(0, -x)
+        val minY = math.max(0, -y)
 
-      val minY = math.max(0, minYClip)
-      val maxY = math.min(ch, maxYClip)
-      val minX = math.max(0, minXClip)
-      val maxX = math.min(cw, maxXClip)
+        // How far can we read from the source (adjusts cw/ch to cx/cy)
+        val clampCw = math.max(0, math.min(cw, that.width - cx))
+        val clampCh = math.max(0, math.min(ch, that.height - cy))
 
-      val thatPixels = that.getPixels()
+        // How far can we read from the source (handle cases where x or y are positive)
+        val maxX = math.min(clampCw, this.width - x)
+        val maxY = math.min(clampCh, this.height - y)
 
-      var dy = minY
-      while (dy < maxY) {
-        val line  = thatPixels(dy + cy)
-        val destY = dy + y
-        var dx    = minX
-        while (dx < maxX) {
-          val destX = dx + x
-          val color = line(dx + cx)
-          putPixel(destX, destY, color)
-          dx += 1
+        val thatPixels = that.getPixels()
+
+        var dy = minY
+        while (dy < maxY) {
+          val line  = thatPixels(dy + cy)
+          val destY = dy + y
+          var dx    = minX
+          while (dx < maxX) {
+            val destX = dx + x
+            val color = line(dx + cx)
+            putPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
         }
-        dy += 1
       }
     }
 
@@ -112,30 +119,37 @@ object Surface {
         that: Surface,
         mask: Color
     )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-      val minYClip = -y
-      val minXClip = -x
-      val maxYClip = this.height - y
-      val maxXClip = this.width - x
+      // Handle clips with a negative origin
+      if (cx < 0) blitWithMask(that, mask)(x - cx, y, 0, cy, cw + cx, ch)
+      else if (cy < 0) blitWithMask(that, mask)(x, y - cy, cx, 0, cw, ch + cy)
+      else {
+        // Where can we start reading the source (handle cases where x or y are negative)
+        val minX = math.max(0, -x)
+        val minY = math.max(0, -y)
 
-      val minY = math.max(0, minYClip)
-      val maxY = math.min(ch, maxYClip)
-      val minX = math.max(0, minXClip)
-      val maxX = math.min(cw, maxXClip)
+        // How far can we read from the source (adjusts cw/ch to cx/cy)
+        val clampCw = math.max(0, math.min(cw, that.width - cx))
+        val clampCh = math.max(0, math.min(ch, that.height - cy))
 
-      val thatPixels = that.getPixels()
+        // How far can we read from the source (handle cases where x or y are positive)
+        val maxX = math.min(clampCw, this.width - x)
+        val maxY = math.min(clampCh, this.height - y)
 
-      var dy = minY
-      while (dy < maxY) {
-        val line  = thatPixels(dy + cy)
-        val destY = dy + y
-        var dx    = minX
-        while (dx < maxX) {
-          val destX = dx + x
-          val color = line(dx + cx)
-          if (color != mask) putPixel(destX, destY, color)
-          dx += 1
+        val thatPixels = that.getPixels()
+
+        var dy = minY
+        while (dy < maxY) {
+          val line  = thatPixels(dy + cy)
+          val destY = dy + y
+          var dx    = minX
+          while (dx < maxX) {
+            val destX = dx + x
+            val color = line(dx + cx)
+            if (color != mask) putPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
         }
-        dy += 1
       }
     }
   }
