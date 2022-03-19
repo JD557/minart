@@ -133,7 +133,11 @@ object Surface {
         val maxX = math.min(clampCw, this.width - x)
         val maxY = math.min(clampCh, this.height - y)
 
-        unsafeBlit(that, mask, x, y, cx, cy, minX, minY, maxX, maxY)
+        if (that.isInstanceOf[SurfaceView]) {
+          unsafeBlit(that.view.clip(cx, cy, clampCw, clampCh), mask, x, y, 0, 0, 0, 0, clampCw, clampCh)
+        } else {
+          unsafeBlit(that, mask, x, y, cx, cy, minX, minY, maxX, maxY)
+        }
       }
     }
 
