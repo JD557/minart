@@ -32,7 +32,7 @@ object Blitting {
         (canvas, state) => {
           renderBackground(canvas)
           canvas.blit(image)(state, state, 4, 4, 8, 8)
-          canvas.blitWithMask(image, Color(0, 0, 0))((128 - 16 - 1) - state, state, 4, 4, 8, 8)
+          canvas.blit(image, Some(Color(0, 0, 0)))((128 - 16 - 1) - state, state, 4, 4, 8, 8)
           canvas.redraw()
           (state + 1) % (128 - 16)
         },
