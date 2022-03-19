@@ -57,6 +57,51 @@ object Surface {
       */
     def fill(color: Color): Unit
 
+    private def unsafeBlit(
+        that: Surface,
+        mask: Option[Color],
+        x: Int,
+        y: Int,
+        cx: Int,
+        cy: Int,
+        minX: Int,
+        minY: Int,
+        maxX: Int,
+        maxY: Int
+    ): Unit = {
+      val thatPixels = that.getPixels()
+      var dy         = minY
+      mask match {
+        case None =>
+          while (dy < maxY) {
+            val line  = thatPixels(dy + cy)
+            val destY = dy + y
+            var dx    = minX
+            while (dx < maxX) {
+              val destX = dx + x
+              val color = line(dx + cx)
+              putPixel(destX, destY, color)
+              dx += 1
+            }
+            dy += 1
+          }
+        case Some(maskColor) =>
+          while (dy < maxY) {
+            val line  = thatPixels(dy + cy)
+            val destY = dy + y
+            var dx    = minX
+            while (dx < maxX) {
+              val destX = dx + x
+              val color = line(dx + cx)
+              if (color != maskColor) putPixel(destX, destY, color)
+              putPixel(destX, destY, color)
+              dx += 1
+            }
+            dy += 1
+          }
+      }
+    }
+
     /** Draws a surface on top of this surface.
       *
       * @param that surface to draw
@@ -88,38 +133,7 @@ object Surface {
         val maxX = math.min(clampCw, this.width - x)
         val maxY = math.min(clampCh, this.height - y)
 
-        val thatPixels = that.getPixels()
-
-        var dy = minY
-        mask match {
-          case None =>
-            while (dy < maxY) {
-              val line  = thatPixels(dy + cy)
-              val destY = dy + y
-              var dx    = minX
-              while (dx < maxX) {
-                val destX = dx + x
-                val color = line(dx + cx)
-                putPixel(destX, destY, color)
-                dx += 1
-              }
-              dy += 1
-            }
-          case Some(maskColor) =>
-            while (dy < maxY) {
-              val line  = thatPixels(dy + cy)
-              val destY = dy + y
-              var dx    = minX
-              while (dx < maxX) {
-                val destX = dx + x
-                val color = line(dx + cx)
-                if (color != maskColor) putPixel(destX, destY, color)
-                putPixel(destX, destY, color)
-                dx += 1
-              }
-              dy += 1
-            }
-        }
+        unsafeBlit(that, mask, x, y, cx, cy, minX, minY, maxX, maxY)
       }
     }
 
