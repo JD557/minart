@@ -2,13 +2,13 @@ package eu.joaocosta.minart.backend
 
 import org.scalajs.dom.ImageData
 
-import eu.joaocosta.minart.graphics.{Color, Surface}
+import eu.joaocosta.minart.graphics.{Color, MutableSurface}
 
 /** A mutable surface backed by an ImageData.
   *
   *  @param imageData imageData that backs this surface
   */
-final class ImageDataSurface(val data: ImageData) extends Surface.MutableSurface {
+final class ImageDataSurface(val data: ImageData) extends MutableSurface {
 
   val width: Int      = data.width
   val height: Int     = data.height

@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.graphics.Surface._
+import eu.joaocosta.minart.graphics.MutableSurface
 
 /** A mutable surface stored in RAM.
   *

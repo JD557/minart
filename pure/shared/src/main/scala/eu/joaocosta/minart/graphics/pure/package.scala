@@ -5,8 +5,8 @@ import eu.joaocosta.minart.runtime.pure.{IOOps, RIO}
 package object pure {
   type SurfaceIO[+A] = RIO[Surface, A]
   object SurfaceIO extends SurfaceIOOps with IOOps[Surface]
-  type MSurfaceIO[+A] = RIO[Surface.MutableSurface, A]
-  object MSurfaceIO extends MSurfaceIOOps with IOOps[Surface.MutableSurface]
+  type MSurfaceIO[+A] = RIO[MutableSurface, A]
+  object MSurfaceIO extends MSurfaceIOOps with IOOps[MutableSurface]
   type CanvasIO[+A] = RIO[Canvas, A]
   object CanvasIO extends CanvasIOOps with IOOps[Canvas]
 

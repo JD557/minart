@@ -8,7 +8,7 @@ import eu.joaocosta.minart.runtime.pure._
 trait MSurfaceIOOps extends SurfaceIOOps {
 
   /** Wrap mutable surface operations in a  [[MSurfaceIO]]. */
-  def accessMSurface[A](f: Surface.MutableSurface => A): MSurfaceIO[A] = RIO.access[Surface.MutableSurface, A](f)
+  def accessMSurface[A](f: MutableSurface => A): MSurfaceIO[A] = RIO.access[MutableSurface, A](f)
 
   /** Put a pixel in the surface with a certain color.
     *
