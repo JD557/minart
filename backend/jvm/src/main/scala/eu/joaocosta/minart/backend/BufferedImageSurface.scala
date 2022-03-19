@@ -59,6 +59,6 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
         )
         g.dispose()
       case _ =>
-        super.blit(that)(x, y, cx, cy, cw, ch)
+        super.blit(that, mask)(x, y, cx, cy, cw, ch)
     }
 }

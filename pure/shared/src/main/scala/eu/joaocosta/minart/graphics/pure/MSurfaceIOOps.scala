@@ -39,7 +39,7 @@ trait MSurfaceIOOps extends SurfaceIOOps {
       that: Surface,
       mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): MSurfaceIO[Unit] =
-    accessMSurface(_.blit(that)(x, y, cx, cy, cw, ch))
+    accessMSurface(_.blit(that, mask)(x, y, cx, cy, cw, ch))
 
   /** Draws a surface on top of this surface and masks the pixels with a certain color.
     *

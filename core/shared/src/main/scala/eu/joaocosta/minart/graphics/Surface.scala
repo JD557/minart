@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import scala.annotation.tailrec
+
 /** A Surface is an object that contains a set of pixels.
   */
 trait Surface {
@@ -64,19 +66,17 @@ object Surface {
         y: Int,
         cx: Int,
         cy: Int,
-        minX: Int,
-        minY: Int,
         maxX: Int,
         maxY: Int
     ): Unit = {
       val thatPixels = that.getPixels()
-      var dy         = minY
+      var dy         = 0
       mask match {
         case None =>
           while (dy < maxY) {
             val line  = thatPixels(dy + cy)
             val destY = dy + y
-            var dx    = minX
+            var dx    = 0
             while (dx < maxX) {
               val destX = dx + x
               val color = line(dx + cx)
@@ -89,16 +89,37 @@ object Surface {
           while (dy < maxY) {
             val line  = thatPixels(dy + cy)
             val destY = dy + y
-            var dx    = minX
+            var dx    = 0
             while (dx < maxX) {
               val destX = dx + x
               val color = line(dx + cx)
               if (color != maskColor) putPixel(destX, destY, color)
-              putPixel(destX, destY, color)
               dx += 1
             }
             dy += 1
           }
+      }
+    }
+
+    @tailrec
+    private def fullBlit(that: Surface, mask: Option[Color], x: Int, y: Int, cx: Int, cy: Int, cw: Int, ch: Int)
+        : Unit = {
+      // Handle negative offsets
+      if (x < 0) fullBlit(that, mask, 0, y, cx - x, cy, cw + x, ch)
+      else if (y < 0) fullBlit(that, mask, x, 0, cx, cy - y, cw, ch + y)
+      else if (cx < 0) fullBlit(that, mask, x - cx, y, 0, cy, cw + cx, ch)
+      else if (cy < 0) fullBlit(that, mask, x, y - cy, cx, 0, cw, ch + cy)
+      else {
+        val maxX = math.min(cw, math.min(that.width - cx, this.width - x))
+        val maxY = math.min(ch, math.min(that.height - cy, this.height - y))
+
+        if (maxX > 0 && maxY > 0) {
+          if (that.isInstanceOf[SurfaceView]) {
+            unsafeBlit(that.view.clip(cx, cy, maxX, maxY), mask, x, y, 0, 0, maxX, maxY)
+          } else {
+            unsafeBlit(that, mask, x, y, cx, cy, maxX, maxY)
+          }
+        }
       }
     }
 
@@ -117,28 +138,7 @@ object Surface {
         that: Surface,
         mask: Option[Color] = None
     )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-      // Handle clips with a negative origin
-      if (cx < 0) blit(that)(x - cx, y, 0, cy, cw + cx, ch)
-      else if (cy < 0) blit(that)(x, y - cy, cx, 0, cw, ch + cy)
-      else {
-        // Where can we start reading the source (handle cases where x or y are negative)
-        val minX = math.max(0, -x)
-        val minY = math.max(0, -y)
-
-        // How far can we read from the source (adjusts cw/ch to cx/cy)
-        val clampCw = math.max(0, math.min(cw, that.width - cx))
-        val clampCh = math.max(0, math.min(ch, that.height - cy))
-
-        // How far can we read from the source (handle cases where x or y are positive)
-        val maxX = math.min(clampCw, this.width - x)
-        val maxY = math.min(clampCh, this.height - y)
-
-        if (that.isInstanceOf[SurfaceView]) {
-          unsafeBlit(that.view.clip(cx, cy, clampCw, clampCh), mask, x, y, 0, 0, 0, 0, clampCw, clampCh)
-        } else {
-          unsafeBlit(that, mask, x, y, cx, cy, minX, minY, maxX, maxY)
-        }
-      }
+      fullBlit(that, mask, x, y, cx, cy, cw, ch)
     }
 
     /** Draws a surface on top of this surface and masks the pixels with a certain color.
