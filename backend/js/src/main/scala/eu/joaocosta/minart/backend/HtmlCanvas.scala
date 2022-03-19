@@ -4,7 +4,7 @@ import scala.scalajs.js
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
-import org.scalajs.dom.{CanvasRenderingContext2D, Event, ImageBitmap, KeyboardEvent, PointerEvent}
+import org.scalajs.dom.{Event, ImageBitmap, KeyboardEvent, PointerEvent}
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
@@ -15,6 +15,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 
+  private[this] var containerDiv: dom.HTMLDivElement  = _
   private[this] var canvas: JsCanvas                  = _
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _
@@ -25,14 +26,16 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
   private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
   private[this] var rawPointerPos: (Int, Int)    = _
-  private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).map { case (x, y) =>
-    val (offsetX, offsetY) =
-      if (settings.fullScreen) (extendedSettings.canvasX, extendedSettings.canvasY)
-      else {
-        val canvasRect = canvas.getBoundingClientRect()
-        (canvasRect.left.toInt, canvasRect.top.toInt)
-      }
-    PointerInput.Position((x - offsetX) / settings.scale, (y - offsetY) / settings.scale)
+  private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).flatMap { case (x, y) =>
+    val (offsetX, offsetY) = {
+      val canvasRect = canvas.getBoundingClientRect()
+      (canvasRect.left.toInt, canvasRect.top.toInt)
+    }
+    val xx = (x - offsetX) / settings.scale
+    val yy = (y - offsetY) / settings.scale
+    if (xx >= 0 && yy >= 0 && xx < settings.width && yy < settings.height)
+      Some(PointerInput.Position(xx, yy))
+    else None
   }
 
   // Initialization
@@ -43,8 +46,9 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
+    containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
-    ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+    ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
       "fullscreenchange",
@@ -64,17 +68,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
     def handlePress()   = { pointerInput = pointerInput.move(cleanPointerPos).press }
     def handleRelease() = { pointerInput = pointerInput.move(cleanPointerPos).release }
     def handleMove(x: Int, y: Int) = {
-      val (offsetX, offsetY) =
-        if (settings.fullScreen) (extendedSettings.canvasX, extendedSettings.canvasY)
-        else (0, 0)
-      if (
-        x >= offsetX && y >= offsetY &&
-        x < extendedSettings.scaledWidth + offsetX && y < extendedSettings.scaledHeight + offsetY
-      ) {
-        rawPointerPos = (x, y)
-      } else {
-        rawPointerPos = null
-      }
+      rawPointerPos = (x, y)
     }
     dom.document.addEventListener[PointerEvent](
       "pointerdown",
@@ -100,23 +94,30 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
+    val clearColorStr = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
     extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
-    canvas.width = if (newSettings.fullScreen) extendedSettings.windowWidth else newSettings.width
-    canvas.height = if (newSettings.fullScreen) extendedSettings.windowHeight else newSettings.height
+    canvas.width = newSettings.width
+    canvas.height = newSettings.height
     canvas.style =
       s"width:${extendedSettings.scaledWidth}px;height:${extendedSettings.scaledHeight}px;image-rendering:pixelated;"
     ctx.imageSmoothingEnabled = false
-    childNode = dom.document.body.appendChild(canvas)
+
+    containerDiv.style =
+      if (newSettings.fullScreen)
+        s"display:flex;justify-content:center;align-items:center;background:$clearColorStr;"
+      else ""
+    containerDiv.appendChild(canvas)
+    childNode = dom.document.body.appendChild(containerDiv)
     surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
 
     if (newSettings.fullScreen) {
-      canvas.requestFullscreen()
+      containerDiv.requestFullscreen()
     } else if (dom.document.fullscreenElement != null && !js.isUndefined(dom.document.fullscreenElement)) {
       dom.document.exitFullscreen()
     }
-    ctx.fillStyle = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
-    ctx.fillRect(0, 0, extendedSettings.windowWidth, extendedSettings.windowHeight)
+    ctx.fillStyle = clearColorStr
+    ctx.fillRect(0, 0, newSettings.width, newSettings.height)
     clear(Set(Canvas.Buffer.Backbuffer))
   }
 
@@ -142,26 +143,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def redraw(): Unit = {
-    if (!settings.fullScreen) {
-      ctx.putImageData(surface.data, 0, 0)
-    } else if (settings.scale == 1) {
-      ctx.putImageData(surface.data, extendedSettings.canvasX, extendedSettings.canvasY)
-    } else {
-      dom.window
-        .createImageBitmap(surface.data)
-        .`then`[Unit] { (bitmap: ImageBitmap) =>
-          ctx
-            .asInstanceOf[js.Dynamic]
-            .drawImage(
-              bitmap,
-              extendedSettings.canvasX,
-              extendedSettings.canvasY,
-              extendedSettings.scaledWidth,
-              extendedSettings.scaledHeight
-            )
-          js.|.from[Unit, Unit, js.Thenable[Unit]](())
-        }
-    }
+    ctx.putImageData(surface.data, 0, 0)
   }
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
