@@ -65,14 +65,15 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurfac
   }
 
   override def blit(
-      that: Surface
+      that: Surface,
+      mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = that match {
-    case img: SdlSurface =>
+    case img: SdlSurface if mask.isEmpty =>
       val srcRect = stackalloc[SDL_Rect]().init(cx, cy, cw, ch)
       val dstRect = stackalloc[SDL_Rect]().init(x, y, cw, ch)
       SDL_UpperBlit(img.data, srcRect, this.data, dstRect)
     case _ =>
-      super.blit(that)(x, y, cx, cy, cw, ch)
+      super.blit(that, mask)(x, y, cx, cy, cw, ch)
   }
 
   def close(): Unit = {

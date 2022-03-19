@@ -57,4 +57,18 @@ trait MutableSurfaceTests extends BasicTestSuite {
     surface.blit(source)(0, 0, 0, 0, -1, -1)
     surface.blit(source)(0, 0, 0, 0, 2 * source.width, 2 * source.height)
   }
+
+  test("Combine a surface with a surface view without blowing up") {
+    val source = surface.toRamSurface().view
+
+    surface.blit(source)(0, 0)
+    surface.blit(source)(-1, -1)
+    surface.blit(source)(1, 1)
+
+    surface.blit(source)(0, 0, 1, 1)
+    surface.blit(source)(0, 0, -1, -1)
+
+    surface.blit(source)(0, 0, 0, 0, -1, -1)
+    surface.blit(source)(0, 0, 0, 0, 2 * source.width, 2 * source.height)
+  }
 }

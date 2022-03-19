@@ -39,10 +39,11 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
   }
 
   override def blit(
-      that: Surface
+      that: Surface,
+      mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
     that match {
-      case img: BufferedImageSurface =>
+      case img: BufferedImageSurface if mask.isEmpty =>
         val g = bufferedImage.createGraphics()
         g.drawImage(
           img.bufferedImage,
@@ -58,6 +59,6 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surfa
         )
         g.dispose()
       case _ =>
-        super.blit(that)(x, y, cx, cy, cw, ch)
+        super.blit(that, mask)(x, y, cx, cy, cw, ch)
     }
 }

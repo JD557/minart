@@ -27,6 +27,7 @@ trait MSurfaceIOOps extends SurfaceIOOps {
   /** Draws a surface on top of this surface.
     *
     * @param that surface to draw
+    * @param mask color to use as a mask (pixels with this color won't be merged)
     * @param x leftmost pixel on the destination surface
     * @param y topmost pixel on the destination surface
     * @param cx leftmost pixel on the source surface
@@ -35,9 +36,10 @@ trait MSurfaceIOOps extends SurfaceIOOps {
     * @param ch clip height of the source surface
     */
   def blit(
-      that: Surface
+      that: Surface,
+      mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): MSurfaceIO[Unit] =
-    accessMSurface(_.blit(that)(x, y, cx, cy, cw, ch))
+    accessMSurface(_.blit(that, mask)(x, y, cx, cy, cw, ch))
 
   /** Draws a surface on top of this surface and masks the pixels with a certain color.
     *
@@ -50,6 +52,7 @@ trait MSurfaceIOOps extends SurfaceIOOps {
     * @param cw clip width of the source surface
     * @param ch clip height of the source surface
     */
+  @deprecated("Use blit instead")
   def blitWithMask(
       that: Surface,
       mask: Color

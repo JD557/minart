@@ -13,10 +13,13 @@ trait SurfaceView extends Surface {
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     new SurfaceView.ClippedView(this, cx, cy, cw, ch)
 
+  def getPixels(): Vector[Array[Color]] =
+    Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
+
   override def view: SurfaceView = this
 
   override def toRamSurface(): RamSurface =
-    new RamSurface(Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten))
+    new RamSurface(getPixels())
 }
 
 object SurfaceView {
@@ -24,10 +27,10 @@ object SurfaceView {
   /** A view over a surface that does nothing.
     */
   class IdentityView(inner: Surface) extends SurfaceView {
-    def width: Int                              = inner.width
-    def height: Int                             = inner.height
-    def getPixel(x: Int, y: Int): Option[Color] = inner.getPixel(x, y)
-    def getPixels(): Vector[Array[Color]]       = inner.getPixels()
+    def width: Int                                 = inner.width
+    def height: Int                                = inner.height
+    def getPixel(x: Int, y: Int): Option[Color]    = inner.getPixel(x, y)
+    override def getPixels(): Vector[Array[Color]] = inner.getPixels()
   }
 
   /** A view over a surface that maps all colors.
@@ -36,7 +39,6 @@ object SurfaceView {
     def width: Int                              = inner.width
     def height: Int                             = inner.height
     def getPixel(x: Int, y: Int): Option[Color] = inner.getPixel(x, y).map(f)
-    def getPixels(): Vector[Array[Color]]       = inner.getPixels().map(_.map(f))
   }
 
   /** A view over a surface that contramaps the positions.
@@ -47,8 +49,6 @@ object SurfaceView {
       val (xx, yy) = f(x, y)
       Some(inner.getPixel(xx, yy).getOrElse(fallback))
     } else None
-    def getPixels(): Vector[Array[Color]] =
-      Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
   }
 
   /** A view that combines two surfaces.
@@ -60,8 +60,6 @@ object SurfaceView {
       pixelA <- innerA.getPixel(x, y)
       pixelB <- innerB.getPixel(x, y)
     } yield f(pixelA, pixelB)
-    def getPixels(): Vector[Array[Color]] =
-      Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
   }
 
   /** A clipped view over a surface.
@@ -71,7 +69,5 @@ object SurfaceView {
     def height: Int = math.min(ch, inner.height - cy)
     def getPixel(x: Int, y: Int): Option[Color] =
       inner.getPixel(cx + x, cy + y)
-    def getPixels(): Vector[Array[Color]] =
-      inner.getPixels().slice(cy, cy + ch).map(_.slice(cx, cx + cw))
   }
 }
