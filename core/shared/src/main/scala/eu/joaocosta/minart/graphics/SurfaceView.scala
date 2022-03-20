@@ -6,12 +6,28 @@ package eu.joaocosta.minart.graphics
   *  This can have a performance impact. However, a new RAM surface with the operations already applied can be constructed using `toRamSurface`
   */
 trait SurfaceView extends Surface {
+
+  /** Maps the colors from this surface view. */
   final def map(f: Color => Color): SurfaceView = new SurfaceView.MapView(this, f)
+
+  /** Contramaps the positions from this surface view. */
   final def contramap(f: (Int, Int) => (Int, Int), fallback: Color = SurfaceView.defaultColor): Plane =
     Plane.fromSurfaceWithFallback(this, fallback).contramap(f)
+
+  /** Combines this view with a surface by combining their colors with the given function. */
   final def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = new SurfaceView.ZipView(this, that, f)
+
+  /** Combines this view with a plane by combining their colors with the given function. */
   final def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView =
     that.zipWith(this, (c1, c2) => f(c2, c1))
+
+  /** Clips this view to a chosen rectangle
+    *
+    * @param cx leftmost pixel on the surface
+    * @param cy topmost pixel on the surface
+    * @param cw clip width
+    * @param ch clip height
+    */
   final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     new SurfaceView.ClippedView(
       (x, y) => this.getPixel(x, y),

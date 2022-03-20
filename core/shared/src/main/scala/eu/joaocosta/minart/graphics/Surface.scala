@@ -10,7 +10,10 @@ trait Surface {
   /** The surface height */
   def height: Int
 
-  /** A view over this surface */
+  /** Returns a view over this surface.
+    *
+    *  Operations performed on a view are executed in a defered fashion.
+    */
   def view: SurfaceView = new SurfaceView.IdentityView(this)
 
   /** Gets the color from the this surface.
