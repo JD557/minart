@@ -6,13 +6,13 @@ package eu.joaocosta.minart.graphics
   *  This can have a performance impact. However, a new RAM surface with the operations already applied can be constructed using `toRamSurface`
   */
 trait SurfaceView extends Surface {
-  def map(f: Color => Color): SurfaceView = new SurfaceView.MapView(this, f)
-  def contramap(f: (Int, Int) => (Int, Int), fallback: Color = Color(0, 0, 0)): Plane =
+  final def map(f: Color => Color): SurfaceView = new SurfaceView.MapView(this, f)
+  final def contramap(f: (Int, Int) => (Int, Int), fallback: Color = SurfaceView.defaultColor): Plane =
     Plane.fromSurfaceWithFallback(this, fallback).contramap(f)
-  def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = new SurfaceView.ZipView(this, that, f)
-  def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView =
+  final def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = new SurfaceView.ZipView(this, that, f)
+  final def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView =
     that.zipWith(this, (c1, c2) => f(c2, c1))
-  def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
+  final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     new SurfaceView.ClippedView(
       (x, y) => this.getPixel(x, y),
       cx,
@@ -22,19 +22,17 @@ trait SurfaceView extends Surface {
     )
 
   def getPixels(): Vector[Array[Color]] =
-    Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y)).flatten)
+    Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y).getOrElse(SurfaceView.defaultColor)))
 
   override def view: SurfaceView = this
-
-  override def toRamSurface(): RamSurface =
-    new RamSurface(getPixels())
 }
 
 object SurfaceView {
+  private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
 
   /** A view over a surface that does nothing.
     */
-  class IdentityView(inner: Surface) extends SurfaceView {
+  final class IdentityView(inner: Surface) extends SurfaceView {
     def width: Int                                 = inner.width
     def height: Int                                = inner.height
     def getPixel(x: Int, y: Int): Option[Color]    = inner.getPixel(x, y)
@@ -43,7 +41,7 @@ object SurfaceView {
 
   /** A view over a surface that maps all colors.
     */
-  class MapView(inner: Surface, f: Color => Color) extends SurfaceView {
+  final class MapView(inner: Surface, f: Color => Color) extends SurfaceView {
     def width: Int                              = inner.width
     def height: Int                             = inner.height
     def getPixel(x: Int, y: Int): Option[Color] = inner.getPixel(x, y).map(f)
@@ -51,7 +49,7 @@ object SurfaceView {
 
   /** A view that combines two surfaces.
     */
-  class ZipView(innerA: Surface, innerB: Surface, f: (Color, Color) => Color) extends SurfaceView {
+  final class ZipView(innerA: Surface, innerB: Surface, f: (Color, Color) => Color) extends SurfaceView {
     def width: Int  = math.min(innerA.width, innerB.width)
     def height: Int = math.min(innerA.height, innerB.height)
     def getPixel(x: Int, y: Int): Option[Color] = for {
@@ -62,7 +60,8 @@ object SurfaceView {
 
   /** A clipped view over a surface or plane.
     */
-  class ClippedView(accessor: (Int, Int) => Option[Color], cx: Int, cy: Int, cw: Int, ch: Int) extends SurfaceView {
+  final class ClippedView(accessor: (Int, Int) => Option[Color], cx: Int, cy: Int, cw: Int, ch: Int)
+      extends SurfaceView {
     def width: Int  = cw
     def height: Int = ch
     def getPixel(x: Int, y: Int): Option[Color] =

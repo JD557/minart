@@ -33,6 +33,5 @@ trait Surface {
   def getPixels(): Vector[Array[Color]]
 
   /** Copies this surface into a new surface stored in RAM */
-  def toRamSurface(): RamSurface =
-    new RamSurface(getPixels())
+  final def toRamSurface(): RamSurface = new RamSurface(getPixels())
 }

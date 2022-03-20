@@ -4,20 +4,20 @@ package eu.joaocosta.minart.graphics
  *
  * Can be clipped to create a surface
  */
-class Plane(generator: (Int, Int) => Color) {
-  def getPixel(x: Int, y: Int): Color = generator(x, y)
-  def map(f: Color => Color): Plane   = new Plane((x, y) => f(generator(x, y)))
+final class Plane private (unboxedGenerator: (Int, Int) => Int) {
+  def getPixel(x: Int, y: Int): Color = Color.fromRGB(unboxedGenerator(x, y))
+  def map(f: Color => Color): Plane   = Plane.fromFunction((x, y) => f(getPixel(x, y)))
   def contramap(f: (Int, Int) => (Int, Int)): Plane = new Plane((x, y) => {
-    val (xx, yy) = f(x, y)
-    generator(xx, yy)
+    val res = f(x, y)
+    unboxedGenerator(res._1, res._2)
   })
-  def zipWith(that: Plane, f: (Color, Color) => Color): Plane = new Plane((x, y) => {
+  def zipWith(that: Plane, f: (Color, Color) => Color): Plane = Plane.fromFunction((x, y) => {
     val c1 = this.getPixel(x, y)
     val c2 = that.getPixel(x, y)
     f(c1, c2)
   })
   def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView =
-    this.clip(0, 0, that.width, that.height).zipWith(that, f)
+    this.toSurfaceView(that.width, that.height).zipWith(that, f)
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     new SurfaceView.ClippedView((x, y) => Some(this.getPixel(x, y)), cx, cy, cw, ch)
   def toSurfaceView(width: Int, height: Int): SurfaceView =
@@ -27,9 +27,11 @@ class Plane(generator: (Int, Int) => Color) {
 }
 
 object Plane {
-  def fromFunction(generator: (Int, Int) => Color): Plane = new Plane(generator)
+  private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
+
+  def fromFunction(generator: (Int, Int) => Color): Plane = new Plane((x, y) => generator(x, y).argb)
   def fromSurfaceWithFallback(surface: Surface, fallback: Color): Plane =
-    new Plane((x, y) => surface.getPixel(x, y).getOrElse(fallback))
+    new Plane((x, y) => surface.getPixel(x, y).getOrElse(fallback).argb)
   def fromSurfaceWithRepetition(surface: Surface): Plane =
     new Plane((x, y) =>
       surface
@@ -37,6 +39,7 @@ object Plane {
           math.floorMod(x, surface.width),
           math.floorMod(y, surface.height)
         )
-        .getOrElse(Color(0, 0, 0))
+        .getOrElse(defaultColor)
+        .argb
     )
 }
