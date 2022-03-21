@@ -12,7 +12,7 @@ object Settings {
 
   def main(args: Array[String]): Unit = {
     ImpureRenderLoop
-      .infiniteRenderLoop(
+      .statelessRenderLoop(
         c => {
           val keyboardInput = c.getKeyboardInput()
           c.clear()
@@ -29,6 +29,7 @@ object Settings {
           c.redraw()
         },
         LoopFrequency.Uncapped
-      )(settingsA)
+      )
+      .run(settingsA)
   }
 }

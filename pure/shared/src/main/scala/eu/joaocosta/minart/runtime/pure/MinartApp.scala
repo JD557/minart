@@ -17,7 +17,8 @@ trait MinartApp {
 
   def main(args: Array[String]): Unit = {
     PureRenderLoop
-      .finiteRenderLoop[State](renderFrame, terminateWhen, frameRate)(
+      .statefulRenderLoop[State](renderFrame, frameRate, terminateWhen)
+      .run(
         loopRunner,
         canvasManager,
         canvasSettings,

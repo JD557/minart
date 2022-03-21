@@ -27,7 +27,7 @@ object Fire {
     }
 
     ImpureRenderLoop
-      .infiniteRenderLoop(
+      .statelessRenderLoop(
         canvas => {
           val keys = canvas.getKeyboardInput()
           if (keys.isDown(KeyboardInput.Key.Up)) temperatureMod = math.min(temperatureMod + 0.1, 1.0)
@@ -61,6 +61,7 @@ object Fire {
           canvas.redraw()
         },
         LoopFrequency.hz60
-      )(canvasSettings)
+      )
+      .run(canvasSettings)
   }
 }

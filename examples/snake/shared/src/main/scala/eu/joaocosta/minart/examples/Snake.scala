@@ -64,7 +64,7 @@ object Snake {
     val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canvasSettings.width)(0)))
 
     ImpureRenderLoop
-      .infiniteRenderLoop[GameState](
+      .statefulRenderLoop[GameState](
         (c, state) => {
           c.clear()
 
@@ -82,7 +82,8 @@ object Snake {
           else state.updateSnakeDir(c.getKeyboardInput()).nextState
         },
         LoopFrequency.fromHz(15)
-      )(
+      )
+      .run(
         canvasSettings,
         initialState
       )

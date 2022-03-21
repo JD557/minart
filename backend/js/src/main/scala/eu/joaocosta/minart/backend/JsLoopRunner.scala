@@ -4,7 +4,6 @@ import scala.scalajs.js.{isUndefined, timers}
 
 import org.scalajs.dom
 
-import eu.joaocosta.minart.runtime.Loop._
 import eu.joaocosta.minart.runtime._
 
 /** Loop runner for the JavaScript backend.
@@ -17,13 +16,13 @@ object JsLoopRunner extends LoopRunner {
       terminateWhen: S => Boolean,
       frequency: LoopFrequency,
       cleanup: () => Unit
-  ): StatefulLoop[S] = {
+  ): Loop[S] = {
     val iterationMillis = frequency match {
       case LoopFrequency.Uncapped         => 0
       case LoopFrequency.LoopDuration(ms) => ms
     }
-    new StatefulLoop[S] {
-      def apply(initialState: S) = {
+    new Loop[S] {
+      def run(initialState: S) = {
         def finiteLoopAux(state: S): Unit = {
           val startTime = System.currentTimeMillis()
           val newState  = operation(state)
@@ -39,7 +38,7 @@ object JsLoopRunner extends LoopRunner {
     }
   }
 
-  def singleRun(operation: () => Unit, cleanup: () => Unit): StatelessLoop = new StatelessLoop {
-    def apply() = operation()
+  def singleRun(operation: () => Unit, cleanup: () => Unit): Loop[Unit] = new Loop[Unit] {
+    def run(initialState: Unit) = operation()
   }
 }

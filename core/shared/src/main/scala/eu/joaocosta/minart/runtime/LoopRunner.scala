@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.runtime
 
 import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.runtime.Loop._
+import eu.joaocosta.minart.runtime.Loop
 
 /** Abstraction that allows to run loops at a certain frequency in a platforrm agnostic way.
   *
@@ -23,14 +23,14 @@ trait LoopRunner {
       terminateWhen: S => Boolean,
       frequency: LoopFrequency,
       cleanup: () => Unit
-  ): StatefulLoop[S]
+  ): Loop[S]
 
   /** Runs a single operation.
     *
     * @param operation operation to perform
     * @param cleanup cleanup procedure to run when the operation is finished
     */
-  def singleRun(operation: () => Unit, cleanup: () => Unit): StatelessLoop
+  def singleRun(operation: () => Unit, cleanup: () => Unit): Loop[Unit]
 }
 
 object LoopRunner {

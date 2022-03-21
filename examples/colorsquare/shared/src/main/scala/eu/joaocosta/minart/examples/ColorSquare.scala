@@ -18,6 +18,7 @@ object ColorSquare {
           c.putPixel(x, y, color)
         }
         c.redraw()
-      })(canvasSettings)
+      })
+      .run(canvasSettings)
   }
 }
