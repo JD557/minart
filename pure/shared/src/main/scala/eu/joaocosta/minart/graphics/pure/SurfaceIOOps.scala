@@ -10,6 +10,18 @@ trait SurfaceIOOps {
   /** Wrap surface operations in a  [[SurfaceIO]]. */
   def accessSurface[A](f: Surface => A): SurfaceIO[A] = RIO.access[Surface, A](f)
 
+  /** Returns the surfaace width */
+  val width: SurfaceIO[Int] = accessSurface(_.width)
+
+  /** Returns the surfaace height */
+  val height: SurfaceIO[Int] = accessSurface(_.height)
+
+  /** Returns a view over this surface.
+    *
+    *  Operations performed on a view are executed in a defered fashion.
+    */
+  val view: SurfaceIO[SurfaceView] = accessSurface(_.view)
+
   /** Gets the color from the this surface.
     * This operation can be perfomance intensive, so it might be worthwile
     * to either use `getPixels` to fetch multiple pixels at the same time or

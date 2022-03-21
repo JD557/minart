@@ -6,13 +6,13 @@ import scala.scalanative.unsigned._
 import sdl2.Extras._
 import sdl2.SDL._
 
-import eu.joaocosta.minart.graphics.{Color, Surface}
+import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
 
 /** Mutabe surface backed by an SDL surface.
   *
   * This class assumes to be the only owner of the surface, and will free the surface when garbage collected.
   */
-final class SdlSurface(val data: Ptr[SDL_Surface]) extends Surface.MutableSurface with AutoCloseable {
+final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with AutoCloseable {
 
   val width: Int       = data.w
   val height: Int      = data.h

@@ -34,8 +34,8 @@ object SurfaceViewSpec extends BasicTestSuite {
   }
 
   test("The contramap view updates the positions") {
-    val newSurface     = surface.view.contramap((x, y) => (y, x), surface.height, surface.width).toRamSurface()
-    val newPixels      = newSurface.getPixels()
+    val newSurface = surface.view.contramap((x, y) => (y, x)).clip(0, 0, surface.height, surface.width).toRamSurface()
+    val newPixels  = newSurface.getPixels()
     val expectedPixels = originalPixels.transpose
 
     assert(newSurface.width == surface.height)

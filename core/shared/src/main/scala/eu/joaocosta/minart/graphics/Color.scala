@@ -16,7 +16,7 @@ object Color {
   def apply(r: Int, g: Int, b: Int): Color =
     new Color((255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255))
 
-  def fromRGB(rgb: Int): Color =
+  @inline def fromRGB(rgb: Int): Color =
     new Color(0xff000000 | rgb)
 
   def unapply(color: Color): Some[(Int, Int, Int)] =

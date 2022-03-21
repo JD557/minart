@@ -7,7 +7,7 @@ import eu.joaocosta.minart.runtime._
 
 trait MutableSurfaceTests extends BasicTestSuite {
 
-  def surface: Surface.MutableSurface
+  def surface: MutableSurface
 
   test("Return the correct number of pixels") {
     val pixels = surface.getPixels()

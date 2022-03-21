@@ -2,11 +2,11 @@ package eu.joaocosta.minart.backend
 
 import java.awt.image.{BufferedImage, DataBufferInt}
 
-import eu.joaocosta.minart.graphics.{Color, Surface}
+import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
 
 /** Mutable image surface backed by an AWT Buffered Image.
   */
-final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Surface.MutableSurface {
+final class BufferedImageSurface(val bufferedImage: BufferedImage) extends MutableSurface {
   val width               = bufferedImage.getWidth()
   val height              = bufferedImage.getHeight()
   private val imagePixels = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]

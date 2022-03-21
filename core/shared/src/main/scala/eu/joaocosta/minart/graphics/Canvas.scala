@@ -12,7 +12,7 @@ import eu.joaocosta.minart.input._
   * There's also a `scale` variable that controls the integer scaling
   * and a `clearColor` that is applied to the whole canvas when it's cleared.
   */
-trait Canvas extends Surface.MutableSurface {
+trait Canvas extends MutableSurface {
 
   /** The settings applied to this canvas.
     */

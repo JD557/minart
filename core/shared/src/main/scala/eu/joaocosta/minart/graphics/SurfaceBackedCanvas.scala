@@ -4,7 +4,7 @@ package eu.joaocosta.minart.graphics
   */
 trait SurfaceBackedCanvas extends LowLevelCanvas {
 
-  protected def surface: Surface.MutableSurface
+  protected def surface: MutableSurface
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     surface.putPixel(x, y, color)
