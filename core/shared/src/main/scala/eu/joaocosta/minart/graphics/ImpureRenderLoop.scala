@@ -13,12 +13,14 @@ object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
     new StatefulRenderLoop[S] {
       def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S) = {
         val canvas = canvasManager.init(canvasSettings)
-        runner.finiteLoop(
-          (state: S) => renderFrame(canvas, state),
-          (newState: S) => terminateWhen(newState) || !canvas.isCreated(),
-          frameRate,
-          () => if (canvas.isCreated()) canvas.close()
-        )(initialState)
+        runner
+          .finiteLoop(
+            (state: S) => renderFrame(canvas, state),
+            (newState: S) => terminateWhen(newState) || !canvas.isCreated(),
+            frameRate,
+            () => if (canvas.isCreated()) canvas.close()
+          )
+          .run(initialState)
       }
     }
   }
@@ -38,7 +40,7 @@ object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
   def singleFrame(renderFrame: Canvas => Unit): StatelessRenderLoop = new StatelessRenderLoop {
     def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit = {
       val canvas = canvasManager.init(canvasSettings)
-      runner.singleRun(() => renderFrame(canvas), () => if (canvas.isCreated()) canvas.close())()
+      runner.singleRun(() => renderFrame(canvas), () => if (canvas.isCreated()) canvas.close()).run()
     }
   }
 }
