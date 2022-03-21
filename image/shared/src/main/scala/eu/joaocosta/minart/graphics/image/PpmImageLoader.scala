@@ -106,7 +106,7 @@ object PpmImageLoader {
           fullChars = chars :+ '\n'.toInt
           _ <- skipBytes(1)
         } yield fullChars).run(b).merge
-        if (line.map(_.toChar).headOption.exists(c => c == '#' || c == '\n'))
+        if (line.headOption.exists(c => c == '#'.toInt || c == '\n'.toInt))
           aux(remaining)
         else
           remaining -> line
@@ -116,9 +116,9 @@ object PpmImageLoader {
 
     val readNextString: ParseState[Nothing, String] =
       readNextLine.flatMap { line =>
-        val chars         = line.map(_.toChar).takeWhile(c => c != ' ')
+        val chars         = line.takeWhile(c => c != ' '.toInt).map(_.toChar)
         val remainingLine = line.drop(chars.size + 1)
-        lazy val string   = chars.mkString("").trim
+        val string        = chars.mkString("").trim
         if (remainingLine.isEmpty)
           State.pure(string)
         else
