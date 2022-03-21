@@ -65,7 +65,7 @@ trait RenderLoop[S] { self =>
 
 object RenderLoop {
 
-  /** The `RenderLoop` contains a set of helpful methods to implement basic render
+  /** Contains a set of helpful methods to implement basic render
     * loops in a platform agonstic way.
     *
     * @tparam F1 effect type for stateless loops
@@ -73,13 +73,12 @@ object RenderLoop {
     */
   trait Builder[F1[-_, +_], F2[-_, -_, +_]] {
 
-    /** Creates a render loop that terminates when a certain condition is reached.
+    /** Creates a render loop that keeps and updates a state on every iteration,
+      *  terminating when a certain condition is reached.
       *
-      * Each loop iteration receives and passes an updated state.
-      *
-      * @param renderFrame Operation to render the frame and update the state
-      * @param frameRate Frame rate limit
-      * @param terminateWhen Loop termination check
+      * @param renderFrame operation to render the frame and update the state
+      * @param frameRate frame rate limit
+      * @param terminateWhen loop termination check
       */
     def statefulRenderLoop[S](
         renderFrame: F2[Canvas, S, S],
@@ -87,19 +86,19 @@ object RenderLoop {
         terminateWhen: S => Boolean = (s: S) => false
     ): RenderLoop[S]
 
-    /** Creates a render loop that never terminates.
+    /** Creates a render loop that keeps no state.
       *
-      * @param renderFrame Operation to render the frame
-      * @param frameRate Frame rate limit
+      * @param renderFrame operation to render the frame
+      * @param frameRate frame rate limit
       */
     def statelessRenderLoop(
         renderFrame: F1[Canvas, Unit],
         frameRate: LoopFrequency
     ): RenderLoop[Unit]
 
-    /** Renders a single frame
+    /** Renders a single frame.
       *
-      * @param renderFrame Operation to render the frame and update the state
+      * @param renderFrame operation to render the frame and update the state
       */
     def singleFrame(renderFrame: F1[Canvas, Unit]): RenderLoop[Unit]
   }
