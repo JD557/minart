@@ -1,135 +1,106 @@
 package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics.RenderLoop._
 import eu.joaocosta.minart.runtime._
 
-/** The `RenderLoop` contains a set of helpful methods to implement basic render
-  * loops in a platform agonstic way.
+/** Render loop that keeps an internal state that is passed to every iteration.
   *
-  * @tparam F1 effect type for stateless loops
-  * @tparam F2 effect type for stateful loops
+  * @tparam S State
   */
-trait RenderLoop[F1[-_, +_], F2[-_, -_, +_]] {
+trait RenderLoop[S] { self =>
 
-  /** Creates a render loop that terminates when a certain condition is reached.
+  /** Runs this render loop with a custom loop runner and canvas manager.
     *
-    * Each loop iteration receives and passes an updated state.
-    *
-    * @param canvasManager Canvas manager to use in the render loop
-    * @param canvasSettings The canvas settings to use
-    * @param initialState Initial state when the loop starts
-    * @param renderFrame Operation to render the frame and update the state
-    * @param terminateWhen Loop termination check
-    * @param frameRate Frame rate limit
+    * @param runner custom loop runner to use
+    * @param canvasManager custom canvas manager to use to create a new canvas
+    * @param canvasSettings settings to use to build the canvas
+    * @param initalState initial render loop state
     */
-  def finiteRenderLoop[S](
-      renderFrame: F2[Canvas, S, S],
-      terminateWhen: S => Boolean,
-      frameRate: LoopFrequency
-  ): StatefulRenderLoop[S]
+  def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
 
-  /** Creates a render loop that never terminates.
+  /** Runs this render loop with a custom loop runner and canvas manager.
     *
-    * Each loop iteration receives and passes an updated state.
+    * @param runner custom loop runner to use
+    * @param canvasManager custom canvas manager to use to create a new canvas
+    * @param canvasSettings settings to use to build the canvas
+    */
+  final def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings)(implicit
+      ev: Unit =:= S
+  ): Unit = run(runner, canvasManager, canvasSettings, ev(()))
+
+  /** Runs this render loop.
     *
-    * @param canvasManager Canvas manager to use in the render loop
-    * @param canvasSettings The canvas settings to use
-    * @param initialState Initial state when the loop starts
-    * @param renderFrame Operation to render the frame and update the state
-    * @param frameRate Frame rate limit
+    * @param canvasSettings settings to use to build the canvas
+    * @param initalState initial render loop state
     */
-  def infiniteRenderLoop[S](
-      renderFrame: F2[Canvas, S, S],
-      frameRate: LoopFrequency
-  ): StatefulRenderLoop[S]
+  final def run(canvasSettings: Canvas.Settings, initialState: S)(implicit
+      lr: DefaultBackend[Any, LoopRunner],
+      cm: DefaultBackend[Any, LowLevelCanvas]
+  ): Unit =
+    run(LoopRunner(), CanvasManager(), canvasSettings, initialState)
 
-  /** Creates a render loop that never terminates.
+  /** Runs this render loop.
     *
-    * @param canvasManager Canvas manager to use in the render loop
-    * @param canvasSettings The canvas settings to use
-    * @param renderFrame Operation to render the frame
-    * @param frameRate Frame rate limit
+    * @param canvasSettings settings to use to build the canvas
     */
-  def infiniteRenderLoop(
-      renderFrame: F1[Canvas, Unit],
-      frameRate: LoopFrequency
-  ): StatelessRenderLoop
+  final def run(
+      canvasSettings: Canvas.Settings
+  )(implicit lr: DefaultBackend[Any, LoopRunner], cm: DefaultBackend[Any, LowLevelCanvas], ev: Unit =:= S): Unit =
+    run(canvasSettings, ev(()))
 
-  /** Renders a single frame
+  /** Converts this render loop to a stateless render loop, with a predefined initial state.
     *
-    * @param canvasManager Canvas manager to use in the render loop
-    * @param canvasSettings The canvas settings to use
-    * @param renderFrame Operation to render the frame and update the state
+    * @param initalState initial render loop state
     */
-  def singleFrame(renderFrame: F1[Canvas, Unit]): StatelessRenderLoop
-}
-
-object RenderLoop {
-
-  /** Render loop that does not store any state.
-    */
-  trait StatelessRenderLoop extends StatefulRenderLoop[Unit] {
-
-    /** Runs this render loop with a custom loop runner and canvas manager.
-      *
-      * @param runner custom loop runner to use
-      * @param canvasManager custom canvas manager to use to create a new canvas
-      * @param canvasSettings settings to use to build the canvas
-      */
-    def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit
-
-    /** Runs this render loop.
-      *
-      * @param canvasSettings settings to use to build the canvas
-      */
-    def apply(
-        canvasSettings: Canvas.Settings
-    )(implicit lr: DefaultBackend[Any, LoopRunner], cm: DefaultBackend[Any, LowLevelCanvas]): Unit =
-      apply(LoopRunner(), CanvasManager(), canvasSettings)
-    def apply(
+  def withInitialState(state: S): RenderLoop[Unit] = new RenderLoop[Unit] {
+    def run(
         runner: LoopRunner,
         canvasManager: CanvasManager,
         canvasSettings: Canvas.Settings,
         initialState: Unit
     ): Unit =
-      apply(runner, canvasManager, canvasSettings)
-    override def withInitialState(initialState: Unit): this.type = this
+      self.run(runner, canvasManager, canvasSettings, state)
   }
+}
 
-  /** Render loop that keeps an internal state that is passed to every iteration.
+object RenderLoop {
+
+  /** The `RenderLoop` contains a set of helpful methods to implement basic render
+    * loops in a platform agonstic way.
     *
-    * @tparam S State
+    * @tparam F1 effect type for stateless loops
+    * @tparam F2 effect type for stateful loops
     */
-  trait StatefulRenderLoop[S] { self =>
+  trait Builder[F1[-_, +_], F2[-_, -_, +_]] {
 
-    /** Runs this render loop with a custom loop runner and canvas manager.
+    /** Creates a render loop that terminates when a certain condition is reached.
       *
-      * @param runner custom loop runner to use
-      * @param canvasManager custom canvas manager to use to create a new canvas
-      * @param canvasSettings settings to use to build the canvas
-      * @param initalState initial render loop state
+      * Each loop iteration receives and passes an updated state.
+      *
+      * @param renderFrame Operation to render the frame and update the state
+      * @param frameRate Frame rate limit
+      * @param terminateWhen Loop termination check
       */
-    def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+    def statefulRenderLoop[S](
+        renderFrame: F2[Canvas, S, S],
+        frameRate: LoopFrequency,
+        terminateWhen: S => Boolean = (s: S) => false
+    ): RenderLoop[S]
 
-    /** Runs this render loop.
+    /** Creates a render loop that never terminates.
       *
-      * @param canvasSettings settings to use to build the canvas
-      * @param initalState initial render loop state
+      * @param renderFrame Operation to render the frame
+      * @param frameRate Frame rate limit
       */
-    def apply(canvasSettings: Canvas.Settings, initialState: S)(implicit
-        lr: DefaultBackend[Any, LoopRunner],
-        cm: DefaultBackend[Any, LowLevelCanvas]
-    ): Unit =
-      apply(LoopRunner(), CanvasManager(), canvasSettings, initialState)
+    def statelessRenderLoop(
+        renderFrame: F1[Canvas, Unit],
+        frameRate: LoopFrequency
+    ): RenderLoop[Unit]
 
-    /** Converts this render loop to a stateless render loop, with a predefined initial state.
+    /** Renders a single frame
       *
-      * @param initalState initial render loop state
+      * @param renderFrame Operation to render the frame and update the state
       */
-    def withInitialState(initialState: S): StatelessRenderLoop = new StatelessRenderLoop {
-      def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit =
-        self.apply(runner, canvasManager, canvasSettings, initialState)
-    }
+    def singleFrame(renderFrame: F1[Canvas, Unit]): RenderLoop[Unit]
   }
 }

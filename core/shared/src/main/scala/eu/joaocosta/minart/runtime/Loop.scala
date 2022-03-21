@@ -6,15 +6,15 @@ package eu.joaocosta.minart.runtime
   */
 trait Loop[S] { self =>
 
-  /** Runs this loop
-    */
-  final def run()(implicit ev: Unit =:= S): Unit = run(ev(()))
-
   /** Runs this loop.
     *
     * @param initalState initial loop state
     */
   def run(initialState: S): Unit
+
+  /** Runs this loop
+    */
+  final def run()(implicit ev: Unit =:= S): Unit = run(ev(()))
 
   /** Converts this loop to a stateless loop, with a predefined initial state.
     *

@@ -1,17 +1,17 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.graphics.RenderLoop._
+import eu.joaocosta.minart.graphics.RenderLoop
 import eu.joaocosta.minart.runtime._
 
 /** A render loop that takes a side-effectful renderFrame operation. */
-object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
-  def finiteRenderLoop[S](
+object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
+  def statefulRenderLoop[S](
       renderFrame: (Canvas, S) => S,
-      terminateWhen: S => Boolean,
-      frameRate: LoopFrequency
-  ): StatefulRenderLoop[S] = {
-    new StatefulRenderLoop[S] {
-      def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S) = {
+      frameRate: LoopFrequency,
+      terminateWhen: S => Boolean = (_: S) => false
+  ): RenderLoop[S] = {
+    new RenderLoop[S] {
+      def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S) = {
         val canvas = canvasManager.init(canvasSettings)
         runner
           .finiteLoop(
@@ -25,20 +25,19 @@ object ImpureRenderLoop extends RenderLoop[Function1, Function2] {
     }
   }
 
-  def infiniteRenderLoop[S](
-      renderFrame: (Canvas, S) => S,
-      frameRate: LoopFrequency
-  ): StatefulRenderLoop[S] =
-    finiteRenderLoop(renderFrame, (_: S) => false, frameRate)
-
-  def infiniteRenderLoop(
+  def statelessRenderLoop(
       renderFrame: Canvas => Unit,
       frameRate: LoopFrequency
-  ): StatelessRenderLoop =
-    infiniteRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate).withInitialState(())
+  ): RenderLoop[Unit] =
+    statefulRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate)
 
-  def singleFrame(renderFrame: Canvas => Unit): StatelessRenderLoop = new StatelessRenderLoop {
-    def apply(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings): Unit = {
+  def singleFrame(renderFrame: Canvas => Unit): RenderLoop[Unit] = new RenderLoop[Unit] {
+    def run(
+        runner: LoopRunner,
+        canvasManager: CanvasManager,
+        canvasSettings: Canvas.Settings,
+        initialState: Unit
+    ): Unit = {
       val canvas = canvasManager.init(canvasSettings)
       runner.singleRun(() => renderFrame(canvas), () => if (canvas.isCreated()) canvas.close()).run()
     }
