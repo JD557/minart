@@ -28,7 +28,7 @@ object Blitting {
 
   def main(args: Array[String]): Unit = {
     ImpureRenderLoop
-      .infiniteRenderLoop[Int](
+      .statefulRenderLoop[Int](
         (canvas, state) => {
           renderBackground(canvas)
           canvas.blit(image)(state, state, 4, 4, 8, 8)
@@ -37,6 +37,7 @@ object Blitting {
           (state + 1) % (128 - 16)
         },
         LoopFrequency.hz60
-      )(canvasSettings, 0)
+      )
+      .run(canvasSettings, 0)
   }
 }

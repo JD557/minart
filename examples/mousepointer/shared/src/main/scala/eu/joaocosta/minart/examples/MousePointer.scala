@@ -9,7 +9,7 @@ object MousePointer {
 
   def main(args: Array[String]): Unit = {
     ImpureRenderLoop
-      .infiniteRenderLoop(
+      .statelessRenderLoop(
         c => {
           c.clear()
           val mouse = c.getPointerInput()
@@ -20,6 +20,7 @@ object MousePointer {
           c.redraw()
         },
         LoopFrequency.Uncapped
-      )(canvasSettings)
+      )
+      .run(canvasSettings)
   }
 }

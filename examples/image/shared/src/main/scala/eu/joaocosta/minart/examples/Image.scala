@@ -14,6 +14,7 @@ object Image {
       .singleFrame(canvas => {
         canvas.blit(bitmap)(0, 0)
         canvas.redraw()
-      })(canvasSettings)
+      })
+      .run(canvasSettings)
   }
 }
