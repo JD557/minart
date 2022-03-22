@@ -98,10 +98,11 @@ final class QoiImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
     ops
       .foldLeft[Either[String, QoiState]](Right(QoiState())) { case (eitherState, eitherOp) =>
         for {
-          state <- eitherState
-          op    <- eitherOp
+          state <- eitherState.right
+          op    <- eitherOp.right
         } yield nextState(state, op)
       }
+      .right
       .flatMap { finalState =>
         val flatPixels     = finalState.imageAcc.reverse
         val expectedPixels = (header.width * header.height).toInt
@@ -117,7 +118,7 @@ final class QoiImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    Header.fromBytes(bytes)(byteReader).flatMap { case (data, header) =>
+    Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
       asSurface(loadOps(data), header)
     }
   }

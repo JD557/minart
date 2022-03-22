@@ -45,7 +45,9 @@ object SurfaceViewSpec extends BasicTestSuite {
 
   test("The zip view combines two surfaces") {
     val newSurface =
-      surface.view.zipWith(surface, (c1, c2) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b)).toRamSurface()
+      surface.view
+        .zipWith(surface, (c1: Color, c2: Color) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
+        .toRamSurface()
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.map(_.map(_ => Color(0, 0, 0)))
 

@@ -46,7 +46,7 @@ final class BmpImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    Header.fromBytes(bytes)(byteReader).flatMap { case (data, header) =>
+    Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
       val pixels = header.bitsPerPixel match {
         case 24 =>
           loadPixels(loadRgbPixel, data)
@@ -55,7 +55,7 @@ final class BmpImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
-      pixels.map { case (_, flatPixels) =>
+      pixels.right.map { case (_, flatPixels) =>
         new RamSurface(flatPixels.take(header.width * header.height).sliding(header.width, header.width).toSeq.reverse)
       }
     }

@@ -111,13 +111,13 @@ object ByteReader {
     }
 
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
-      val buffer = List.newBuilder[Int]
-      var head   = nextOption(bytes)
-      while (head.exists(p)) {
-        buffer += head.get
-        head = nextOption(bytes)
+      val bufferedBytes = bytes.buffered
+      val buffer        = List.newBuilder[Int]
+      while (bufferedBytes.hasNext && p(bufferedBytes.head)) {
+        buffer += bufferedBytes.head
+        bufferedBytes.next
       }
-      (head.iterator ++ bytes) -> buffer.result()
+      bufferedBytes -> buffer.result()
     }
   }
 }

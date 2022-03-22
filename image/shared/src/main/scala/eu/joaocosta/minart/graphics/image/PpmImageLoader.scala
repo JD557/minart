@@ -49,7 +49,7 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    Header.fromBytes(bytes)(byteReader).flatMap { case (data, header) =>
+    Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
       val pixels = header.magic match {
         case "P3" =>
           loadPixels(loadStringPixel, data)
@@ -58,7 +58,7 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }
-      pixels.map { case (_, flatPixels) =>
+      pixels.right.map { case (_, flatPixels) =>
         new RamSurface(flatPixels.take(header.width * header.height).sliding(header.width, header.width).toSeq)
       }
     }
@@ -98,15 +98,19 @@ object PpmImageLoader {
 
   private final class ByteStringOps[F[_]](val byteReader: ByteReader[F]) {
     import byteReader._
+    private val newLine = '\n'.toInt
+    private val comment = '#'.toInt
+    private val space   = ' '.toInt
+
     val readNextLine: ParseState[Nothing, List[Int]] = State[F[Int], List[Int]] { bytes =>
       @tailrec
       def aux(b: F[Int]): (F[Int], List[Int]) = {
         val (remaining, line) = (for {
-          chars <- readWhile(_.toChar != '\n')
-          fullChars = chars :+ '\n'.toInt
+          chars <- readWhile(_ != newLine)
+          fullChars = chars :+ newLine
           _ <- skipBytes(1)
         } yield fullChars).run(b).merge
-        if (line.headOption.exists(c => c == '#'.toInt || c == '\n'.toInt))
+        if (line.headOption.exists(c => c == comment || c == newLine))
           aux(remaining)
         else
           remaining -> line
@@ -116,13 +120,13 @@ object PpmImageLoader {
 
     val readNextString: ParseState[Nothing, String] =
       readNextLine.flatMap { line =>
-        val chars         = line.takeWhile(c => c != ' '.toInt).map(_.toChar)
+        val chars         = line.takeWhile(c => c != space).map(_.toChar)
         val remainingLine = line.drop(chars.size + 1)
         val string        = chars.mkString("").trim
         if (remainingLine.isEmpty)
           State.pure(string)
         else
-          pushBytes(remainingLine :+ '\n'.toInt).map(_ => string)
+          pushBytes(remainingLine :+ newLine).map(_ => string)
       }
 
     def parseNextInt(errorMessage: String): ParseState[String, Int] =
