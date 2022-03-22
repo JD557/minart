@@ -147,7 +147,7 @@ lazy val examples = (project in file("examples"))
       `examples-blitting`.componentProjects,
       `examples-colorSquare`.componentProjects,
       `examples-fire`.componentProjects,
-      // `examples-image`.componentProjects,
+      `examples-image`.componentProjects,
       `examples-mousePointer`.componentProjects,
       `examples-pureColorSquare`.componentProjects,
       `examples-settings`.componentProjects,
