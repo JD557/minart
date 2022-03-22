@@ -127,7 +127,14 @@ object PpmImageLoader {
 
     def parseNextInt(errorMessage: String): ParseState[String, Int] =
       readNextString.flatMap { str =>
-        State.fromEither(str.toIntOption.toRight(s"$errorMessage: $str"))
+        val intEither =
+          try {
+            Right(str.toInt)
+          } catch {
+            case _: Throwable =>
+              Left(s"$errorMessage: $str")
+          }
+        State.fromEither(intEither)
       }
 
   }

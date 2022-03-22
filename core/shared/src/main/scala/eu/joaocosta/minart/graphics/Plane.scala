@@ -56,6 +56,11 @@ final class Plane private (unboxedGenerator: (Int, Int) => Int) {
 
 object Plane {
   private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
+  private def floorMod(x: Int, y: Int): Int = {
+    val rem = x % y
+    if (rem >= 0) rem
+    else rem + y
+  }
 
   /** Creates a plane from a generator function
     *
@@ -77,8 +82,8 @@ object Plane {
     new Plane((x, y) =>
       surface
         .getPixel(
-          math.floorMod(x, surface.width),
-          math.floorMod(y, surface.height)
+          floorMod(x, surface.width),
+          floorMod(y, surface.height)
         )
         .getOrElse(defaultColor)
         .argb

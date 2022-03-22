@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.graphics.MutableSurface
-
 /** A mutable surface stored in RAM.
   *
   * @param data the raw data that backs this surface

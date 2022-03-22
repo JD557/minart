@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.graphics.RenderLoop
 import eu.joaocosta.minart.runtime._
 
 /** A render loop that takes a side-effectful renderFrame operation. */

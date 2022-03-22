@@ -1,7 +1,8 @@
 package eu.joaocosta.minart.graphics.image.helpers
 
-//import scala.collection.compat.immutable.LazyList
 import java.io.InputStream
+
+import scala.collection.compat.immutable.LazyList
 
 /** Helper methods to read binary data from an input stream.
   */
@@ -73,6 +74,10 @@ object ByteReader {
   }
 
   object IteratorByteReader extends ByteReader[Iterator] {
+    // Ported from 2.13 stdlib
+    private def nextOption[Int](it: Iterator[Int]): Option[Int] =
+      if (it.hasNext) Some(it.next()) else None
+
     def fromInputStream(is: InputStream): Iterator[Int] =
       Iterator.continually(is.read()).takeWhile(_ != -1)
 
@@ -92,7 +97,7 @@ object ByteReader {
       }
 
     val readByte: ParseState[String, Option[Int]] = State { bytes =>
-      bytes -> bytes.nextOption()
+      bytes -> nextOption(bytes)
     }
 
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
@@ -107,10 +112,10 @@ object ByteReader {
 
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
       val buffer = List.newBuilder[Int]
-      var head   = bytes.nextOption()
+      var head   = nextOption(bytes)
       while (head.exists(p)) {
         buffer += head.get
-        head = bytes.nextOption()
+        head = nextOption(bytes)
       }
       (head.iterator ++ bytes) -> buffer.result()
     }
