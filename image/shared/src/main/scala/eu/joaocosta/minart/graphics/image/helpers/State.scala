@@ -10,7 +10,9 @@ sealed trait State[S, +E, +A] {
     flatMap(x => if (test(x)) State.pure(x) else State.error(failure(x)))
   def collect[EE >: E, B](f: PartialFunction[A, B], failure: A => EE): State[S, EE, B] = {
     val pf =
-      f.andThen((x: B) => State.pure[S, B](x)).orElse[A, State[S, EE, B]]((x: A) => State.error[S, EE](failure(x)))
+      f.andThen((x: B) => State.pure[S, B](x)).orElse[A, State[S, EE, B]] { case x =>
+        State.error[S, EE](failure(x))
+      }
     flatMap(pf)
   }
   def modify(f: S => S): State[S, E, A] =

@@ -65,7 +65,7 @@ object PlaneSpec extends BasicTestSuite {
     val plane = Plane.fromSurfaceWithRepetition(surface)
     val newSurface =
       plane
-        .zipWith(plane, (c1, c2) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
+        .zipWith(plane, (c1: Color, c2: Color) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
         .toRamSurface(surface.width, surface.height)
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.map(_.map(_ => Color(0, 0, 0)))
@@ -79,7 +79,7 @@ object PlaneSpec extends BasicTestSuite {
     val plane = Plane.fromSurfaceWithRepetition(surface)
     val newSurface =
       plane
-        .zipWith(surface, (c1, c2) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
+        .zipWith(surface, (c1: Color, c2: Color) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
         .toRamSurface()
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.map(_.map(_ => Color(0, 0, 0)))
