@@ -20,8 +20,8 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 
   /** Combines this view with a surface by combining their colors with the given function. */
   def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView =
-    that.view
-      .zipWith(plane, f)
+    plane
+      .zipWith(that, f)
       .copy(
         width = math.min(that.width, width),
         height = math.min(that.height, height)

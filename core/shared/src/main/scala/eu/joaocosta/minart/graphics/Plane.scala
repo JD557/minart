@@ -24,8 +24,14 @@ final class Plane private (unboxedGenerator: (Int, Int) => Int) {
   })
 
   /** Combines this plane with a surface by combining their colors with the given function. */
-  def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView =
-    this.toSurfaceView(that.width, that.height).zipWith(that, f)
+  def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = SurfaceView(
+    Plane.fromFunction((x, y) => {
+      val c1 = this.getPixel(x, y)
+      that.getPixel(x, y).fold(c1)(c2 => f(c1, c2))
+    }),
+    width = that.width,
+    height = that.height
+  )
 
   /** Clips this plane to a chosen rectangle, returning a surface view.
     *
