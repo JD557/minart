@@ -14,7 +14,7 @@ trait Surface {
     *
     *  Operations performed on a view are executed in a defered fashion.
     */
-  def view: SurfaceView = new SurfaceView.IdentityView(this)
+  def view: SurfaceView = SurfaceView(this)
 
   /** Gets the color from the this surface.
     * This operation can be perfomance intensive, so it might be worthwile

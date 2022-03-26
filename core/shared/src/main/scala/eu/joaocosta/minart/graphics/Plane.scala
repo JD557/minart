@@ -35,7 +35,8 @@ final class Plane private (unboxedGenerator: (Int, Int) => Int) {
     * @param ch clip height
     */
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
-    new SurfaceView.ClippedView((x, y) => Some(this.getPixel(x, y)), cx, cy, cw, ch)
+    if (cx == 0 && cy == 0) toSurfaceView(cw, ch)
+    else contramap((x, y) => (cx + x, cy + y)).toSurfaceView(cw, ch)
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner
     *
@@ -43,7 +44,7 @@ final class Plane private (unboxedGenerator: (Int, Int) => Int) {
     * @param height surface view height
     */
   def toSurfaceView(width: Int, height: Int): SurfaceView =
-    clip(0, 0, width, height)
+    SurfaceView(this, width, height)
 
   /** Converts this plane to a RAM surface, assuming (0, 0) as the top-left corner
     *
