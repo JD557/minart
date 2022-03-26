@@ -1,25 +1,35 @@
 package eu.joaocosta.minart.graphics
 
-/** A view over a surface.
+/** A view over a surface, stored as a plane limited by a width and height.
   *  Allows lazy operations to be applied over a surface.
   *
   *  This can have a performance impact. However, a new RAM surface with the operations already applied can be constructed using `toRamSurface`
   */
-trait SurfaceView extends Surface {
+final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surface {
+
+  def getPixel(x: Int, y: Int): Option[Color] =
+    if (x >= 0 && y >= 0 && x < width && y < height) Some(plane.getPixel(x, y))
+    else None
 
   /** Maps the colors from this surface view. */
-  final def map(f: Color => Color): SurfaceView = new SurfaceView.MapView(this, f)
+  def map(f: Color => Color): SurfaceView = copy(plane.map(f))
 
   /** Contramaps the positions from this surface view. */
-  final def contramap(f: (Int, Int) => (Int, Int), fallback: Color = SurfaceView.defaultColor): Plane =
-    Plane.fromSurfaceWithFallback(this, fallback).contramap(f)
+  def contramap(f: (Int, Int) => (Int, Int)): Plane =
+    plane.contramap(f)
 
   /** Combines this view with a surface by combining their colors with the given function. */
-  final def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = new SurfaceView.ZipView(this, that, f)
+  def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView =
+    plane
+      .zipWith(that, f)
+      .copy(
+        width = math.min(that.width, width),
+        height = math.min(that.height, height)
+      )
 
   /** Combines this view with a plane by combining their colors with the given function. */
-  final def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView =
-    that.zipWith(this, (c1, c2) => f(c2, c1))
+  def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView =
+    copy(plane = plane.zipWith(that, f))
 
   /** Clips this view to a chosen rectangle
     *
@@ -28,14 +38,19 @@ trait SurfaceView extends Surface {
     * @param cw clip width
     * @param ch clip height
     */
-  final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
-    new SurfaceView.ClippedView(
-      (x, y) => this.getPixel(x, y),
-      cx,
-      cy,
-      math.min(cw, this.width - cx),
-      math.min(ch, this.height - cy)
-    )
+  def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView = {
+    val newWidth  = math.min(cw, this.width - cx)
+    val newHeight = math.min(ch, this.height - cy)
+    if (cx == 0 && cy == 0)
+      if (newWidth == width && newHeight == height) this
+      else copy(width = newWidth, height = newHeight)
+    else
+      SurfaceView(
+        plane.contramap((x, y) => (cx + x, cy + y)),
+        width = newWidth,
+        height = newHeight
+      )
+  }
 
   def getPixels(): Vector[Array[Color]] =
     Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y).getOrElse(SurfaceView.defaultColor)))
@@ -46,41 +61,6 @@ trait SurfaceView extends Surface {
 object SurfaceView {
   private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
 
-  /** A view over a surface that does nothing.
-    */
-  final class IdentityView(inner: Surface) extends SurfaceView {
-    def width: Int                                 = inner.width
-    def height: Int                                = inner.height
-    def getPixel(x: Int, y: Int): Option[Color]    = inner.getPixel(x, y)
-    override def getPixels(): Vector[Array[Color]] = inner.getPixels()
-  }
-
-  /** A view over a surface that maps all colors.
-    */
-  final class MapView(inner: Surface, f: Color => Color) extends SurfaceView {
-    def width: Int                              = inner.width
-    def height: Int                             = inner.height
-    def getPixel(x: Int, y: Int): Option[Color] = inner.getPixel(x, y).map(f)
-  }
-
-  /** A view that combines two surfaces.
-    */
-  final class ZipView(innerA: Surface, innerB: Surface, f: (Color, Color) => Color) extends SurfaceView {
-    def width: Int  = math.min(innerA.width, innerB.width)
-    def height: Int = math.min(innerA.height, innerB.height)
-    def getPixel(x: Int, y: Int): Option[Color] = for {
-      pixelA <- innerA.getPixel(x, y)
-      pixelB <- innerB.getPixel(x, y)
-    } yield f(pixelA, pixelB)
-  }
-
-  /** A clipped view over a surface or plane.
-    */
-  final class ClippedView(accessor: (Int, Int) => Option[Color], cx: Int, cy: Int, cw: Int, ch: Int)
-      extends SurfaceView {
-    def width: Int  = cw
-    def height: Int = ch
-    def getPixel(x: Int, y: Int): Option[Color] =
-      accessor(cx + x, cy + y)
-  }
+  def apply(surface: Surface): SurfaceView =
+    SurfaceView(Plane.fromSurfaceWithFallback(surface, defaultColor), surface.width, surface.height)
 }
