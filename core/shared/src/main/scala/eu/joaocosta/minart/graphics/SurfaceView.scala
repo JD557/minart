@@ -41,15 +41,8 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView = {
     val newWidth  = math.min(cw, this.width - cx)
     val newHeight = math.min(ch, this.height - cy)
-    if (cx == 0 && cy == 0)
-      if (newWidth == width && newHeight == height) this
-      else copy(width = newWidth, height = newHeight)
-    else
-      SurfaceView(
-        plane.contramap((x, y) => (cx + x, cy + y)),
-        width = newWidth,
-        height = newHeight
-      )
+    if (cx == 0 && cy == 0 && newWidth == width && newHeight == height) this
+    else plane.clip(cx, cy, cw, ch)
   }
 
   def getPixels(): Vector[Array[Color]] =
