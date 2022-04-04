@@ -15,6 +15,11 @@ object ImageSpec extends BasicTestSuite {
       assert(image.isSuccess)
       assert(image.get.width == 128)
       assert(image.get.height == 128)
+
+      val imageRect = Image.loadBmpImage(Resource("scala-rect.bmp"))
+      assert(imageRect.isSuccess)
+      assert(imageRect.get.width == 77)
+      assert(imageRect.get.height == 119)
     }
 
     test("Load a PPM image") {
@@ -26,6 +31,15 @@ object ImageSpec extends BasicTestSuite {
       assert(imageTxt.isSuccess)
       assert(imageTxt.get.width == 128)
       assert(imageTxt.get.height == 128)
+
+      val imageRectBin = Image.loadPpmImage(Resource("scala-rect.ppm"))
+      assert(imageRectBin.isSuccess)
+      assert(imageRectBin.get.width == 77)
+      assert(imageRectBin.get.height == 119)
+      val imageRectTxt = Image.loadPpmImage(Resource("scala-rect2.ppm"))
+      assert(imageRectTxt.isSuccess)
+      assert(imageRectTxt.get.width == 77)
+      assert(imageRectTxt.get.height == 119)
     }
 
     test("Load a QOI image") {
@@ -33,6 +47,11 @@ object ImageSpec extends BasicTestSuite {
       assert(image.isSuccess)
       assert(image.get.width == 128)
       assert(image.get.height == 128)
+
+      val imageRect = Image.loadQoiImage(Resource("scala-rect.qoi"))
+      assert(imageRect.isSuccess)
+      assert(imageRect.get.width == 77)
+      assert(imageRect.get.height == 119)
     }
 
     test("Load the same data from different formats") {
