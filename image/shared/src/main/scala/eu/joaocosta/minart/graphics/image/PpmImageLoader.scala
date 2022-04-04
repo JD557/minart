@@ -36,13 +36,14 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
   private def loadPixels(
       loadColor: ParseState[String, Color],
       data: F[Int],
+      remainingPixels: Int,
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
-    if (isEmpty(data)) Right(data -> acc.reverse)
+    if (isEmpty(data) || remainingPixels == 0) Right(data -> acc.reverse)
     else {
       loadColor.run(data) match {
         case Left(error)               => Left(error)
-        case Right((remaining, color)) => loadPixels(loadColor, remaining, color :: acc)
+        case Right((remaining, color)) => loadPixels(loadColor, remaining, remainingPixels - 1, color :: acc)
       }
     }
   }
@@ -50,16 +51,18 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
     Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
+      val numPixels = header.width * header.height
       val pixels = header.magic match {
         case "P3" =>
-          loadPixels(loadStringPixel, data)
+          loadPixels(loadStringPixel, data, numPixels)
         case "P6" =>
-          loadPixels(loadBinaryPixel, data)
+          loadPixels(loadBinaryPixel, data, numPixels)
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }
-      pixels.right.map { case (_, flatPixels) =>
-        new RamSurface(flatPixels.take(header.width * header.height).sliding(header.width, header.width).toSeq)
+      pixels.right.flatMap { case (_, flatPixels) =>
+        if (flatPixels.size != numPixels) Left(s"Invalid number of pixels: Got ${flatPixels.size}, expected $numPixels")
+        else Right(new RamSurface(flatPixels.sliding(header.width, header.width).toSeq))
       }
     }
   }
