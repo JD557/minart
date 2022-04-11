@@ -6,6 +6,7 @@ name := "minart"
 ThisBuild / organization := "eu.joaocosta"
 ThisBuild / publishTo    := sonatypePublishToBundle.value
 ThisBuild / scalaVersion := "3.1.1"
+ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.15", "2.13.8", "3.1.1")
 ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage     := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
@@ -14,34 +15,22 @@ ThisBuild / scmInfo := Some(
     "scm:git@github.com:JD557/minart.git"
   )
 )
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
-val sharedSettings = Seq(
-  organization       := "eu.joaocosta",
-  scalaVersion       := "3.1.1",
-  crossScalaVersions := Seq("2.11.12", "2.12.15", "2.13.8", "3.1.1"),
-  licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT")),
-  homepage           := Some(url("https://github.com/JD557/minart")),
-  scmInfo := Some(
-    ScmInfo(
-      url("https://github.com/JD557/minart"),
-      "scm:git@github.com:JD557/minart.git"
-    )
-  ),
-  autoAPIMappings := true,
-  scalacOptions ++= Seq(
-    "-deprecation",
-    "-feature",
-    "-language:higherKinds",
-    "-unchecked"
-  ),
-  scalafmtOnCompile := true,
-  semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision,
-  scalafixOnCompile := true,
-  libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0")
+ThisBuild / autoAPIMappings := true
+ThisBuild / scalacOptions ++= Seq(
+  "-deprecation",
+  "-feature",
+  "-language:higherKinds",
+  "-unchecked"
 )
+ThisBuild / libraryDependencies ++=
+    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0")
+
+ThisBuild / scalafmtOnCompile := true
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalafixOnCompile := true
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
@@ -57,6 +46,7 @@ val noTestSettings = Seq(
 )
 
 val publishSettings = Seq(
+  Compile / packageDoc / publishArtifact := false,
   publishMavenStyle      := true,
   Test / publishArtifact := false,
   pomIncludeRepository   := { _ => false }
@@ -89,7 +79,6 @@ val nativeSettings = Seq(
 lazy val root =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .in(file("."))
-    .settings(sharedSettings)
     .settings(name := "minart")
     .settings(publishSettings)
     .jsSettings(jsSettings)
@@ -99,7 +88,6 @@ lazy val root =
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .settings(sharedSettings)
     .settings(name := "minart-core")
     .settings(testSettings)
     .settings(publishSettings)
@@ -109,7 +97,6 @@ lazy val core =
 lazy val backend =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
-    .settings(sharedSettings)
     .settings(name := "minart-backend")
     .settings(testSettings)
     .settings(publishSettings)
@@ -119,7 +106,6 @@ lazy val backend =
 lazy val pure =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
-    .settings(sharedSettings)
     .settings(name := "minart-pure")
     .settings(testSettings)
     .settings(publishSettings)
@@ -130,7 +116,6 @@ lazy val image =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
     .dependsOn(backend % "test")
-    .settings(sharedSettings)
     .settings(name := "minart-image")
     .settings(testSettings)
     .settings(publishSettings)
@@ -138,7 +123,6 @@ lazy val image =
     .nativeSettings(nativeSettings)
 
 lazy val examples = (project in file("examples"))
-  .settings(sharedSettings)
   .settings(name := "minart-examples")
   .settings(noTestSettings)
   .settings(noPublishSettings)
@@ -160,7 +144,6 @@ def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) 
     .in(file(s"examples/${exampleName}"))
     .dependsOn(core)
     .dependsOn(backend)
-    .settings(sharedSettings)
     .settings(name := s"minart-examples-${exampleName}")
     .settings(noTestSettings)
     .settings(noPublishSettings)
