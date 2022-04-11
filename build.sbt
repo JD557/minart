@@ -40,24 +40,11 @@ val testSettings = Seq(
   Test / scalacOptions ++= Seq("-Yrangepos")
 )
 
-val noTestSettings = Seq(
-  test        := (()),
-  Test / test := (())
-)
-
 val publishSettings = Seq(
   Compile / packageDoc / publishArtifact := false,
   publishMavenStyle      := true,
   Test / publishArtifact := false,
   pomIncludeRepository   := { _ => false }
-)
-
-val noPublishSettings = Seq(
-  publish / skip  := true,
-  publish         := (()),
-  publishLocal    := (()),
-  publishArtifact := false,
-  publishTo       := None
 )
 
 val jsSettings = Seq(
@@ -121,61 +108,6 @@ lazy val image =
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
-
-lazy val examples = (project in file("examples"))
-  .settings(name := "minart-examples")
-  .settings(noTestSettings)
-  .settings(noPublishSettings)
-  .aggregate(
-    Seq(
-      `examples-blitting`.componentProjects,
-      `examples-colorSquare`.componentProjects,
-      `examples-fire`.componentProjects,
-      `examples-image`.componentProjects,
-      `examples-mousePointer`.componentProjects,
-      `examples-pureColorSquare`.componentProjects,
-      `examples-settings`.componentProjects,
-      `examples-snake`.componentProjects
-    ).flatten.map(_.project): _*
-  )
-
-def example(project: sbtcrossproject.CrossProject.Builder, exampleName: String) = {
-  project
-    .in(file(s"examples/${exampleName}"))
-    .dependsOn(core)
-    .dependsOn(backend)
-    .settings(name := s"minart-examples-${exampleName}")
-    .settings(noTestSettings)
-    .settings(noPublishSettings)
-    .jsSettings(jsSettings)
-    .jsSettings(scalaJSUseMainModuleInitializer := true)
-    .nativeSettings(nativeSettings)
-}
-
-lazy val `examples-blitting` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "blitting")
-
-lazy val `examples-colorSquare` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "colorsquare")
-
-lazy val `examples-fire` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "fire")
-
-lazy val `examples-image` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "image")
-    .dependsOn(image)
-
-lazy val `examples-mousePointer` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "mousepointer")
-
-lazy val `examples-pureColorSquare` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "purecolorsquare").dependsOn(pure)
-
-lazy val `examples-settings` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "settings")
-
-lazy val `examples-snake` =
-  example(crossProject(JVMPlatform, JSPlatform, NativePlatform), "snake")
 
 releaseCrossBuild    := true
 releaseTagComment    := s"Release ${(ThisBuild / version).value}"
