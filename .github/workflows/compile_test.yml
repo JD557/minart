@@ -116,12 +116,12 @@ jobs:
         chmod +x scala-cli
         sudo mv scala-cli /usr/local/bin/scala-cli
     - name: Compile examples (Release)
-      run:
+      run: |
         cd examples/release
         ls | grep .sc | xargs scala-cli compile
     - name: Publish Local
       run: sbt -Dsbt.color=always publishLocal
     - name: Compile examples (Snapshot)
-      run:
+      run: |
         cd examples/snapshot
         ls | grep .sc | xargs scala-cli compile
