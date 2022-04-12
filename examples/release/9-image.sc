@@ -1,4 +1,4 @@
-//> using scala "3.1.1"
+//> using scala "3.1.2"
 //> using lib "eu.joaocosta::minart:0.4.0-RC1"
 
 /*
