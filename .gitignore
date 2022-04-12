@@ -23,3 +23,6 @@ project/plugins/project/
 # Metals specific
 metals.sbt
 .metals/
+
+# Scala-CLI
+.scala-build/
