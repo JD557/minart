@@ -23,14 +23,15 @@ ThisBuild / scalacOptions ++= Seq(
   "-language:higherKinds",
   "-unchecked"
 )
-ThisBuild / libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0")
-
 ThisBuild / scalafmtOnCompile := true
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+
+val sharedSettings = Seq(libraryDependencies ++=
+    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0")
+)
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
@@ -49,6 +50,7 @@ val publishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
+    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0",
     "org.scala-js" %%% "scalajs-dom" % "2.1.0"
   )
 )
@@ -67,6 +69,7 @@ lazy val root =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .in(file("."))
     .settings(name := "minart")
+    .settings(sharedSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
@@ -76,6 +79,7 @@ lazy val root =
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .settings(name := "minart-core")
+    .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
@@ -85,6 +89,7 @@ lazy val backend =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
     .settings(name := "minart-backend")
+    .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
@@ -94,6 +99,7 @@ lazy val pure =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .dependsOn(core)
     .settings(name := "minart-pure")
+    .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
@@ -104,6 +110,7 @@ lazy val image =
     .dependsOn(core)
     .dependsOn(backend % "test")
     .settings(name := "minart-image")
+    .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
     .jsSettings(jsSettings)
