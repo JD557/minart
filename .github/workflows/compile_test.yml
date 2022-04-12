@@ -110,6 +110,11 @@ jobs:
       with:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Install Scala-CLI
+      run: |
+        curl -fL https://github.com/Virtuslab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gzip -d > scala-cli
+        chmod +x scala-cli
+        sudo mv scala-cli /usr/local/bin/scala-cli
     - name: Compile examples (Release)
       run: ls examples/release | xargs scala-cli compile
     - name: Publish Local
