@@ -13,11 +13,7 @@ lazy val root =
       Seq(
         scalaVersion := "$scala_version$",
         libraryDependencies ++= List(
-          $if(pure.truthy) $
-            "eu.joaocosta" %%% "minart-core" % "0.3.3",
-          "eu.joaocosta"   %%% "minart-pure" % "0.3.3"
-            $else$
-            "eu.joaocosta" %%% "minart-core" % "0.3.3" $endif$
+          "eu.joaocosta" %%% "minart" % "0.4.0-RC1",
         )
       )
     )

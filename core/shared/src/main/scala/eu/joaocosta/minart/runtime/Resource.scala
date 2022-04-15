@@ -47,6 +47,6 @@ trait Resource {
 }
 
 object Resource {
-  def apply(resourcePath: String): Resource =
-    DefaultBackend[String, Resource].defaultValue(resourcePath)
+  def apply(resourcePath: String)(implicit backend: DefaultBackend[String, Resource]): Resource =
+    backend.defaultValue(resourcePath)
 }

@@ -1,5 +1,6 @@
 package $package$
 
+import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.pure._
 import eu.joaocosta.minart.runtime._

@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.backend.defaults._
+
 /** Abstraction that provides an `init` operation to create a new canvas.
   *
   * This is helpful to deal with the fact that creating a new canvas is a
@@ -28,6 +30,6 @@ object CanvasManager {
     *
     * @return [[CanvasManager]] using the default backend for the target platform
     */
-  def apply(): CanvasManager =
+  def apply()(implicit backend: DefaultBackend[Any, LowLevelCanvas]): CanvasManager =
     CanvasManager(() => LowLevelCanvas.create())
 }

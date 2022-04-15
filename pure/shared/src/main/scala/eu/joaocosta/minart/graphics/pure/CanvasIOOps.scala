@@ -20,24 +20,6 @@ trait CanvasIOOps extends MSurfaceIOOps {
     */
   def changeSettings(newSettings: Canvas.Settings): CanvasIO[Unit] = accessCanvas(_.changeSettings(newSettings))
 
-  /** Gets the color from the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to either use `getBackbuffer` to fetch multiple pixels at the same time or
-    * to implement this operation on the application code.
-    *
-    * @param x pixel x position
-    * @param y pixel y position
-    */
-  @deprecated("Use CanvasIO.getPixel instead")
-  def getBackbufferPixel(x: Int, y: Int): CanvasIO[Color] = accessCanvas(_.getBackbufferPixel(x, y))
-
-  /** Returns the backbuffer.
-    * This operation can be perfomance intensive, so it might be worthwile
-    * to implement this operation on the application code.
-    */
-  @deprecated("Use CanvasIO.getPixels instead")
-  val getBackbuffer: CanvasIO[Vector[Vector[Color]]] = accessCanvas(_.getBackbuffer())
-
   /** Gets the current keyboard input. */
   val getKeyboardInput: CanvasIO[KeyboardInput] = accessCanvas(_.getKeyboardInput())
 

@@ -4,7 +4,7 @@ package eu.joaocosta.minart.graphics
   */
 trait SurfaceBackedCanvas extends LowLevelCanvas {
 
-  protected def surface: Surface.MutableSurface
+  protected def surface: MutableSurface
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     surface.putPixel(x, y, color)
@@ -19,13 +19,8 @@ trait SurfaceBackedCanvas extends LowLevelCanvas {
     surface.fill(color)
 
   override def blit(
-      that: Surface
-  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
-    surface.blit(that)(x, y, cx, cy, cw, ch)
-
-  override def blitWithMask(
       that: Surface,
-      mask: Color
+      mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
-    surface.blitWithMask(that, mask)(x, y, cx, cy, cw, ch)
+    surface.blit(that, mask)(x, y, cx, cy, cw, ch)
 }

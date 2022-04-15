@@ -18,7 +18,9 @@ case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased
   def isUp(key: Key): Boolean = !keysDown(key)
 
   /** Returns a new state where a key has been pressed. */
-  def press(key: Key): KeyboardInput = KeyboardInput(keysDown + key, keysPressed + key, keysReleased - key)
+  def press(key: Key): KeyboardInput =
+    if (keysDown(key)) this
+    else KeyboardInput(keysDown + key, keysPressed + key, keysReleased - key)
 
   /** Returns a new state where a key has been released. */
   def release(key: Key): KeyboardInput = KeyboardInput(keysDown - key, keysPressed - key, keysReleased + key)
