@@ -50,6 +50,12 @@ trait Plane { outer =>
         }
       }.toSurfaceView(cw, ch)
 
+  /** Inverts a plane color. */
+  def invertColor: Plane = map(_.invert)
+
+  /** Transposes a surface. */
+  def transpose: Plane = contramap((x, y) => (y, x))
+
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner
     *
     * @param width surface view width
