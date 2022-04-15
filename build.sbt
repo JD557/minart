@@ -42,7 +42,6 @@ val testSettings = Seq(
 )
 
 val publishSettings = Seq(
-  Compile / packageDoc / publishArtifact := false,
   publishMavenStyle      := true,
   Test / publishArtifact := false,
   pomIncludeRepository   := { _ => false }
