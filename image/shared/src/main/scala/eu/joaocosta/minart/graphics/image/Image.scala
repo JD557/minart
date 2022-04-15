@@ -6,35 +6,8 @@ import scala.util.{Failure, Success, Try}
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime.Resource
 
-/** Object containing user-friendly functions to load and manipulate images.
-  */
+/** Object containing user-friendly functions to images. */
 object Image {
-
-  /** Inverts an image color.
-    */
-  def invert(surface: Surface): SurfaceView =
-    surface.view.map(_.invert)
-
-  /** Flips an image horizontally.
-    */
-  def flipH(surface: Surface): SurfaceView =
-    surface.view
-      .contramap((x, y) => (surface.width - x - 1, y))
-      .clip(0, 0, surface.width, surface.height)
-
-  /** Flips an image vertically.
-    */
-  def flipV(surface: Surface): SurfaceView =
-    surface.view
-      .contramap((x, y) => (x, surface.height - y - 1))
-      .clip(0, 0, surface.width, surface.height)
-
-  /** Transposes an image.
-    */
-  def transpose(surface: Surface): SurfaceView =
-    surface.view
-      .contramap((x, y) => (y, x))
-      .clip(0, 0, surface.height, surface.width)
 
   /** Loads an image using a custom ImageLoader.
     *

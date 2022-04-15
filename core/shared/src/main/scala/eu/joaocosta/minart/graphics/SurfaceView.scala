@@ -45,6 +45,22 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     else plane.clip(cx, cy, cw, ch)
   }
 
+  /** Inverts a surface color. */
+  def invertColor: SurfaceView = map(_.invert)
+
+  /** Flips a surface horizontally. */
+  def flipH: SurfaceView =
+    contramap((x, y) => (width - x - 1, y))
+      .toSurfaceView(width, height)
+
+  /** Flips an surface vertically. */
+  def flipV: SurfaceView = contramap((x, y) => (x, height - y - 1))
+    .toSurfaceView(width, height)
+
+  /** Transposes a surface. */
+  def transpose: SurfaceView =
+    plane.transpose.toSurfaceView(height, width)
+
   def getPixels(): Vector[Array[Color]] =
     Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y).getOrElse(SurfaceView.defaultColor)))
 
