@@ -27,7 +27,7 @@ Minart is still in a 0.x version. Quoting the semver specification:
 To include Minart, simply add `minart` to your project:
 
 ```scala
-libraryDependencies += "eu.joaocosta" %% "minart" % "0.4.0-RC1"
+libraryDependencies += "eu.joaocosta" %% "minart" % "0.4.0"
 ```
 
 Or just create a new project using the provided giter8 template, with:

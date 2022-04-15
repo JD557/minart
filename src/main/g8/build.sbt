@@ -13,7 +13,7 @@ lazy val root =
       Seq(
         scalaVersion := "$scala_version$",
         libraryDependencies ++= List(
-          "eu.joaocosta" %%% "minart" % "0.4.0-RC1",
+          "eu.joaocosta" %%% "minart" % "0.4.0",
         )
       )
     )
