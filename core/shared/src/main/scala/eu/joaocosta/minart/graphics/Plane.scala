@@ -99,14 +99,19 @@ object Plane {
     * @param surface reference surface
     */
   def fromSurfaceWithRepetition(surface: Surface): Plane =
-    new Plane {
-      def getPixel(x: Int, y: Int): Color = {
-        surface
-          .getPixel(
-            floorMod(x, surface.width),
-            floorMod(y, surface.height)
-          )
-          .getOrElse(defaultColor)
+    if (surface.width <= 0 || surface.height <= 0)
+      new Plane {
+        def getPixel(x: Int, y: Int): Color = defaultColor
       }
-    }
+    else
+      new Plane {
+        def getPixel(x: Int, y: Int): Color = {
+          surface
+            .getPixel(
+              floorMod(x, surface.width),
+              floorMod(y, surface.height)
+            )
+            .getOrElse(defaultColor)
+        }
+      }
 }
