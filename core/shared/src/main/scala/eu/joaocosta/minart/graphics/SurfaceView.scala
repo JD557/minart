@@ -7,9 +7,8 @@ package eu.joaocosta.minart.graphics
   */
 final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surface {
 
-  def getPixel(x: Int, y: Int): Option[Color] =
-    if (x >= 0 && y >= 0 && x < width && y < height) Some(plane.getPixel(x, y))
-    else None
+  def unsafeGetPixel(x: Int, y: Int): Color =
+    plane.getPixel(x, y)
 
   /** Maps the colors from this surface view. */
   def map(f: Color => Color): SurfaceView = copy(plane.map(f))
@@ -62,7 +61,7 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     plane.transpose.toSurfaceView(height, width)
 
   def getPixels(): Vector[Array[Color]] =
-    Vector.tabulate(height)(y => Array.tabulate(width)(x => getPixel(x, y).getOrElse(SurfaceView.defaultColor)))
+    Vector.tabulate(height)(y => Array.tabulate(width)(x => unsafeGetPixel(x, y)))
 
   override def view: SurfaceView = this
 }

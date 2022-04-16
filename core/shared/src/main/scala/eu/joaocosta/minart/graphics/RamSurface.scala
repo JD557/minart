@@ -11,11 +11,10 @@ final class RamSurface(val data: Vector[Array[Color]]) extends MutableSurface {
   def this(colors: Seq[Seq[Color]]) =
     this(colors.map(_.toArray).toVector)
 
-  def getPixel(x: Int, y: Int): Option[Color] =
-    if (x >= 0 && y >= 0 && x < width && y < height) Some(data(y)(x))
-    else None
+  def unsafeGetPixel(x: Int, y: Int): Color =
+    data(y)(x)
 
-  def getPixels(): Vector[Array[Color]] = data
+  def getPixels(): Vector[Array[Color]] = data.map(_.clone())
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     if (x >= 0 && y >= 0 && x < width && y < height)

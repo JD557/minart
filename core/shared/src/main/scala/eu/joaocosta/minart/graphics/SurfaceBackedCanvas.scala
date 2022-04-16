@@ -9,8 +9,8 @@ trait SurfaceBackedCanvas extends LowLevelCanvas {
   def putPixel(x: Int, y: Int, color: Color): Unit =
     surface.putPixel(x, y, color)
 
-  def getPixel(x: Int, y: Int): Option[Color] =
-    surface.getPixel(x, y)
+  def unsafeGetPixel(x: Int, y: Int): Color =
+    surface.unsafeGetPixel(x, y)
 
   def getPixels(): Vector[Array[Color]] =
     surface.getPixels()

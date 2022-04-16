@@ -30,17 +30,16 @@ trait MutableSurface extends Surface {
       maxX: Int,
       maxY: Int
   ): Unit = {
-    val thatPixels = that.getPixels()
-    var dy         = 0
+    var dy = 0
     mask match {
       case None =>
         while (dy < maxY) {
-          val line  = thatPixels(dy + cy)
+          val srcY  = dy + cy
           val destY = dy + y
           var dx    = 0
           while (dx < maxX) {
             val destX = dx + x
-            val color = line(dx + cx)
+            val color = that.unsafeGetPixel(dx + cx, srcY)
             putPixel(destX, destY, color)
             dx += 1
           }
@@ -48,12 +47,12 @@ trait MutableSurface extends Surface {
         }
       case Some(maskColor) =>
         while (dy < maxY) {
-          val line  = thatPixels(dy + cy)
+          val srcY  = dy + cy
           val destY = dy + y
           var dx    = 0
           while (dx < maxX) {
             val destX = dx + x
-            val color = line(dx + cx)
+            val color = that.unsafeGetPixel(dx + cx, srcY)
             if (color != maskColor) putPixel(destX, destY, color)
             dx += 1
           }
@@ -74,11 +73,7 @@ trait MutableSurface extends Surface {
       val maxY = math.min(ch, math.min(that.height - cy, this.height - y))
 
       if (maxX > 0 && maxY > 0) {
-        if (that.isInstanceOf[SurfaceView]) {
-          unsafeBlit(that.view.clip(cx, cy, maxX, maxY), mask, x, y, 0, 0, maxX, maxY)
-        } else {
-          unsafeBlit(that, mask, x, y, cx, cy, maxX, maxY)
-        }
+        unsafeBlit(that, mask, x, y, cx, cy, maxX, maxY)
       }
     }
   }

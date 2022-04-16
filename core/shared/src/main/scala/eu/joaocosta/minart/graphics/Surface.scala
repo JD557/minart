@@ -16,6 +16,17 @@ trait Surface {
     */
   def view: SurfaceView = SurfaceView(this)
 
+  /** Gets the color from the this surface in an unsafe way.
+    *
+    * This operation is unsafe: reading a out of bounds pixel has undefined behavior.
+    * You should only use this if the performance of `getPixel` and `getPixels` are not acceptable.
+    *
+    * @param x pixel x position
+    * @param y pixel y position
+    * @return pixel color
+    */
+  def unsafeGetPixel(x: Int, y: Int): Color
+
   /** Gets the color from the this surface.
     * This operation can be perfomance intensive, so it might be worthwile
     * to either use `getPixels` to fetch multiple pixels at the same time or
@@ -25,7 +36,9 @@ trait Surface {
     * @param y pixel y position
     * @return pixel color
     */
-  def getPixel(x: Int, y: Int): Option[Color]
+  def getPixel(x: Int, y: Int): Option[Color] =
+    if (x >= 0 && y >= 0 && x < width && y < height) Some(unsafeGetPixel(x, y))
+    else None
 
   /** Returns the pixels from this surface.
     * This operation can be perfomance intensive, so it might be worthwile

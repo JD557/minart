@@ -15,11 +15,10 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
   private val lines   = 0 until height
   private val columns = 0 until width
 
-  def getPixel(x: Int, y: Int): Option[Color] =
-    if (x >= 0 && y >= 0 && x < width && y < height) {
-      val baseAddr = 4 * (y * width + x)
-      Some(Color(data.data(baseAddr + 0), data.data(baseAddr + 1), data.data(baseAddr + 2)))
-    } else None
+  def unsafeGetPixel(x: Int, y: Int): Color = {
+    val baseAddr = 4 * (y * width + x)
+    Color(data.data(baseAddr + 0), data.data(baseAddr + 1), data.data(baseAddr + 2))
+  }
 
   def getPixels(): Vector[Array[Color]] = {
     val imgData = data.data

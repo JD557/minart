@@ -20,19 +20,16 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
   private val columns  = 0 until width
   private val renderer = SDL_CreateSoftwareRenderer(data)
 
-  def getPixel(x: Int, y: Int): Option[Color] =
-    if (data.pixels != null && x >= 0 && y >= 0 && x < width && y < height) {
-      // Assuming a BGRA surface
-      val baseAddr =
-        4 * (y * width + x)
-      Some(
-        Color(
-          (data.pixels(baseAddr + 2) & 0xff),
-          (data.pixels(baseAddr + 1) & 0xff),
-          (data.pixels(baseAddr + 0) & 0xff)
-        )
-      )
-    } else None
+  def unsafeGetPixel(x: Int, y: Int): Color = {
+    // Assuming a BGRA surface
+    val baseAddr =
+      4 * (y * width + x)
+    Color(
+      (data.pixels(baseAddr + 2) & 0xff),
+      (data.pixels(baseAddr + 1) & 0xff),
+      (data.pixels(baseAddr + 0) & 0xff)
+    )
+  }
 
   def getPixels(): Vector[Array[Color]] = {
     lines.map { y =>
