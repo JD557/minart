@@ -11,16 +11,8 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
   val height              = bufferedImage.getHeight()
   private val imagePixels = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
-  def getPixel(x: Int, y: Int): Option[Color] =
-    if (x >= 0 && y >= 0 && x < width && y < height)
-      Some(
-        Color.fromRGB(
-          imagePixels.getElem(
-            y * width + x
-          )
-        )
-      )
-    else None
+  def unsafeGetPixel(x: Int, y: Int): Color =
+    Color.fromRGB(imagePixels.getElem(y * width + x))
 
   def getPixels(): Vector[Array[Color]] =
     imagePixels.getData().iterator.map(Color.fromRGB).grouped(width).map(_.toArray).toVector

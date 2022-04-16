@@ -71,4 +71,19 @@ trait MutableSurfaceTests extends BasicTestSuite {
     surface.blit(source)(0, 0, 0, 0, -1, -1)
     surface.blit(source)(0, 0, 0, 0, 2 * source.width, 2 * source.height)
   }
+
+  test("Correctly combine two surfaces") {
+    surface.fill(Color(255, 0, 0))
+    val source = surface.toRamSurface()
+    surface.fill(Color(0, 0, 0))
+
+    assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
+    assert(surface.getPixel(1, 1) == Some(Color(0, 0, 0)))
+
+    surface.blit(source)(1, 1)
+
+    assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
+    assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
+    assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
+  }
 }
