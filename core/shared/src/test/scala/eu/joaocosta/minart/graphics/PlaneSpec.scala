@@ -47,6 +47,21 @@ object PlaneSpec extends BasicTestSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
+  test("Flatmapping it updates the colors based on the position") {
+    val newSurface =
+      Plane
+        .fromSurfaceWithRepetition(surface)
+        .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
+        .toRamSurface(surface.width, surface.height)
+    val newPixels = newSurface.getPixels()
+    val expectedPixels =
+      originalPixels.take(8) ++ originalPixels.drop(8).map(_.map(_.invert))
+
+    assert(newSurface.width == surface.width)
+    assert(newSurface.height == surface.height)
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
   test("Contramapping updates the positions") {
     val newSurface =
       Plane

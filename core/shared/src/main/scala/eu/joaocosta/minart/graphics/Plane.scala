@@ -4,12 +4,18 @@ package eu.joaocosta.minart.graphics
  *
  * Can be clipped to create a surface.
  */
-trait Plane { outer =>
+trait Plane extends Function2[Int, Int, Color] { outer =>
+  def apply(x: Int, y: Int): Color = getPixel(x, y)
   def getPixel(x: Int, y: Int): Color
 
   /** Maps the colors from this plane. */
   final def map(f: Color => Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y))
+  }
+
+  /* Flatmaps this plane */
+  final def flatMap(f: Color => (Int, Int) => Color): Plane = new Plane {
+    def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y)).apply(x, y)
   }
 
   /** Contramaps the positions from this plane. */
@@ -79,6 +85,14 @@ object Plane {
     val rem = x % y
     if (rem >= 0) rem
     else rem + y
+  }
+
+  /** Creates a plane from a constant color
+    *
+    * @param constant constant color
+    */
+  def fromConstant(color: Color): Plane = new Plane {
+    def getPixel(x: Int, y: Int): Color = color
   }
 
   /** Creates a plane from a generator function
