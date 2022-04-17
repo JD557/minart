@@ -50,12 +50,16 @@ ImpureRenderLoop
       val image = Plane.fromSurfaceWithRepetition(updatedBitmap) // Create an inifinitePlane from our surface
         .contramap((x, y) => ((x * zoom).toInt, (y * zoom).toInt)) // Apply zooming logic
         .contramap((x, y) => ((x * frameCos - y * frameSin).toInt, (x * frameSin + y * frameCos).toInt)) // Rotatiion
+        .flatMap(color => (x, y) => // Add a crazy checkerboard effect
+            if (x % 32 < 16 != y % 32 < 16) color.invert
+            else color
+          )
         .clip(0, 0, 128, 128) // Clip into a SurfaceView
 
       // Draw the image. Note that image is a SurfaceView, we don't need to convert it into a RamSurface.
       canvas.blit(image)(0, 0)
       canvas.redraw()
-      t + 0.05
+      t + 0.01
     },
     LoopFrequency.hz60
   ).run(canvasSettings, 0)
