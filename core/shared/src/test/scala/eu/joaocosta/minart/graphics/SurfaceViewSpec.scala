@@ -33,6 +33,19 @@ object SurfaceViewSpec extends BasicTestSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
+  test("The flatMap view updates the colors based on the position") {
+    val newSurface = surface.view
+      .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
+      .toRamSurface()
+    val newPixels = newSurface.getPixels()
+    val expectedPixels =
+      originalPixels.take(8) ++ originalPixels.drop(8).map(_.map(_.invert))
+
+    assert(newSurface.width == surface.width)
+    assert(newSurface.height == surface.height)
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
   test("The contramap view updates the positions") {
     val newSurface = surface.view.contramap((x, y) => (y, x)).clip(0, 0, surface.height, surface.width).toRamSurface()
     val newPixels  = newSurface.getPixels()
