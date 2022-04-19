@@ -84,7 +84,9 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       keyListener = new AwtCanvas.KeyListener()
       mouseListener = new AwtCanvas.MouseListener(javaCanvas, extendedSettings)
       javaCanvas.addKeyListener(keyListener)
+      javaCanvas.frame.addKeyListener(keyListener)
       javaCanvas.addMouseListener(mouseListener)
+      javaCanvas.frame.addMouseListener(mouseListener)
       clear(Set(Canvas.Buffer.Backbuffer))
     }
   }
@@ -132,8 +134,10 @@ object AwtCanvas {
       new Dimension(scaledWidth, scaledHeight)
 
     val frame = new JFrame("Minart")
-    frame.add(this)
+    frame.setUndecorated(fullScreen)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
+
+    frame.add(this)
     frame.pack()
     GraphicsEnvironment
       .getLocalGraphicsEnvironment()
@@ -145,7 +149,6 @@ object AwtCanvas {
     val buffStrategy = getBufferStrategy
 
     override def paint(g: Graphics) = outerCanvas.javaRedraw(g)
-
     frame.setVisible(true)
     frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
