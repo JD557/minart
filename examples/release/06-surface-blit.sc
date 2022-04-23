@@ -68,4 +68,5 @@ ImpureRenderLoop
       (state + 1) % (128 - 16)
     },
     LoopFrequency.hz60
-  ).run(canvasSettings, 0)
+  )
+  .run(canvasSettings, 0)
