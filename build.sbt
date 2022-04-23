@@ -3,12 +3,12 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 name := "minart"
 
-ThisBuild / organization := "eu.joaocosta"
-ThisBuild / publishTo    := sonatypePublishToBundle.value
-ThisBuild / scalaVersion := "3.1.2"
+ThisBuild / organization       := "eu.joaocosta"
+ThisBuild / publishTo          := sonatypePublishToBundle.value
+ThisBuild / scalaVersion       := "3.1.2"
 ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.15", "2.13.8", "3.1.2")
-ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
-ThisBuild / homepage     := Some(url("https://github.com/JD557/minart"))
+ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / homepage           := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
     url("https://github.com/JD557/minart"),
@@ -23,13 +23,14 @@ ThisBuild / scalacOptions ++= Seq(
   "-language:higherKinds",
   "-unchecked"
 )
-ThisBuild / scalafmtOnCompile := true
-ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-ThisBuild / scalafixOnCompile := true
+ThisBuild / scalafmtOnCompile                              := true
+ThisBuild / semanticdbEnabled                              := true
+ThisBuild / semanticdbVersion                              := scalafixSemanticdb.revision
+ThisBuild / scalafixOnCompile                              := true
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
-val sharedSettings = Seq(libraryDependencies ++=
+val sharedSettings = Seq(
+  libraryDependencies ++=
     Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0")
 )
 
@@ -50,7 +51,7 @@ val publishSettings = Seq(
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0",
-    "org.scala-js" %%% "scalajs-dom" % "2.1.0"
+    "org.scala-js"           %%% "scalajs-dom"             % "2.1.0"
   )
 )
 
