@@ -9,6 +9,9 @@ package object defaults {
   implicit val defaultLoopRunner: DefaultBackend[Any, JavaLoopRunner.type] =
     DefaultBackend.fromConstant(JavaLoopRunner)
 
+  implicit val defaultAudioPlayer: DefaultBackend[Any, JavaAudioPlayer.type] =
+    DefaultBackend.fromConstant(JavaAudioPlayer)
+
   implicit val defaultPlatform: DefaultBackend[Any, Platform.JVM.type] =
     DefaultBackend.fromConstant(Platform.JVM)
 
