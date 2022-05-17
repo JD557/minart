@@ -37,6 +37,54 @@ object Extras {
   /* End SDL_bool */
 
   /** ************************************
+    * *********** SDL_audio.h *************
+    * ************************************
+    */
+
+  val AUDIO_U8     = 0x0008.toUShort
+  val AUDIO_S8     = 0x8008.toUShort
+  val AUDIO_U16LSB = 0x0010.toUShort
+  val AUDIO_S16LSB = 0x8010.toUShort
+  val AUDIO_U16MSB = 0x1010.toUShort
+  val AUDIO_S16MSB = 0x9010.toUShort
+  val AUDIO_U16    = AUDIO_U16LSB
+  val AUDIO_S16    = AUDIO_S16LSB
+  val AUDIO_S32LSB = 0x8020.toUShort
+  val AUDIO_S32MSB = 0x9020.toUShort
+  val AUDIO_S32    = AUDIO_S32LSB
+  val AUDIO_F32LSB = 0x8120.toUShort
+  val AUDIO_F32MSB = 0x9120.toUShort
+  val AUDIO_F32    = AUDIO_F32LSB
+
+  val SDL_AUDIO_ALLOW_FREQUENCY_CHANGE = 0x00000001
+  val SDL_AUDIO_ALLOW_FORMAT_CHANGE    = 0x00000002
+  val SDL_AUDIO_ALLOW_CHANNELS_CHANGE  = 0x00000004
+  val SDL_AUDIO_ALLOW_SAMPLES_CHANGE   = 0x00000008
+  val SDL_AUDIO_ALLOW_ANY_CHANGE =
+    (SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_FORMAT_CHANGE | SDL_AUDIO_ALLOW_CHANNELS_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE)
+
+  implicit class SDL_AudioSpecOps(val self: Ptr[SDL_AudioSpec]) extends AnyVal {
+    def freq: CInt                                     = self._1
+    def freq_=(nFreq: CInt): Unit                      = { self._1 = nFreq }
+    def format: SDL_AudioFormat                        = self._2
+    def format_=(nFormat: SDL_AudioFormat): Unit       = { self._2 = nFormat }
+    def channels: UByte                                = self._3
+    def channels_=(nChannels: UByte): Unit             = { self._3 = nChannels }
+    def silence: UByte                                 = self._4
+    def silence_=(nSilence: UByte): Unit               = { self._4 = nSilence }
+    def samples: UShort                                = self._5
+    def samples_=(nSamples: UShort): Unit              = { self._5 = nSamples }
+    def padding: UShort                                = self._6
+    def padding_=(nPadding: UShort): Unit              = { self._6 = nPadding }
+    def size: UInt                                     = self._7
+    def size_=(nSize: UInt): Unit                      = { self._7 = nSize }
+    def callback: SDL_AudioCallback                    = self._8
+    def callback_=(nCallback: SDL_AudioCallback): Unit = { self._8 = nCallback }
+    def userdata: Ptr[Byte]                            = self._9
+    def userdata_=(nUserdata: Ptr[Byte]): Unit         = { self._9 = nUserdata }
+  }
+
+  /** ************************************
     * *********** SDL_error.h *************
     * ************************************
     */
