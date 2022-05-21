@@ -11,7 +11,7 @@ case class AudioWave(
 
   def iterator(sampleRate: Double): Iterator[Double] = {
     val samples  = numSamples(sampleRate)
-    val stepSize = 1.0 / samples
+    val stepSize = duration / samples
     Iterator.from(0).take(samples).map { i =>
       wave(i * stepSize)
     }
