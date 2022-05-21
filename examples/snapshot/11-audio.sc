@@ -14,7 +14,7 @@ val song = (t: Double) => {
   math.pow(2, exp/12.0)*440
 }
 val testSample =
-  AudioSample.fromFunction(t => math.sin(song(t) * 6.28 * t), 1.0)
+  AudioWave(t => math.sin(song(t) * 6.28 * t), 1.0)
 
 AudioPlayer().play(testSample)
 

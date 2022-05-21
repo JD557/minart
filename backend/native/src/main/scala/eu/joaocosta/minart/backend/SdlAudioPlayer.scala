@@ -9,20 +9,23 @@ import sdl2.SDL._
 import eu.joaocosta.minart.audio._
 
 object SdlAudioPlayer extends AudioPlayer {
-  def play(sample: AudioSample): Unit = {
+  private val sampleRate = 44100
+
+  def play(wave: AudioWave): Unit = {
+    val samples = wave.numSamples(sampleRate)
     SDL_InitSubSystem(SDL_INIT_AUDIO)
     val want = stackalloc[SDL_AudioSpec]()
     val have = stackalloc[SDL_AudioSpec]()
-    want.freq = sample.sampleRate.toInt
+    want.freq = sampleRate
     want.format = AUDIO_S8
     want.channels = 1.toUByte
     want.samples = 4096.toUShort // FIXME
     val device: SDL_AudioDeviceID = SDL_OpenAudioDevice(null, 0, want, have, 0)
-    val arr                       = stackalloc[Byte](sample.data.size)
-    sample.to8BitArray.zipWithIndex.foreach { case (x, i) =>
+    val arr                       = stackalloc[Byte](samples)
+    wave.byteIterator(sampleRate).zipWithIndex.foreach { case (x, i) =>
       arr(i) = x
     }
-    SDL_QueueAudio(device, arr, sample.data.size.toUInt)
+    SDL_QueueAudio(device, arr, samples.toUInt)
     SDL_PauseAudioDevice(device, 0)
   }
 }

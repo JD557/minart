@@ -6,13 +6,16 @@ import javax.sound.sampled._
 import eu.joaocosta.minart.audio._
 
 object JavaAudioPlayer extends AudioPlayer {
-  def play(sample: AudioSample): Unit = {
-    val clip   = AudioSystem.getClip()
-    val format = new AudioFormat(sample.sampleRate, 8, 1, true, false)
+  private val sampleRate = 44100
+
+  def play(wave: AudioWave): Unit = {
+    val clip    = AudioSystem.getClip()
+    val format  = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
+    val samples = wave.byteIterator(sampleRate).toArray[Byte]
     val stream = new AudioInputStream(
-      ByteArrayInputStream(sample.to8BitArray),
+      ByteArrayInputStream(samples),
       format,
-      sample.data.size
+      samples.size
     )
     clip.open(stream)
     clip.setMicrosecondPosition(0)

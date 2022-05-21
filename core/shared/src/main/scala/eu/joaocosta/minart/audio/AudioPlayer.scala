@@ -3,7 +3,7 @@ package eu.joaocosta.minart.audio
 import eu.joaocosta.minart.backend.defaults._
 
 trait AudioPlayer {
-  def play(sample: AudioSample): Unit
+  def play(wave: AudioWave): Unit
 }
 
 object AudioPlayer {
