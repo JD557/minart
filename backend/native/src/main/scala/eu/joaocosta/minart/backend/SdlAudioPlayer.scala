@@ -21,11 +21,13 @@ object SdlAudioPlayer extends AudioPlayer {
     want.channels = 1.toUByte
     want.samples = 4096.toUShort // FIXME
     val device: SDL_AudioDeviceID = SDL_OpenAudioDevice(null, 0, want, have, 0)
-    val arr                       = stackalloc[Byte](samples)
-    wave.byteIterator(sampleRate).zipWithIndex.foreach { case (x, i) =>
-      arr(i) = x
+    Zone { implicit z =>
+      val arr = alloc[Byte](samples)
+      wave.byteIterator(sampleRate).zipWithIndex.foreach { case (x, i) =>
+        arr(i) = x
+      }
+      SDL_QueueAudio(device, arr, samples.toUInt)
     }
-    SDL_QueueAudio(device, arr, samples.toUInt)
     SDL_PauseAudioDevice(device, 0)
   }
 }
