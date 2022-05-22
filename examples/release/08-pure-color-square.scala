@@ -26,16 +26,16 @@ object PureColorSquare extends MinartApp {
   /* The LoopRunner and CanvasManager are low level primitives from the backend.
    * It is recommended to just use the default values here
    */
-  val loopRunner     = LoopRunner()
-  val canvasManager  = CanvasManager()
+  val loopRunner    = LoopRunner()
+  val canvasManager = CanvasManager()
 
   /*
    * The state must always be defined.
    * In this case, we'll just set it to unit, as we don't care about the state
    */
   type State = Unit
-  val initialState   = ()
-  val terminateWhen  = (_: State) => false
+  val initialState  = ()
+  val terminateWhen = (_: State) => false
 
   // Then we define the canvas settings and frame rate
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)

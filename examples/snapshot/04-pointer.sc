@@ -16,10 +16,9 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime._
 
-/**
- * Note the adition of clearColor here.
- * This is the color of the canvas when nothing is drawn.
- */
+/** Note the adition of clearColor here.
+  * This is the color of the canvas when nothing is drawn.
+  */
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(255, 255, 255))
 
 ImpureRenderLoop
@@ -58,4 +57,5 @@ ImpureRenderLoop
       canvas.redraw()
     },
     LoopFrequency.Uncapped // As fast as possible
-  ).run(canvasSettings)
+  )
+  .run(canvasSettings)

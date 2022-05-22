@@ -16,7 +16,7 @@ import eu.joaocosta.minart.runtime._
 
 // First, let's load our example scala logo image
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(0, 0, 0))
-val bitmap = Image.loadBmpImage(Resource("assets/scala.bmp")).get
+val bitmap         = Image.loadBmpImage(Resource("assets/scala.bmp")).get
 
 /*
  * Now, let's manipulate our image a bit
@@ -24,8 +24,8 @@ val bitmap = Image.loadBmpImage(Resource("assets/scala.bmp")).get
 
 val updatedBitmap = bitmap.view
   .map(color => if (color == Color(255, 255, 255)) Color(0, 0, 0) else color) // change background color
-  .clip(14, 0, 100, 128) // clip the image
-  .toRamSurface() // convert it back to a RamSurface
+  .clip(14, 0, 100, 128)                                                      // clip the image
+  .toRamSurface()                                                             // convert it back to a RamSurface
 
 /*
  * Note that in the above example we convert the image back to a RAM surface.
@@ -45,15 +45,17 @@ ImpureRenderLoop
     (canvas, t) => {
       val frameSin = math.sin(t)
       val frameCos = math.cos(t)
-      val zoom = frameSin + 2.0
+      val zoom     = frameSin + 2.0
 
-      val image = Plane.fromSurfaceWithRepetition(updatedBitmap) // Create an inifinitePlane from our surface
+      val image = Plane
+        .fromSurfaceWithRepetition(updatedBitmap)                  // Create an inifinitePlane from our surface
         .contramap((x, y) => ((x * zoom).toInt, (y * zoom).toInt)) // Apply zooming logic
         .contramap((x, y) => ((x * frameCos - y * frameSin).toInt, (x * frameSin + y * frameCos).toInt)) // Rotatiion
-        .flatMap(color => (x, y) => // Add a crazy checkerboard effect
+        .flatMap(color =>
+          (x, y) => // Add a crazy checkerboard effect
             if (x % 32 < 16 != y % 32 < 16) color.invert
             else color
-          )
+        )
         .clip(0, 0, 128, 128) // Clip into a SurfaceView
 
       // Draw the image. Note that image is a SurfaceView, we don't need to convert it into a RamSurface.
@@ -62,4 +64,5 @@ ImpureRenderLoop
       t + 0.01
     },
     LoopFrequency.hz60
-  ).run(canvasSettings, 0)
+  )
+  .run(canvasSettings, 0)

@@ -29,7 +29,7 @@ def automata(backbuffer: Vector[Array[Color]], x: Int, y: Int): Color = {
       backbuffer(y + 1)(xx)
     }
   // We compute some random loss
-  val randomLoss  = 0.8 + (scala.util.Random.nextDouble() / 5)
+  val randomLoss = 0.8 + (scala.util.Random.nextDouble() / 5)
 
   // The pixel temperature will be the average of the neighbors intensity, with the random loss applied
   val temperature = ((neighbors.map(c => (c.r + c.g + c.b) / 3).sum / 3) * randomLoss).toInt
@@ -50,7 +50,7 @@ def automata(backbuffer: Vector[Array[Color]], x: Int, y: Int): Color = {
 ImpureRenderLoop
   .statelessRenderLoop(
     canvas => {
-      
+
       // We set some pixels to always be white, so that the fire keeps growing from there
       // Add bottom fire root
       for {
@@ -70,8 +70,8 @@ ImpureRenderLoop
       }
 
       /** The getPixels method returns all pixels from the canvas.
-       *  We'll pass this to our automata
-       */
+        *  We'll pass this to our automata
+        */
       val backbuffer = canvas.getPixels()
       for {
         x <- (0 until canvas.width)
