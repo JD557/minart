@@ -9,13 +9,16 @@ object JavaAudioPlayer extends AudioPlayer {
   private val sampleRate = 44100
 
   def play(wave: AudioWave): Unit = {
-    val clip    = AudioSystem.getClip()
-    val format  = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
-    val samples = wave.byteIterator(sampleRate).toArray[Byte]
+    val clip   = AudioSystem.getClip()
+    val format = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
+    val is = new InputStream {
+      val it          = wave.byteIterator(sampleRate)
+      def read(): Int = if (it.isEmpty) -1 else (it.next() & 0xFF).toInt
+    }
     val stream = new AudioInputStream(
-      ByteArrayInputStream(samples),
+      is,
       format,
-      samples.size
+      wave.numSamples(sampleRate)
     )
     clip.open(stream)
     clip.setMicrosecondPosition(0)
