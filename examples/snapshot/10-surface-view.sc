@@ -1,5 +1,5 @@
 //> using scala "3.1.2"
-//> using lib "eu.joaocosta::minart:0.4.1-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.4.1-SNAPSHOT"
 
 /*
  * It can be quite cumbersome an ineficient to apply multiple transformations to a surface if we just use the getPixel
