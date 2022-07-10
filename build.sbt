@@ -31,7 +31,7 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 
 val sharedSettings = Seq(
   libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0")
+    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.0")
 )
 
 val testSettings = Seq(
@@ -50,7 +50,7 @@ val publishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.7.0",
+    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.0",
     "org.scala-js"           %%% "scalajs-dom"             % "2.2.0"
   )
 )
