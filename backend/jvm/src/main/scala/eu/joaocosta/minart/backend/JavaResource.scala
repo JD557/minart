@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.backend
 
-import java.io.{FileInputStream, InputStream}
+import java.io.{FileInputStream, FileOutputStream, InputStream, OutputStream}
 
 import scala.concurrent._
 import scala.io.Source
@@ -23,10 +23,7 @@ final case class JavaResource(resourcePath: String) extends Resource {
   def path = "./" + resourcePath
   def withSource[A](f: Source => A): Try[A] = {
     Using[Source, A](
-      Source.fromInputStream(
-        Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)
-          .getOrElse(new FileInputStream(path))
-      )
+      Source.fromInputStream(unsafeInputStream())
     )(f)
   }
   def withSourceAsync[A](f: Source => A): Future[A] = Future(blocking(withSource(f)).get)
@@ -36,5 +33,8 @@ final case class JavaResource(resourcePath: String) extends Resource {
 
   // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+
   def unsafeInputStream(): InputStream =
-    Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get).getOrElse(new FileInputStream(path))
+    Try(new FileInputStream(path)).orElse(Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)).get
+
+  def withOutputStream(f: OutputStream => Unit): Unit =
+    Using[OutputStream, Unit](new FileOutputStream(path))(f)
 }

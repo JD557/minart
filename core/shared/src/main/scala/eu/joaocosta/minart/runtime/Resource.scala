@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.runtime
 
-import java.io.InputStream
+import java.io.{InputStream, OutputStream}
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -44,6 +44,11 @@ trait Resource {
     * This method should only be used if for some reason the input stream must stay open (e.g. for data streaming)
     */
   def unsafeInputStream(): InputStream
+
+  /** Provides a [[java.io.OutputStream]] to write data to this resource location.
+    * The OutputStream is closed in the end, so it should not escape this call.
+    */
+  def withOutputStream(f: OutputStream => Unit): Unit
 }
 
 object Resource {
