@@ -86,8 +86,8 @@ final case class JsResource(resourcePath: String) extends Resource {
   }
 
   def withOutputStream(f: OutputStream => Unit): Unit =
-    Using[OutputStream, Unit](new ByteArrayOutputStream()) { os =>
+    Using[ByteArrayOutputStream, Unit](new ByteArrayOutputStream()) { os =>
       f(os)
-      dom.window.localStorage.setItem(resourcePath, os.toString())
+      dom.window.localStorage.setItem(resourcePath, os.toByteArray().iterator.map(_.toChar).mkString(""))
     }
 }
