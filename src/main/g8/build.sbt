@@ -4,14 +4,13 @@ name := "$name$"
 
 version := "$version$"
 
-scalaVersion := "$scala_version$"
+ThisBuild / scalaVersion := "$scala_version$"
 
 lazy val root =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .in(file("."))
     .settings(
       Seq(
-        scalaVersion := "$scala_version$",
         libraryDependencies ++= List(
           "eu.joaocosta" %%% "minart" % "0.4.0"
         )

@@ -2,8 +2,10 @@
 *.log
 *.hnir
 *.DS_Store
+*.dll
 
 # sbt specific
+.sbtopts
 .cache
 .history
 .lib/

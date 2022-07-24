@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.runtime
 
-import eu.joaocosta.minart.runtime.pure.{IOOps, RIO}
-
 package object pure {
 
   /** Representation of a operation on that requires a Resource, with the common Monad operations.

@@ -4,7 +4,7 @@ import scala.scalajs.js
 
 import org.scalajs.dom
 import org.scalajs.dom.html.{Canvas => JsCanvas}
-import org.scalajs.dom.{Event, ImageBitmap, KeyboardEvent, PointerEvent}
+import org.scalajs.dom.{Event, KeyboardEvent, PointerEvent}
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._

@@ -83,7 +83,6 @@ object PpmImageLoader {
   object Header {
     def fromBytes[F[_]](bytes: F[Int])(byteReader: ByteReader[F]): byteReader.ParseResult[Header] = {
       val byteStringOps = new PpmImageLoader.ByteStringOps(byteReader)
-      import byteReader._
       import byteStringOps._
       (
         for {

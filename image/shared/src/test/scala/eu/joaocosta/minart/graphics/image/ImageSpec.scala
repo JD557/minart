@@ -2,7 +2,6 @@ package eu.joaocosta.minart.graphics.image
 
 import verify._
 
-import eu.joaocosta.minart.backend._
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime._
 

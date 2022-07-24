@@ -4,9 +4,6 @@ import scala.util.Random
 
 import verify._
 
-import eu.joaocosta.minart.backend._
-import eu.joaocosta.minart.runtime._
-
 object PlaneSpec extends BasicTestSuite {
 
   lazy val surface = new RamSurface(
