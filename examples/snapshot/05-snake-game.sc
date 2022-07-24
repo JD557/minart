@@ -1,5 +1,5 @@
-//> using scala "3.1.2"
-//> using lib "eu.joaocosta::minart::0.4.1-SNAPSHOT"
+//> using scala "3.1.3"
+//> using lib "eu.joaocosta::minart::0.4.2-SNAPSHOT"
 
 /*
  * Now that we learned the basics of animation and input handling, we are almost ready to make a game.

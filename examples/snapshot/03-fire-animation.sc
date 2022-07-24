@@ -1,5 +1,5 @@
-//> using scala "3.1.2"
-//> using lib "eu.joaocosta::minart::0.4.1-SNAPSHOT"
+//> using scala "3.1.3"
+//> using lib "eu.joaocosta::minart::0.4.2-SNAPSHOT"
 
 /*
  * In the previous examples we just drew a static image on the screen.
