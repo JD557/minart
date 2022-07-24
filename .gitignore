@@ -2,6 +2,7 @@
 *.log
 *.hnir
 *.DS_Store
+*.dll
 
 # sbt specific
 .cache
