@@ -15,7 +15,6 @@ import javax.swing.{JFrame, WindowConstants}
 
 import scala.collection.JavaConverters._
 
-import eu.joaocosta.minart.graphics.Canvas.Buffer
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input.KeyboardInput.Key

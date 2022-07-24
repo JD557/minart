@@ -4,8 +4,7 @@ import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStre
 
 import scala.concurrent._
 import scala.io.Source
-import scala.util.Using.Releasable
-import scala.util.{Try, Using}
+import scala.util.Try
 
 import eu.joaocosta.minart.runtime.Resource
 

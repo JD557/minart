@@ -4,8 +4,7 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream, Output
 
 import scala.concurrent.{Future, Promise}
 import scala.io.Source
-import scala.scalajs.js
-import scala.util.{Try, Using}
+import scala.util.Try
 
 import org.scalajs.dom
 import org.scalajs.dom.{ProgressEvent, XMLHttpRequest}

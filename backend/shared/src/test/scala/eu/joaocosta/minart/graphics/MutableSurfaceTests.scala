@@ -2,9 +2,6 @@ package eu.joaocosta.minart.graphics
 
 import verify._
 
-import eu.joaocosta.minart.backend._
-import eu.joaocosta.minart.runtime._
-
 trait MutableSurfaceTests extends BasicTestSuite {
 
   def surface: MutableSurface

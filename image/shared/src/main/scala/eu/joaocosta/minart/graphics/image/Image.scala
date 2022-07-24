@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.graphics.image
 
-import scala.io.{BufferedSource, Source}
 import scala.util.{Failure, Success, Try}
 
 import eu.joaocosta.minart.graphics._
