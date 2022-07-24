@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.runtime.pure
 
-import java.io.InputStream
+import java.io.{InputStream, OutputStream}
 
 import scala.io.Source
 import scala.util.Try
@@ -17,6 +17,9 @@ trait ResourceIOOps {
   /** Path to the resource
     */
   val path: ResourceIO[String] = accessResource(_.path)
+
+  /** Checks if the resource exists */
+  val exists: ResourceIO[Boolean] = accessResource(_.exists())
 
   /** Loads the resource synchronously, processes the contents using a [[scala.io.Source]] and returns the result.
     *  The Source is closed in the end, so it should not escape this call.
@@ -43,4 +46,10 @@ trait ResourceIOOps {
     */
   def withInputStreamAsync[A](f: InputStream => A): ResourceIO[Poll[A]] =
     accessResource(res => Poll.fromFuture(res.withInputStreamAsync(f)))
+
+  /** Provides a [[java.io.OutputStream]] to write data to this resource location.
+    * The OutputStream is closed in the end, so it should not escape this call.
+    */
+  def withOutputStream(f: OutputStream => Unit): ResourceIO[Try[Unit]] =
+    accessResource(_.withOutputStream(f))
 }

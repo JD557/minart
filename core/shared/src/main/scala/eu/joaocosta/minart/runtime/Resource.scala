@@ -4,7 +4,8 @@ import java.io.{InputStream, OutputStream}
 
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.Try
+import scala.util.Using.Releasable
+import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.backend.defaults._
 
@@ -12,15 +13,40 @@ import eu.joaocosta.minart.backend.defaults._
   */
 trait Resource {
 
+  // Required for scala 2.11
+  protected implicit val sourceReleasable: Releasable[Source] = new Releasable[Source] {
+    def release(source: Source) = source.close()
+  }
+
   /** Path to the resource
     */
   def path: String
+
+  /** Loads the resource synchronously, and returns an [[java.io.InputStream]].
+    * The InputStream is NOT closed in the end.
+    *
+    * This method should only be used if for some reason the input stream must stay open (e.g. for data streaming)
+    */
+  def unsafeInputStream(): InputStream
+
+  /** Loads the resource synchronously, and returns an [[java.io.OutputStream]].
+    * The OutputStream is NOT closed in the end.
+    *
+    * This method should only be used if for some reason the output stream must stay open (e.g. for data streaming)
+    */
+  def unsafeOutputStream(): OutputStream
+
+  /** Checks if the resource exists */
+  def exists(): Boolean = withInputStream(_ => ()).isSuccess
 
   /** Loads the resource synchronously, processes the contents using a [[scala.io.Source]] and returns the result.
     *  The Source is closed in the end, so it should not escape this call.
     * For working with binary files, it is recommended to use [[withInputStream]] instead.
     */
-  def withSource[A](f: Source => A): Try[A]
+  def withSource[A](f: Source => A): Try[A] =
+    Using[Source, A](
+      Source.fromInputStream(unsafeInputStream())
+    )(f)
 
   /** Loads the resource asynchronously, processes the contents using a [[scala.io.Source]] and returns the result.
     * The Source is closed in the end, so it should not escape this call.
@@ -31,24 +57,19 @@ trait Resource {
   /** Loads the resource synchronously, processes the contents using a [[java.io.InputStream]] and returns the result.
     *  The InputStream is closed in the end, so it should not escape this call.
     */
-  def withInputStream[A](f: InputStream => A): Try[A]
+  def withInputStream[A](f: InputStream => A): Try[A] =
+    Using[InputStream, A](unsafeInputStream())(f)
 
   /** Loads the resource asynchronously, processes the contents using a [[java.io.InputStream]] and returns the result.
     *  The InputStream is closed in the end, so it should not escape this call.
     */
   def withInputStreamAsync[A](f: InputStream => A): Future[A]
 
-  /** Loads the resource synchronously, and returns an [[java.io.InputStream]].
-    * The InputStream is NOT closed in the end.
-    *
-    * This method should only be used if for some reason the input stream must stay open (e.g. for data streaming)
-    */
-  def unsafeInputStream(): InputStream
-
   /** Provides a [[java.io.OutputStream]] to write data to this resource location.
     * The OutputStream is closed in the end, so it should not escape this call.
     */
-  def withOutputStream(f: OutputStream => Unit): Unit
+  def withOutputStream(f: OutputStream => Unit): Try[Unit] =
+    Using[OutputStream, Unit](unsafeOutputStream())(f)
 }
 
 object Resource {

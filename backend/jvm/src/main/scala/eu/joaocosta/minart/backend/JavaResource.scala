@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.backend
 
-import java.io.{FileInputStream, FileOutputStream, InputStream, OutputStream}
+import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStream}
 
 import scala.concurrent._
 import scala.io.Source
@@ -15,26 +15,18 @@ import eu.joaocosta.minart.runtime.Resource
 final case class JavaResource(resourcePath: String) extends Resource {
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  // Required for scala 2.11
-  private implicit val sourceReleasable: Releasable[Source] = new Releasable[Source] {
-    def release(source: Source) = source.close()
-  }
-
   def path = "./" + resourcePath
-  def withSource[A](f: Source => A): Try[A] = {
-    Using[Source, A](
-      Source.fromInputStream(unsafeInputStream())
-    )(f)
-  }
-  def withSourceAsync[A](f: Source => A): Future[A] = Future(blocking(withSource(f)).get)
-  def withInputStream[A](f: InputStream => A): Try[A] =
-    Using[InputStream, A](unsafeInputStream())(f)
-  def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(blocking(withInputStream(f)).get)
+
+  override def exists(): Boolean =
+    this.getClass().getResource("/" + resourcePath) != null ||
+      new File(path).exists()
 
   // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+
   def unsafeInputStream(): InputStream =
     Try(new FileInputStream(path)).orElse(Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get)).get
+  def unsafeOutputStream(): OutputStream = new FileOutputStream(path)
 
-  def withOutputStream(f: OutputStream => Unit): Unit =
-    Using[OutputStream, Unit](new FileOutputStream(path))(f)
+  def withSourceAsync[A](f: Source => A): Future[A]           = Future(blocking(withSource(f)).get)
+  def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(blocking(withInputStream(f)).get)
+
 }
