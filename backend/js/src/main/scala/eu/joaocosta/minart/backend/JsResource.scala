@@ -20,7 +20,35 @@ final case class JsResource(resourcePath: String) extends Resource {
   private def loadFromLocalStorage(): Option[String] =
     Option(dom.window.localStorage.getItem(resourcePath))
 
-  def withSource[A](f: Source => A): Try[A] = Try {
+  def unsafeInputStream(): InputStream = {
+    val data = loadFromLocalStorage() match {
+      case Some(d) => d
+      case None =>
+        val xhr = new XMLHttpRequest()
+        xhr.open("GET", path, false)
+        xhr.overrideMimeType("text/plain; charset=x-user-defined")
+        xhr.send()
+        xhr.responseText
+    }
+    new ByteArrayInputStream(data.toCharArray.map(_.toByte))
+  }
+
+  def unsafeOutputStream(): OutputStream = new OutputStream {
+    val inner = new ByteArrayOutputStream()
+    override def close(): Unit = {
+      flush()
+      inner.close()
+    }
+    override def flush(): Unit = {
+      inner.flush()
+      dom.window.localStorage.setItem(resourcePath, inner.toByteArray().iterator.map(_.toChar).mkString(""))
+    }
+    override def write(b: Array[Byte]): Unit                     = inner.write(b)
+    override def write(b: Array[Byte], off: Int, len: Int): Unit = inner.write(b, off, len)
+    override def write(b: Int): Unit                             = inner.write(b)
+  }
+
+  override def withSource[A](f: Source => A): Try[A] = Try {
     val data = loadFromLocalStorage() match {
       case Some(d) => d
       case None =>
@@ -49,10 +77,6 @@ final case class JsResource(resourcePath: String) extends Resource {
     promise.future
   }
 
-  def withInputStream[A](f: InputStream => A): Try[A] = Try {
-    f(unsafeInputStream())
-  }
-
   def withInputStreamAsync[A](f: InputStream => A): Future[A] = {
     val promise = Promise[A]()
     loadFromLocalStorage() match {
@@ -72,22 +96,4 @@ final case class JsResource(resourcePath: String) extends Resource {
     promise.future
   }
 
-  def unsafeInputStream(): InputStream = {
-    val data = loadFromLocalStorage() match {
-      case Some(d) => d
-      case None =>
-        val xhr = new XMLHttpRequest()
-        xhr.open("GET", path, false)
-        xhr.overrideMimeType("text/plain; charset=x-user-defined")
-        xhr.send()
-        xhr.responseText
-    }
-    new ByteArrayInputStream(data.toCharArray.map(_.toByte))
-  }
-
-  def withOutputStream(f: OutputStream => Unit): Unit =
-    Using[ByteArrayOutputStream, Unit](new ByteArrayOutputStream()) { os =>
-      f(os)
-      dom.window.localStorage.setItem(resourcePath, os.toByteArray().iterator.map(_.toChar).mkString(""))
-    }
 }
