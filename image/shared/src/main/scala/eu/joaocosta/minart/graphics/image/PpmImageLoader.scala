@@ -9,7 +9,7 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for PGM/PPM files.
   *
-  * Supports P2, P3, P5 and P6 PBM files with a 8 bit color range.
+  * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
 final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader {
   import PpmImageLoader._
