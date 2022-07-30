@@ -25,7 +25,16 @@ object ImageSpec extends BasicTestSuite {
       assert(imageRect.get.height == 119)
     }
 
-    test("Load a PPM image") {
+    test("Load a PGM/PPM image") {
+      val imageGrayscaleBin = Image.loadPpmImage(Resource("scala.pgm"))
+      assert(imageGrayscaleBin.isSuccess)
+      assert(imageGrayscaleBin.get.width == 128)
+      assert(imageGrayscaleBin.get.height == 128)
+      val imageGrayscaleTxt = Image.loadPpmImage(Resource("scala-txt.pgm"))
+      assert(imageGrayscaleTxt.isSuccess)
+      assert(imageGrayscaleTxt.get.width == 128)
+      assert(imageGrayscaleTxt.get.height == 128)
+
       val imageBin = Image.loadPpmImage(Resource("scala.ppm"))
       assert(imageBin.isSuccess)
       assert(imageBin.get.width == 128)
@@ -60,9 +69,14 @@ object ImageSpec extends BasicTestSuite {
     test("Load the same data from different formats") {
       val bmpRgb  = Image.loadBmpImage(Resource("scala.bmp")).get.getPixels().map(_.toVector)
       val bmpArgb = Image.loadBmpImage(Resource("scala-argb.bmp")).get.getPixels().map(_.toVector)
-      val ppmP6   = Image.loadPpmImage(Resource("scala.ppm")).get.getPixels().map(_.toVector)
+      val ppmP2   = Image.loadPpmImage(Resource("scala-txt.pgm")).get.getPixels().map(_.toVector)
       val ppmP3   = Image.loadPpmImage(Resource("scala-txt.ppm")).get.getPixels().map(_.toVector)
+      val ppmP5   = Image.loadPpmImage(Resource("scala.pgm")).get.getPixels().map(_.toVector)
+      val ppmP6   = Image.loadPpmImage(Resource("scala.ppm")).get.getPixels().map(_.toVector)
       val qoi     = Image.loadQoiImage(Resource("scala.qoi")).get.getPixels().map(_.toVector)
+
+      assert(ppmP2 == ppmP5)
+
       assert(bmpRgb == bmpArgb)
       assert(bmpRgb == ppmP6)
       assert(bmpRgb == ppmP3)
