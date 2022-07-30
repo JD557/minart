@@ -103,9 +103,22 @@ object BmpImageLoader {
           Set(24, 32),
           bpp => s"Unsupported bits per pixel (must be 24 or 32): $bpp"
         )
-        compressionMethod <- readLENumber(4).validate(_ == 0, _ => "Compression is not supported")
+        compressionMethod <- readLENumber(4).validate(
+          c => c == 0 || c == 3 || c == 6,
+          _ => "Compression is not supported"
+        )
+        loadColorMask = compressionMethod == 3 || compressionMethod == 6
+        _         <- if (loadColorMask) skipBytes(20) else noop
+        redMask   <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x00ff0000)
+        greenMask <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x0000ff00)
+        blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x000000ff)
+        _         <- if (loadColorMask) skipBytes(4) else noop // Skip alpha mask (or color space)
+        _ <- State.check(
+          redMask == 0x00ff0000 && greenMask == 0x0000ff00 && blueMask == 0x000000ff,
+          "Unsupported color format (must be either RGB or ARGB)"
+        )
         header = Header(magic, size, offset, width, height, bitsPerPixel)
-        _ <- skipBytes(offset - 34)
+        _ <- skipBytes(offset - (if (loadColorMask) 70 else 34))
       } yield header).run(bytes)
     }
   }

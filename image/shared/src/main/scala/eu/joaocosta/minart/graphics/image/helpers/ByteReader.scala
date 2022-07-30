@@ -31,6 +31,9 @@ trait ByteReader[F[_]] {
   /** Reads data while a predicate is true */
   def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]]
 
+  /** Does nothing */
+  val noop: ParseState[Nothing, Unit] = skipBytes(0)
+
   /** Read a String from N Bytes */
   def readString(n: Int): ParseState[Nothing, String] =
     readBytes(n).map { bytes => bytes.map(_.toChar).mkString("") }

@@ -10,10 +10,14 @@ object ImageSpec extends BasicTestSuite {
   // Can't load resources in JS tests
   if (Platform() != Platform.JS) {
     test("Load a BMP image") {
-      val image = Image.loadBmpImage(Resource("scala.bmp"))
-      assert(image.isSuccess)
-      assert(image.get.width == 128)
-      assert(image.get.height == 128)
+      val imageRgb = Image.loadBmpImage(Resource("scala.bmp"))
+      assert(imageRgb.isSuccess)
+      assert(imageRgb.get.width == 128)
+      assert(imageRgb.get.height == 128)
+      val imageArgb = Image.loadBmpImage(Resource("scala-argb.bmp"))
+      assert(imageArgb.isSuccess)
+      assert(imageArgb.get.width == 128)
+      assert(imageArgb.get.height == 128)
 
       val imageRect = Image.loadBmpImage(Resource("scala-rect.bmp"))
       assert(imageRect.isSuccess)
@@ -26,7 +30,7 @@ object ImageSpec extends BasicTestSuite {
       assert(imageBin.isSuccess)
       assert(imageBin.get.width == 128)
       assert(imageBin.get.height == 128)
-      val imageTxt = Image.loadPpmImage(Resource("scala2.ppm"))
+      val imageTxt = Image.loadPpmImage(Resource("scala-txt.ppm"))
       assert(imageTxt.isSuccess)
       assert(imageTxt.get.width == 128)
       assert(imageTxt.get.height == 128)
@@ -35,7 +39,7 @@ object ImageSpec extends BasicTestSuite {
       assert(imageRectBin.isSuccess)
       assert(imageRectBin.get.width == 77)
       assert(imageRectBin.get.height == 119)
-      val imageRectTxt = Image.loadPpmImage(Resource("scala-rect2.ppm"))
+      val imageRectTxt = Image.loadPpmImage(Resource("scala-rect-txt.ppm"))
       assert(imageRectTxt.isSuccess)
       assert(imageRectTxt.get.width == 77)
       assert(imageRectTxt.get.height == 119)
@@ -54,14 +58,15 @@ object ImageSpec extends BasicTestSuite {
     }
 
     test("Load the same data from different formats") {
-      val bmp   = Image.loadBmpImage(Resource("scala.bmp")).get.getPixels().map(_.toVector)
-      val ppmP6 = Image.loadPpmImage(Resource("scala.ppm")).get.getPixels().map(_.toVector)
-      val ppmP3 = Image.loadPpmImage(Resource("scala2.ppm")).get.getPixels().map(_.toVector)
-      val qoi   = Image.loadQoiImage(Resource("scala.qoi")).get.getPixels().map(_.toVector)
-
-      assert(bmp == ppmP6)
-      assert(bmp == ppmP3)
-      assert(bmp == qoi)
+      val bmpRgb  = Image.loadBmpImage(Resource("scala.bmp")).get.getPixels().map(_.toVector)
+      val bmpArgb = Image.loadBmpImage(Resource("scala-argb.bmp")).get.getPixels().map(_.toVector)
+      val ppmP6   = Image.loadPpmImage(Resource("scala.ppm")).get.getPixels().map(_.toVector)
+      val ppmP3   = Image.loadPpmImage(Resource("scala-txt.ppm")).get.getPixels().map(_.toVector)
+      val qoi     = Image.loadQoiImage(Resource("scala.qoi")).get.getPixels().map(_.toVector)
+      assert(bmpRgb == bmpArgb)
+      assert(bmpRgb == ppmP6)
+      assert(bmpRgb == ppmP3)
+      assert(bmpRgb == qoi)
     }
   }
 }
