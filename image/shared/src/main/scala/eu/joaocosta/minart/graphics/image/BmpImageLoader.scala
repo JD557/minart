@@ -109,9 +109,9 @@ object BmpImageLoader {
         )
         loadColorMask = compressionMethod == 3 || compressionMethod == 6
         _         <- if (loadColorMask) skipBytes(20) else noop
-        redMask   <- if (loadColorMask) readLENumber(4) else State.pure(0x00ff0000)
-        greenMask <- if (loadColorMask) readLENumber(4) else State.pure(0x0000ff00)
-        blueMask  <- if (loadColorMask) readLENumber(4) else State.pure(0x000000ff)
+        redMask   <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x00ff0000)
+        greenMask <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x0000ff00)
+        blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x000000ff)
         _         <- if (loadColorMask) skipBytes(4) else noop // Skip alpha mask (or color space)
         _ <- State.check(
           redMask == 0x00ff0000 && greenMask == 0x0000ff00 && blueMask == 0x000000ff,
