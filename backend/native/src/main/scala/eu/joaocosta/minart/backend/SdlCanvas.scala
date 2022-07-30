@@ -78,15 +78,17 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
     ubyteClearB = newSettings.clearColor.b.toUByte
-    window = SDL_CreateWindow(
-      c"Minart",
-      SDL_WINDOWPOS_CENTERED,
-      SDL_WINDOWPOS_CENTERED,
-      extendedSettings.scaledWidth,
-      extendedSettings.scaledHeight,
-      if (extendedSettings.settings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
-      else SDL_WINDOW_SHOWN
-    )
+    Zone { implicit z =>
+      window = SDL_CreateWindow(
+        toCString(newSettings.title),
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        extendedSettings.scaledWidth,
+        extendedSettings.scaledHeight,
+        if (extendedSettings.settings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
+        else SDL_WINDOW_SHOWN
+      )
+    }
     windowSurface = SDL_GetWindowSurface(window)
     surface = new SdlSurface(
       SDL_CreateRGBSurface(0.toUInt, newSettings.width, newSettings.height, 32, 0.toUInt, 0.toUInt, 0.toUInt, 0.toUInt)

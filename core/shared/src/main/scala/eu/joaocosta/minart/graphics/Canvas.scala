@@ -77,13 +77,15 @@ object Canvas {
     * @param scale The canvas integer scaling factor
     * @param fullscreen Whether the canvas should be rendered in a full screen window
     * @param clearColor The color to be used when the canvas is cleared
+    * @param title The title to use if this Canvas needs to create a window
     */
   case class Settings(
       width: Int,
       height: Int,
       scale: Int = 1,
       fullScreen: Boolean = false,
-      clearColor: Color = Color(255, 255, 255)
+      clearColor: Color = Color(255, 255, 255),
+      title: String = "Minart"
   )
 
 }
