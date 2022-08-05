@@ -47,9 +47,7 @@ object SdlLoopRunner extends LoopRunner {
       var quit  = false
       val event = stackalloc[SDL_Event]()
       while (!quit) {
-        while (SDL_PollEvent(event) != 0) {
-          if (event.type_ == SDL_QUIT) { quit = true }
-        }
+        if (SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT) { quit = true }
       }
       cleanup()
     }
