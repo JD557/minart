@@ -23,13 +23,6 @@ trait LoopRunner {
       frequency: LoopFrequency,
       cleanup: () => Unit
   ): Loop[S]
-
-  /** Runs a single operation.
-    *
-    * @param operation operation to perform
-    * @param cleanup cleanup procedure to run when the operation is finished
-    */
-  def singleRun(operation: () => Unit, cleanup: () => Unit): Loop[Unit]
 }
 
 object LoopRunner {

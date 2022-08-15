@@ -13,30 +13,42 @@ object JavaLoopRunner extends LoopRunner {
       frequency: LoopFrequency,
       cleanup: () => Unit
   ): Loop[S] = {
-    val iterationMillis = frequency match {
-      case LoopFrequency.Uncapped         => 0
-      case LoopFrequency.LoopDuration(ms) => ms
+    frequency match {
+      case LoopFrequency.Never =>
+        new Loop[S] {
+          def run(initialState: S) = operation(initialState)
+        }
+      case LoopFrequency.Uncapped =>
+        @tailrec
+        def finiteLoopAux(state: S): Unit = {
+          val newState = operation(state)
+          if (!terminateWhen(newState)) finiteLoopAux(newState)
+          else ()
+        }
+        new Loop[S] {
+          def run(initialState: S) = {
+            finiteLoopAux(initialState)
+            cleanup()
+          }
+        }
+      case LoopFrequency.LoopDuration(iterationMillis) =>
+        new Loop[S] {
+          @tailrec
+          def finiteLoopAux(state: S): Unit = {
+            val startTime = System.currentTimeMillis()
+            val newState  = operation(state)
+            if (!terminateWhen(newState)) {
+              val endTime  = System.currentTimeMillis()
+              val waitTime = iterationMillis - (endTime - startTime)
+              if (waitTime > 0) Thread.sleep(waitTime)
+              finiteLoopAux(newState)
+            } else ()
+          }
+          def run(initialState: S) = {
+            finiteLoopAux(initialState)
+            cleanup()
+          }
+        }
     }
-    @tailrec
-    def finiteLoopAux(state: S): Unit = {
-      val startTime = System.currentTimeMillis()
-      val newState  = operation(state)
-      if (!terminateWhen(newState)) {
-        val endTime  = System.currentTimeMillis()
-        val waitTime = iterationMillis - (endTime - startTime)
-        if (waitTime > 0) Thread.sleep(waitTime)
-        finiteLoopAux(newState)
-      } else ()
-    }
-    new Loop[S] {
-      def run(initialState: S) = {
-        finiteLoopAux(initialState)
-        cleanup()
-      }
-    }
-  }
-
-  def singleRun(operation: () => Unit, cleanup: () => Unit): Loop[Unit] = new Loop[Unit] {
-    def run(initialState: Unit) = operation()
   }
 }

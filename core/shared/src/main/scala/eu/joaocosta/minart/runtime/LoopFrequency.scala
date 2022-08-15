@@ -16,6 +16,9 @@ object LoopFrequency {
   /** Uncapped loop frequency. */
   case object Uncapped extends LoopFrequency
 
+  /** Run a single iteration */
+  case object Never extends LoopFrequency
+
   /** 60 Hz. */
   final val hz60 = fromHz(60)
 
@@ -35,14 +38,16 @@ object LoopFrequency {
     *
     * @param duration minimum loop iteration duration
     */
-  def fromDuration(duration: FiniteDuration): LoopFrequency =
-    if (duration.toMillis <= 0) Uncapped
+  def fromDuration(duration: Duration): LoopFrequency =
+    if (!duration.isFinite) Never
+    else if (duration.toMillis <= 0) Uncapped
     else LoopDuration(duration.toMillis)
 
   /** Builds a [[LoopFrequency]] in Hz.
     */
   def fromHz(hz: Int): LoopFrequency = {
-    if (hz <= 0 || 1000 / hz == 0) Uncapped
+    if (hz <= 0) Never
+    else if (1000 / hz == 0) Uncapped
     else LoopDuration(1000 / hz)
   }
 }
