@@ -7,9 +7,9 @@ import scala.annotation.tailrec
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image.helpers._
 
-/** Image loader for PPM files.
+/** Image loader for PGM/PPM files.
   *
-  * Supports P3/P6 PPM files with a 8 bit color range.
+  * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
 final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader {
   import PpmImageLoader._
@@ -17,7 +17,16 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
   import byteReader._
   import byteStringOps._
 
-  private val loadStringPixel: ParseState[String, Color] =
+  // P2
+  private val loadStringGrayscalePixel: ParseState[String, Color] =
+    (
+      for {
+        value <- parseNextInt("Invalid value")
+      } yield Color(value, value, value)
+    )
+
+  // P3
+  private val loadStringRgbPixel: ParseState[String, Color] =
     (
       for {
         red   <- parseNextInt("Invalid red channel")
@@ -26,7 +35,15 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
       } yield Color(red, green, blue)
     )
 
-  private val loadBinaryPixel: ParseState[String, Color] =
+  // P5
+  private val loadBinaryGrayscalePixel: ParseState[String, Color] =
+    readByte.collect(
+      { case Some(byte) => Color(byte, byte, byte) },
+      _ => "Not enough data to read Grayscale pixel"
+    )
+
+  // P6
+  private val loadBinaryRgbPixel: ParseState[String, Color] =
     readBytes(3).collect(
       { case bytes if bytes.size == 3 => Color(bytes(0), bytes(1), bytes(2)) },
       _ => "Not enough data to read RGB pixel"
@@ -53,10 +70,14 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
     Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
       val numPixels = header.width * header.height
       val pixels = header.magic match {
+        case "P2" =>
+          loadPixels(loadStringGrayscalePixel, data, numPixels)
         case "P3" =>
-          loadPixels(loadStringPixel, data, numPixels)
+          loadPixels(loadStringRgbPixel, data, numPixels)
+        case "P5" =>
+          loadPixels(loadBinaryGrayscalePixel, data, numPixels)
         case "P6" =>
-          loadPixels(loadBinaryPixel, data, numPixels)
+          loadPixels(loadBinaryRgbPixel, data, numPixels)
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }
@@ -71,7 +92,7 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
 object PpmImageLoader {
   val defaultLoader = new PpmImageLoader[Iterator](ByteReader.IteratorByteReader)
 
-  val supportedFormats = Set("P3", "P6")
+  val supportedFormats = Set("P2", "P3", "P5", "P6")
 
   final case class Header(
       magic: String,

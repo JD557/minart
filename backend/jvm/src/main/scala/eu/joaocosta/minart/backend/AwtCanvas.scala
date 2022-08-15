@@ -74,6 +74,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
         extendedSettings.scaledWidth,
         extendedSettings.scaledHeight,
         newSettings.fullScreen,
+        newSettings.title,
         this
       )
       extendedSettings = extendedSettings.copy(
@@ -126,13 +127,14 @@ object AwtCanvas {
       scaledWidth: Int,
       scaledHeight: Int,
       fullScreen: Boolean,
+      title: String,
       outerCanvas: AwtCanvas
   ) extends JavaCanvas {
 
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
 
-    val frame = new JFrame("Minart")
+    val frame = new JFrame(title)
     frame.setUndecorated(fullScreen)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
