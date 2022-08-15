@@ -18,38 +18,51 @@ object SdlLoopRunner extends LoopRunner {
       frequency: LoopFrequency,
       cleanup: () => Unit
   ): Loop[S] = {
-    val iterationMillis = frequency match {
-      case LoopFrequency.Uncapped         => 0
-      case LoopFrequency.LoopDuration(ms) => ms
-    }
-    @tailrec
-    def finiteLoopAux(state: S): Unit = {
-      val startTime = SDL_GetTicks()
-      val newState  = operation(state)
-      if (!terminateWhen(newState)) {
-        val endTime  = SDL_GetTicks()
-        val waitTime = iterationMillis - (endTime - startTime).toInt
-        if (waitTime > 0) SDL_Delay(waitTime.toUInt)
-        finiteLoopAux(newState)
-      } else ()
-    }
-    new Loop[S] {
-      def run(initialState: S) = {
-        finiteLoopAux(initialState)
-        cleanup()
-      }
-    }
-  }
-
-  def singleRun(operation: () => Unit, cleanup: () => Unit): Loop[Unit] = new Loop[Unit] {
-    def run(initialState: Unit) = {
-      operation()
-      var quit  = false
-      val event = stackalloc[SDL_Event]()
-      while (!quit) {
-        if (SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT) { quit = true }
-      }
-      cleanup()
+    frequency match {
+      case LoopFrequency.Never =>
+        new Loop[S] {
+          def run(initialState: S) = {
+            operation(initialState)
+            var quit  = false
+            val event = stackalloc[SDL_Event]()
+            while (!quit) {
+              if (SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT) { quit = true }
+            }
+            cleanup()
+          }
+        }
+      case LoopFrequency.Uncapped =>
+        new Loop[S] {
+          @tailrec
+          def finiteLoopAux(state: S): Unit = {
+            val newState = operation(state)
+            if (!terminateWhen(newState)) {
+              finiteLoopAux(newState)
+            } else ()
+          }
+          def run(initialState: S) = {
+            finiteLoopAux(initialState)
+            cleanup()
+          }
+        }
+      case LoopFrequency.LoopDuration(iterationMillis) =>
+        new Loop[S] {
+          @tailrec
+          def finiteLoopAux(state: S): Unit = {
+            val startTime = SDL_GetTicks()
+            val newState  = operation(state)
+            if (!terminateWhen(newState)) {
+              val endTime  = SDL_GetTicks()
+              val waitTime = iterationMillis - (endTime - startTime).toInt
+              if (waitTime > 0) SDL_Delay(waitTime.toUInt)
+              finiteLoopAux(newState)
+            } else ()
+          }
+          def run(initialState: S) = {
+            finiteLoopAux(initialState)
+            cleanup()
+          }
+        }
     }
   }
 }

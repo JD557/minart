@@ -30,15 +30,6 @@ object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
   ): RenderLoop[Unit] =
     statefulRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate)
 
-  def singleFrame(renderFrame: Canvas => Unit): RenderLoop[Unit] = new RenderLoop[Unit] {
-    def run(
-        runner: LoopRunner,
-        canvasManager: CanvasManager,
-        canvasSettings: Canvas.Settings,
-        initialState: Unit
-    ): Unit = {
-      val canvas = canvasManager.init(canvasSettings)
-      runner.singleRun(() => renderFrame(canvas), () => if (canvas.isCreated()) canvas.close()).run()
-    }
-  }
+  def singleFrame(renderFrame: Canvas => Unit): RenderLoop[Unit] =
+    statelessRenderLoop(renderFrame, LoopFrequency.Never)
 }
