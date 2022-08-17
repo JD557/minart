@@ -1,17 +1,21 @@
-package eu.joaocosta.minart.graphics.image
+package eu.joaocosta.minart.graphics.image.ppm
 
 import java.io.InputStream
 
 import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for PGM/PPM files.
   *
   * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
-final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader {
+trait PpmImageLoader[F[_]] extends ImageLoader {
+  val byteReader: ByteReader[F]
+
+  import PpmImageFormat._
   import PpmImageLoader._
   private val byteStringOps = new ByteStringOps(byteReader)
   import byteReader._
@@ -65,9 +69,25 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
     }
   }
 
+  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+    val byteStringOps = new PpmImageLoader.ByteStringOps(byteReader)
+    import byteStringOps._
+    (
+      for {
+        magic  <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
+        width  <- parseNextInt(s"Invalid width")
+        height <- parseNextInt(s"Invalid height")
+        colorRange <- parseNextInt(s"Invalid color range").validate(
+          _ == 255,
+          range => s"Unsupported color range: $range"
+        )
+      } yield Header(magic, width, height, colorRange)
+    ).run(bytes)
+  }
+
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
+    loadHeader(bytes).right.flatMap { case (data, header) =>
       val numPixels = header.width * header.height
       val pixels = header.magic match {
         case "P2" =>
@@ -90,35 +110,6 @@ final class PpmImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
 }
 
 object PpmImageLoader {
-  val defaultLoader = new PpmImageLoader[Iterator](ByteReader.IteratorByteReader)
-
-  val supportedFormats = Set("P2", "P3", "P5", "P6")
-
-  final case class Header(
-      magic: String,
-      width: Int,
-      height: Int,
-      colorRange: Int
-  )
-
-  object Header {
-    def fromBytes[F[_]](bytes: F[Int])(byteReader: ByteReader[F]): byteReader.ParseResult[Header] = {
-      val byteStringOps = new PpmImageLoader.ByteStringOps(byteReader)
-      import byteStringOps._
-      (
-        for {
-          magic  <- readNextString.validate(supportedFormats, m => s"Unsupported format: $m")
-          width  <- parseNextInt(s"Invalid width")
-          height <- parseNextInt(s"Invalid height")
-          colorRange <- parseNextInt(s"Invalid color range").validate(
-            _ == 255,
-            range => s"Unsupported color range: $range"
-          )
-        } yield Header(magic, width, height, colorRange)
-      ).run(bytes)
-    }
-  }
-
   private final class ByteStringOps[F[_]](val byteReader: ByteReader[F]) {
     import byteReader._
     private val newLine = '\n'.toInt
@@ -163,6 +154,5 @@ object PpmImageLoader {
           }
         State.fromEither(intEither)
       }
-
   }
 }

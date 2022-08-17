@@ -27,7 +27,7 @@ object Image {
   /** Loads an image in the PPM format.
     */
   def loadPpmImage(resource: Resource): Try[RamSurface] =
-    loadImage(PpmImageLoader.defaultLoader, resource)
+    loadImage(ppm.PpmImageFormat.defaultFormat, resource)
 
   /** Loads an image in the BMP format.
     */

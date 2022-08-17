@@ -5,7 +5,7 @@ import verify._
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime._
 
-object ImageSpec extends BasicTestSuite {
+object ImageLoaderSpec extends BasicTestSuite {
 
   // Can't load resources in JS tests
   if (Platform() != Platform.JS) {
