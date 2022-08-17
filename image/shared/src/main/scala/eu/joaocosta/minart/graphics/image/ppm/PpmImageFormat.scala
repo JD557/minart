@@ -2,11 +2,8 @@ package eu.joaocosta.minart.graphics.image.ppm
 
 import java.io.InputStream
 
-import scala.annotation.tailrec
-
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image.helpers._
-import eu.joaocosta.minart.graphics.image.ppm
 
 /** Image loader and writer for PGM/PPM files.
   *

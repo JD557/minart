@@ -2,6 +2,8 @@ package eu.joaocosta.minart.graphics.image.ppm
 
 import java.io.OutputStream
 
+import scala.annotation.tailrec
+
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
@@ -18,6 +20,7 @@ trait PpmImageWriter[F[_]] extends ImageWriter {
   private def storeBinaryRgbPixel(color: Color): ByteStreamState[String] =
     writeBytes(List(color.r, color.g, color.b))
 
+  @tailrec
   private def storePixels(
       storeColor: Color => ByteStreamState[String],
       surface: Surface,
@@ -26,7 +29,9 @@ trait PpmImageWriter[F[_]] extends ImageWriter {
   ): ByteStreamState[String] = {
     if (currentPixel >= surface.width * surface.height) acc
     else {
-      val color = surface.unsafeGetPixel(currentPixel % surface.width, currentPixel / surface.width)
+      val x     = currentPixel % surface.width
+      val y     = currentPixel / surface.width
+      val color = surface.unsafeGetPixel(x, y)
       storePixels(storeColor, surface, currentPixel + 1, acc.flatMap(_ => storeColor(color)))
     }
   }

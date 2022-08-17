@@ -32,7 +32,7 @@ object Image {
   /** Loads an image in the BMP format.
     */
   def loadBmpImage(resource: Resource): Try[RamSurface] =
-    loadImage(BmpImageLoader.defaultLoader, resource)
+    loadImage(bmp.BmpImageFormat.defaultFormat, resource)
 
   /** Loads an image in the QOI format.
     */

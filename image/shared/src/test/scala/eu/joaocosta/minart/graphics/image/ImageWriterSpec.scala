@@ -19,5 +19,14 @@ object ImageWriterSpec extends BasicTestSuite {
       val newImage = ppm.PpmImageFormat.defaultFormat.loadImage(is).toOption.get
       assert(newImage.getPixels().map(_.toVector) == originalImage.getPixels().map(_.toVector))
     }
+
+    test("Write a BMP image") {
+      val originalImage = Image.loadBmpImage(Resource("scala.bmp")).get
+      val os            = new ByteArrayOutputStream()
+      bmp.BmpImageFormat.defaultFormat.storeImage(originalImage, os)
+      val is       = new ByteArrayInputStream(os.toByteArray)
+      val newImage = bmp.BmpImageFormat.defaultFormat.loadImage(is).toOption.get
+      assert(newImage.getPixels().map(_.toVector) == originalImage.getPixels().map(_.toVector))
+    }
   }
 }
