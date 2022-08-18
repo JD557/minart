@@ -14,14 +14,10 @@ object Image {
     * @param resource Resource pointing to the image
     */
   def loadImage(loader: ImageLoader, resource: Resource): Try[RamSurface] = {
-    resource
-      .withInputStream { inputStream =>
-        loader.loadImage(inputStream)
-      }
-      .flatMap {
-        case Left(error)   => Failure(new Exception(error))
-        case Right(result) => Success(result)
-      }
+    loader.loadImage(resource).flatMap {
+      case Left(error)   => Failure(new Exception(error))
+      case Right(result) => Success(result)
+    }
   }
 
   /** Loads an image in the PPM format.
@@ -38,4 +34,28 @@ object Image {
     */
   def loadQoiImage(resource: Resource): Try[RamSurface] =
     loadImage(qoi.QoiImageFormat.defaultFormat, resource)
+
+  /** Stores an image using a custom ImageWriter.
+    *
+    * @param writer ImageWriter to use
+    * @param surface Surface to store
+    * @param resource Resource pointing to the output destination
+    */
+  def storeImage(writer: ImageWriter, surface: Surface, resource: Resource): Try[Unit] = {
+    writer.storeImage(surface, resource).flatMap {
+      case Left(error)   => Failure(new Exception(error))
+      case Right(result) => Success(result)
+    }
+  }
+
+  /** Stores an image in the PPM format.
+    */
+  def storePpmImage(surface: Surface, resource: Resource): Try[Unit] =
+    storeImage(ppm.PpmImageFormat.defaultFormat, surface, resource)
+
+  /** Stores an image in the BMP format.
+    */
+  def storeBmpImage(surface: Surface, resource: Resource): Try[Unit] =
+    storeImage(bmp.BmpImageFormat.defaultFormat, surface, resource)
+
 }

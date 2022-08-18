@@ -10,12 +10,15 @@ import eu.joaocosta.minart.runtime._
 object ImageWriterSpec extends BasicTestSuite {
 
   def roundtripTest(baseResource: Resource, imageFormat: ImageLoader with ImageWriter) = {
-    val originalImage = baseResource.withInputStream(is => imageFormat.loadImage(is).toOption.get).get
-    val os            = new ByteArrayOutputStream()
-    imageFormat.storeImage(originalImage, os)
-    val is       = new ByteArrayInputStream(os.toByteArray)
-    val newImage = imageFormat.loadImage(is).toOption.get
-    assert(newImage.getPixels().map(_.toVector) == originalImage.getPixels().map(_.toVector))
+    val (oldPixels, newPixels) = (for {
+      original <- imageFormat.loadImage(baseResource).get
+      originalPixels = original.getPixels().map(_.toVector)
+      stored <- imageFormat.toByteArray(original)
+      loaded <- imageFormat.fromByteArray(stored)
+      loadedPixels = loaded.getPixels().map(_.toVector)
+    } yield (originalPixels, loadedPixels)).toOption.get
+
+    assert(oldPixels == newPixels)
   }
 
   // Can't load resources in JS tests

@@ -68,8 +68,8 @@ trait Resource {
   /** Provides a [[java.io.OutputStream]] to write data to this resource location.
     * The OutputStream is closed in the end, so it should not escape this call.
     */
-  def withOutputStream(f: OutputStream => Unit): Try[Unit] =
-    Using[OutputStream, Unit](unsafeOutputStream())(f)
+  def withOutputStream[A](f: OutputStream => A): Try[A] =
+    Using[OutputStream, A](unsafeOutputStream())(f)
 }
 
 object Resource {
