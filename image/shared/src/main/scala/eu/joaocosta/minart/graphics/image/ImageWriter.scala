@@ -35,6 +35,6 @@ trait ImageWriter {
     */
   def toByteArray(surface: Surface): Either[String, Array[Byte]] = {
     val os = new ByteArrayOutputStream()
-    storeImage(surface, os).map(_ => os.toByteArray)
+    storeImage(surface, os).right.map(_ => os.toByteArray)
   }
 }

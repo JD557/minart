@@ -45,7 +45,7 @@ trait ByteWriter[F[_]] {
 object ByteWriter {
   object LazyListByteWriter extends ByteWriter[LazyList] {
     def toOutputStream[E](data: ByteStreamState[E], os: OutputStream): Either[E, Unit] =
-      data.run(LazyList.empty[Array[Byte]]).map { case (s, _) =>
+      data.run(LazyList.empty[Array[Byte]]).right.map { case (s, _) =>
         s.foreach(bytes => os.write(bytes))
       }
 
@@ -59,7 +59,7 @@ object ByteWriter {
 
   object IteratorByteWriter extends ByteWriter[Iterator] {
     def toOutputStream[E](data: ByteStreamState[E], os: OutputStream): Either[E, Unit] =
-      data.run(Iterator.empty[Array[Byte]]).map { case (s, _) =>
+      data.run(Iterator.empty).right.map { case (s, _) =>
         s.foreach(bytes => os.write(bytes))
       }
 
