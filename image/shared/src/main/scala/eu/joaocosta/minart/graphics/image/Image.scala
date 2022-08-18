@@ -37,5 +37,5 @@ object Image {
   /** Loads an image in the QOI format.
     */
   def loadQoiImage(resource: Resource): Try[RamSurface] =
-    loadImage(QoiImageLoader.defaultLoader, resource)
+    loadImage(qoi.QoiImageFormat.defaultFormat, resource)
 }

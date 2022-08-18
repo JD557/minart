@@ -1,15 +1,19 @@
-package eu.joaocosta.minart.graphics.image
+package eu.joaocosta.minart.graphics.image.qoi
 
 import java.io.InputStream
 
 import scala.collection.compat.immutable.LazyList
 
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for QOI files.
   */
-final class QoiImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader {
+trait QoiImageLoader[F[_]] extends ImageLoader {
+  val byteReader: ByteReader[F]
+
+  import QoiImageFormat._
   import QoiImageLoader._
   import byteReader._
 
@@ -116,65 +120,36 @@ final class QoiImageLoader[F[_]](byteReader: ByteReader[F]) extends ImageLoader 
       }
   }
 
+  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+    (
+      for {
+        magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
+        width    <- readBENumber(4)
+        height   <- readBENumber(4)
+        channels <- readByte.collect({ case Some(byte) => byte.toByte }, _ => "Incomplete header: no channel byte")
+        colorspace <- readByte.collect(
+          { case Some(byte) => byte.toByte },
+          _ => "Incomplete header: no color space byte"
+        )
+      } yield Header(
+        magic,
+        width,
+        height,
+        channels,
+        colorspace
+      )
+    ).run(bytes)
+  }
+
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    Header.fromBytes(bytes)(byteReader).right.flatMap { case (data, header) =>
+    loadHeader(bytes).right.flatMap { case (data, header) =>
       asSurface(loadOps(data), header)
     }
   }
 }
 
 object QoiImageLoader {
-  val defaultLoader = new QoiImageLoader[Iterator](ByteReader.IteratorByteReader)
-
-  val supportedFormats = Set("qoif")
-
-  final case class Header(
-      magic: String,
-      width: Long,
-      height: Long,
-      channels: Byte,
-      colorspace: Byte
-  )
-
-  object Header {
-    def fromBytes[F[_]](bytes: F[Int])(byteReader: ByteReader[F]): byteReader.ParseResult[Header] = {
-      import byteReader._
-      (
-        for {
-          magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
-          width    <- readBENumber(4)
-          height   <- readBENumber(4)
-          channels <- readByte.collect({ case Some(byte) => byte.toByte }, _ => "Incomplete header: no channel byte")
-          colorspace <- readByte.collect(
-            { case Some(byte) => byte.toByte },
-            _ => "Incomplete header: no color space byte"
-          )
-        } yield Header(
-          magic,
-          width,
-          height,
-          channels,
-          colorspace
-        )
-      ).run(bytes)
-    }
-  }
-
-  // Private structures
-  private sealed trait Op
-  private object Op {
-    final case class OpRgb(red: Int, green: Int, blue: Int)              extends Op
-    final case class OpRgba(red: Int, green: Int, blue: Int, alpha: Int) extends Op
-    final case class OpIndex(index: Int)                                 extends Op
-    final case class OpDiff(dr: Int, dg: Int, db: Int)                   extends Op
-    final case class OpLuma(dg: Int, drdg: Int, dbdg: Int) extends Op {
-      val dr = drdg + dg
-      val db = dbdg + dg
-    }
-    final case class OpRun(run: Int) extends Op
-  }
-
   private final case class QoiColor(r: Int, g: Int, b: Int, a: Int) {
     def toMinartColor = Color(r, g, b)
     def hash          = (r * 3 + g * 5 + b * 7 + a * 11) % 64
