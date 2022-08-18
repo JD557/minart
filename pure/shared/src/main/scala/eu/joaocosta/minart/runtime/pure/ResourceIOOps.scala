@@ -50,6 +50,6 @@ trait ResourceIOOps {
   /** Provides a [[java.io.OutputStream]] to write data to this resource location.
     * The OutputStream is closed in the end, so it should not escape this call.
     */
-  def withOutputStream(f: OutputStream => Unit): ResourceIO[Try[Unit]] =
+  def withOutputStream[A](f: OutputStream => A): ResourceIO[Try[A]] =
     accessResource(_.withOutputStream(f))
 }

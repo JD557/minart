@@ -118,7 +118,7 @@ object ByteReader {
       val buffer        = List.newBuilder[Int]
       while (bufferedBytes.hasNext && p(bufferedBytes.head)) {
         buffer += bufferedBytes.head
-        bufferedBytes.next
+        bufferedBytes.next()
       }
       bufferedBytes -> buffer.result()
     }
