@@ -33,8 +33,17 @@ object RIOSpec extends BasicTestSuite {
   }
 
   test("provide a stack-safe flatMap operation") {
-    val io = (1 to 1000).foldLeft[RIO[Any, Int]](RIO.pure(0)) { case (acc, _) => acc.flatMap(x => RIO.pure(x + 1)) }
-    assert(io.run(()) == 1000)
+    // pure(0).flatMap(pure(_ + 1)).flatMap(pure(_ + 1)).flatMap...
+    val ioA = (1 to 1000).foldLeft[RIO[Any, Int]](RIO.pure(0)) { case (acc, _) => acc.flatMap(x => RIO.pure(x + 1)) }
+    assert(ioA.run(()) == 1000)
+    // pure(0).flatMap(x => pure( + 1).flatMap(x => (pure(x + 1).flatMap...))
+    val ioB = {
+      def loop(x: Int): RIO[Any, Int] =
+        if (x >= 1000) RIO.pure(x)
+        else RIO.pure(x + 1).flatMap(loop)
+      loop(0)
+    }
+    assert(ioB.run(()) == 1000)
   }
 
   test("provide zip/zipWith operations") {
