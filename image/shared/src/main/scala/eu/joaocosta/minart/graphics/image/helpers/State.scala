@@ -1,39 +1,43 @@
 package eu.joaocosta.minart.graphics.image.helpers
 
-/** State monad implementation to use when loading images.
+import scala.annotation.tailrec
+
+/** State monad implementation to use when loading/storing images.
   */
 sealed trait State[S, +E, +A] {
-  def run(initial: S): Either[E, (S, A)]
-  def map[B](f: A => B): State[S, E, B]                             = flatMap(x => State.pure(f(x)))
-  def flatMap[EE >: E, B](f: A => State[S, EE, B]): State[S, EE, B] = State.FlatMap[S, EE, A, B](this, f)
-  def validate[EE >: E](test: A => Boolean, failure: A => EE): State[S, EE, A] =
+  @tailrec
+  final def run(initial: S): Either[E, (S, A)] = this match {
+    case State.Point(f)     => Right(f(initial))
+    case State.Error(error) => Left(error)
+    case State.FlatMap(st, andThen) =>
+      st match {
+        case State.Point(f) =>
+          val (nextState, nextValue) = f(initial)
+          andThen(nextValue).run(nextState)
+        case State.Error(error) => Left(error)
+        case State.FlatMap(nextSt, nextAndThen) =>
+          nextSt.flatMap(next => nextAndThen(next).flatMap(andThen)).run(initial)
+      }
+  }
+  final def map[B](f: A => B): State[S, E, B] = flatMap(x => State.pure(f(x)))
+  final def flatMap[EE >: E, B](f: A => State[S, EE, B]): State[S, EE, B] = State.FlatMap[S, EE, A, B](this, f)
+  final def validate[EE >: E](test: A => Boolean, failure: A => EE): State[S, EE, A] =
     flatMap(x => if (test(x)) State.pure(x) else State.error(failure(x)))
-  def collect[EE >: E, B](f: PartialFunction[A, B], failure: A => EE): State[S, EE, B] = {
+  final def collect[EE >: E, B](f: PartialFunction[A, B], failure: A => EE): State[S, EE, B] = {
     val pf =
       f.andThen((x: B) => State.pure[S, B](x)).orElse[A, State[S, EE, B]] { case x =>
         State.error[S, EE](failure(x))
       }
     flatMap(pf)
   }
-  def modify(f: S => S): State[S, E, A] =
+  final def modify(f: S => S): State[S, E, A] =
     flatMap(x => State(s => (f(s), x)))
 }
 object State {
-  private final case class Point[S, +A](f: S => (S, A)) extends State[S, Nothing, A] {
-    def run(initial: S): Either[Nothing, (S, A)] = Right(f(initial))
-  }
-  private final case class Error[S, +E](error: E) extends State[S, E, Nothing] {
-    def run(initial: S): Either[E, Nothing] = Left(error)
-  }
+  private final case class Point[S, +A](f: S => (S, A)) extends State[S, Nothing, A]
+  private final case class Error[S, +E](error: E)       extends State[S, E, Nothing]
   private final case class FlatMap[S, +E, A, +B](st: State[S, E, A], andThen: A => State[S, E, B])
-      extends State[S, E, B] {
-    def run(initial: S): Either[E, (S, B)] = {
-      st.run(initial) match {
-        case Right((nextState, nextValue)) => andThen(nextValue).run(nextState)
-        case Left(err)                     => Left(err)
-      }
-    }
-  }
+      extends State[S, E, B]
 
   def apply[S, A](f: S => (S, A)): State[S, Nothing, A] = Point(f)
   def pure[S, A](a: A): State[S, Nothing, A]            = Point(s => (s, a))
