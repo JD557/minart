@@ -7,7 +7,9 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image loader for QOI files.
   */
-final class QoiImageFormat[F[_]](val byteReader: ByteReader[F], val byteWriter: ByteWriter[F]) extends QoiImageLoader[F]
+final class QoiImageFormat[F[_]](val byteReader: ByteReader[F], val byteWriter: ByteWriter[F])
+    extends QoiImageLoader[F]
+    with QoiImageWriter[F]
 
 object QoiImageFormat {
   val defaultFormat = new QoiImageFormat[Iterator](ByteReader.IteratorByteReader, ByteWriter.IteratorByteWriter)
