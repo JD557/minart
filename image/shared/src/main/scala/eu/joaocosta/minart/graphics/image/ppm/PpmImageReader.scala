@@ -15,7 +15,6 @@ import eu.joaocosta.minart.graphics.image.helpers._
 trait PpmImageReader[F[_]] extends ImageReader {
   val byteReader: ByteReader[F]
 
-  import PpmImageFormat._
   import PpmImageReader._
   private val byteStringOps = new ByteStringOps(byteReader)
   import byteReader._
@@ -69,7 +68,7 @@ trait PpmImageReader[F[_]] extends ImageReader {
     }
   }
 
-  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
     val byteStringOps = new PpmImageReader.ByteStringOps(byteReader)
     import byteStringOps._
     (

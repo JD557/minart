@@ -8,13 +8,13 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
 
-/** Image writer for Qoi files.
+/** Image writer for QOI files.
   */
 trait QoiImageWriter[F[_]] extends ImageWriter {
   val byteWriter: ByteWriter[F]
   import byteWriter._
 
-  final def storeHeader(surface: Surface): ByteStreamState[String] = {
+  private def storeHeader(surface: Surface): ByteStreamState[String] = {
     (for {
       _ <- writeString("qoif")
       _ <- writeBENumber(surface.width, 4)
@@ -60,7 +60,7 @@ trait QoiImageWriter[F[_]] extends ImageWriter {
   }
 
   @tailrec
-  final def storeOps(ops: List[Op], acc: ByteStreamState[String] = emptyStream): ByteStreamState[String] = ops match {
+  private def storeOps(ops: List[Op], acc: ByteStreamState[String] = emptyStream): ByteStreamState[String] = ops match {
     case Nil => acc
     case op :: xs =>
       val nextStream = (for {

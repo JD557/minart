@@ -1,8 +1,7 @@
 package eu.joaocosta.minart.graphics.image.qoi
 
-// Private structures
-sealed trait Op
-object Op {
+private[qoi] sealed trait Op
+private[qoi] object Op {
   final case class OpRgb(red: Int, green: Int, blue: Int)              extends Op
   final case class OpRgba(red: Int, green: Int, blue: Int, alpha: Int) extends Op
   final case class OpIndex(index: Int)                                 extends Op

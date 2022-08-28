@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image.bmp
 
-final case class Header(
+private[bmp] final case class Header(
     magic: String,
     size: Int,
     offset: Int,

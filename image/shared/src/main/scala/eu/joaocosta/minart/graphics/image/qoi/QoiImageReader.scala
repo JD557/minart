@@ -120,7 +120,7 @@ trait QoiImageReader[F[_]] extends ImageReader {
       }
   }
 
-  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
     (
       for {
         magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")

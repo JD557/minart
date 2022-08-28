@@ -83,7 +83,7 @@ object RenderLoop {
     def statefulRenderLoop[S](
         renderFrame: F2[Canvas, S, S],
         frameRate: LoopFrequency,
-        terminateWhen: S => Boolean = (s: S) => false
+        terminateWhen: S => Boolean = (_: S) => false
     ): RenderLoop[S]
 
     /** Creates a render loop that keeps no state.
