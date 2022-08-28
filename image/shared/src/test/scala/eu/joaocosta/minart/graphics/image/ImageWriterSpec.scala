@@ -11,12 +11,12 @@ object ImageWriterSpec extends BasicTestSuite {
 
   def roundtripTest(baseResource: Resource, imageFormat: ImageReader with ImageWriter) = {
     val (oldPixels, newPixels) = (for {
-      original <- imageFormat.loadImage(baseResource).get.right.toOption
+      original <- imageFormat.loadImage(baseResource).get.right
       originalPixels = original.getPixels().map(_.toVector)
-      stored <- imageFormat.toByteArray(original).right.toOption
-      loaded <- imageFormat.fromByteArray(stored).right.toOption
+      stored <- imageFormat.toByteArray(original).right
+      loaded <- imageFormat.fromByteArray(stored).right
       loadedPixels = loaded.getPixels().map(_.toVector)
-    } yield (originalPixels, loadedPixels)).get
+    } yield (originalPixels, loadedPixels)).toOption.get
 
     assert(oldPixels == newPixels)
   }
@@ -25,14 +25,17 @@ object ImageWriterSpec extends BasicTestSuite {
   if (Platform() != Platform.JS) {
     test("Write a PPM image") {
       roundtripTest(Resource("scala.ppm"), ppm.PpmImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect.ppm"), ppm.PpmImageFormat.defaultFormat)
     }
 
     test("Write a BMP image") {
       roundtripTest(Resource("scala.bmp"), bmp.BmpImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect.bmp"), bmp.BmpImageFormat.defaultFormat)
     }
 
     test("Write a QOI image") {
       roundtripTest(Resource("scala.qoi"), qoi.QoiImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect.qoi"), qoi.QoiImageFormat.defaultFormat)
     }
   }
 }
