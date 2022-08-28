@@ -1,5 +1,5 @@
 //> using scala "3.1.3"
-//> using lib "eu.joaocosta::minart::0.4.1"
+//> using lib "eu.joaocosta::minart::0.4.2"
 
 /*
  * Now that we learned the basics of animation, we can start to look at more dynamic applications.

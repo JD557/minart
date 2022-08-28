@@ -21,13 +21,14 @@ Minart is still in a 0.x version. Quoting the semver specification:
 * Keyboard and pointer input
 * Surface blitting (with a mask)
 * Surface views and infinite planes
+* Reading and Writing PPM, BMP and QOI images
 
 ## Getting Started
 
 To include Minart, simply add `minart` to your project:
 
 ```scala
-libraryDependencies += "eu.joaocosta" %% "minart" % "0.4.1"
+libraryDependencies += "eu.joaocosta" %% "minart" % "0.4.2"
 ```
 
 Or just create a new project using the provided giter8 template, with:
@@ -52,8 +53,8 @@ The Minart project is divided in multiple small packages:
   While usually required, you can skip it if you plan to implement your own backend.
 - `minart-pure`: Contains the RIO implementation for pure applications.
   You can skip it if you plan to just write impure code or bring your own IO implementation.
-- `minart-image`: Contains logic to load images from PPM, BMP or QOI files.
-  You can skip it if you don't plan to load any images.
+- `minart-image`: Contains logic to load and store images in PPM, BMP or QOI format.
+  You can skip it if you don't plan to read or write any images.
 
 If for some reason you want to make your binary as small as possible, you can include individual packages instead of
 the full `minart` bundle.

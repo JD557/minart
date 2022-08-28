@@ -1,5 +1,5 @@
 //> using scala "3.1.3"
-//> using lib "eu.joaocosta::minart::0.4.2-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.4.3-SNAPSHOT"
 
 /*
  * Some people might prefer to code using a "programs as values" approach.
