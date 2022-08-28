@@ -14,4 +14,12 @@ object BmpImageFormat {
   val defaultFormat = new BmpImageFormat[Iterator](ByteReader.IteratorByteReader, ByteWriter.IteratorByteWriter)
 
   val supportedFormats = Set("BM")
+
+  // Every line in a BMP file is padded to 4 bytes
+  private[bmp] def linePadding(width: Int, bitsPerPixel: Int): Int = {
+    val bytesPerPixel = bitsPerPixel / 8
+    val bytesPerLine  = bytesPerPixel * width
+    val extraBytes    = bytesPerLine % 4
+    if (extraBytes == 0) 0 else (4 - extraBytes)
+  }
 }
