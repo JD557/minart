@@ -10,7 +10,7 @@ import eu.joaocosta.minart.graphics.image.helpers._
   * Supports uncompressed 24/32bit Windows BMPs.
   */
 final class BmpImageFormat[F[_]](val byteReader: ByteReader[F], val byteWriter: ByteWriter[F])
-    extends BmpImageLoader[F]
+    extends BmpImageReader[F]
     with BmpImageWriter[F]
 
 object BmpImageFormat {

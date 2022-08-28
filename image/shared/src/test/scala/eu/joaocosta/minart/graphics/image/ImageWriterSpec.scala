@@ -9,7 +9,7 @@ import eu.joaocosta.minart.runtime._
 
 object ImageWriterSpec extends BasicTestSuite {
 
-  def roundtripTest(baseResource: Resource, imageFormat: ImageLoader with ImageWriter) = {
+  def roundtripTest(baseResource: Resource, imageFormat: ImageReader with ImageWriter) = {
     val (oldPixels, newPixels) = (for {
       original <- imageFormat.loadImage(baseResource).get.right.toOption
       originalPixels = original.getPixels().map(_.toVector)

@@ -8,12 +8,12 @@ import eu.joaocosta.minart.runtime.Resource
 /** Object containing user-friendly functions to images. */
 object Image {
 
-  /** Loads an image using a custom ImageLoader.
+  /** Loads an image using a custom ImageReader.
     *
-    * @param loader ImageLoader to use
+    * @param loader ImageReader to use
     * @param resource Resource pointing to the image
     */
-  def loadImage(loader: ImageLoader, resource: Resource): Try[RamSurface] = {
+  def loadImage(loader: ImageReader, resource: Resource): Try[RamSurface] = {
     loader.loadImage(resource).flatMap {
       case Left(error)   => Failure(new Exception(error))
       case Right(result) => Success(result)
