@@ -19,7 +19,7 @@ sealed trait State[S, +E, +A] {
           nextSt.flatMap(next => nextAndThen(next).flatMap(andThen)).run(initial)
       }
   }
-  final def map[B](f: A => B): State[S, E, B] = flatMap(x => State.pure(f(x)))
+  final def map[B](f: A => B): State[S, E, B]                             = flatMap(x => State.pure(f(x)))
   final def flatMap[EE >: E, B](f: A => State[S, EE, B]): State[S, EE, B] = State.FlatMap[S, EE, A, B](this, f)
   final def validate[EE >: E](test: A => Boolean, failure: A => EE): State[S, EE, A] =
     flatMap(x => if (test(x)) State.pure(x) else State.error(failure(x)))

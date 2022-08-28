@@ -150,10 +150,6 @@ trait QoiImageLoader[F[_]] extends ImageLoader {
 }
 
 object QoiImageLoader {
-  private final case class QoiColor(r: Int, g: Int, b: Int, a: Int) {
-    def toMinartColor = Color(r, g, b)
-    def hash          = (r * 3 + g * 5 + b * 7 + a * 11) % 64
-  }
 
   private final case class QoiState(
       imageAcc: List[QoiColor] = Nil,

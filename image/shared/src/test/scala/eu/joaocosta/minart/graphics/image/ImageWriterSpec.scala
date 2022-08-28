@@ -30,5 +30,9 @@ object ImageWriterSpec extends BasicTestSuite {
     test("Write a BMP image") {
       roundtripTest(Resource("scala.bmp"), bmp.BmpImageFormat.defaultFormat)
     }
+
+    test("Write a QOI image") {
+      roundtripTest(Resource("scala.qoi"), qoi.QoiImageFormat.defaultFormat)
+    }
   }
 }

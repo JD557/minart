@@ -58,4 +58,9 @@ object Image {
   def storeBmpImage(surface: Surface, resource: Resource): Try[Unit] =
     storeImage(bmp.BmpImageFormat.defaultFormat, surface, resource)
 
+  /** Stores an image in the QOI format.
+    */
+  def storeQoiImage(surface: Surface, resource: Resource): Try[Unit] =
+    storeImage(qoi.QoiImageFormat.defaultFormat, surface, resource)
+
 }
