@@ -35,7 +35,7 @@ trait BmpImageWriter[F[_]] extends ImageWriter {
     }
   }
 
-  def storeHeader(surface: Surface): ByteStreamState[String] = {
+  private def storeHeader(surface: Surface): ByteStreamState[String] = {
     (for {
       _ <- writeString("BM")
       _ <- writeLENumber(14 + 40 + 3 * surface.width * surface.height, 4) // BMP size

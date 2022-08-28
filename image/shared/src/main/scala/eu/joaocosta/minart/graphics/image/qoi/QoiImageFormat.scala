@@ -1,14 +1,11 @@
 package eu.joaocosta.minart.graphics.image.qoi
 
-import java.io.InputStream
-
-import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image.helpers._
 
-/** Image loader for QOI files.
+/** Image format for QOI files.
   */
 final class QoiImageFormat[F[_]](val byteReader: ByteReader[F], val byteWriter: ByteWriter[F])
-    extends QoiImageLoader[F]
+    extends QoiImageReader[F]
     with QoiImageWriter[F]
 
 object QoiImageFormat {

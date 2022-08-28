@@ -8,11 +8,11 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
 
-/** Image loader for BMP files.
+/** Image reader for BMP files.
   *
   * Supports uncompressed 24/32bit Windows BMPs.
   */
-trait BmpImageLoader[F[_]] extends ImageLoader {
+trait BmpImageReader[F[_]] extends ImageReader {
   val byteReader: ByteReader[F]
   import byteReader._
 
@@ -46,7 +46,7 @@ trait BmpImageLoader[F[_]] extends ImageLoader {
     }
   }
 
-  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
     (for {
       magic <- readString(2).validate(
         BmpImageFormat.supportedFormats,

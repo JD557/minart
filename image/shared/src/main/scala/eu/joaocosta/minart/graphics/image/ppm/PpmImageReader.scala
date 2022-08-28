@@ -8,15 +8,14 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
 
-/** Image loader for PGM/PPM files.
+/** Image reader for PGM/PPM files.
   *
   * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
-trait PpmImageLoader[F[_]] extends ImageLoader {
+trait PpmImageReader[F[_]] extends ImageReader {
   val byteReader: ByteReader[F]
 
-  import PpmImageFormat._
-  import PpmImageLoader._
+  import PpmImageReader._
   private val byteStringOps = new ByteStringOps(byteReader)
   import byteReader._
   import byteStringOps._
@@ -69,8 +68,8 @@ trait PpmImageLoader[F[_]] extends ImageLoader {
     }
   }
 
-  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
-    val byteStringOps = new PpmImageLoader.ByteStringOps(byteReader)
+  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+    val byteStringOps = new PpmImageReader.ByteStringOps(byteReader)
     import byteStringOps._
     (
       for {
@@ -109,7 +108,7 @@ trait PpmImageLoader[F[_]] extends ImageLoader {
   }
 }
 
-object PpmImageLoader {
+object PpmImageReader {
   private final class ByteStringOps[F[_]](val byteReader: ByteReader[F]) {
     import byteReader._
     private val newLine = '\n'.toInt

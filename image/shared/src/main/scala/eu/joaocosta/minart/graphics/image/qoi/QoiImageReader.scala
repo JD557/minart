@@ -8,13 +8,13 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.graphics.image.helpers._
 
-/** Image loader for QOI files.
+/** Image reader for QOI files.
   */
-trait QoiImageLoader[F[_]] extends ImageLoader {
+trait QoiImageReader[F[_]] extends ImageReader {
   val byteReader: ByteReader[F]
 
   import QoiImageFormat._
-  import QoiImageLoader._
+  import QoiImageReader._
   import byteReader._
 
   // Binary helpers
@@ -120,7 +120,7 @@ trait QoiImageLoader[F[_]] extends ImageLoader {
       }
   }
 
-  def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
     (
       for {
         magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
@@ -149,7 +149,7 @@ trait QoiImageLoader[F[_]] extends ImageLoader {
   }
 }
 
-object QoiImageLoader {
+object QoiImageReader {
 
   private final case class QoiState(
       imageAcc: List[QoiColor] = Nil,
