@@ -31,17 +31,39 @@ trait BmpImageReader[F[_]] extends ImageReader {
       )
 
   @tailrec
-  private def loadPixels(
+  private def loadPixelLine(
       loadColor: ParseState[String, Color],
       data: F[Int],
       remainingPixels: Int,
+      padding: Int,
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
-    if (isEmpty(data) || remainingPixels == 0) Right(data -> acc.reverse)
+    if (isEmpty(data) || remainingPixels == 0)
+      skipBytes(padding).map(_ => acc).run(data)
     else {
       loadColor.run(data) match {
-        case Left(error)               => Left(error)
-        case Right((remaining, color)) => loadPixels(loadColor, remaining, remainingPixels - 1, color :: acc)
+        case Left(error) => Left(error)
+        case Right((remaining, color)) =>
+          loadPixelLine(loadColor, remaining, remainingPixels - 1, padding, color :: acc)
+      }
+    }
+  }
+
+  @tailrec
+  private def loadPixels(
+      loadColor: ParseState[String, Color],
+      data: F[Int],
+      remainingLines: Int,
+      width: Int,
+      padding: Int,
+      acc: List[Color] = Nil
+  ): ParseResult[List[Color]] = {
+    if (isEmpty(data) || remainingLines == 0) Right(data -> acc.reverse)
+    else {
+      loadPixelLine(loadColor, data, width, padding) match {
+        case Left(error) => Left(error)
+        case Right((remaining, line)) =>
+          loadPixels(loadColor, remaining, remainingLines - 1, width, padding, line ++ acc)
       }
     }
   }
@@ -94,9 +116,21 @@ trait BmpImageReader[F[_]] extends ImageReader {
       val numPixels = header.width * header.height
       val pixels = header.bitsPerPixel match {
         case 24 =>
-          loadPixels(loadRgbPixel, data, numPixels)
+          loadPixels(
+            loadRgbPixel,
+            data,
+            header.height,
+            header.width,
+            BmpImageFormat.linePadding(header.width, header.bitsPerPixel)
+          )
         case 32 =>
-          loadPixels(loadRgbaPixel, data, numPixels)
+          loadPixels(
+            loadRgbaPixel,
+            data,
+            header.height,
+            header.width,
+            BmpImageFormat.linePadding(header.width, header.bitsPerPixel)
+          )
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
