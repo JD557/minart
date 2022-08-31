@@ -48,6 +48,8 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   def unsafeInit(newSettings: Canvas.Settings): Unit = {
     containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
+    containerDiv.appendChild(canvas)
+    childNode = dom.document.body.appendChild(containerDiv)
     ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
@@ -94,6 +96,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   }
 
   def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
+    val oldSettings   = settings
     val clearColorStr = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
     extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
@@ -107,14 +110,22 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
       if (newSettings.fullScreen)
         s"display:flex;justify-content:center;align-items:center;background:$clearColorStr;"
       else ""
-    containerDiv.appendChild(canvas)
-    childNode = dom.document.body.appendChild(containerDiv)
     surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
 
-    if (newSettings.fullScreen) {
-      containerDiv.requestFullscreen()
-    } else if (dom.document.fullscreenElement != null && !js.isUndefined(dom.document.fullscreenElement)) {
-      dom.document.exitFullscreen()
+    if (oldSettings.fullScreen != newSettings.fullScreen) {
+      if (newSettings.fullScreen) {
+        containerDiv.requestFullscreen()
+        // Set a safe fallback on unexpected fullscreen exits
+        if (oldSettings.fullScreen == false) {
+          containerDiv.onfullscreenchange = (_: Event) =>
+            if (dom.document.fullscreenElement == null && settings.fullScreen == true) {
+              changeSettings(oldSettings)
+            }
+        }
+      } else if (dom.document.fullscreenElement != null && !js.isUndefined(dom.document.fullscreenElement)) {
+        containerDiv.onfullscreenchange = (_: Event) => ()
+        dom.document.exitFullscreen()
+      }
     }
     ctx.fillStyle = clearColorStr
     ctx.fillRect(0, 0, newSettings.width, newSettings.height)
