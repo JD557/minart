@@ -66,7 +66,7 @@ object ImageLoaderSpec extends BasicTestSuite {
       assert(imageRect.get.height == 119)
     }
 
-    test("Load the same data from different formats") {
+    test("Load the same data from different formats (square image)") {
       val bmpRgb  = Image.loadBmpImage(Resource("scala.bmp")).get.getPixels().map(_.toVector)
       val bmpArgb = Image.loadBmpImage(Resource("scala-argb.bmp")).get.getPixels().map(_.toVector)
       val ppmP2   = Image.loadPpmImage(Resource("scala-txt.pgm")).get.getPixels().map(_.toVector)
@@ -81,6 +81,15 @@ object ImageLoaderSpec extends BasicTestSuite {
       assert(bmpRgb == ppmP6)
       assert(bmpRgb == ppmP3)
       assert(bmpRgb == qoi)
+    }
+
+    test("Load the same data from different formats (non-square image)") {
+      val bmp = Image.loadBmpImage(Resource("scala-rect.bmp")).get.getPixels().map(_.toVector)
+      val ppm = Image.loadPpmImage(Resource("scala-rect.ppm")).get.getPixels().map(_.toVector)
+      val qoi = Image.loadQoiImage(Resource("scala-rect.qoi")).get.getPixels().map(_.toVector)
+
+      assert(bmp == ppm)
+      assert(bmp == qoi)
     }
   }
 }

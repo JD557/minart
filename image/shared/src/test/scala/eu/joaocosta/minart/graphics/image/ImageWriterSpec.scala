@@ -25,14 +25,17 @@ object ImageWriterSpec extends BasicTestSuite {
   if (Platform() != Platform.JS) {
     test("Write a PPM image") {
       roundtripTest(Resource("scala.ppm"), ppm.PpmImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect.ppm"), ppm.PpmImageFormat.defaultFormat)
     }
 
     test("Write a BMP image") {
       roundtripTest(Resource("scala.bmp"), bmp.BmpImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect.bmp"), bmp.BmpImageFormat.defaultFormat)
     }
 
     test("Write a QOI image") {
       roundtripTest(Resource("scala.qoi"), qoi.QoiImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect.qoi"), qoi.QoiImageFormat.defaultFormat)
     }
   }
 }
