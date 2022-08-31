@@ -117,13 +117,13 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
         containerDiv.requestFullscreen()
         // Set a safe fallback on unexpected fullscreen exits
         if (oldSettings.fullScreen == false) {
-          containerDiv.onfullscreenchange = (_) =>
+          containerDiv.onfullscreenchange = (_: Event) =>
             if (dom.document.fullscreenElement == null && settings.fullScreen == true) {
               changeSettings(oldSettings)
             }
         }
       } else if (dom.document.fullscreenElement != null && !js.isUndefined(dom.document.fullscreenElement)) {
-        containerDiv.onfullscreenchange = (_) => ()
+        containerDiv.onfullscreenchange = (_: Event) => ()
         dom.document.exitFullscreen()
       }
     }
