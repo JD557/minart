@@ -125,3 +125,34 @@ jobs:
       run: |
         cd examples/snapshot
         ls | grep .sc | xargs scala-cli compile
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    env:
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8 and SBT
+      uses: olafurpg/setup-scala@v13
+      with:
+        java-version: adopt@1.8
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
+    - name: Cache SBT ivy cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache SBT
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Compute coverage
+      run: sbt -Dsbt.color=always rootJVM/clean coverage rootJVM/test rootJVM/coverageAggregate
+    - name: Upload report
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r jvm/target/scala-3.2.0/coverage-report/cobertura.xml
