@@ -51,7 +51,7 @@ val publishSettings = Seq(
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.1",
-    "org.scala-js"           %%% "scalajs-dom"             % "2.2.0"
+    "org.scala-js"           %%% "scalajs-dom"             % "2.3.0"
   )
 )
 
