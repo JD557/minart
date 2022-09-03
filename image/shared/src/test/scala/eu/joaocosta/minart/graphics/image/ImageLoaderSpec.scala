@@ -1,95 +1,113 @@
 package eu.joaocosta.minart.graphics.image
 
+import scala.util.Try
+
 import verify._
 
 import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
 object ImageLoaderSpec extends BasicTestSuite {
 
+  def sameImage(results: List[RamSurface]): Unit = {
+    results.sliding(2).foreach {
+      case img1 :: img2 :: _ => assert(img1.getPixels().map(_.toVector) == img2.getPixels().map(_.toVector))
+      case _                 => ()
+    }
+  }
+
+  def testSize(results: List[Try[RamSurface]], expectedWidth: Int, expectedHeight: Int): Unit = {
+    assert(results.forall(_.isSuccess))
+    assert(results.head.get.width == expectedWidth)
+    assert(results.head.get.height == expectedHeight)
+    sameImage(results.map(_.get))
+  }
+
   // Can't load resources in JS tests
   if (Platform() != Platform.JS) {
     test("Load a BMP image") {
-      val imageRgb = Image.loadBmpImage(Resource("scala.bmp"))
-      assert(imageRgb.isSuccess)
-      assert(imageRgb.get.width == 128)
-      assert(imageRgb.get.height == 128)
-      val imageArgb = Image.loadBmpImage(Resource("scala-argb.bmp"))
-      assert(imageArgb.isSuccess)
-      assert(imageArgb.get.width == 128)
-      assert(imageArgb.get.height == 128)
-
-      val imageRect = Image.loadBmpImage(Resource("scala-rect.bmp"))
-      assert(imageRect.isSuccess)
-      assert(imageRect.get.width == 77)
-      assert(imageRect.get.height == 119)
+      testSize(
+        List(Image.loadBmpImage(Resource("scala/bmp-24bit.bmp")), Image.loadBmpImage(Resource("scala/bmp-32bit.bmp"))),
+        128,
+        128
+      )
+      testSize(
+        List(
+          Image.loadBmpImage(Resource("scala-rect/bmp-24bit.bmp")),
+          Image.loadBmpImage(Resource("scala-rect/bmp-32bit.bmp"))
+        ),
+        77,
+        119
+      )
     }
 
-    test("Load a PGM/PPM image") {
-      val imageGrayscaleBin = Image.loadPpmImage(Resource("scala.pgm"))
-      assert(imageGrayscaleBin.isSuccess)
-      assert(imageGrayscaleBin.get.width == 128)
-      assert(imageGrayscaleBin.get.height == 128)
-      val imageGrayscaleTxt = Image.loadPpmImage(Resource("scala-txt.pgm"))
-      assert(imageGrayscaleTxt.isSuccess)
-      assert(imageGrayscaleTxt.get.width == 128)
-      assert(imageGrayscaleTxt.get.height == 128)
+    test("Load a PPM image") {
+      testSize(
+        List(Image.loadPpmImage(Resource("scala/ppm-p3.ppm")), Image.loadPpmImage(Resource("scala/ppm-p6.ppm"))),
+        128,
+        128
+      )
+      testSize(
+        List(
+          Image.loadPpmImage(Resource("scala-rect/ppm-p3.ppm")),
+          Image.loadPpmImage(Resource("scala-rect/ppm-p6.ppm"))
+        ),
+        77,
+        119
+      )
+    }
 
-      val imageBin = Image.loadPpmImage(Resource("scala.ppm"))
-      assert(imageBin.isSuccess)
-      assert(imageBin.get.width == 128)
-      assert(imageBin.get.height == 128)
-      val imageTxt = Image.loadPpmImage(Resource("scala-txt.ppm"))
-      assert(imageTxt.isSuccess)
-      assert(imageTxt.get.width == 128)
-      assert(imageTxt.get.height == 128)
-
-      val imageRectBin = Image.loadPpmImage(Resource("scala-rect.ppm"))
-      assert(imageRectBin.isSuccess)
-      assert(imageRectBin.get.width == 77)
-      assert(imageRectBin.get.height == 119)
-      val imageRectTxt = Image.loadPpmImage(Resource("scala-rect-txt.ppm"))
-      assert(imageRectTxt.isSuccess)
-      assert(imageRectTxt.get.width == 77)
-      assert(imageRectTxt.get.height == 119)
+    test("Load a PGM image") {
+      testSize(
+        List(Image.loadPpmImage(Resource("scala/pgm-p2.pgm")), Image.loadPpmImage(Resource("scala/pgm-p5.pgm"))),
+        128,
+        128
+      )
+      testSize(
+        List(
+          Image.loadPpmImage(Resource("scala-rect/pgm-p2.pgm")),
+          Image.loadPpmImage(Resource("scala-rect/pgm-p5.pgm"))
+        ),
+        77,
+        119
+      )
     }
 
     test("Load a QOI image") {
-      val image = Image.loadQoiImage(Resource("scala.qoi"))
-      assert(image.isSuccess)
-      assert(image.get.width == 128)
-      assert(image.get.height == 128)
-
-      val imageRect = Image.loadQoiImage(Resource("scala-rect.qoi"))
-      assert(imageRect.isSuccess)
-      assert(imageRect.get.width == 77)
-      assert(imageRect.get.height == 119)
+      testSize(
+        List(Image.loadQoiImage(Resource("scala/qoi-24bit.qoi")), Image.loadQoiImage(Resource("scala/qoi-32bit.qoi"))),
+        128,
+        128
+      )
+      testSize(
+        List(
+          Image.loadQoiImage(Resource("scala-rect/qoi-24bit.qoi")),
+          Image.loadQoiImage(Resource("scala-rect/qoi-32bit.qoi"))
+        ),
+        77,
+        119
+      )
     }
 
     test("Load the same data from different formats (square image)") {
-      val bmpRgb  = Image.loadBmpImage(Resource("scala.bmp")).get.getPixels().map(_.toVector)
-      val bmpArgb = Image.loadBmpImage(Resource("scala-argb.bmp")).get.getPixels().map(_.toVector)
-      val ppmP2   = Image.loadPpmImage(Resource("scala-txt.pgm")).get.getPixels().map(_.toVector)
-      val ppmP3   = Image.loadPpmImage(Resource("scala-txt.ppm")).get.getPixels().map(_.toVector)
-      val ppmP5   = Image.loadPpmImage(Resource("scala.pgm")).get.getPixels().map(_.toVector)
-      val ppmP6   = Image.loadPpmImage(Resource("scala.ppm")).get.getPixels().map(_.toVector)
-      val qoi     = Image.loadQoiImage(Resource("scala.qoi")).get.getPixels().map(_.toVector)
-
-      assert(ppmP2 == ppmP5)
-
-      assert(bmpRgb == bmpArgb)
-      assert(bmpRgb == ppmP6)
-      assert(bmpRgb == ppmP3)
-      assert(bmpRgb == qoi)
+      sameImage(
+        List(
+          Image.loadBmpImage(Resource("scala/bmp-24bit.bmp")).get,
+          Image.loadPpmImage(Resource("scala/ppm-p3.ppm")).get,
+          Image.loadQoiImage(Resource("scala/qoi-24bit.qoi")).get
+        )
+      )
     }
 
     test("Load the same data from different formats (non-square image)") {
-      val bmp = Image.loadBmpImage(Resource("scala-rect.bmp")).get.getPixels().map(_.toVector)
-      val ppm = Image.loadPpmImage(Resource("scala-rect.ppm")).get.getPixels().map(_.toVector)
-      val qoi = Image.loadQoiImage(Resource("scala-rect.qoi")).get.getPixels().map(_.toVector)
-
-      assert(bmp == ppm)
-      assert(bmp == qoi)
+      sameImage(
+        List(
+          Image.loadBmpImage(Resource("scala-rect/bmp-24bit.bmp")).get,
+          Image.loadPpmImage(Resource("scala-rect/ppm-p3.ppm")).get,
+          Image.loadQoiImage(Resource("scala-rect/qoi-24bit.qoi")).get
+        )
+      )
     }
   }
 }

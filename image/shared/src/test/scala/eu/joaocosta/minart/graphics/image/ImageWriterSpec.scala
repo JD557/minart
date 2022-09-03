@@ -24,18 +24,18 @@ object ImageWriterSpec extends BasicTestSuite {
   // Can't load resources in JS tests
   if (Platform() != Platform.JS) {
     test("Write a PPM image") {
-      roundtripTest(Resource("scala.ppm"), ppm.PpmImageFormat.defaultFormat)
-      roundtripTest(Resource("scala-rect.ppm"), ppm.PpmImageFormat.defaultFormat)
+      roundtripTest(Resource("scala/ppm-p3.ppm"), ppm.PpmImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect/ppm-p3.ppm"), ppm.PpmImageFormat.defaultFormat)
     }
 
     test("Write a BMP image") {
-      roundtripTest(Resource("scala.bmp"), bmp.BmpImageFormat.defaultFormat)
-      roundtripTest(Resource("scala-rect.bmp"), bmp.BmpImageFormat.defaultFormat)
+      roundtripTest(Resource("scala/bmp-24bit.bmp"), bmp.BmpImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect/bmp-24bit.bmp"), bmp.BmpImageFormat.defaultFormat)
     }
 
     test("Write a QOI image") {
-      roundtripTest(Resource("scala.qoi"), qoi.QoiImageFormat.defaultFormat)
-      roundtripTest(Resource("scala-rect.qoi"), qoi.QoiImageFormat.defaultFormat)
+      roundtripTest(Resource("scala/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
     }
   }
 }
