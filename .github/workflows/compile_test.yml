@@ -43,6 +43,9 @@ jobs:
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Compile (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
+    - name: Install scala-native libraries
+      if: matrix.platform == 'native'
+      run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
   compile-examples:
