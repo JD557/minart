@@ -24,8 +24,8 @@ class SdlCanvas() extends SurfaceBackedCanvas {
 
   // Input resources
 
-  private[this] var keyboardInput: KeyboardInput = KeyboardInput(Set(), Set(), Set())
-  private[this] var pointerInput: PointerInput   = PointerInput(None, Nil, Nil, false)
+  private[this] var keyboardInput: KeyboardInput = KeyboardInput.empty
+  private[this] var pointerInput: PointerInput   = PointerInput.empty
   private[this] var rawPointerPos: (Int, Int)    = _
   private[this] def cleanPointerPos: Option[PointerInput.Position] = if (isCreated())
     Option(rawPointerPos).map { case (x, y) =>

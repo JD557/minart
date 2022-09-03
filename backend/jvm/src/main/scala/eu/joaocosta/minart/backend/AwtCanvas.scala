@@ -161,7 +161,7 @@ object AwtCanvas {
 
   private class KeyListener extends JavaKeyListener {
     private[this] val events = new ConcurrentLinkedQueue[KeyListener.KeyboardEvent]()
-    private[this] var state  = KeyboardInput(Set(), Set(), Set())
+    private[this] var state  = KeyboardInput.empty
 
     private[this] def computeState(): KeyboardInput = synchronized {
       state = events.asScala.foldLeft(state) {
@@ -201,7 +201,7 @@ object AwtCanvas {
 
   private class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
     private[this] val events          = new ConcurrentLinkedQueue[MouseListener.MouseEvent]()
-    @volatile private[this] var state = PointerInput(None, Nil, Nil, false)
+    @volatile private[this] var state = PointerInput.empty
 
     private[this] def computeState(): PointerInput = synchronized {
       state = events.asScala.foldLeft(state) {

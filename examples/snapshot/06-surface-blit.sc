@@ -33,7 +33,7 @@ val image = new RamSurface(
  * Also, by returning a Surface instead of MutableSurface, we make sure that no one else can mutate it.
  */
 val background: Surface = {
-  val surface = new RamSurface(Vector.fill(canvasSettings.height)(Array.fill(canvasSettings.width)(Color(0, 0, 0))))
+  val surface = new RamSurface(canvasSettings.width, canvasSettings.height, Color(0, 0, 0))
   for {
     x <- (0 until surface.width)
     y <- (0 until surface.height)
