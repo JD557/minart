@@ -4,12 +4,15 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image format for QOI files.
   */
-final class QoiImageFormat[F[_]](val byteReader: ByteReader[F], val byteWriter: ByteWriter[F])
-    extends QoiImageReader[F]
-    with QoiImageWriter[F]
+final class QoiImageFormat[R, W[_]](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W])
+    extends QoiImageReader[R]
+    with QoiImageWriter[W]
 
 object QoiImageFormat {
-  val defaultFormat = new QoiImageFormat[Iterator](ByteReader.IteratorByteReader, ByteWriter.IteratorByteWriter)
+  val defaultFormat = new QoiImageFormat[ByteReader.ModifiableInputStream, Iterator](
+    ByteReader.InputStreamByteReader,
+    ByteWriter.IteratorByteWriter
+  )
 
   val supportedFormats = Set("qoif")
 }

@@ -12,8 +12,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
   *
   * Supports uncompressed 24/32bit Windows BMPs.
   */
-trait BmpImageReader[F[_]] extends ImageReader {
-  val byteReader: ByteReader[F]
+trait BmpImageReader[Container] extends ImageReader {
+  val byteReader: ByteReader[Container]
   import byteReader._
 
   private val loadRgbPixel: ParseState[String, Color] =
@@ -33,7 +33,7 @@ trait BmpImageReader[F[_]] extends ImageReader {
   @tailrec
   private def loadPixelLine(
       loadColor: ParseState[String, Color],
-      data: F[Int],
+      data: Container,
       remainingPixels: Int,
       padding: Int,
       acc: List[Color] = Nil
@@ -52,7 +52,7 @@ trait BmpImageReader[F[_]] extends ImageReader {
   @tailrec
   private def loadPixels(
       loadColor: ParseState[String, Color],
-      data: F[Int],
+      data: Container,
       remainingLines: Int,
       width: Int,
       padding: Int,
@@ -68,7 +68,7 @@ trait BmpImageReader[F[_]] extends ImageReader {
     }
   }
 
-  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: Container): ParseResult[Header] = {
     (for {
       magic <- readString(2).validate(
         BmpImageFormat.supportedFormats,
@@ -97,9 +97,9 @@ trait BmpImageReader[F[_]] extends ImageReader {
       )
       loadColorMask = compressionMethod == 3 || compressionMethod == 6
       _         <- if (loadColorMask) skipBytes(20) else noop
-      redMask   <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x00ff0000)
-      greenMask <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x0000ff00)
-      blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x000000ff)
+      redMask   <- if (loadColorMask) readLENumber(4) else State.pure[Container, Int](0x00ff0000)
+      greenMask <- if (loadColorMask) readLENumber(4) else State.pure[Container, Int](0x0000ff00)
+      blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[Container, Int](0x000000ff)
       _         <- if (loadColorMask) skipBytes(4) else noop // Skip alpha mask (or color space)
       _ <- State.check(
         redMask == 0x00ff0000 && greenMask == 0x0000ff00 && blueMask == 0x000000ff,

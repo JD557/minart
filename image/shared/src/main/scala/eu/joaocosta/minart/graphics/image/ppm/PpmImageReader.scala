@@ -12,8 +12,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
   *
   * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
-trait PpmImageReader[F[_]] extends ImageReader {
-  val byteReader: ByteReader[F]
+trait PpmImageReader[Container] extends ImageReader {
+  val byteReader: ByteReader[Container]
 
   import PpmImageReader._
   private val byteStringOps = new ByteStringOps(byteReader)
@@ -55,7 +55,7 @@ trait PpmImageReader[F[_]] extends ImageReader {
   @tailrec
   private def loadPixels(
       loadColor: ParseState[String, Color],
-      data: F[Int],
+      data: Container,
       remainingPixels: Int,
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
@@ -68,7 +68,7 @@ trait PpmImageReader[F[_]] extends ImageReader {
     }
   }
 
-  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: Container): ParseResult[Header] = {
     val byteStringOps = new PpmImageReader.ByteStringOps(byteReader)
     import byteStringOps._
     (
@@ -109,15 +109,15 @@ trait PpmImageReader[F[_]] extends ImageReader {
 }
 
 object PpmImageReader {
-  private final class ByteStringOps[F[_]](val byteReader: ByteReader[F]) {
+  private final class ByteStringOps[Container](val byteReader: ByteReader[Container]) {
     import byteReader._
     private val newLine = '\n'.toInt
     private val comment = '#'.toInt
     private val space   = ' '.toInt
 
-    val readNextLine: ParseState[Nothing, List[Int]] = State[F[Int], List[Int]] { bytes =>
+    val readNextLine: ParseState[Nothing, List[Int]] = State[Container, List[Int]] { bytes =>
       @tailrec
-      def aux(b: F[Int]): (F[Int], List[Int]) = {
+      def aux(b: Container): (Container, List[Int]) = {
         val (remaining, line) = (for {
           chars <- readWhile(_ != newLine)
           fullChars = chars :+ newLine

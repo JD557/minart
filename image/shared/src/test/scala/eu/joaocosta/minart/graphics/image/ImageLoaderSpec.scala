@@ -18,7 +18,7 @@ object ImageLoaderSpec extends BasicTestSuite {
   }
 
   def testSize(results: List[Try[RamSurface]], expectedWidth: Int, expectedHeight: Int): Unit = {
-    assert(results.forall(_.isSuccess))
+    assert(results.map(_.get).size != 0)
     assert(results.head.get.width == expectedWidth)
     assert(results.head.get.height == expectedHeight)
     sameImage(results.map(_.get))
