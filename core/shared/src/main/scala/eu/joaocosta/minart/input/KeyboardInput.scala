@@ -31,6 +31,10 @@ case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased
 
 object KeyboardInput {
 
+  /** Keyboard Input with everything unset
+    */
+  val empty = KeyboardInput(Set(), Set(), Set())
+
   /** Internal trait to store mappings from platform-specific key representations to a [[Key]].
     * This should not have to be used in the application code.
     */

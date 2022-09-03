@@ -11,6 +11,9 @@ final class RamSurface(val data: Vector[Array[Color]]) extends MutableSurface {
   def this(colors: Seq[Seq[Color]]) =
     this(colors.map(_.toArray).toVector)
 
+  def this(width: Int, height: Int, color: Color) =
+    this(Vector.fill(height)(Array.fill(width)(color)))
+
   def unsafeGetPixel(x: Int, y: Int): Color =
     data(y)(x)
 
@@ -31,5 +34,4 @@ final class RamSurface(val data: Vector[Array[Color]]) extends MutableSurface {
       y += 1
     }
   }
-
 }

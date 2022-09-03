@@ -41,5 +41,12 @@ case class PointerInput(
 }
 
 object PointerInput {
+
+  /** Pointer Input with everything unset
+    */
+  val empty = PointerInput(None, Nil, Nil, false)
+
+  /** Position on the screen
+    */
   case class Position(x: Int, y: Int)
 }
