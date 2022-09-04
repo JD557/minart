@@ -16,6 +16,9 @@ object Color {
   def apply(r: Int, g: Int, b: Int): Color =
     new Color((255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255))
 
+  def apply(r: Byte, g: Byte, b: Byte): Color =
+    new Color((255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255))
+
   @inline def fromRGB(rgb: Int): Color =
     new Color(0xff000000 | rgb)
 

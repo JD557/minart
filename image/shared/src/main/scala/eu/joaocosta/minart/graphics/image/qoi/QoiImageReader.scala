@@ -10,8 +10,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image reader for QOI files.
   */
-trait QoiImageReader[ByteSeq] extends ImageReader {
-  val byteReader: ByteReader[ByteSeq]
+trait QoiImageReader[Container] extends ImageReader {
+  val byteReader: ByteReader[Container]
 
   import QoiImageFormat._
   import QoiImageReader._
@@ -89,7 +89,7 @@ trait QoiImageReader[ByteSeq] extends ImageReader {
     }
   }
 
-  private def loadOps(bytes: ByteSeq): Iterator[Either[String, Op]] = new Iterator[Either[String, Op]] {
+  private def loadOps(bytes: Container): Iterator[Either[String, Op]] = new Iterator[Either[String, Op]] {
     var currBytes = bytes
     def hasNext   = !byteReader.isEmpty(currBytes)
     def next(): Either[String, Op] =
@@ -118,7 +118,7 @@ trait QoiImageReader[ByteSeq] extends ImageReader {
           new RamSurface(
             finalState.imageAcc.reverseIterator
               .take(expectedPixels)
-              .map(_.toMinartColor)
+              .map(_.minartColor)
               .grouped(header.width.toInt)
               .map(_.toArray)
               .toVector
@@ -128,7 +128,7 @@ trait QoiImageReader[ByteSeq] extends ImageReader {
       }
   }
 
-  private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
+  private def loadHeader(bytes: Container): ParseResult[Header] = {
     (
       for {
         magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")

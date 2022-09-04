@@ -25,8 +25,11 @@ trait ByteReader[ByteSeq] {
   /** Read 1 Byte */
   val readByte: ParseState[String, Option[Int]]
 
-  /** Read N Byte */
+  /** Read N Bytes */
   def readBytes(n: Int): ParseState[Nothing, Array[Int]]
+
+  /** Read N Bytes */
+  def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]]
 
   /** Reads data while a predicate is true */
   def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]]
@@ -68,6 +71,10 @@ object ByteReader {
 
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
       bytes.drop(n) -> bytes.take(n).toArray
+    }
+
+    def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
+      bytes.drop(n) -> bytes.take(n).map(_.toByte).toArray
     }
 
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
@@ -113,6 +120,16 @@ object ByteReader {
       bytes -> buffer.result()
     }
 
+    def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
+      val buffer = Array.newBuilder[Byte]
+      var count  = n
+      while (count > 0 && bytes.hasNext) {
+        buffer += bytes.next().toByte
+        count -= 1
+      }
+      bytes -> buffer.result()
+    }
+
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
       val bufferedBytes = bytes.buffered
       val buffer        = List.newBuilder[Int]
@@ -125,21 +142,21 @@ object ByteReader {
   }
 
   class ModifiableInputStream(inner: InputStream) extends InputStream {
-    val buffer                              = new collection.mutable.Stack[Int]()
+    val buffer                              = new collection.mutable.Stack[Byte]()
     override def available(): Int           = buffer.size + inner.available()
     override def close(): Unit              = inner.close()
     override def mark(readLimit: Int): Unit = ()
     override def markSupported(): Boolean   = false
     override def read() = {
       if (buffer.isEmpty) inner.read()
-      else buffer.pop()
+      else java.lang.Byte.toUnsignedInt(buffer.pop())
     }
     override def read(b: Array[Byte]): Int = {
       if (buffer.isEmpty || b.isEmpty) inner.read(b)
       else {
         val toPop    = math.min(b.size, buffer.size).toInt
         val toStream = b.size - toPop
-        (0 until toPop).foreach(idx => b(idx) = buffer.pop().toByte)
+        (0 until toPop).foreach(idx => b(idx) = buffer.pop())
         inner.read(b, toPop, toStream) + toPop
       }
     }
@@ -160,13 +177,13 @@ object ByteReader {
         val next = inner.read()
         if (next == -1) true
         else {
-          buffer.push(next)
+          buffer.push(next.toByte)
           false
         }
       } else false
 
     def pushBytes(bytes: Seq[Int]): this.type = {
-      buffer.pushAll(bytes.reverseIterator)
+      buffer.pushAll(bytes.reverseIterator.map(_.toByte))
       this
     }
   }
@@ -193,10 +210,13 @@ object ByteReader {
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
       val byteArr    = Array.ofDim[Byte](n)
       val resultSize = bytes.read(byteArr)
-      bytes -> byteArr.iterator
-        .take(resultSize)
-        .map { byte => java.lang.Byte.toUnsignedInt(byte) }
-        .toArray
+      bytes -> byteArr.map(b => java.lang.Byte.toUnsignedInt(b))
+    }
+
+    def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
+      val byteArr    = Array.ofDim[Byte](n)
+      val resultSize = bytes.read(byteArr)
+      bytes -> byteArr
     }
 
     def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>

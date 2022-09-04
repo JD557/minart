@@ -17,14 +17,14 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
   import byteReader._
 
   private val loadRgbPixel: ParseState[String, Color] =
-    readBytes(3)
+    readRawBytes(3)
       .collect(
         { case bytes if bytes.size == 3 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGB pixel"
       )
 
   private val loadRgbaPixel: ParseState[String, Color] =
-    readBytes(4)
+    readRawBytes(4)
       .collect(
         { case bytes if bytes.size == 4 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGBA pixel"
