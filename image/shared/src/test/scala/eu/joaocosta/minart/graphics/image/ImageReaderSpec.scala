@@ -8,7 +8,7 @@ import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
-object ImageLoaderSpec extends BasicTestSuite {
+object ImageReaderSpec extends BasicTestSuite {
 
   def sameImage(results: List[RamSurface]): Unit = {
     results.sliding(2).foreach {
@@ -40,6 +40,14 @@ object ImageLoaderSpec extends BasicTestSuite {
         77,
         119
       )
+      testSize(
+        List(
+          Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")),
+          Image.loadBmpImage(Resource("lausanne/bmp-32bit.bmp"))
+        ),
+        640,
+        480
+      )
     }
 
     test("Load a PPM image") {
@@ -55,6 +63,14 @@ object ImageLoaderSpec extends BasicTestSuite {
         ),
         77,
         119
+      )
+      testSize(
+        List(
+          Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")),
+          Image.loadPpmImage(Resource("lausanne/ppm-p6.ppm"))
+        ),
+        640,
+        480
       )
     }
 
@@ -72,6 +88,14 @@ object ImageLoaderSpec extends BasicTestSuite {
         77,
         119
       )
+      testSize(
+        List(
+          Image.loadPpmImage(Resource("lausanne/pgm-p2.pgm")),
+          Image.loadPpmImage(Resource("lausanne/pgm-p5.pgm"))
+        ),
+        640,
+        480
+      )
     }
 
     test("Load a QOI image") {
@@ -87,6 +111,14 @@ object ImageLoaderSpec extends BasicTestSuite {
         ),
         77,
         119
+      )
+      testSize(
+        List(
+          Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")),
+          Image.loadQoiImage(Resource("lausanne/qoi-32bit.qoi"))
+        ),
+        640,
+        480
       )
     }
 
@@ -106,6 +138,16 @@ object ImageLoaderSpec extends BasicTestSuite {
           Image.loadBmpImage(Resource("scala-rect/bmp-24bit.bmp")).get,
           Image.loadPpmImage(Resource("scala-rect/ppm-p3.ppm")).get,
           Image.loadQoiImage(Resource("scala-rect/qoi-24bit.qoi")).get
+        )
+      )
+    }
+
+    test("Load the same data from different formats (large image)") {
+      sameImage(
+        List(
+          Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")).get,
+          Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")).get,
+          Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")).get
         )
       )
     }
