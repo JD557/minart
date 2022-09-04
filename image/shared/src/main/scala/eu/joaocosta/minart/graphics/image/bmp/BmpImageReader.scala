@@ -37,9 +37,9 @@ trait BmpImageReader[Container] extends ImageReader {
       remainingPixels: Int,
       padding: Int,
       acc: List[Color] = Nil
-  ): ParseResult[List[Color]] = {
+  ): ParseResult[Array[Color]] = {
     if (isEmpty(data) || remainingPixels == 0)
-      skipBytes(padding).map(_ => acc).run(data)
+      skipBytes(padding).map(_ => acc.reverse.toArray).run(data)
     else {
       loadColor.run(data) match {
         case Left(error) => Left(error)
@@ -56,14 +56,14 @@ trait BmpImageReader[Container] extends ImageReader {
       remainingLines: Int,
       width: Int,
       padding: Int,
-      acc: List[Color] = Nil
-  ): ParseResult[List[Color]] = {
-    if (isEmpty(data) || remainingLines == 0) Right(data -> acc.reverse)
+      acc: Vector[Array[Color]] = Vector()
+  ): ParseResult[Vector[Array[Color]]] = {
+    if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
       loadPixelLine(loadColor, data, width, padding) match {
         case Left(error) => Left(error)
         case Right((remaining, line)) =>
-          loadPixels(loadColor, remaining, remainingLines - 1, width, padding, line ++ acc)
+          loadPixels(loadColor, remaining, remainingLines - 1, width, padding, line +: acc)
       }
     }
   }
@@ -134,9 +134,12 @@ trait BmpImageReader[Container] extends ImageReader {
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
-      pixels.right.flatMap { case (_, flatPixels) =>
-        if (flatPixels.size != numPixels) Left(s"Invalid number of pixels: Got ${flatPixels.size}, expected $numPixels")
-        else Right(new RamSurface(flatPixels.sliding(header.width, header.width).toSeq.reverse))
+      pixels.right.flatMap { case (_, pixelMatrix) =>
+        if (pixelMatrix.size != header.height)
+          Left(s"Invalid number of lines: Got ${pixelMatrix.size}, expected ${header.height}")
+        else if (pixelMatrix.nonEmpty && pixelMatrix.last.size != header.width)
+          Left(s"Invalid number of pixels in the last line: Got ${pixelMatrix.last.size}, expected ${header.width}")
+        else Right(new RamSurface(pixelMatrix))
       }
     }
   }
