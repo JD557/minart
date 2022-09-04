@@ -12,7 +12,7 @@ final class PpmImageFormat[R, W](val byteReader: ByteReader[R], val byteWriter: 
     with PpmImageWriter[W]
 
 object PpmImageFormat {
-  val defaultFormat = new PpmImageFormat[ByteReader.ModifiableInputStream, Iterator[Array[Byte]]](
+  val defaultFormat = new PpmImageFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
     ByteReader.InputStreamByteReader,
     ByteWriter.IteratorByteWriter
   )

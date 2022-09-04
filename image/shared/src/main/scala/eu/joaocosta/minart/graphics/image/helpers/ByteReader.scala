@@ -16,9 +16,6 @@ trait ByteReader[ByteSeq] {
   /** Checks if a byte sequence is empty */
   def isEmpty(seq: ByteSeq): Boolean
 
-  /** Adds a sequence of bytes to the head of the byte stream */
-  def pushBytes(bytes: Seq[Int]): ParseState[Nothing, Unit]
-
   /** Skip N Bytes */
   def skipBytes(n: Int): ParseState[Nothing, Unit]
 
@@ -59,9 +56,6 @@ object ByteReader {
 
     def isEmpty(seq: LazyList[Int]): Boolean = seq.isEmpty
 
-    def pushBytes(bytes: Seq[Int]): ParseState[Nothing, Unit] =
-      State.modify(s => bytes.to(LazyList) ++ s)
-
     def skipBytes(n: Int): ParseState[Nothing, Unit] =
       State.modify(_.drop(n))
 
@@ -92,9 +86,6 @@ object ByteReader {
       Iterator.continually(is.read()).takeWhile(_ != -1)
 
     def isEmpty(seq: Iterator[Int]): Boolean = seq.isEmpty
-
-    def pushBytes(bytes: Seq[Int]): ParseState[Nothing, Unit] =
-      State.modify(s => bytes.iterator ++ s)
 
     def skipBytes(n: Int): ParseState[Nothing, Unit] =
       State.modify { bytes =>
@@ -141,60 +132,60 @@ object ByteReader {
     }
   }
 
-  class ModifiableInputStream(inner: InputStream) extends InputStream {
-    val buffer                              = new collection.mutable.Stack[Byte]()
-    override def available(): Int           = buffer.size + inner.available()
+  class CustomInputStream(inner: InputStream) extends InputStream {
+    var hasBuffer: Boolean                  = false
+    var buffer: Int                         = 0
+    override def available(): Int           = inner.available() + (if (hasBuffer) 1 else 0)
     override def close(): Unit              = inner.close()
     override def mark(readLimit: Int): Unit = ()
     override def markSupported(): Boolean   = false
     override def read() = {
-      if (buffer.isEmpty) inner.read()
-      else java.lang.Byte.toUnsignedInt(buffer.pop())
+      if (!hasBuffer) inner.read()
+      else {
+        hasBuffer = false
+        buffer
+      }
     }
     override def read(b: Array[Byte]): Int = {
-      if (buffer.isEmpty || b.isEmpty) inner.read(b)
+      if (!hasBuffer || b.isEmpty) inner.read(b)
       else {
-        val toPop    = math.min(b.size, buffer.size).toInt
-        val toStream = b.size - toPop
-        (0 until toPop).foreach(idx => b(idx) = buffer.pop())
-        inner.read(b, toPop, toStream) + toPop
+        hasBuffer = false
+        b(0) = buffer.toByte
+        inner.read(b, 1, b.size - 1)
       }
     }
     override def reset(): Unit = ()
     override def skip(n: Long): Long = {
-      if (buffer.isEmpty || n == 0) inner.skip(n)
+      if (!hasBuffer || n == 0) inner.skip(n)
       else {
-        val toPop    = math.min(n, buffer.size).toInt
-        val toStream = n - toPop
-        (0 until toPop).foreach(_ => buffer.pop().toByte)
-        inner.skip(toStream) + toPop
+        hasBuffer = false
+        inner.skip(n - 1) + 1
       }
     }
 
     // Extra methods
     def isEmpty(): Boolean =
-      if (buffer.isEmpty) {
+      if (!hasBuffer) {
         val next = inner.read()
         if (next == -1) true
         else {
-          buffer.push(next.toByte)
+          buffer = next
+          hasBuffer = true
           false
         }
       } else false
 
-    def pushBytes(bytes: Seq[Int]): this.type = {
-      buffer.pushAll(bytes.reverseIterator.map(_.toByte))
-      this
+    def setBuffer(value: Int): Unit = {
+      buffer = value
+      hasBuffer = true
     }
+
   }
 
-  object InputStreamByteReader extends ByteReader[ModifiableInputStream] {
-    def fromInputStream(is: InputStream): ModifiableInputStream = new ModifiableInputStream(is)
+  object InputStreamByteReader extends ByteReader[CustomInputStream] {
+    def fromInputStream(is: InputStream): CustomInputStream = new CustomInputStream(is)
 
-    def isEmpty(seq: ModifiableInputStream): Boolean = seq.isEmpty()
-
-    def pushBytes(bytes: Seq[Int]): ParseState[Nothing, Unit] =
-      State.modify(s => s.pushBytes(bytes))
+    def isEmpty(seq: CustomInputStream): Boolean = seq.isEmpty()
 
     def skipBytes(n: Int): ParseState[Nothing, Unit] =
       State.modify { bytes =>
@@ -226,7 +217,7 @@ object ByteReader {
         buffer += value
         value = bytes.read()
       }
-      if (value != -1) bytes.pushBytes(List(value))
+      if (value != -1) bytes.setBuffer(value)
       bytes -> buffer.result()
     }
   }

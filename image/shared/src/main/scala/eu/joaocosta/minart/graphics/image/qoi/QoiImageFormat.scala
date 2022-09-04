@@ -9,7 +9,7 @@ final class QoiImageFormat[R, W](val byteReader: ByteReader[R], val byteWriter: 
     with QoiImageWriter[W]
 
 object QoiImageFormat {
-  val defaultFormat = new QoiImageFormat[ByteReader.ModifiableInputStream, Iterator[Array[Byte]]](
+  val defaultFormat = new QoiImageFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
     ByteReader.InputStreamByteReader,
     ByteWriter.IteratorByteWriter
   )

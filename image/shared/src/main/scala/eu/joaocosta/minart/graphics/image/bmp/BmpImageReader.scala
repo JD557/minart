@@ -39,7 +39,7 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
       acc: List[Color] = Nil
   ): ParseResult[Array[Color]] = {
     if (isEmpty(data) || remainingPixels == 0)
-      skipBytes(padding).map(_ => acc.reverse.toArray).run(data)
+      skipBytes(padding).map(_ => acc.reverseIterator.toArray).run(data)
     else {
       loadColor.run(data) match {
         case Left(error) => Left(error)
