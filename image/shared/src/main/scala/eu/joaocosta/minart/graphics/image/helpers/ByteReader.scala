@@ -166,7 +166,7 @@ object ByteReader {
       } else false
 
     def pushBytes(bytes: Seq[Int]): this.type = {
-      bytes.reverseIterator.foreach(byte => buffer.push(byte))
+      buffer.pushAll(bytes.reverseIterator)
       this
     }
   }
@@ -187,7 +187,7 @@ object ByteReader {
 
     val readByte: ParseState[String, Option[Int]] = State { bytes =>
       val value = bytes.read()
-      bytes -> Option.when(value >= -1)(value)
+      bytes -> (if (value >= -1) Some(value) else None)
     }
 
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>

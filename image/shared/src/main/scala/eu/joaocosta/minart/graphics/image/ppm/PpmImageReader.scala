@@ -59,7 +59,7 @@ trait PpmImageReader[Container] extends ImageReader {
       remainingPixels: Int,
       acc: List[Color] = Nil
   ): ParseResult[List[Color]] = {
-    if (isEmpty(data) || remainingPixels == 0) Right(data -> acc.reverse)
+    if (isEmpty(data) || remainingPixels == 0) Right(data -> acc)
     else {
       loadColor.run(data) match {
         case Left(error)               => Left(error)
@@ -102,7 +102,15 @@ trait PpmImageReader[Container] extends ImageReader {
       }
       pixels.right.flatMap { case (_, flatPixels) =>
         if (flatPixels.size != numPixels) Left(s"Invalid number of pixels: Got ${flatPixels.size}, expected $numPixels")
-        else Right(new RamSurface(flatPixels.sliding(header.width, header.width).toSeq))
+        else
+          Right(
+            new RamSurface(
+              flatPixels.reverseIterator
+                .grouped(header.width)
+                .map(_.toArray)
+                .toVector
+            )
+          )
       }
     }
   }
@@ -120,10 +128,9 @@ object PpmImageReader {
       def aux(b: Container): (Container, List[Int]) = {
         val (remaining, line) = (for {
           chars <- readWhile(_ != newLine)
-          fullChars = chars :+ newLine
-          _ <- skipBytes(1)
-        } yield fullChars).run(b).merge
-        if (line.headOption.exists(c => c == comment || c == newLine))
+          _     <- skipBytes(1)
+        } yield chars).run(b).merge
+        if (line.isEmpty || line.headOption.exists(c => c == comment))
           aux(remaining)
         else
           remaining -> line
