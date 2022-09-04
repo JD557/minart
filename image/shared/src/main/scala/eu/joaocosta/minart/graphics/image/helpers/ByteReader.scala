@@ -6,15 +6,15 @@ import scala.collection.compat.immutable.LazyList
 
 /** Helper methods to read binary data from an input stream.
   */
-trait ByteReader[Container] {
-  type ParseResult[T]   = Either[String, (Container, T)]
-  type ParseState[E, T] = State[Container, E, T]
+trait ByteReader[ByteSeq] {
+  type ParseResult[T]   = Either[String, (ByteSeq, T)]
+  type ParseState[E, T] = State[ByteSeq, E, T]
 
   /** Generates a sequence of bytes from a byte stream */
-  def fromInputStream(is: InputStream): Container
+  def fromInputStream(is: InputStream): ByteSeq
 
   /** Checks if a byte sequence is empty */
-  def isEmpty(seq: Container): Boolean
+  def isEmpty(seq: ByteSeq): Boolean
 
   /** Adds a sequence of bytes to the head of the byte stream */
   def pushBytes(bytes: Seq[Int]): ParseState[Nothing, Unit]

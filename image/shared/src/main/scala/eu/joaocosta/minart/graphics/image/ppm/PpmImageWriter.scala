@@ -12,8 +12,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
   *
   * Stores data as P6 PPM files with a 8 bit color range.
   */
-trait PpmImageWriter[F[_]] extends ImageWriter {
-  val byteWriter: ByteWriter[F]
+trait PpmImageWriter[ByteSeq] extends ImageWriter {
+  val byteWriter: ByteWriter[ByteSeq]
 
   import byteWriter._
 

@@ -10,8 +10,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image writer for QOI files.
   */
-trait QoiImageWriter[F[_]] extends ImageWriter {
-  val byteWriter: ByteWriter[F]
+trait QoiImageWriter[ByteSeq] extends ImageWriter {
+  val byteWriter: ByteWriter[ByteSeq]
   import byteWriter._
 
   private def storeHeader(surface: Surface): ByteStreamState[String] = {

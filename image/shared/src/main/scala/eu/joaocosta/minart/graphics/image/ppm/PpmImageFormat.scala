@@ -7,12 +7,12 @@ import eu.joaocosta.minart.graphics.image.helpers._
   * Supports reading P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range
   * and stores data as P6 PPM files with a 8 bit color range.
   */
-final class PpmImageFormat[R, W[_]](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W])
+final class PpmImageFormat[R, W](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W])
     extends PpmImageReader[R]
     with PpmImageWriter[W]
 
 object PpmImageFormat {
-  val defaultFormat = new PpmImageFormat[ByteReader.ModifiableInputStream, Iterator](
+  val defaultFormat = new PpmImageFormat[ByteReader.ModifiableInputStream, Iterator[Array[Byte]]](
     ByteReader.InputStreamByteReader,
     ByteWriter.IteratorByteWriter
   )
