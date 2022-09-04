@@ -195,11 +195,7 @@ object ByteReader {
       val resultSize = bytes.read(byteArr)
       bytes -> byteArr.iterator
         .take(resultSize)
-        .map { byte =>
-          val intValue = byte.toInt
-          if (intValue >= 0) intValue
-          else intValue + 256
-        }
+        .map { byte => java.lang.Byte.toUnsignedInt(byte) }
         .toArray
     }
 
