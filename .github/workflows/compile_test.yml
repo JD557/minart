@@ -42,12 +42,12 @@ jobs:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Compile (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
     - name: Install scala-native libraries
       if: matrix.platform == 'native'
       run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
   compile-examples:
     name: Compile examples
     runs-on: ubuntu-latest
@@ -86,7 +86,7 @@ jobs:
         cd examples/release
         ls | grep .sc | xargs scala-cli compile
     - name: Publish Local
-      run: sbt -Dsbt.color=always publishLocal
+      run: sbt -J-Xmx3G -Dsbt.color=always publishLocal
     - name: Compile examples (Snapshot)
       run: |
         cd examples/snapshot
@@ -119,6 +119,6 @@ jobs:
         path: ~/.sbt
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
     - name: Compute coverage
-      run: sbt -Dsbt.color=always rootJVM/clean coverage rootJVM/test rootJVM/coverageAggregate
+      run: sbt -J-Xmx3G -Dsbt.color=always rootJVM/clean coverage rootJVM/test rootJVM/coverageAggregate
     - name: Upload report
       run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r jvm/target/scala-3.2.0/coverage-report/cobertura.xml
