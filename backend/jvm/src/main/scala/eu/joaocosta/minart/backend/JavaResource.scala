@@ -22,9 +22,8 @@ final case class JavaResource(resourcePath: String) extends Resource {
 
   // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+
   def unsafeInputStream(): InputStream =
-    Try(new FileInputStream(path))
+    Try(new BufferedInputStream(new FileInputStream(path)))
       .orElse(Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get))
-      .map(is => new BufferedInputStream(is))
       .get
   def unsafeOutputStream(): OutputStream = new FileOutputStream(path)
 
