@@ -46,6 +46,15 @@ object RIOSpec extends BasicTestSuite {
     assert(ioB.run(()) == 1000)
   }
 
+  test("provide access/contramap/provide operations") {
+    val originalIo     = RIO.access[Int, Int](x => x)
+    val contramappedIo = originalIo.contramap[Int](x => x + 1)
+    assert(originalIo.run(0) == 0)
+    assert(originalIo.provide(0).run(()) == 0)
+    assert(contramappedIo.run(0) == 1)
+    assert(contramappedIo.provide(0).run(()) == 1)
+  }
+
   test("provide zip/zipWith operations") {
     val zipIo = RIO.pure(1).zip(RIO.pure(2))
     assert(zipIo.run(()) == (1, 2))
@@ -64,8 +73,43 @@ object RIOSpec extends BasicTestSuite {
     assert(hasRunAndFinally == true)
   }
 
-  test("correctly sequence operations") {
-    val io = RIO.sequence(List(RIO.pure(1), RIO.pure(2), RIO.pure(3)))
-    assert(io.run(()) == List(1, 2, 3))
+  test("correctly sequence/traverse results") {
+    val seqIo      = RIO.sequence(List(RIO.pure(1), RIO.pure(2), RIO.pure(3)))
+    val traverseIo = RIO.traverse(List(0, 1, 2))(x => RIO.pure(x + 1))
+    assert(seqIo.run(()) == List(1, 2, 3))
+    assert(traverseIo.run(()) == List(1, 2, 3))
+  }
+
+  test("correctly sequence/traverse side-effects") {
+    val buffer = new collection.mutable.ListBuffer[String]()
+    def addValue(x: String): RIO[Any, String] = RIO.suspend {
+      buffer += x
+      x
+    }
+
+    val io = for {
+      _ <- RIO.sequence(List(addValue("sequence1"), addValue("sequence2"), addValue("sequence3")))
+      _ <- RIO.sequence_(List(addValue("sequence_1"), addValue("sequence_2"), addValue("sequence_3")))
+      _ <- RIO.traverse(List(1, 2, 3))(x => addValue(s"traverse$x"))
+      _ <- RIO.foreach(List(1, 2, 3))(x => addValue(s"foreach$x"))
+    } yield buffer.result()
+
+    assert(
+      io.run(()) ==
+        List(
+          "sequence1",
+          "sequence2",
+          "sequence3",
+          "sequence_1",
+          "sequence_2",
+          "sequence_3",
+          "traverse1",
+          "traverse2",
+          "traverse3",
+          "foreach1",
+          "foreach2",
+          "foreach3"
+        )
+    )
   }
 }
