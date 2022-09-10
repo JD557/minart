@@ -11,6 +11,11 @@ object PlaneSpec extends BasicTestSuite {
   )
   lazy val originalPixels = surface.getPixels()
 
+  test("Can be created from a constant color") {
+    val plane = Plane.fromConstant(Color(10, 20, 30))
+    assert(plane.getPixel(Random.nextInt(), Random.nextInt()) == Color(10, 20, 30))
+  }
+
   test("Can be created from a function") {
     val plane = Plane.fromFunction((x, y) => Color(x, y, x + y))
     assert(plane.getPixel(10, 20) == Color(10, 20, 30))
