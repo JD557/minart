@@ -12,19 +12,19 @@ import eu.joaocosta.minart.graphics.image.helpers._
   *
   * Supports uncompressed 24/32bit Windows BMPs.
   */
-trait BmpImageReader[F[_]] extends ImageReader {
-  val byteReader: ByteReader[F]
+trait BmpImageReader[ByteSeq] extends ImageReader {
+  val byteReader: ByteReader[ByteSeq]
   import byteReader._
 
   private val loadRgbPixel: ParseState[String, Color] =
-    readBytes(3)
+    readRawBytes(3)
       .collect(
         { case bytes if bytes.size == 3 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGB pixel"
       )
 
   private val loadRgbaPixel: ParseState[String, Color] =
-    readBytes(4)
+    readRawBytes(4)
       .collect(
         { case bytes if bytes.size == 4 => Color(bytes(2), bytes(1), bytes(0)) },
         _ => "Not enough data to read RGBA pixel"
@@ -33,13 +33,13 @@ trait BmpImageReader[F[_]] extends ImageReader {
   @tailrec
   private def loadPixelLine(
       loadColor: ParseState[String, Color],
-      data: F[Int],
+      data: ByteSeq,
       remainingPixels: Int,
       padding: Int,
       acc: List[Color] = Nil
-  ): ParseResult[List[Color]] = {
+  ): ParseResult[Array[Color]] = {
     if (isEmpty(data) || remainingPixels == 0)
-      skipBytes(padding).map(_ => acc).run(data)
+      skipBytes(padding).map(_ => acc.reverseIterator.toArray).run(data)
     else {
       loadColor.run(data) match {
         case Left(error) => Left(error)
@@ -52,23 +52,23 @@ trait BmpImageReader[F[_]] extends ImageReader {
   @tailrec
   private def loadPixels(
       loadColor: ParseState[String, Color],
-      data: F[Int],
+      data: ByteSeq,
       remainingLines: Int,
       width: Int,
       padding: Int,
-      acc: List[Color] = Nil
-  ): ParseResult[List[Color]] = {
-    if (isEmpty(data) || remainingLines == 0) Right(data -> acc.reverse)
+      acc: Vector[Array[Color]] = Vector()
+  ): ParseResult[Vector[Array[Color]]] = {
+    if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
       loadPixelLine(loadColor, data, width, padding) match {
         case Left(error) => Left(error)
         case Right((remaining, line)) =>
-          loadPixels(loadColor, remaining, remainingLines - 1, width, padding, line ++ acc)
+          loadPixels(loadColor, remaining, remainingLines - 1, width, padding, line +: acc)
       }
     }
   }
 
-  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
     (for {
       magic <- readString(2).validate(
         BmpImageFormat.supportedFormats,
@@ -97,9 +97,9 @@ trait BmpImageReader[F[_]] extends ImageReader {
       )
       loadColorMask = compressionMethod == 3 || compressionMethod == 6
       _         <- if (loadColorMask) skipBytes(20) else noop
-      redMask   <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x00ff0000)
-      greenMask <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x0000ff00)
-      blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[F[Int], Int](0x000000ff)
+      redMask   <- if (loadColorMask) readLENumber(4) else State.pure[ByteSeq, Int](0x00ff0000)
+      greenMask <- if (loadColorMask) readLENumber(4) else State.pure[ByteSeq, Int](0x0000ff00)
+      blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[ByteSeq, Int](0x000000ff)
       _         <- if (loadColorMask) skipBytes(4) else noop // Skip alpha mask (or color space)
       _ <- State.check(
         redMask == 0x00ff0000 && greenMask == 0x0000ff00 && blueMask == 0x000000ff,
@@ -134,9 +134,12 @@ trait BmpImageReader[F[_]] extends ImageReader {
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
-      pixels.right.flatMap { case (_, flatPixels) =>
-        if (flatPixels.size != numPixels) Left(s"Invalid number of pixels: Got ${flatPixels.size}, expected $numPixels")
-        else Right(new RamSurface(flatPixels.sliding(header.width, header.width).toSeq.reverse))
+      pixels.right.flatMap { case (_, pixelMatrix) =>
+        if (pixelMatrix.size != header.height)
+          Left(s"Invalid number of lines: Got ${pixelMatrix.size}, expected ${header.height}")
+        else if (pixelMatrix.nonEmpty && pixelMatrix.last.size != header.width)
+          Left(s"Invalid number of pixels in the last line: Got ${pixelMatrix.last.size}, expected ${header.width}")
+        else Right(new RamSurface(pixelMatrix))
       }
     }
   }

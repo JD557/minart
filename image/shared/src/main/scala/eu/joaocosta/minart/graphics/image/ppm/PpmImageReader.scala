@@ -12,8 +12,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
   *
   * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
-trait PpmImageReader[F[_]] extends ImageReader {
-  val byteReader: ByteReader[F]
+trait PpmImageReader[ByteSeq] extends ImageReader {
+  val byteReader: ByteReader[ByteSeq]
 
   import PpmImageReader._
   private val byteStringOps = new ByteStringOps(byteReader)
@@ -53,22 +53,42 @@ trait PpmImageReader[F[_]] extends ImageReader {
     )
 
   @tailrec
-  private def loadPixels(
+  private def loadPixelLine(
       loadColor: ParseState[String, Color],
-      data: F[Int],
+      data: ByteSeq,
       remainingPixels: Int,
       acc: List[Color] = Nil
-  ): ParseResult[List[Color]] = {
-    if (isEmpty(data) || remainingPixels == 0) Right(data -> acc.reverse)
+  ): ParseResult[Array[Color]] = {
+    if (isEmpty(data) || remainingPixels == 0)
+      Right(data -> acc.reverseIterator.toArray)
     else {
       loadColor.run(data) match {
-        case Left(error)               => Left(error)
-        case Right((remaining, color)) => loadPixels(loadColor, remaining, remainingPixels - 1, color :: acc)
+        case Left(error) => Left(error)
+        case Right((remaining, color)) =>
+          loadPixelLine(loadColor, remaining, remainingPixels - 1, color :: acc)
       }
     }
   }
 
-  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  @tailrec
+  private def loadPixels(
+      loadColor: ParseState[String, Color],
+      data: ByteSeq,
+      remainingLines: Int,
+      width: Int,
+      acc: Vector[Array[Color]] = Vector()
+  ): ParseResult[Vector[Array[Color]]] = {
+    if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
+    else {
+      loadPixelLine(loadColor, data, width) match {
+        case Left(error) => Left(error)
+        case Right((remaining, line)) =>
+          loadPixels(loadColor, remaining, remainingLines - 1, width, acc :+ line)
+      }
+    }
+  }
+
+  private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
     val byteStringOps = new PpmImageReader.ByteStringOps(byteReader)
     import byteStringOps._
     (
@@ -90,56 +110,47 @@ trait PpmImageReader[F[_]] extends ImageReader {
       val numPixels = header.width * header.height
       val pixels = header.magic match {
         case "P2" =>
-          loadPixels(loadStringGrayscalePixel, data, numPixels)
+          loadPixels(loadStringGrayscalePixel, data, header.height, header.width)
         case "P3" =>
-          loadPixels(loadStringRgbPixel, data, numPixels)
+          loadPixels(loadStringRgbPixel, data, header.height, header.width)
         case "P5" =>
-          loadPixels(loadBinaryGrayscalePixel, data, numPixels)
+          loadPixels(loadBinaryGrayscalePixel, data, header.height, header.width)
         case "P6" =>
-          loadPixels(loadBinaryRgbPixel, data, numPixels)
+          loadPixels(loadBinaryRgbPixel, data, header.height, header.width)
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }
-      pixels.right.flatMap { case (_, flatPixels) =>
-        if (flatPixels.size != numPixels) Left(s"Invalid number of pixels: Got ${flatPixels.size}, expected $numPixels")
-        else Right(new RamSurface(flatPixels.sliding(header.width, header.width).toSeq))
+      pixels.right.flatMap { case (_, pixelMatrix) =>
+        if (pixelMatrix.size != header.height)
+          Left(s"Invalid number of lines: Got ${pixelMatrix.size}, expected ${header.height}")
+        else if (pixelMatrix.nonEmpty && pixelMatrix.last.size != header.width)
+          Left(s"Invalid number of pixels in the last line: Got ${pixelMatrix.last.size}, expected ${header.width}")
+        else Right(new RamSurface(pixelMatrix))
       }
     }
   }
 }
 
 object PpmImageReader {
-  private final class ByteStringOps[F[_]](val byteReader: ByteReader[F]) {
+  private final class ByteStringOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
     import byteReader._
+    private val space   = ' '.toInt
     private val newLine = '\n'.toInt
     private val comment = '#'.toInt
-    private val space   = ' '.toInt
 
-    val readNextLine: ParseState[Nothing, List[Int]] = State[F[Int], List[Int]] { bytes =>
-      @tailrec
-      def aux(b: F[Int]): (F[Int], List[Int]) = {
-        val (remaining, line) = (for {
-          chars <- readWhile(_ != newLine)
-          fullChars = chars :+ newLine
-          _ <- skipBytes(1)
-        } yield fullChars).run(b).merge
-        if (line.headOption.exists(c => c == comment || c == newLine))
-          aux(remaining)
-        else
-          remaining -> line
-      }
-      aux(bytes)
-    }
+    val skipLine: ParseState[Nothing, Unit] =
+      readWhile(_ != newLine).flatMap(_ => skipBytes(1))
 
-    val readNextString: ParseState[Nothing, String] =
-      readNextLine.flatMap { line =>
-        val chars         = line.takeWhile(c => c != space).map(_.toChar)
-        val remainingLine = line.drop(chars.size + 1)
-        val string        = chars.mkString("").trim
-        if (remainingLine.isEmpty)
-          State.pure(string)
-        else
-          pushBytes(remainingLine :+ newLine).map(_ => string)
+    val readNextString: ParseState[String, String] =
+      readByte.flatMap {
+        case None => State.pure("")
+        case Some(c) =>
+          if (c == comment) skipLine.flatMap(_ => readNextString)
+          else if (c == newLine || c == space) readNextString
+          else
+            readWhile(char => char != space && char != newLine)
+              .map(chars => (c.toChar :: chars.map(_.toChar)).mkString(""))
+              .flatMap(str => skipBytes(1).map(_ => str))
       }
 
     def parseNextInt(errorMessage: String): ParseState[String, Int] =

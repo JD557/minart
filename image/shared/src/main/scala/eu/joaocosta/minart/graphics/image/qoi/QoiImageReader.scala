@@ -10,15 +10,15 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image reader for QOI files.
   */
-trait QoiImageReader[F[_]] extends ImageReader {
-  val byteReader: ByteReader[F]
+trait QoiImageReader[Container] extends ImageReader {
+  val byteReader: ByteReader[Container]
 
   import QoiImageFormat._
   import QoiImageReader._
   import byteReader._
 
   // Binary helpers
-  private def wrapAround(b: Int): Int                = if (b >= 0) b % 256 else 256 + b
+  private def wrapAround(b: Int): Int                = b & 0x0ff
   private def load2Bits(b: Int, bias: Int = 2): Int  = (b & 0x03) - bias
   private def load4Bits(b: Int, bias: Int = 8): Int  = (b & 0x0f) - bias
   private def load6Bits(b: Int, bias: Int = 32): Int = (b & 0x3f) - bias
@@ -56,14 +56,6 @@ trait QoiImageReader[F[_]] extends ImageReader {
       }
   }
 
-  private def loadOps(bytes: F[Int]): LazyList[Either[String, Op]] =
-    if (isEmpty(bytes)) LazyList.empty
-    else
-      opFromBytes.run(bytes) match {
-        case Left(error)            => LazyList(Left(error))
-        case Right((remaining, op)) => Right(op) #:: loadOps(remaining)
-      }
-
   // State iteration
   private def nextState(state: QoiState, chunk: Op): QoiState = {
     import Op._
@@ -97,8 +89,20 @@ trait QoiImageReader[F[_]] extends ImageReader {
     }
   }
 
+  private def loadOps(bytes: Container): Iterator[Either[String, Op]] = new Iterator[Either[String, Op]] {
+    var currBytes = bytes
+    def hasNext   = !byteReader.isEmpty(currBytes)
+    def next(): Either[String, Op] =
+      opFromBytes.run(currBytes) match {
+        case Left(error) => Left(error)
+        case Right((remaining, op)) =>
+          currBytes = remaining
+          Right(op)
+      }
+  }
+
   // Image reconstruction
-  private def asSurface(ops: LazyList[Either[String, Op]], header: Header): Either[String, RamSurface] = {
+  private def asSurface(ops: Iterator[Either[String, Op]], header: Header): Either[String, RamSurface] = {
     ops
       .foldLeft[Either[String, QoiState]](Right(QoiState())) { case (eitherState, eitherOp) =>
         for {
@@ -108,19 +112,23 @@ trait QoiImageReader[F[_]] extends ImageReader {
       }
       .right
       .flatMap { finalState =>
-        val flatPixels     = finalState.imageAcc.reverse
         val expectedPixels = (header.width * header.height).toInt
         Either.cond(
-          flatPixels.size >= expectedPixels,
+          finalState.imageAcc.size >= expectedPixels,
           new RamSurface(
-            flatPixels.take(expectedPixels).map(_.toMinartColor).grouped(header.width.toInt).map(_.toArray).toVector
+            finalState.imageAcc.reverseIterator
+              .take(expectedPixels)
+              .map(_.minartColor)
+              .grouped(header.width.toInt)
+              .map(_.toArray)
+              .toVector
           ),
-          s"Invalid number of pixels! Got ${flatPixels.size}, expected ${expectedPixels}"
+          s"Invalid number of pixels! Got ${finalState.imageAcc.size}, expected ${expectedPixels}"
         )
       }
   }
 
-  private def loadHeader(bytes: F[Int]): ParseResult[Header] = {
+  private def loadHeader(bytes: Container): ParseResult[Header] = {
     (
       for {
         magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")

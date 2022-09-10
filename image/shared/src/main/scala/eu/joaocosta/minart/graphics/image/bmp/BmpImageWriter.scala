@@ -12,8 +12,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
   *
   * Stores data as uncompressed 24bit Windows BMPs.
   */
-trait BmpImageWriter[F[_]] extends ImageWriter {
-  val byteWriter: ByteWriter[F]
+trait BmpImageWriter[ByteSeq] extends ImageWriter {
+  val byteWriter: ByteWriter[ByteSeq]
   import byteWriter._
 
   private def storeBgrPixel(color: Color): ByteStreamState[String] =

@@ -10,8 +10,8 @@ import eu.joaocosta.minart.graphics.image.helpers._
 
 /** Image writer for QOI files.
   */
-trait QoiImageWriter[F[_]] extends ImageWriter {
-  val byteWriter: ByteWriter[F]
+trait QoiImageWriter[ByteSeq] extends ImageWriter {
+  val byteWriter: ByteWriter[ByteSeq]
   import byteWriter._
 
   private def storeHeader(surface: Surface): ByteStreamState[String] = {
@@ -29,7 +29,7 @@ trait QoiImageWriter[F[_]] extends ImageWriter {
       .getPixels()
       .iterator
       .flatten
-      .foldLeft(QoiImageWriter.QoiState()) { case (state, color) => state.addColor(color) }
+      .foldLeft(QoiImageWriter.QoiState()) { case (state, color) => state.addMinartColor(color) }
       .opAcc
       .reverse
 
@@ -88,7 +88,7 @@ object QoiImageWriter {
       previousColor: Option[QoiColor] = None,
       colorMap: Vector[QoiColor] = Vector.fill(64)(QoiColor(0, 0, 0, 0))
   ) {
-    def addColor(color: Color): QoiState =
+    def addMinartColor(color: Color): QoiState =
       addColor(QoiColor.fromMinartColor(color))
     def addColor(color: QoiColor): QoiState = {
       lazy val hash = color.hash
