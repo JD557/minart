@@ -26,19 +26,25 @@ object ImageWriterSpec extends BasicTestSuite {
     test("Write a PPM image") {
       roundtripTest(Resource("scala/ppm-p3.ppm"), ppm.PpmImageFormat.defaultFormat)
       roundtripTest(Resource("scala-rect/ppm-p3.ppm"), ppm.PpmImageFormat.defaultFormat)
-      roundtripTest(Resource("lausanne/ppm-p3.ppm"), ppm.PpmImageFormat.defaultFormat)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native)
+        roundtripTest(Resource("lausanne/ppm-p3.ppm"), ppm.PpmImageFormat.defaultFormat)
     }
 
     test("Write a BMP image") {
       roundtripTest(Resource("scala/bmp-24bit.bmp"), bmp.BmpImageFormat.defaultFormat)
       roundtripTest(Resource("scala-rect/bmp-24bit.bmp"), bmp.BmpImageFormat.defaultFormat)
-      roundtripTest(Resource("lausanne/bmp-24bit.bmp"), bmp.BmpImageFormat.defaultFormat)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native)
+        roundtripTest(Resource("lausanne/bmp-24bit.bmp"), bmp.BmpImageFormat.defaultFormat)
     }
 
     test("Write a QOI image") {
       roundtripTest(Resource("scala/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
       roundtripTest(Resource("scala-rect/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
-      roundtripTest(Resource("lausanne/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native)
+        roundtripTest(Resource("lausanne/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
     }
   }
 }

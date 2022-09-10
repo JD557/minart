@@ -38,7 +38,8 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       bmpTest("scala", 128, 128)
       bmpTest("scala-rect", 77, 119)
-      bmpTest("lausanne", 640, 480)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native) bmpTest("lausanne", 640, 480)
     }
 
     test("Load a PPM image") {
@@ -50,7 +51,8 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       ppmTest("scala", 128, 128)
       ppmTest("scala-rect", 77, 119)
-      ppmTest("lausanne", 640, 480)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native) ppmTest("lausanne", 640, 480)
     }
 
     test("Load a PGM image") {
@@ -63,6 +65,8 @@ object ImageReaderSpec extends BasicTestSuite {
       pgmTest("scala", 128, 128)
       pgmTest("scala-rect", 77, 119)
       pgmTest("lausanne", 640, 480)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native) pgmTest("lausanne", 640, 480)
     }
 
     test("Load a QOI image") {
@@ -77,7 +81,8 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       qoiTest("scala", 128, 128)
       qoiTest("scala-rect", 77, 119)
-      qoiTest("lausanne", 640, 480)
+      // Native tests in debug require a large heap here
+      if (Platform() != Platform.Native) qoiTest("lausanne", 640, 480)
     }
 
     test("Load the same data from different formats (square image)") {
@@ -99,15 +104,17 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       )
     }
-
-    test("Load the same data from different formats (large image)") {
-      sameImage(
-        List(
-          Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")).get,
-          Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")).get,
-          Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")).get
+    // Native tests in debug require a large heap here
+    if (Platform() != Platform.Native) {
+      test("Load the same data from different formats (large image)") {
+        sameImage(
+          List(
+            Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")).get,
+            Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")).get,
+            Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")).get
+          )
         )
-      )
+      }
     }
   }
 }
