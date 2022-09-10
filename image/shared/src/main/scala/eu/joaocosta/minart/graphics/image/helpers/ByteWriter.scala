@@ -2,8 +2,6 @@ package eu.joaocosta.minart.graphics.image.helpers
 
 import java.io.OutputStream
 
-import scala.collection.compat.immutable.LazyList
-
 /** Helper methods to write binary data to an output stream.
   */
 trait ByteWriter[ByteStream] {
@@ -42,20 +40,6 @@ trait ByteWriter[ByteStream] {
 }
 
 object ByteWriter {
-  object LazyListByteWriter extends ByteWriter[LazyList[Array[Byte]]] {
-    def toOutputStream[E](data: ByteStreamState[E], os: OutputStream): Either[E, Unit] =
-      data.run(LazyList.empty[Array[Byte]]).right.map { case (s, _) =>
-        s.foreach(bytes => os.write(bytes))
-      }
-
-    def append(stream: LazyList[Array[Byte]]): ByteStreamState[Nothing] =
-      State.modify[LazyList[Array[Byte]]](s => s ++ stream)
-
-    def writeBytes(bytes: Seq[Int]): ByteStreamState[String] =
-      if (bytes.forall(b => b >= 0 && b <= 255)) append(LazyList(bytes.map(_.toByte).toArray))
-      else State.error(s"Sequence $bytes contains invalid bytes")
-  }
-
   object IteratorByteWriter extends ByteWriter[Iterator[Array[Byte]]] {
     def toOutputStream[E](data: ByteStreamState[E], os: OutputStream): Either[E, Unit] =
       data.run(Iterator.empty).right.map { case (s, _) =>

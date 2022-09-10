@@ -2,8 +2,6 @@ package eu.joaocosta.minart.graphics.image.helpers
 
 import java.io.InputStream
 
-import scala.collection.compat.immutable.LazyList
-
 /** Helper methods to read binary data from an input stream.
   */
 trait ByteReader[ByteSeq] {
@@ -50,87 +48,6 @@ trait ByteReader[ByteSeq] {
 }
 
 object ByteReader {
-  object LazyListByteReader extends ByteReader[LazyList[Int]] {
-    def fromInputStream(is: InputStream): LazyList[Int] =
-      LazyList.continually(is.read()).takeWhile(_ != -1)
-
-    def isEmpty(seq: LazyList[Int]): Boolean = seq.isEmpty
-
-    def skipBytes(n: Int): ParseState[Nothing, Unit] =
-      State.modify(_.drop(n))
-
-    val readByte: ParseState[String, Option[Int]] = State { bytes =>
-      bytes.tail -> bytes.headOption
-    }
-
-    def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
-      bytes.drop(n) -> bytes.take(n).toArray
-    }
-
-    def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
-      bytes.drop(n) -> bytes.take(n).map(_.toByte).toArray
-    }
-
-    def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
-      val (isTrue, isFalse) = bytes.span(p)
-      isFalse -> isTrue.toList
-    }
-  }
-
-  object IteratorByteReader extends ByteReader[Iterator[Int]] {
-    // Ported from 2.13 stdlib
-    private def nextOption[Int](it: Iterator[Int]): Option[Int] =
-      if (it.hasNext) Some(it.next()) else None
-
-    def fromInputStream(is: InputStream): Iterator[Int] =
-      Iterator.continually(is.read()).takeWhile(_ != -1)
-
-    def isEmpty(seq: Iterator[Int]): Boolean = seq.isEmpty
-
-    def skipBytes(n: Int): ParseState[Nothing, Unit] =
-      State.modify { bytes =>
-        var count = n
-        while (count > 0 && bytes.hasNext) {
-          bytes.next()
-          count -= 1
-        }
-        bytes
-      }
-
-    val readByte: ParseState[String, Option[Int]] = State { bytes =>
-      bytes -> nextOption(bytes)
-    }
-
-    def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
-      val buffer = Array.newBuilder[Int]
-      var count  = n
-      while (count > 0 && bytes.hasNext) {
-        buffer += bytes.next()
-        count -= 1
-      }
-      bytes -> buffer.result()
-    }
-
-    def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
-      val buffer = Array.newBuilder[Byte]
-      var count  = n
-      while (count > 0 && bytes.hasNext) {
-        buffer += bytes.next().toByte
-        count -= 1
-      }
-      bytes -> buffer.result()
-    }
-
-    def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
-      val bufferedBytes = bytes.buffered
-      val buffer        = List.newBuilder[Int]
-      while (bufferedBytes.hasNext && p(bufferedBytes.head)) {
-        buffer += bufferedBytes.head
-        bufferedBytes.next()
-      }
-      bufferedBytes -> buffer.result()
-    }
-  }
 
   class CustomInputStream(inner: InputStream) extends InputStream {
     var hasBuffer: Boolean                  = false
