@@ -25,7 +25,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
     (
       for {
         value <- parseNextInt("Invalid value")
-      } yield Color(value, value, value)
+      } yield Color.grayscale(value)
     )
 
   // P3
@@ -41,7 +41,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
   // P5
   private val loadBinaryGrayscalePixel: ParseState[String, Color] =
     readByte.collect(
-      { case Some(byte) => Color(byte, byte, byte) },
+      { case Some(byte) => Color.grayscale(byte) },
       _ => "Not enough data to read Grayscale pixel"
     )
 
