@@ -48,8 +48,10 @@ object PollSpec extends BasicTestSuite {
     assert(zipWithPoll.poll.run(()) == Some(Success(3)))
   }
 
-  test("correctly sequence operations") {
-    val io = Poll.sequence(List(Poll.successful(1), Poll.successful(2), Poll.successful(3)))
-    assert(io.poll.run(()) == Some(Success(List(1, 2, 3))))
+  test("correctly sequence/traverse operations") {
+    val seqIo      = Poll.sequence(List(Poll.successful(1), Poll.successful(2), Poll.successful(3)))
+    val traverseIo = Poll.traverse(List(0, 1, 2))(x => Poll.successful(x + 1))
+    assert(seqIo.poll.run(()) == Some(Success(List(1, 2, 3))))
+    assert(traverseIo.poll.run(()) == Some(Success(List(1, 2, 3))))
   }
 }
