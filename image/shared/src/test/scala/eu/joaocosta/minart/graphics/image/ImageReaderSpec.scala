@@ -27,99 +27,57 @@ object ImageReaderSpec extends BasicTestSuite {
   // Can't load resources in JS tests
   if (Platform() != Platform.JS) {
     test("Load a BMP image") {
-      testSize(
-        List(Image.loadBmpImage(Resource("scala/bmp-24bit.bmp")), Image.loadBmpImage(Resource("scala/bmp-32bit.bmp"))),
-        128,
-        128
-      )
-      testSize(
-        List(
-          Image.loadBmpImage(Resource("scala-rect/bmp-24bit.bmp")),
-          Image.loadBmpImage(Resource("scala-rect/bmp-32bit.bmp"))
-        ),
-        77,
-        119
-      )
-      testSize(
-        List(
-          Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")),
-          Image.loadBmpImage(Resource("lausanne/bmp-32bit.bmp"))
-        ),
-        640,
-        480
-      )
+      def bmpTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(
+            Image.loadBmpImage(Resource(s"$dir/bmp-24bit.bmp")),
+            Image.loadBmpImage(Resource(s"$dir/bmp-32bit.bmp"))
+          ),
+          width,
+          height
+        )
+      bmpTest("scala", 128, 128)
+      bmpTest("scala-rect", 77, 119)
+      bmpTest("lausanne", 640, 480)
     }
 
     test("Load a PPM image") {
-      testSize(
-        List(Image.loadPpmImage(Resource("scala/ppm-p3.ppm")), Image.loadPpmImage(Resource("scala/ppm-p6.ppm"))),
-        128,
-        128
-      )
-      testSize(
-        List(
-          Image.loadPpmImage(Resource("scala-rect/ppm-p3.ppm")),
-          Image.loadPpmImage(Resource("scala-rect/ppm-p6.ppm"))
-        ),
-        77,
-        119
-      )
-      testSize(
-        List(
-          Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")),
-          Image.loadPpmImage(Resource("lausanne/ppm-p6.ppm"))
-        ),
-        640,
-        480
-      )
+      def ppmTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(Image.loadPpmImage(Resource(s"$dir/ppm-p3.ppm")), Image.loadPpmImage(Resource(s"$dir/ppm-p6.ppm"))),
+          width,
+          height
+        )
+      ppmTest("scala", 128, 128)
+      ppmTest("scala-rect", 77, 119)
+      ppmTest("lausanne", 640, 480)
     }
 
     test("Load a PGM image") {
-      testSize(
-        List(Image.loadPpmImage(Resource("scala/pgm-p2.pgm")), Image.loadPpmImage(Resource("scala/pgm-p5.pgm"))),
-        128,
-        128
-      )
-      testSize(
-        List(
-          Image.loadPpmImage(Resource("scala-rect/pgm-p2.pgm")),
-          Image.loadPpmImage(Resource("scala-rect/pgm-p5.pgm"))
-        ),
-        77,
-        119
-      )
-      testSize(
-        List(
-          Image.loadPpmImage(Resource("lausanne/pgm-p2.pgm")),
-          Image.loadPpmImage(Resource("lausanne/pgm-p5.pgm"))
-        ),
-        640,
-        480
-      )
+      def pgmTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(Image.loadPpmImage(Resource(s"$dir/pgm-p2.pgm")), Image.loadPpmImage(Resource(s"$dir/pgm-p5.pgm"))),
+          width,
+          height
+        )
+      pgmTest("scala", 128, 128)
+      pgmTest("scala-rect", 77, 119)
+      pgmTest("lausanne", 640, 480)
     }
 
     test("Load a QOI image") {
-      testSize(
-        List(Image.loadQoiImage(Resource("scala/qoi-24bit.qoi")), Image.loadQoiImage(Resource("scala/qoi-32bit.qoi"))),
-        128,
-        128
-      )
-      testSize(
-        List(
-          Image.loadQoiImage(Resource("scala-rect/qoi-24bit.qoi")),
-          Image.loadQoiImage(Resource("scala-rect/qoi-32bit.qoi"))
-        ),
-        77,
-        119
-      )
-      testSize(
-        List(
-          Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")),
-          Image.loadQoiImage(Resource("lausanne/qoi-32bit.qoi"))
-        ),
-        640,
-        480
-      )
+      def qoiTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(
+            Image.loadQoiImage(Resource(s"$dir/qoi-24bit.qoi")),
+            Image.loadQoiImage(Resource(s"$dir/qoi-32bit.qoi"))
+          ),
+          width,
+          height
+        )
+      qoiTest("scala", 128, 128)
+      qoiTest("scala-rect", 77, 119)
+      qoiTest("lausanne", 640, 480)
     }
 
     test("Load the same data from different formats (square image)") {
