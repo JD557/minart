@@ -11,8 +11,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
-class HtmlCanvas() extends SurfaceBackedCanvas {
-
+class HtmlCanvas(parentNode: dom.Node = dom.document.body) extends SurfaceBackedCanvas {
   // Rendering resources
 
   private[this] var containerDiv: dom.HTMLDivElement  = _
@@ -49,7 +48,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
     containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     containerDiv.appendChild(canvas)
-    childNode = dom.document.body.appendChild(containerDiv)
+    childNode = parentNode.appendChild(containerDiv)
     ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     changeSettings(newSettings)
     dom.document.addEventListener[Event](
@@ -135,7 +134,7 @@ class HtmlCanvas() extends SurfaceBackedCanvas {
   // Cleanup
 
   def unsafeDestroy(): Unit = if (childNode != null) {
-    dom.document.body.removeChild(childNode)
+    parentNode.removeChild(childNode)
     childNode = null
   }
 
