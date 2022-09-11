@@ -2,7 +2,7 @@ package eu.joaocosta.minart.graphics.image.qoi
 
 import eu.joaocosta.minart.graphics.Color
 
-private[qoi] final class QoiColor private (val argb: Int) extends AnyVal {
+private[qoi] final class QoiColor private (val argb: Int) {
   @inline def a: Int = ((argb & 0xff000000) >> 24) & 0x0ff
   @inline def r: Int = (argb & 0x00ff0000) >> 16
   @inline def g: Int = (argb & 0x0000ff00) >> 8
@@ -10,6 +10,11 @@ private[qoi] final class QoiColor private (val argb: Int) extends AnyVal {
 
   def hash        = (r * 3 + g * 5 + b * 7 + a * 11) % 64
   def minartColor = Color.fromRGB(argb)
+
+  override def toString: String = s"QoiColor($r,$g,$b)"
+  override def hashCode(): Int  = hash
+  override def equals(that: Any) =
+    (that.isInstanceOf[QoiColor] && this.argb == that.asInstanceOf[QoiColor].argb)
 }
 
 private[qoi] object QoiColor {
