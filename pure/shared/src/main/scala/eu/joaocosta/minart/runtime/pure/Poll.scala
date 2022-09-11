@@ -9,7 +9,7 @@ import scala.util.{Failure, Success, Try}
   *  might be applied sequentially every time `poll` is called.
   *  While this might be inneficient, this is by design, to simplify multiplatform development.
   */
-case class Poll[+A](poll: RIO[Any, Option[Try[A]]]) extends AnyVal {
+case class Poll[+A](poll: RIO[Any, Option[Try[A]]]) {
 
   /** Transforms the result of this operation. */
   def transform[B](f: Try[A] => Try[B]): Poll[B] =

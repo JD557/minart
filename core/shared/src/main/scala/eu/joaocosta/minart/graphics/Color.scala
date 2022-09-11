@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.graphics
 
 /** RGB Color */
-final class Color private (val argb: Int) extends AnyVal {
+final class Color private (val argb: Int) {
   @inline def r: Int = (argb & 0x00ff0000) >> 16
   @inline def g: Int = (argb & 0x0000ff00) >> 8
   @inline def b: Int = (argb & 0x000000ff)
@@ -42,7 +42,10 @@ final class Color private (val argb: Int) extends AnyVal {
     */
   def invert: Color = Color(255 - r, 255 - g, 255 - b)
 
-  override def toString = s"Color($r,$g,$b)"
+  override def toString: String = s"Color($r,$g,$b)"
+  override def hashCode(): Int  = argb.hashCode()
+  override def equals(that: Any): Boolean =
+    (that.isInstanceOf[Color] && this.argb == that.asInstanceOf[Color].argb)
 }
 
 object Color {
