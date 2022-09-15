@@ -29,9 +29,32 @@ ThisBuild / semanticdbVersion                              := scalafixSemanticdb
 ThisBuild / scalafixOnCompile                              := true
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
+val siteSettings = Seq(
+    Compile / doc / scalacOptions ++= (
+      if (scalaBinaryVersion.value.startsWith("3"))
+        Seq("-siteroot", "docs")
+      else Seq()
+    )
+  )
+
+def docSettings(projectName: String) = Seq(
+    Compile / doc / scalacOptions ++= (
+      if (scalaBinaryVersion.value.startsWith("3"))
+        Seq(
+          "-project",
+          projectName,
+          "-project-version",
+          version.value,
+          "-social-links:" +
+            "github::https://github.com/JD557/Minart"
+        )
+      else Seq()
+    )
+  )
+
 val sharedSettings = Seq(
   libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.1")
+    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.1"),
 )
 
 val testSettings = Seq(
@@ -82,6 +105,8 @@ lazy val core =
     .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
+    .settings(docSettings("Minart"))
+    .settings(siteSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
@@ -92,6 +117,7 @@ lazy val backend =
     .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
+    .settings(docSettings("Minart Backend"))
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
@@ -102,6 +128,7 @@ lazy val pure =
     .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
+    .settings(docSettings("Minart Pure"))
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
@@ -113,6 +140,7 @@ lazy val image =
     .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
+    .settings(docSettings("Minart Image"))
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
