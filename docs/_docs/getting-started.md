@@ -7,7 +7,10 @@ title: Getting Started
 To include Minart, simply add the `minart` library to your project:
 
 ```scala
+// JVM Only
 libraryDependencies += "eu.joaocosta" %% "minart" % "{{ projectVersion }}"
+// For JVM/JS/Native cross-compilation
+libraryDependencies += "eu.joaocosta" %%% "minart" % "{{ projectVersion }}"
 ```
 
 Or just create a new project using the provided [giter8](http://www.foundweekends.org/giter8/) template, with:
