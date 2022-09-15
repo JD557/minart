@@ -5,7 +5,7 @@
  [![scaladoc (pure)](https://javadoc.io/badge2/eu.joaocosta/minart-pure_3/scaladoc%20%28pure%29.svg)](https://javadoc.io/doc/eu.joaocosta/minart-pure_3)
  [![scaladoc (image)](https://javadoc.io/badge2/eu.joaocosta/minart-image_3/scaladoc%20%28image%29.svg)](https://javadoc.io/doc/eu.joaocosta/minart-image_3)
 
-Minart is a very minimalistic Scala library to put pixels in a canvas.
+Minart is a minimalistic Scala library to put pixels in a canvas.
 
 It's mostly useful for small toy projects or prototypes that deal with generative art or software rendering.
 
