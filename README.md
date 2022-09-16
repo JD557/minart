@@ -9,7 +9,7 @@ Minart is a minimalistic Scala library to put pixels in a canvas.
 
 It's mostly useful for small toy projects or prototypes that deal with generative art or software rendering.
 
-To know more about the library and how to get started check the [microsite](https://javadoc.io/doc/eu.joaocosta/minart-core_3/latest/docs/index.html) and the [examples](https://github.com/JD557/minart/tree/master/examples)
+To know more about the library and how to get started check the [microsite](https://javadoc.io/doc/eu.joaocosta/minart-core_3/latest/docs/index.html) and the [examples](https://github.com/JD557/minart/tree/master/examples).
 
 ## Features
 
