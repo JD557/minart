@@ -6,7 +6,7 @@ name := "minart"
 ThisBuild / organization       := "eu.joaocosta"
 ThisBuild / publishTo          := sonatypePublishToBundle.value
 ThisBuild / scalaVersion       := "3.2.0"
-ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.16", "2.13.8", "3.2.0")
+ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.17", "2.13.8", "3.2.0")
 ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage           := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
@@ -30,31 +30,31 @@ ThisBuild / scalafixOnCompile                              := true
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
 val siteSettings = Seq(
-    Compile / doc / scalacOptions ++= (
-      if (scalaBinaryVersion.value.startsWith("3"))
-        Seq("-siteroot", "docs")
-      else Seq()
-    )
+  Compile / doc / scalacOptions ++= (
+    if (scalaBinaryVersion.value.startsWith("3"))
+      Seq("-siteroot", "docs")
+    else Seq()
   )
+)
 
 def docSettings(projectName: String) = Seq(
-    Compile / doc / scalacOptions ++= (
-      if (scalaBinaryVersion.value.startsWith("3"))
-        Seq(
-          "-project",
-          projectName,
-          "-project-version",
-          version.value,
-          "-social-links:" +
-            "github::https://github.com/JD557/Minart"
-        )
-      else Seq()
-    )
+  Compile / doc / scalacOptions ++= (
+    if (scalaBinaryVersion.value.startsWith("3"))
+      Seq(
+        "-project",
+        projectName,
+        "-project-version",
+        version.value,
+        "-social-links:" +
+          "github::https://github.com/JD557/Minart"
+      )
+    else Seq()
   )
+)
 
 val sharedSettings = Seq(
   libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.1"),
+    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.8.1")
 )
 
 val testSettings = Seq(
