@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.3-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.4.4-SNAPSHOT"
 
 /*
  * It is sometimes convenient to load images from external resources.
