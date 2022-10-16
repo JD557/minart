@@ -11,7 +11,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
-class HtmlCanvas(parentNode: dom.Node = dom.document.body) extends SurfaceBackedCanvas {
+class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBackedCanvas {
   // Rendering resources
 
   private[this] var containerDiv: dom.HTMLDivElement  = _
