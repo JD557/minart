@@ -51,6 +51,8 @@ object SDL {
       allowedChanges: CInt
   ): SDL_AudioDeviceID = extern
   def SDL_PauseAudioDevice(dev: SDL_AudioDeviceID, pause_on: CInt): Unit = extern;
+  def SDL_LockAudioDevice(dev: SDL_AudioDeviceID): Unit                  = extern;
+  def SDL_UnlockAudioDevice(dev: SDL_AudioDeviceID): Unit                = extern;
 
   /** ************************************
     * *********** SDL_error.h ************

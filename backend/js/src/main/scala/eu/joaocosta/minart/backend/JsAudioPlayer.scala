@@ -1,21 +1,46 @@
 package eu.joaocosta.minart.backend
 
+import scala.scalajs.js
+
 import org.scalajs.dom._
 
 import eu.joaocosta.minart.audio._
 
 object JsAudioPlayer extends AudioPlayer {
-  private val audioCtx   = new AudioContext();
-  private val sampleRate = 44100
+  private lazy val audioCtx = new AudioContext();
+  private val sampleRate    = 44100
+  private val bufferSize    = 8192
+
+  private val playQueue = new AudioPlayer.AudioQueue(sampleRate)
+
+  private val callback: (Double, Int) => () => Unit = (startTime: Double, consumed: Int) =>
+    () => {
+      if (playQueue.nonEmpty) {
+        val batchSize   = math.min(bufferSize, playQueue.size)
+        val duration    = (1000.0 * batchSize) / sampleRate
+        val audioSource = audioCtx.createBufferSource()
+        val buffer      = audioCtx.createBuffer(1, batchSize, sampleRate)
+        val channelData = buffer.getChannelData(0)
+        (0 until batchSize).foreach { i =>
+          channelData(i) = playQueue.dequeue().toFloat
+        }
+        audioSource.buffer = buffer
+        audioSource.connect(audioCtx.destination)
+        if (consumed == 0) {
+          audioSource.start()
+          window.setTimeout(callback(audioCtx.currentTime, batchSize), duration - 25)
+        } else {
+          audioSource.start(startTime + consumed.toDouble / sampleRate)
+          window.setTimeout(callback(startTime, consumed + batchSize), duration - 25)
+        }
+      }
+    }
 
   def play(wave: AudioWave): Unit = {
-    val samples     = wave.numSamples(sampleRate)
-    var buffer      = audioCtx.createBuffer(1, samples, sampleRate)
-    val channelData = buffer.getChannelData(0)
-    wave.iterator(sampleRate).zipWithIndex.foreach { case (x, i) => channelData(i) = x.toFloat }
-    val source = audioCtx.createBufferSource()
-    source.buffer = buffer
-    source.connect(audioCtx.destination)
-    source.start()
+    val alreadyPlaying = playQueue.nonEmpty
+    playQueue.enqueue(wave)
+    if (!alreadyPlaying) {
+      callback(0.0, 0)()
+    }
   }
 }

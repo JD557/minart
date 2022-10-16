@@ -7,22 +7,28 @@ import eu.joaocosta.minart.audio._
 
 object JavaAudioPlayer extends AudioPlayer {
   private val sampleRate = 44100
+  private val bufferSize = 4096
+
+  private val playQueue      = new AudioPlayer.AudioQueue(sampleRate)
+  private val format         = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
+  private val sourceDataLine = AudioSystem.getSourceDataLine(format)
+  private var init           = false
 
   def play(wave: AudioWave): Unit = {
-    val clip   = AudioSystem.getClip()
-    val format = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
-    val is = new InputStream {
-      val it          = wave.byteIterator(sampleRate)
-      def read(): Int = if (it.isEmpty) -1 else (it.next() & 0xFF).toInt
+    playQueue.enqueue(wave)
+    if (!init) {
+      sourceDataLine.open(format, bufferSize)
+      scala.concurrent.Future {
+        while (true) {
+          val available = sourceDataLine.available()
+          if (available > 0) {
+            val buf = Array.fill(available)(playQueue.dequeueByte())
+            sourceDataLine.write(buf, 0, available)
+          }
+        }
+      }(scala.concurrent.ExecutionContext.global)
+      init = true
     }
-    val stream = new AudioInputStream(
-      is,
-      format,
-      wave.numSamples(sampleRate)
-    )
-    clip.open(stream)
-    clip.setMicrosecondPosition(0)
-    clip.loop(0)
-    clip.start()
+    sourceDataLine.start()
   }
 }
