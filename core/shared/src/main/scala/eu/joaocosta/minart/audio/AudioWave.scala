@@ -109,6 +109,6 @@ object AudioWave {
     */
   def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioWave = {
     val duration = data.size / sampleRate
-    AudioWave(t => data.applyOrElse((t * sampleRate).toInt, _ => 0.0), duration)
+    AudioWave(t => data.applyOrElse((t * sampleRate).toInt, (_: Int) => 0.0), duration)
   }
 }
