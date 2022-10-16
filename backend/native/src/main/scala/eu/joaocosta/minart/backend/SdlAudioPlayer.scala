@@ -47,4 +47,13 @@ object SdlAudioPlayer extends AudioPlayer {
     // SDL_UnlockAudioDevice(device.get)
     SDL_PauseAudioDevice(device.get, 0)
   }
+
+  def isPlaying(): Boolean =
+    playQueue.nonEmpty &&
+      device.forall(dev => SDL_GetQueuedAudioSize(dev).toInt == 0)
+
+  def stop(): Unit = {
+    playQueue.clear()
+    device.foreach(dev => SDL_ClearQueuedAudio(dev))
+  }
 }

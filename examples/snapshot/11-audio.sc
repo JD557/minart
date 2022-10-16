@@ -38,6 +38,9 @@ ImpureRenderLoop
       // When someone presses "Space", we send our sound wave to the queue
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
         AudioPlayer().play(Audio.testSample)
+      // When someone presses "Backspace", we stop the audio player
+      if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
+        AudioPlayer().stop()
       canvas.clear()
       canvas.fill(Color(0, 128, 0))
       canvas.redraw()

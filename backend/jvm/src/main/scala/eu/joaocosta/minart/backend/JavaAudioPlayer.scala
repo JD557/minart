@@ -3,6 +3,8 @@ package eu.joaocosta.minart.backend
 import java.io._
 import javax.sound.sampled._
 
+import scala.concurrent._
+
 import eu.joaocosta.minart.audio._
 
 object JavaAudioPlayer extends AudioPlayer {
@@ -14,21 +16,36 @@ object JavaAudioPlayer extends AudioPlayer {
   private val sourceDataLine = AudioSystem.getSourceDataLine(format)
   private var init           = false
 
+  private implicit val ec: ExecutionContext = ExecutionContext.global
+
+  private def callback(): Future[Unit] = Future {
+    if (playQueue.nonEmpty) {
+      val available = sourceDataLine.available()
+      if (available > 0) {
+        val buf = Array.fill(available)(playQueue.dequeueByte())
+        sourceDataLine.write(buf, 0, available)
+      }
+      true
+    } else false
+  }.flatMap {
+    case true  => callback()
+    case false => Future.successful(())
+  }
+
   def play(wave: AudioWave): Unit = {
+    val alreadyPlaying = isPlaying()
     playQueue.enqueue(wave)
     if (!init) {
       sourceDataLine.open(format, bufferSize)
-      scala.concurrent.Future {
-        while (true) {
-          val available = sourceDataLine.available()
-          if (available > 0) {
-            val buf = Array.fill(available)(playQueue.dequeueByte())
-            sourceDataLine.write(buf, 0, available)
-          }
-        }
-      }(scala.concurrent.ExecutionContext.global)
+      sourceDataLine.start()
       init = true
     }
-    sourceDataLine.start()
+    if (!alreadyPlaying) {
+      callback()
+    }
   }
+
+  def isPlaying(): Boolean = playQueue.nonEmpty
+
+  def stop(): Unit = playQueue.clear()
 }

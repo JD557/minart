@@ -42,7 +42,6 @@ object SDL {
   type SDL_AudioCallback = CFuncPtr3[Ptr[Byte], Ptr[UByte], CInt, Unit]
   type SDL_AudioSpec = CStruct9[CInt, SDL_AudioFormat, UByte, UByte, UShort, UShort, UInt, SDL_AudioCallback, Ptr[Byte]]
 
-  def SDL_QueueAudio(dev: SDL_AudioDeviceID, data: Ptr[Byte], len: UInt): CInt = extern
   def SDL_OpenAudioDevice(
       device: CString,
       iscapture: CInt,
@@ -50,9 +49,15 @@ object SDL {
       obtained: Ptr[SDL_AudioSpec],
       allowedChanges: CInt
   ): SDL_AudioDeviceID = extern
-  def SDL_PauseAudioDevice(dev: SDL_AudioDeviceID, pause_on: CInt): Unit = extern;
-  def SDL_LockAudioDevice(dev: SDL_AudioDeviceID): Unit                  = extern;
-  def SDL_UnlockAudioDevice(dev: SDL_AudioDeviceID): Unit                = extern;
+  def SDL_CloseAudioDevice(
+      dev: SDL_AudioDeviceID
+  ): Unit = extern
+  def SDL_PauseAudioDevice(dev: SDL_AudioDeviceID, pause_on: CInt): Unit       = extern
+  def SDL_LockAudioDevice(dev: SDL_AudioDeviceID): Unit                        = extern
+  def SDL_UnlockAudioDevice(dev: SDL_AudioDeviceID): Unit                      = extern
+  def SDL_QueueAudio(dev: SDL_AudioDeviceID, data: Ptr[Byte], len: UInt): CInt = extern
+  def SDL_GetQueuedAudioSize(dev: SDL_AudioDeviceID): UInt                     = extern;
+  def SDL_ClearQueuedAudio(dev: SDL_AudioDeviceID): Unit                       = extern
 
   /** ************************************
     * *********** SDL_error.h ************

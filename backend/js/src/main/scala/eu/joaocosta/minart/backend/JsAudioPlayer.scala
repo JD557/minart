@@ -9,7 +9,7 @@ import eu.joaocosta.minart.audio._
 object JsAudioPlayer extends AudioPlayer {
   private lazy val audioCtx = new AudioContext();
   private val sampleRate    = 44100
-  private val bufferSize    = 8192
+  private val bufferSize    = 4096
 
   private val playQueue = new AudioPlayer.AudioQueue(sampleRate)
 
@@ -31,16 +31,22 @@ object JsAudioPlayer extends AudioPlayer {
           window.setTimeout(callback(audioCtx.currentTime, batchSize), duration - 25)
         } else {
           audioSource.start(startTime + consumed.toDouble / sampleRate)
-          window.setTimeout(callback(startTime, consumed + batchSize), duration - 25)
+          val nextTarget    = (startTime + (consumed + batchSize).toDouble / sampleRate)
+          val sleepDuration = (nextTarget - audioCtx.currentTime) * 1000 - 25
+          window.setTimeout(callback(startTime, consumed + batchSize), sleepDuration)
         }
       }
     }
 
   def play(wave: AudioWave): Unit = {
-    val alreadyPlaying = playQueue.nonEmpty
+    val alreadyPlaying = isPlaying()
     playQueue.enqueue(wave)
     if (!alreadyPlaying) {
       callback(0.0, 0)()
     }
   }
+
+  def isPlaying(): Boolean = playQueue.nonEmpty
+
+  def stop(): Unit = playQueue.clear()
 }

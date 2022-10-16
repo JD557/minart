@@ -3,7 +3,18 @@ package eu.joaocosta.minart.audio
 import eu.joaocosta.minart.backend.defaults._
 
 trait AudioPlayer {
+
+  /** Enqueues an audio wave to be played later.
+    */
   def play(wave: AudioWave): Unit
+
+  /** Checks if this player still has data to be played.
+    */
+  def isPlaying(): Boolean
+
+  /** Stops playback and removes all enqueued waves.
+    */
+  def stop(): Unit
 }
 
 object AudioPlayer {
@@ -35,6 +46,12 @@ object AudioPlayer {
     }
     def dequeueByte(): Byte = {
       (math.min(math.max(-1.0, dequeue()), 1.0) * 127).toByte
+    }
+
+    def clear(): this.type = synchronized {
+      waveQueue.clear()
+      valueQueue.clear()
+      this
     }
   }
 }
