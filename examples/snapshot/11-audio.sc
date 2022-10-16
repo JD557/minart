@@ -20,16 +20,24 @@ object Audio {
   // A function from a time in milliseconds to a frequency
   private val song = (t: Double) => {
     val note =
-      if (t < 0.2) 0 // A
-      else if (t < 0.4) 4 // C#
-      else if (t < 0.6) 7 // E
+      if (t < 0.3) 0 // A
+      else if (t < 0.5) 4 // C#
+      else if (t < 0.7) 7 // E
       else 12 // A
     math.pow(2, note / 12.0) * 440 // Convert the notes to frequencies (equal temperament)
   }
 
   // Here we generate a sin wave with the frequencies from our song
-  val testSample =
+  val arpeggio =
     AudioWave(wave = t => math.sin(song(t) * 6.28 * t), duration = 1.0)
+
+  val bass =
+    AudioWave(wave = t => math.sin(220 * 6.28 * t), duration = 2.0)
+
+  // Mix our arpeggio (going up and down) with a low root note
+  val testSample =
+    arpeggio.append(arpeggio.reverse)
+      .zipWith(bass, (high, low) => high * 0.7 + low * 0.3)
 }
 
 ImpureRenderLoop
