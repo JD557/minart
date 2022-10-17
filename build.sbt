@@ -134,8 +134,7 @@ lazy val pure =
 
 lazy val image =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .dependsOn(core)
-    .dependsOn(backend % "test")
+    .dependsOn(core, backend % "test")
     .settings(name := "minart-image")
     .settings(sharedSettings)
     .settings(testSettings)
