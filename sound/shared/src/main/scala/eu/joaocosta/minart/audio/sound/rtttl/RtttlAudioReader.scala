@@ -55,28 +55,27 @@ trait RtttlAudioReader extends AudioClipReader {
           (c == '#')
       )
       prefix match {
-        case ""   => Left("Failed to parse note, no valid characters found")
-        case "p"  => Right((suffix, None))
-        case "a"  => Right((suffix, Some(0)))
-        case "a#" => Right((suffix, Some(1)))
-        case "b"  => Right((suffix, Some(2)))
-        case "c"  => Right((suffix, Some(3)))
-        case "c#" => Right((suffix, Some(4)))
-        case "d"  => Right((suffix, Some(5)))
-        case "d#" => Right((suffix, Some(6)))
-        case "e"  => Right((suffix, Some(7)))
-        case "f"  => Right((suffix, Some(8)))
-        case "f#" => Right((suffix, Some(9)))
-        case "g"  => Right((suffix, Some(10)))
-        case "g#" => Right((suffix, Some(11)))
-        case _    => Left(s"Invalid note: $prefix")
+        case "" | "p"   => Right((suffix, None))
+        case "a"        => Right((suffix, Some(0)))
+        case "a#"       => Right((suffix, Some(1)))
+        case "b"        => Right((suffix, Some(2)))
+        case "c" | "b#" => Right((suffix, Some(3)))
+        case "c#"       => Right((suffix, Some(4)))
+        case "d"        => Right((suffix, Some(5)))
+        case "d#"       => Right((suffix, Some(6)))
+        case "e"        => Right((suffix, Some(7)))
+        case "f" | "e#" => Right((suffix, Some(8)))
+        case "f#"       => Right((suffix, Some(9)))
+        case "g"        => Right((suffix, Some(10)))
+        case "g#"       => Right((suffix, Some(11)))
+        case _          => Left(s"Invalid note: $prefix")
       }
     }
 
-    val (str1, duration) = parseNumber(data)
+    val isDotted         = data.contains('.')
+    val (str1, duration) = parseNumber(data.filter(c => c != '.' && c != ' '))
     parseNote(str1).map { case (str2, note) =>
       val (str3, octave) = parseNumber(str2)
-      val isDotted       = str3 == "."
       val baseDuration   = 60.0 / (defaults.beat * duration.getOrElse(defaults.duration) / 4.0)
       Note(
         octave.getOrElse(defaults.octave),
