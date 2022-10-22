@@ -4,9 +4,9 @@ import eu.joaocosta.minart.backend.defaults._
 
 trait AudioPlayer {
 
-  /** Enqueues an audio wave to be played later.
+  /** Enqueues an audio clip to be played later.
     */
-  def play(wave: AudioWave): Unit
+  def play(wave: AudioClip): Unit
 
   /** Checks if this player still has data to be played.
     */
@@ -23,21 +23,21 @@ object AudioPlayer {
 
   class AudioQueue(sampleRate: Int) {
     private val valueQueue = scala.collection.mutable.Queue[Double]()
-    private val waveQueue  = scala.collection.mutable.Queue[AudioWave]()
+    private val clipQueue  = scala.collection.mutable.Queue[AudioClip]()
 
-    def isEmpty  = synchronized { valueQueue.isEmpty && waveQueue.isEmpty }
+    def isEmpty  = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
     def nonEmpty = !isEmpty
-    def size     = valueQueue.size + waveQueue.map(_.numSamples(sampleRate)).sum
+    def size     = valueQueue.size + clipQueue.map(_.numSamples(sampleRate)).sum
 
-    def enqueue(wave: AudioWave): this.type = synchronized {
-      waveQueue.enqueue(wave)
+    def enqueue(clip: AudioClip): this.type = synchronized {
+      clipQueue.enqueue(clip)
       this
     }
     def dequeue(): Double = synchronized {
       if (valueQueue.nonEmpty) {
         valueQueue.dequeue()
-      } else if (waveQueue.nonEmpty) {
-        val nextWave = waveQueue.dequeue()
+      } else if (clipQueue.nonEmpty) {
+        val nextWave = clipQueue.dequeue()
         valueQueue ++= nextWave.iterator(sampleRate)
         valueQueue.dequeue()
       } else {
@@ -49,7 +49,7 @@ object AudioPlayer {
     }
 
     def clear(): this.type = synchronized {
-      waveQueue.clear()
+      clipQueue.clear()
       valueQueue.clear()
       this
     }

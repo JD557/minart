@@ -38,9 +38,9 @@ object JsAudioPlayer extends AudioPlayer {
       }
     }
 
-  def play(wave: AudioWave): Unit = {
+  def play(clip: AudioClip): Unit = {
     val alreadyPlaying = isPlaying()
-    playQueue.enqueue(wave)
+    playQueue.enqueue(clip)
     if (!alreadyPlaying) {
       callback(0.0, 0)()
     }

@@ -32,9 +32,9 @@ object JavaAudioPlayer extends AudioPlayer {
     case false => Future.successful(())
   }
 
-  def play(wave: AudioWave): Unit = {
+  def play(clip: AudioClip): Unit = {
     val alreadyPlaying = isPlaying()
-    playQueue.enqueue(wave)
+    playQueue.enqueue(clip)
     if (!init) {
       sourceDataLine.open(format, bufferSize)
       sourceDataLine.start()

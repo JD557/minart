@@ -29,10 +29,11 @@ object Audio {
 
   // Here we generate a sin wave with the frequencies from our song
   val arpeggio =
-    AudioWave(wave = t => math.sin(song(t) * 6.28 * t), duration = 1.0)
+    AudioClip(wave = (t: Double) => math.sin(song(t) * 6.28 * t), duration = 1.0)
 
+  // We can also use the provided oscilators
   val bass =
-    AudioWave(wave = t => math.sin(220 * 6.28 * t), duration = 2.0)
+    Oscilator.sin.generate(frequency = 220, amplitude = 1.0).clip(2.0)
 
   // Mix our arpeggio (going up and down) with a low root note
   val testSample =

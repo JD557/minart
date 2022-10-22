@@ -28,7 +28,7 @@ object SdlAudioPlayer extends AudioPlayer {
     }
   }*/
 
-  def play(wave: AudioWave): Unit = {
+  def play(clip: AudioClip): Unit = {
     if (device == None) {
       SDL_InitSubSystem(SDL_INIT_AUDIO)
       val want = stackalloc[SDL_AudioSpec]()
@@ -41,7 +41,7 @@ object SdlAudioPlayer extends AudioPlayer {
       device = Some(SDL_OpenAudioDevice(null, 0, want, have, 0))
     }
     // SDL_LockAudioDevice(device.get)
-    playQueue.enqueue(wave)
+    playQueue.enqueue(clip)
     val arr = Array.fill(playQueue.size)(playQueue.dequeueByte())
     SDL_QueueAudio(device.get, arr.asInstanceOf[ByteArray].at(0), arr.size.toUInt)
     // SDL_UnlockAudioDevice(device.get)
