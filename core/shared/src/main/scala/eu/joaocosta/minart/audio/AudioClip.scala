@@ -84,6 +84,8 @@ final case class AudioClip(
   def byteIterator(sampleRate: Double): Iterator[Byte] =
     iterator(sampleRate)
       .map(x => (math.min(math.max(-1.0, x), 1.0) * 127).toByte)
+
+  override def toString = s"AudioClip($wave,$duration)"
 }
 
 object AudioClip {

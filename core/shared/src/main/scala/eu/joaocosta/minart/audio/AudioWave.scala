@@ -48,6 +48,8 @@ final case class AudioWave(wave: Double => Double) extends (Double => Double) {
     iterator(sampleRate)
       .map(x => (math.min(math.max(-1.0, x), 1.0) * 127).toByte)
   }
+
+  override def toString = s"AudioWave(<function1>)"
 }
 
 object AudioWave {

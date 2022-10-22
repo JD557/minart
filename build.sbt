@@ -96,8 +96,8 @@ lazy val root =
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
-    .dependsOn(core, backend, pure, image)
-    .aggregate(core, backend, pure, image)
+    .dependsOn(core, backend, pure, image, sound)
+    .aggregate(core, backend, pure, image, sound)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -140,6 +140,17 @@ lazy val image =
     .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart Image"))
+    .jsSettings(jsSettings)
+    .nativeSettings(nativeSettings)
+
+lazy val sound =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .dependsOn(core, backend % "test")
+    .settings(name := "minart-sound")
+    .settings(sharedSettings)
+    .settings(testSettings)
+    .settings(publishSettings)
+    .settings(docSettings("Minart Sound"))
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
