@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image writer for QOI files.
   */

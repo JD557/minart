@@ -2,8 +2,8 @@
 //> using lib "eu.joaocosta::minart::0.4.4-SNAPSHOT"
 
 /**
- * Just like we can load image from external resources, we can load sounds.
- * The minart-sound library and audio.sound includes some codecs out of the box.
+ * Just like images, it can also be convenient to load sound files.
+ * The minart-sound project includes some sound formats to get started.
  *
  * Note: This is an experimental API, it might break in a future version
  */
@@ -15,16 +15,16 @@ import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.backend.defaults._
 
 /**
- * Just like loading an image, we can load a sound file
+ * Just like loading an image, we can load sound resources
  */
-val sound = Sound.loadRtttlClip(Resource("assets/ringtone.rtttl")).get
+val clip = Sound.loadRtttlClip(Resource("assets/ringtone.rtttl")).get
 
-// Here we have exactly the same logic from the audio tutorial
+// Same logic as the audio example
 ImpureRenderLoop
   .statelessRenderLoop(
     canvas => {
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
-        AudioPlayer().play(sound)
+        AudioPlayer().play(clip)
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
         AudioPlayer().stop()
       canvas.clear()

@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image.bmp
 
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image reader and writer for BMP files.
   *

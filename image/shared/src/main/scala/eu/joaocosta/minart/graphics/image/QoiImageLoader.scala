@@ -3,7 +3,7 @@ package eu.joaocosta.minart.graphics.image
 import java.io.InputStream
 
 import eu.joaocosta.minart.graphics.RamSurface
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 @deprecated("Use eu.joaocosta.minart.graphics.image.qoi.QoiImageFormat instead")
 final class QoiImageLoader[F[_]](val byteReader: ByteReader[F[Int]]) extends ImageLoader { self =>

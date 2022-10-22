@@ -7,12 +7,18 @@ import scala.io.Source
 
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.audio.sound._
+import eu.joaocosta.minart.internal._
 
 /** Audio reader for RTTTL files.
   */
-trait RtttlAudioReader extends AudioClipReader {
+trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
 
-  def oscilator: Oscilator
+  val byteReader: ByteReader[ByteSeq]
+  val oscilator: Oscilator
+  import RtttlAudioReader._
+  private val byteStringOps = new ByteStringOps(byteReader)
+  import byteReader._
+  import byteStringOps._
 
   private def parseHeader(jintu: String, defaultValue: String): Either[String, Header] = {
     val defaultSection = defaultValue.split(",").map(_.split("="))
@@ -33,7 +39,71 @@ trait RtttlAudioReader extends AudioClipReader {
     }
   }
 
-  case class Note(octave: Double, note: Option[Int], duration: Double) {
+  private def parseData(defaults: Header)(data: String): Either[String, Note] = {
+    val parseNote: State[String, String, Option[Int]] = {
+      StringReader
+        .readWhile { c =>
+          (c >= 'A' && c <= 'G') ||
+          (c >= 'a' && c <= 'g') ||
+          (c == 'P' || c == 'p') ||
+          (c == '#')
+        }
+        .flatMap {
+          case "" | "p"   => State.pure(None)
+          case "a"        => State.pure(Some(0))
+          case "a#"       => State.pure(Some(1))
+          case "b"        => State.pure(Some(2))
+          case "c" | "b#" => State.pure(Some(3))
+          case "c#"       => State.pure(Some(4))
+          case "d"        => State.pure(Some(5))
+          case "d#"       => State.pure(Some(6))
+          case "e"        => State.pure(Some(7))
+          case "f" | "e#" => State.pure(Some(8))
+          case "f#"       => State.pure(Some(9))
+          case "g"        => State.pure(Some(10))
+          case "g#"       => State.pure(Some(11))
+          case str        => State.error(s"Invalid note: $str")
+        }
+    }
+    val isDotted = data.contains('.')
+    (for {
+      duration <- StringReader.readNumber
+      note     <- parseNote
+      octave   <- StringReader.readNumber
+      baseDuration = 60.0 / (defaults.beat * duration.getOrElse(defaults.duration) / 4.0)
+    } yield Note(
+      octave.getOrElse(defaults.octave),
+      note,
+      if (isDotted) { baseDuration + baseDuration / 2 }
+      else baseDuration
+    )).run(data.filter(c => c != '.' && c != ' ')).right.map(_._2)
+  }
+
+  private def sequenceNotes(notes: Array[Either[String, Note]]): Either[String, AudioClip] = {
+    notes
+      .foldLeft[Either[String, AudioClip]](Right(AudioClip.empty)) {
+        case (_, Left(error)) => Left(error)
+        case (Left(error), _) => Left(error)
+        case (Right(acc), Right(note)) =>
+          Right(acc.append(oscilator(note.frequency).clip(note.duration)))
+      }
+  }
+
+  def loadClip(is: InputStream): Either[String, AudioClip] = {
+    val bytes = fromInputStream(is)
+    (for {
+      jintu    <- readNextSection
+      defaults <- readNextSection
+      header   <- State.fromEither(parseHeader(jintu, defaults))
+      data     <- readNextSection
+      notes = data.split(",").map(parseData(header) _)
+      clip <- State.fromEither(sequenceNotes(notes))
+    } yield clip).run(bytes).right.map(_._2)
+  }
+}
+
+object RtttlAudioReader {
+  private case class Note(octave: Double, note: Option[Int], duration: Double) {
     def frequency: Double = note match {
       case None => 0.0
       case Some(n) =>
@@ -42,65 +112,25 @@ trait RtttlAudioReader extends AudioClipReader {
     }
   }
 
-  def parseData(defaults: Header)(data: String): Either[String, Note] = {
-    def parseNumber(str: String): (String, Option[Int]) = {
-      val (prefix, suffix) = str.span(c => c >= '0' && c <= '9')
-      (suffix, prefix.toIntOption)
-    }
-    def parseNote(str: String): Either[String, (String, Option[Int])] = {
-      val (prefix, suffix) = str.span(c =>
-        (c >= 'A' && c <= 'G') ||
-          (c >= 'a' && c <= 'g') ||
-          (c == 'P' || c == 'p') ||
-          (c == '#')
-      )
-      prefix match {
-        case "" | "p"   => Right((suffix, None))
-        case "a"        => Right((suffix, Some(0)))
-        case "a#"       => Right((suffix, Some(1)))
-        case "b"        => Right((suffix, Some(2)))
-        case "c" | "b#" => Right((suffix, Some(3)))
-        case "c#"       => Right((suffix, Some(4)))
-        case "d"        => Right((suffix, Some(5)))
-        case "d#"       => Right((suffix, Some(6)))
-        case "e"        => Right((suffix, Some(7)))
-        case "f" | "e#" => Right((suffix, Some(8)))
-        case "f#"       => Right((suffix, Some(9)))
-        case "g"        => Right((suffix, Some(10)))
-        case "g#"       => Right((suffix, Some(11)))
-        case _          => Left(s"Invalid note: $prefix")
-      }
-    }
+  private final class ByteStringOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
+    import byteReader._
+    private val separator = ':'.toInt
 
-    val isDotted         = data.contains('.')
-    val (str1, duration) = parseNumber(data.filter(c => c != '.' && c != ' '))
-    parseNote(str1).map { case (str2, note) =>
-      val (str3, octave) = parseNumber(str2)
-      val baseDuration   = 60.0 / (defaults.beat * duration.getOrElse(defaults.duration) / 4.0)
-      Note(
-        octave.getOrElse(defaults.octave),
-        note,
-        if (isDotted) { baseDuration + baseDuration / 2 }
-        else baseDuration
-      )
-    }
+    val readNextSection: ParseState[String, String] =
+      readWhile(char => char != separator)
+        .map(chars => chars.map(_.toChar).mkString(""))
+        .flatMap(str => skipBytes(1).map(_ => str))
   }
 
-  def loadClip(is: InputStream): Either[String, AudioClip] = {
-    // RTTTL files are small enough to fit in memory
-    val sections = Source.fromInputStream(is).getLines.mkString("").split(":")
-    if (sections.length != 3) Left(s"RTTTL file had ${sections.length} sections. Expected 3.")
-    else {
-      parseHeader(sections(0), sections(1)).flatMap { header =>
-        val notes = sections(2).split(",").map(parseData(header) _)
-        notes.foldLeft[Either[String, AudioClip]](Right(AudioClip.empty)) {
-          case (_, Left(error)) => Left(error)
-          case (Left(error), _) => Left(error)
-          case (Right(acc), Right(note)) =>
-            Right(acc.append(oscilator(note.frequency).clip(note.duration)))
-        }
-      }
+  private object StringReader {
+    def readWhile(p: Char => Boolean): State[String, Nothing, String] = State { str =>
+      val (prefix, suffix) = str.span(p)
+      suffix -> prefix
     }
 
+    val readNumber: State[String, Nothing, Option[Int]] =
+      readWhile(c => c >= '0' && c <= '9').map { values =>
+        Option.when(values.nonEmpty)(values.toInt)
+      }
   }
 }

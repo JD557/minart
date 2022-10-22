@@ -3,7 +3,7 @@ package eu.joaocosta.minart.graphics.image
 import java.io.InputStream
 
 import eu.joaocosta.minart.graphics.RamSurface
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 @deprecated("Use eu.joaocosta.minart.graphics.image.bmp.BmpImageFormat instead")
 final class BmpImageLoader[F[_]](val byteReader: ByteReader[F[Int]]) extends ImageLoader { self =>

@@ -1,10 +1,10 @@
-package eu.joaocosta.minart.graphics.image.helpers
+package eu.joaocosta.minart.internal
 
 import java.io.InputStream
 
 /** Helper methods to read binary data from an input stream.
   */
-trait ByteReader[ByteSeq] {
+private[minart] trait ByteReader[ByteSeq] {
   type ParseResult[T]   = Either[String, (ByteSeq, T)]
   type ParseState[E, T] = State[ByteSeq, E, T]
 
@@ -47,7 +47,7 @@ trait ByteReader[ByteSeq] {
   }
 }
 
-object ByteReader {
+private[minart] object ByteReader {
 
   class CustomInputStream(inner: InputStream) extends InputStream {
     var hasBuffer: Boolean                  = false
