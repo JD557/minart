@@ -1,4 +1,4 @@
-addSbtPlugin("ch.epfl.scala"      % "sbt-scalafix"                  % "0.10.2")
+addSbtPlugin("ch.epfl.scala"      % "sbt-scalafix"                  % "0.10.4")
 addSbtPlugin("com.github.sbt"     % "sbt-pgp"                       % "2.1.2")
 addSbtPlugin("com.github.sbt"     % "sbt-release"                   % "1.1.0")
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.2.0")
