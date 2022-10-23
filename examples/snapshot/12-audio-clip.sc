@@ -17,7 +17,7 @@ import eu.joaocosta.minart.backend.defaults._
 /**
  * Just like loading an image, we can load sound resources
  */
-val clip = Sound.loadRtttlClip(Resource("assets/ringtone.rtttl")).get
+val clip = Sound.loadAiffClip(Resource("assets/sample.aiff")).get
 
 // Same logic as the audio example
 ImpureRenderLoop

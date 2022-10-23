@@ -24,4 +24,9 @@ object Sound {
     */
   def loadRtttlClip(resource: Resource): Try[AudioClip] =
     loadClip(rtttl.RtttlAudioFormat.defaultFormat, resource)
+
+  /** Loads an audio clip in the AIFF format.
+    */
+  def loadAiffClip(resource: Resource): Try[AudioClip] =
+    loadClip(aiff.AiffAudioFormat.defaultFormat, resource)
 }

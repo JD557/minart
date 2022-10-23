@@ -41,9 +41,19 @@ private[minart] trait ByteReader[ByteSeq] {
     bytes.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
 
+  /** Read a Integer N Bytes as a Long (Little Endian) */
+  def readLENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
+    bytes.zipWithIndex.map { case (num, idx) => num.toLong << (idx * 8) }.sum
+  }
+
   /** Read a Integer N Bytes (Big Endian) */
   def readBENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
     bytes.reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
+  }
+
+  /** Read a Integer N Bytes as a Long (Big Endian) */
+  def readBENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
+    bytes.reverse.zipWithIndex.map { case (num, idx) => num.toLong << (idx * 8) }.sum
   }
 }
 
