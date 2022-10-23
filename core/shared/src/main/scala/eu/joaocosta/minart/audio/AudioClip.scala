@@ -72,6 +72,14 @@ final case class AudioClip(
   def reverse: AudioClip =
     contramap(t => duration - t)
 
+  /** Speeds up/down this clip according to a multiplier */
+  def changeSpeed(multiplier: Double): AudioClip =
+    wave.contramap(t => multiplier * t).clip(duration / multiplier)
+
+  /** Returns an audio wave that repeats this clip forever */
+  def repeating: AudioWave =
+    wave.contramap(t => AudioClip.floorMod(t, duration))
+
   /** Samples this wave at the specified sample rate and returns an iterator of Doubles
     * in the [-1, 1] range.
     */
@@ -107,5 +115,11 @@ object AudioClip {
   def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioClip = {
     val duration = data.size / sampleRate
     AudioWave.fromIndexedSeq(data, sampleRate).clip(duration)
+  }
+
+  private def floorMod(x: Double, y: Double): Double = {
+    val rem = x % y
+    if (rem >= 0) rem
+    else rem + y
   }
 }
