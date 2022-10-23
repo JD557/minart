@@ -28,3 +28,6 @@ metals.sbt
 
 # Scala-CLI
 .scala-build/
+
+# Windows specific
+null/
