@@ -8,36 +8,25 @@ import scala.concurrent._
   */
 trait Loop[S] { self =>
 
-  /** Runs this loop.
+  /** Runs this loop and returns the result in a future.
     *
     * @param initalState initial loop state
+    * @return Final state
     */
-  def run(initialState: S): Unit
-
-  /** Runs this loop
-    */
-  final def run()(implicit ev: Unit =:= S): Unit = run(ev(()))
+  def run(initialState: S): Future[S]
 
   /** Runs this loop and returns the result in a future.
     *
     * @param initalState initial loop state
     * @return Final state
     */
-  def runAsync(initialState: S)(implicit ec: ExecutionContext): Future[S]
-
-  /** Runs this loop and returns the result in a future.
-    *
-    * @param initalState initial loop state
-    * @return Final state
-    */
-  final def runAsync()(implicit ev: Unit =:= S, ec: ExecutionContext): Future[S] = runAsync(ev(()))
+  final def run()(implicit ev: Unit =:= S): Future[S] = run(ev(()))
 
   /** Converts this loop to a stateless loop, with a predefined initial state.
     *
     * @param initalState initial loop state
     */
   final def withInitialState(state: S): Loop[Unit] = new Loop[Unit] {
-    def run(initialState: Unit): Unit                                             = self.run(state)
-    def runAsync(initialState: Unit)(implicit ec: ExecutionContext): Future[Unit] = self.runAsync(state).map(_ => ())
+    def run(initialState: Unit): Future[Unit] = self.run(state).map(_ => ())(ExecutionContext.parasitic)
   }
 }

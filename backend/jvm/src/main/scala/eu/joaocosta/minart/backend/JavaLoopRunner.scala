@@ -25,9 +25,8 @@ object JavaLoopRunner extends LoopRunner {
   }
 
   final class NeverRenderLoop[S](operation: S => S) extends Loop[S] {
-    def run(initialState: S) = operation(initialState)
-    def runAsync(initialState: S)(implicit ec: ExecutionContext) =
-      Future(operation(initialState))
+    def run(initialState: S) =
+      Future(operation(initialState))(ExecutionContext.global)
   }
 
   final class UncappedRenderLoop[S](
@@ -36,24 +35,16 @@ object JavaLoopRunner extends LoopRunner {
       cleanup: () => Unit
   ) extends Loop[S] {
     @tailrec
-    def finiteLoopAux(state: S): Unit = {
+    def finiteLoopAux(state: S): S = {
       val newState = operation(state)
       if (!terminateWhen(newState)) finiteLoopAux(newState)
-      else ()
+      else newState
     }
-    def run(initialState: S) = {
-      finiteLoopAux(initialState)
+    def run(initialState: S): Future[S] = Future {
+      val res = finiteLoopAux(initialState)
       cleanup()
-    }
-    def runAsync(initialState: S)(implicit ec: ExecutionContext): Future[S] =
-      Future(operation(initialState)).flatMap { newState =>
-        if (!terminateWhen(newState)) runAsync(newState)
-        else
-          Future {
-            cleanup()
-            newState
-          }
-      }
+      res
+    }(ExecutionContext.global)
   }
 
   final class CappedRenderLoop[S](
@@ -63,34 +54,20 @@ object JavaLoopRunner extends LoopRunner {
       cleanup: () => Unit
   ) extends Loop[S] {
     @tailrec
-    def finiteLoopAux(state: S): Unit = {
+    def finiteLoopAux(state: S): S = {
       val startTime = System.currentTimeMillis()
       val newState  = operation(state)
       if (!terminateWhen(newState)) {
         val endTime  = System.currentTimeMillis()
         val waitTime = iterationMillis - (endTime - startTime)
-        if (waitTime > 0) Thread.sleep(waitTime)
-        finiteLoopAux(newState)
-      } else ()
-    }
-    def run(initialState: S) = {
-      finiteLoopAux(initialState)
-      cleanup()
-    }
-    def finiteLoopAsyncAux(state: S, startTime: Long)(implicit ec: ExecutionContext): Future[S] =
-      Future {
-        val endTime  = System.currentTimeMillis()
-        val waitTime = iterationMillis - (endTime - startTime)
         if (waitTime > 0) blocking { Thread.sleep(waitTime) }
-        (System.currentTimeMillis(), operation(state))
-      }.flatMap { case (startTime, newState) =>
-        if (!terminateWhen(newState)) finiteLoopAsyncAux(newState, startTime)
-        else Future.successful(newState)
-      }
-    def runAsync(initialState: S)(implicit ec: ExecutionContext) =
-      finiteLoopAsyncAux(initialState, System.currentTimeMillis()).map { res =>
-        cleanup()
-        res
-      }
+        finiteLoopAux(newState)
+      } else newState
+    }
+    def run(initialState: S): Future[S] = Future {
+      val res = finiteLoopAux(initialState)
+      cleanup()
+      res
+    }(ExecutionContext.global)
   }
 }

@@ -30,28 +30,21 @@ object SdlLoopRunner extends LoopRunner {
   }
 
   final class NeverRenderLoop[S](operation: S => S, cleanup: () => Unit) extends Loop[S] {
-    def run(initialState: S) = {
-      operation(initialState)
-      var quit  = false
-      val event = stackalloc[SDL_Event]()
-      while (!quit) {
-        if (SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT) { quit = true }
-      }
-      cleanup()
-    }
-    def finiteLoopAsyncAux()(implicit ec: ExecutionContext): Future[Unit] = {
+    private implicit val ec: ExecutionContext = ExecutionContext.global
+    def finiteLoopAux(): Future[Unit] = {
       val event = stackalloc[SDL_Event]()
       Future { SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT }.flatMap { quit =>
         if (quit) Future.successful(())
-        else finiteLoopAsyncAux()
+        else finiteLoopAux()
       }
     }
-    def runAsync(initialState: S)(implicit ec: ExecutionContext) =
-      finiteLoopAsyncAux().map { _ =>
+    def run(initialState: S): Future[S] = {
+      val res = operation(initialState)
+      finiteLoopAux().map { _ =>
         cleanup()
-        initialState
+        res
       }
-
+    }
   }
 
   final class UncappedRenderLoop[S](
@@ -59,23 +52,14 @@ object SdlLoopRunner extends LoopRunner {
       terminateWhen: S => Boolean,
       cleanup: () => Unit
   ) extends Loop[S] {
-    @tailrec
-    def finiteLoopAux(state: S): Unit = {
-      val newState = operation(state)
-      if (!terminateWhen(newState)) finiteLoopAux(newState)
-      else ()
-    }
-    def run(initialState: S) = {
-      finiteLoopAux(initialState)
-      cleanup()
-    }
-    def runAsync(initialState: S)(implicit ec: ExecutionContext): Future[S] =
+    private implicit val ec: ExecutionContext = ExecutionContext.global
+    def run(initialState: S): Future[S] =
       Future(operation(initialState)).flatMap { newState =>
-        if (!terminateWhen(newState)) runAsync(newState)
+        if (!terminateWhen(newState)) run(newState)
         else
           Future {
             cleanup()
-            initialState
+            newState
           }
       }
   }
@@ -86,33 +70,19 @@ object SdlLoopRunner extends LoopRunner {
       iterationMillis: Long,
       cleanup: () => Unit
   ) extends Loop[S] {
-    @tailrec
-    def finiteLoopAux(state: S): Unit = {
-      val startTime = SDL_GetTicks().toLong
-      val newState  = operation(state)
-      if (!terminateWhen(newState)) {
-        val endTime  = SDL_GetTicks().toLong
-        val waitTime = iterationMillis - (endTime - startTime)
-        if (waitTime > 0) SDL_Delay(waitTime.toUInt)
-        finiteLoopAux(newState)
-      } else ()
-    }
-    def run(initialState: S) = {
-      finiteLoopAux(initialState)
-      cleanup()
-    }
-    def finiteLoopAsyncAux(state: S, startTime: Long)(implicit ec: ExecutionContext): Future[S] =
+    private implicit val ec: ExecutionContext = ExecutionContext.global
+    def finiteLoopAux(state: S, startTime: Long): Future[S] =
       Future {
         val endTime  = SDL_GetTicks().toLong
         val waitTime = iterationMillis - (endTime - startTime)
         if (waitTime > 0) blocking { SDL_Delay(waitTime.toUInt) }
         (SDL_GetTicks().toLong, operation(state))
       }.flatMap { case (startTime, newState) =>
-        if (!terminateWhen(newState)) finiteLoopAsyncAux(newState, startTime)
+        if (!terminateWhen(newState)) finiteLoopAux(newState, startTime)
         else Future.successful(state)
       }
-    def runAsync(initialState: S)(implicit ec: ExecutionContext) =
-      finiteLoopAsyncAux(initialState, SDL_GetTicks().toLong).map { res =>
+    def run(initialState: S): Future[S] =
+      finiteLoopAux(initialState, SDL_GetTicks().toLong).map { res =>
         cleanup()
         res
       }
