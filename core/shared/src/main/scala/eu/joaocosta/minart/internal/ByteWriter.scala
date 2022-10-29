@@ -1,10 +1,10 @@
-package eu.joaocosta.minart.graphics.image.helpers
+package eu.joaocosta.minart.internal
 
 import java.io.OutputStream
 
 /** Helper methods to write binary data to an output stream.
   */
-trait ByteWriter[ByteStream] {
+private[minart] trait ByteWriter[ByteStream] {
   type ByteStreamState[E] = State[ByteStream, E, Unit]
 
   /** Writes a ByteStream to a output stream */
@@ -39,7 +39,7 @@ trait ByteWriter[ByteStream] {
     writeBytes((0 until bytes).reverse.map { idx => (value >> (idx * 8)) & 0x000000ff })
 }
 
-object ByteWriter {
+private[minart] object ByteWriter {
   object IteratorByteWriter extends ByteWriter[Iterator[Array[Byte]]] {
     def toOutputStream[E](data: ByteStreamState[E], os: OutputStream): Either[E, Unit] =
       data.run(Iterator.empty).right.map { case (s, _) =>

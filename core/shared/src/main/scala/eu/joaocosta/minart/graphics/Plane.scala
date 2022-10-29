@@ -13,7 +13,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y))
   }
 
-  /* Flatmaps this plane */
+  /** Flatmaps this plane */
   final def flatMap(f: Color => (Int, Int) => Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y)).apply(x, y)
   }

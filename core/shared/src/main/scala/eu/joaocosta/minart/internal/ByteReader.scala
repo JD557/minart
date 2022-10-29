@@ -1,10 +1,10 @@
-package eu.joaocosta.minart.graphics.image.helpers
+package eu.joaocosta.minart.internal
 
 import java.io.InputStream
 
 /** Helper methods to read binary data from an input stream.
   */
-trait ByteReader[ByteSeq] {
+private[minart] trait ByteReader[ByteSeq] {
   type ParseResult[T]   = Either[String, (ByteSeq, T)]
   type ParseState[E, T] = State[ByteSeq, E, T]
 
@@ -41,13 +41,23 @@ trait ByteReader[ByteSeq] {
     bytes.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
 
+  /** Read a Integer N Bytes as a Long (Little Endian) */
+  def readLENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
+    bytes.zipWithIndex.map { case (num, idx) => num.toLong << (idx * 8) }.sum
+  }
+
   /** Read a Integer N Bytes (Big Endian) */
   def readBENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
     bytes.reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
+
+  /** Read a Integer N Bytes as a Long (Big Endian) */
+  def readBENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
+    bytes.reverse.zipWithIndex.map { case (num, idx) => num.toLong << (idx * 8) }.sum
+  }
 }
 
-object ByteReader {
+private[minart] object ByteReader {
 
   class CustomInputStream(inner: InputStream) extends InputStream {
     var hasBuffer: Boolean                  = false

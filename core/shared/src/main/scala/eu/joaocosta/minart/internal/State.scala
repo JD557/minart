@@ -1,10 +1,10 @@
-package eu.joaocosta.minart.graphics.image.helpers
+package eu.joaocosta.minart.internal
 
 import scala.annotation.tailrec
 
 /** State monad implementation to use when loading/storing images.
   */
-sealed trait State[S, +E, +A] {
+private[minart] sealed trait State[S, +E, +A] {
   @tailrec
   final def run(initial: S): Either[E, (S, A)] = this match {
     case State.Point(f)     => Right(f(initial))
@@ -33,7 +33,7 @@ sealed trait State[S, +E, +A] {
   final def modify(f: S => S): State[S, E, A] =
     flatMap(x => State(s => (f(s), x)))
 }
-object State {
+private[minart] object State {
   private final case class Point[S, +A](f: S => (S, A)) extends State[S, Nothing, A]
   private final case class Error[S, +E](error: E)       extends State[S, E, Nothing]
   private final case class FlatMap[S, +E, A, +B](st: State[S, E, A], andThen: A => State[S, E, B])

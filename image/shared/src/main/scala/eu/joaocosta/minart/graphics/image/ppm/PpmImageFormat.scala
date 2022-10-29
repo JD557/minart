@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image.ppm
 
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image format and writer for PGM/PPM files.
   *

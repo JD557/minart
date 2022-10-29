@@ -68,7 +68,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
   }
 
   def unsafeInit(newSettings: Canvas.Settings) = {
-    SDL_Init(SDL_INIT_VIDEO)
+    SDL_InitSubSystem(SDL_INIT_VIDEO)
     changeSettings(newSettings)
   }
 

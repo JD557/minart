@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image reader for PGM/PPM files.
   *
@@ -89,8 +89,6 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
   }
 
   private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
-    val byteStringOps = new PpmImageReader.ByteStringOps(byteReader)
-    import byteStringOps._
     (
       for {
         magic  <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
