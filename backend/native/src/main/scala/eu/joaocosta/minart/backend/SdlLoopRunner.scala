@@ -2,6 +2,7 @@ package eu.joaocosta.minart.backend
 
 import scala.annotation.tailrec
 import scala.concurrent._
+import scala.scalanative.libc.stdlib._
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
@@ -32,10 +33,12 @@ object SdlLoopRunner extends LoopRunner {
   final class NeverRenderLoop[S](operation: S => S, cleanup: () => Unit) extends Loop[S] {
     private implicit val ec: ExecutionContext = ExecutionContext.global
     def finiteLoopAux(): Future[Unit] = {
-      val event = stackalloc[SDL_Event]()
+      val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
       Future { SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT }.flatMap { quit =>
-        if (quit) Future.successful(())
-        else finiteLoopAux()
+        if (quit) {
+          free(event.asInstanceOf[Ptr[Byte]])
+          Future.successful(())
+        } else finiteLoopAux()
       }
     }
     def run(initialState: S): Future[S] = {
