@@ -80,7 +80,7 @@ object JsLoopRunner extends LoopRunner {
   ): Loop[S] = {
     frequency match {
       case LoopFrequency.Never =>
-        NeverRenderLoop(operation)
+        new NeverRenderLoop(operation)
       case LoopFrequency.Uncapped =>
         new UncappedRenderLoop(operation, terminateWhen, cleanup)
       case LoopFrequency.LoopDuration(iterationMillis) =>

@@ -27,6 +27,7 @@ trait Loop[S] { self =>
     * @param initalState initial loop state
     */
   final def withInitialState(state: S): Loop[Unit] = new Loop[Unit] {
-    def run(initialState: Unit): Future[Unit] = self.run(state).map(_ => ())(ExecutionContext.global) // TODO this should probably be parasitic
+    def run(initialState: Unit): Future[Unit] =
+      self.run(state).map(_ => ())(ExecutionContext.global) // TODO this should probably be parasitic
   }
 }
