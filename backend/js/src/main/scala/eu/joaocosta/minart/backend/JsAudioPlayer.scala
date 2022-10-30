@@ -41,9 +41,7 @@ object JsAudioPlayer extends AudioPlayer {
   def play(clip: AudioClip): Unit = {
     val alreadyPlaying = isPlaying()
     playQueue.enqueue(clip)
-    if (!alreadyPlaying) {
-      callback(0.0, 0)()
-    }
+    if (!alreadyPlaying) callback(0.0, 0)()
   }
 
   def isPlaying(): Boolean = playQueue.nonEmpty
