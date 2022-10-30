@@ -1,5 +1,6 @@
 package eu.joaocosta.minart.backend
 
+import scala.concurrent._
 import scala.scalanative.libc._
 import scala.scalanative.libc.stdlib.malloc
 import scala.scalanative.runtime.ByteArray
@@ -13,7 +14,7 @@ import eu.joaocosta.minart.audio._
 
 object SdlAudioPlayer extends AudioPlayer {
   private val sampleRate                        = 44100
-  private val bufferSize                        = 4096.toUShort
+  private val bufferSize                        = 4096
   private var device: Option[SDL_AudioDeviceID] = None
 
   private val playQueue = new AudioPlayer.AudioQueue(sampleRate)
@@ -27,6 +28,21 @@ object SdlAudioPlayer extends AudioPlayer {
       i = i + 1
     }
   }*/
+  private implicit val ec: ExecutionContext = ExecutionContext.global
+  private def callback(nextSchedule: Long): Future[Unit] = Future {
+    if (playQueue.nonEmpty) {
+      if (System.currentTimeMillis() > nextSchedule) {
+        val len  = scala.math.min(bufferSize, playQueue.size)
+        val buff = Array.fill(len)(playQueue.dequeueByte())
+        SDL_QueueAudio(device.get, buff.asInstanceOf[ByteArray].at(0), buff.size.toUInt)
+        val bufferedMillis = (1000 * len) / sampleRate
+        Some(System.currentTimeMillis() + bufferedMillis - 25)
+      } else Some(nextSchedule)
+    } else None
+  }.flatMap {
+    case Some(next) => callback(next)
+    case None       => Future.successful(())
+  }
 
   def play(clip: AudioClip): Unit = {
     if (device == None) {
@@ -36,14 +52,14 @@ object SdlAudioPlayer extends AudioPlayer {
       want.freq = sampleRate
       want.format = AUDIO_S8
       want.channels = 1.toUByte
-      want.samples = bufferSize
-      want.callback = null // Ideally this should use a callback
+      want.samples = bufferSize.toUShort
+      want.callback = null // Ideally this should use a SDL callback
       device = Some(SDL_OpenAudioDevice(null, 0, want, have, 0))
     }
+    val alreadyPlaying = isPlaying()
     // SDL_LockAudioDevice(device.get)
     playQueue.enqueue(clip)
-    val arr = Array.fill(playQueue.size)(playQueue.dequeueByte())
-    SDL_QueueAudio(device.get, arr.asInstanceOf[ByteArray].at(0), arr.size.toUInt)
+    if (!alreadyPlaying) callback(0)
     // SDL_UnlockAudioDevice(device.get)
     SDL_PauseAudioDevice(device.get, 0)
   }
