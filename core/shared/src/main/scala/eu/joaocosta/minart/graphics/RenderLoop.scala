@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import scala.concurrent.{ExecutionContext, Future}
+
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime._
 
@@ -16,7 +18,7 @@ trait RenderLoop[S] { self =>
     * @param canvasSettings settings to use to build the canvas
     * @param initalState initial render loop state
     */
-  def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Unit
+  def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Future[S]
 
   /** Runs this render loop with a custom loop runner and canvas manager.
     *
@@ -26,7 +28,7 @@ trait RenderLoop[S] { self =>
     */
   final def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings)(implicit
       ev: Unit =:= S
-  ): Unit = run(runner, canvasManager, canvasSettings, ev(()))
+  ): Future[S] = run(runner, canvasManager, canvasSettings, ev(()))
 
   /** Runs this render loop.
     *
@@ -36,7 +38,7 @@ trait RenderLoop[S] { self =>
   final def run(canvasSettings: Canvas.Settings, initialState: S)(implicit
       lr: DefaultBackend[Any, LoopRunner],
       cm: DefaultBackend[Any, LowLevelCanvas]
-  ): Unit =
+  ): Future[S] =
     run(LoopRunner(), CanvasManager(), canvasSettings, initialState)
 
   /** Runs this render loop.
@@ -45,7 +47,7 @@ trait RenderLoop[S] { self =>
     */
   final def run(
       canvasSettings: Canvas.Settings
-  )(implicit lr: DefaultBackend[Any, LoopRunner], cm: DefaultBackend[Any, LowLevelCanvas], ev: Unit =:= S): Unit =
+  )(implicit lr: DefaultBackend[Any, LoopRunner], cm: DefaultBackend[Any, LowLevelCanvas], ev: Unit =:= S): Future[S] =
     run(canvasSettings, ev(()))
 
   /** Converts this render loop to a stateless render loop, with a predefined initial state.
@@ -58,8 +60,8 @@ trait RenderLoop[S] { self =>
         canvasManager: CanvasManager,
         canvasSettings: Canvas.Settings,
         initialState: Unit
-    ): Unit =
-      self.run(runner, canvasManager, canvasSettings, state)
+    ): Future[Unit] =
+      self.run(runner, canvasManager, canvasSettings, state).map(_ => ())(ExecutionContext.global)
   }
 }
 

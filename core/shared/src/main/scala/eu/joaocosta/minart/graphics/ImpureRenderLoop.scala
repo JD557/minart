@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import scala.concurrent.Future
+
 import eu.joaocosta.minart.runtime._
 
 /** A render loop that takes a side-effectful renderFrame operation. */
@@ -10,7 +12,12 @@ object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
       terminateWhen: S => Boolean = (_: S) => false
   ): RenderLoop[S] = {
     new RenderLoop[S] {
-      def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S) = {
+      def run(
+          runner: LoopRunner,
+          canvasManager: CanvasManager,
+          canvasSettings: Canvas.Settings,
+          initialState: S
+      ): Future[S] = {
         val canvas = canvasManager.init(canvasSettings)
         runner
           .finiteLoop(

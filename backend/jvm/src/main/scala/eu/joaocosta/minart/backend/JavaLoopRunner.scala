@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.backend
 
 import scala.annotation.tailrec
+import scala.concurrent._
 
 import eu.joaocosta.minart.runtime._
 
@@ -15,40 +16,58 @@ object JavaLoopRunner extends LoopRunner {
   ): Loop[S] = {
     frequency match {
       case LoopFrequency.Never =>
-        new Loop[S] {
-          def run(initialState: S) = operation(initialState)
-        }
+        new NeverRenderLoop(operation)
       case LoopFrequency.Uncapped =>
-        @tailrec
-        def finiteLoopAux(state: S): Unit = {
-          val newState = operation(state)
-          if (!terminateWhen(newState)) finiteLoopAux(newState)
-          else ()
-        }
-        new Loop[S] {
-          def run(initialState: S) = {
-            finiteLoopAux(initialState)
-            cleanup()
-          }
-        }
+        new UncappedRenderLoop(operation, terminateWhen, cleanup)
       case LoopFrequency.LoopDuration(iterationMillis) =>
-        new Loop[S] {
-          @tailrec
-          def finiteLoopAux(state: S): Unit = {
-            val startTime = System.currentTimeMillis()
-            val newState  = operation(state)
-            if (!terminateWhen(newState)) {
-              val endTime  = System.currentTimeMillis()
-              val waitTime = iterationMillis - (endTime - startTime)
-              if (waitTime > 0) Thread.sleep(waitTime)
-              finiteLoopAux(newState)
-            } else ()
-          }
-          def run(initialState: S) = {
-            finiteLoopAux(initialState)
-            cleanup()
-          }
-        }
+        new CappedRenderLoop(operation, terminateWhen, iterationMillis, cleanup)
     }
+  }
+
+  final class NeverRenderLoop[S](operation: S => S) extends Loop[S] {
+    def run(initialState: S) =
+      Future(operation(initialState))(ExecutionContext.global)
+  }
+
+  final class UncappedRenderLoop[S](
+      operation: S => S,
+      terminateWhen: S => Boolean,
+      cleanup: () => Unit
+  ) extends Loop[S] {
+    @tailrec
+    def finiteLoopAux(state: S): S = {
+      val newState = operation(state)
+      if (!terminateWhen(newState)) finiteLoopAux(newState)
+      else newState
+    }
+    def run(initialState: S): Future[S] = Future {
+      val res = finiteLoopAux(initialState)
+      cleanup()
+      res
+    }(ExecutionContext.global)
+  }
+
+  final class CappedRenderLoop[S](
+      operation: S => S,
+      terminateWhen: S => Boolean,
+      iterationMillis: Long,
+      cleanup: () => Unit
+  ) extends Loop[S] {
+    @tailrec
+    def finiteLoopAux(state: S): S = {
+      val startTime = System.currentTimeMillis()
+      val newState  = operation(state)
+      if (!terminateWhen(newState)) {
+        val endTime  = System.currentTimeMillis()
+        val waitTime = iterationMillis - (endTime - startTime)
+        if (waitTime > 0) blocking { Thread.sleep(waitTime) }
+        finiteLoopAux(newState)
+      } else newState
+    }
+    def run(initialState: S): Future[S] = Future {
+      val res = finiteLoopAux(initialState)
+      cleanup()
+      res
+    }(ExecutionContext.global)
   }
 }

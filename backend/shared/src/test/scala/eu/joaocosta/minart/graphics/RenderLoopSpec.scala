@@ -1,14 +1,15 @@
 package eu.joaocosta.minart.graphics
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import verify._
 
 import eu.joaocosta.minart.backend._
+import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime._
 
-trait RenderLoopTests extends BasicTestSuite {
-
-  def loopRunner: LoopRunner
+object RenderLoopTests extends BasicTestSuite {
 
   object TestCanvas extends SurfaceBackedCanvas {
     protected var surface: RamSurface = _
@@ -26,21 +27,7 @@ trait RenderLoopTests extends BasicTestSuite {
     def getPointerInput(): PointerInput   = PointerInput.empty
   }
 
-  def singleFrameTest() = test("Have a singleFrame operation that runs only once") {
-    var renderCount: Int = 0
-    ImpureRenderLoop
-      .singleFrame(
-        renderFrame = (canvas: Canvas) => renderCount += 1
-      )
-      .run(
-        runner = loopRunner,
-        canvasManager = CanvasManager(() => TestCanvas),
-        canvasSettings = Canvas.Settings(4, 4)
-      )
-    assert(renderCount == 1)
-  }
-
-  def loopTest() = test("Have a finiteRenderLoop operation that ends when a certain state is reached") {
+  testAsync("Have a finiteRenderLoop operation that ends when a certain state is reached") {
     var renderCount: Int = 0
     ImpureRenderLoop
       .statefulRenderLoop[Int](
@@ -52,11 +39,13 @@ trait RenderLoopTests extends BasicTestSuite {
         frameRate = LoopFrequency.Uncapped
       )
       .run(
-        runner = loopRunner,
+        runner = LoopRunner(),
         canvasManager = CanvasManager(() => TestCanvas),
         canvasSettings = Canvas.Settings(4, 4),
         initialState = 0
       )
-    assert(renderCount == 5)
+      .map { _ =>
+        assert(renderCount == 5)
+      }
   }
 }
