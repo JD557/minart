@@ -5,11 +5,13 @@ import scala.scalajs.js
 import org.scalajs.dom._
 
 import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.runtime._
 
 object JsAudioPlayer extends AudioPlayer {
-  private lazy val audioCtx = new AudioContext();
-  private val sampleRate    = 44100
-  private val bufferSize    = 4096
+  private lazy val audioCtx      = new AudioContext();
+  private val sampleRate         = 44100
+  private val bufferSize         = 4096
+  private val preemptiveCallback = LoopFrequency.hz15.millis
 
   private val playQueue = new AudioPlayer.MultiChannelAudioQueue(sampleRate)
 
@@ -29,11 +31,11 @@ object JsAudioPlayer extends AudioPlayer {
         audioSource.connect(audioCtx.destination)
         if (consumed == 0) {
           audioSource.start()
-          window.setTimeout(callback(audioCtx.currentTime, batchSize), duration - 25)
+          window.setTimeout(callback(audioCtx.currentTime, batchSize), duration - preemptiveCallback)
         } else {
           audioSource.start(startTime + consumed.toDouble / sampleRate)
           val nextTarget    = (startTime + (consumed + batchSize).toDouble / sampleRate)
-          val sleepDuration = (nextTarget - audioCtx.currentTime) * 1000 - 25
+          val sleepDuration = (nextTarget - audioCtx.currentTime) * 1000 - preemptiveCallback
           window.setTimeout(callback(startTime, consumed + batchSize), sleepDuration)
         }
       } else {

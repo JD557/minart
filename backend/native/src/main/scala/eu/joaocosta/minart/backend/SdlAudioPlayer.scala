@@ -11,10 +11,12 @@ import sdl2.Extras._
 import sdl2.SDL._
 
 import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.runtime._
 
 object SdlAudioPlayer extends AudioPlayer {
   private val sampleRate                        = 44100
   private val bufferSize                        = 4096
+  private val preemptiveCallback                = LoopFrequency.hz15.millis
   private var device: Option[SDL_AudioDeviceID] = None
 
   private val playQueue = new AudioPlayer.MultiChannelAudioQueue(sampleRate)
@@ -32,12 +34,12 @@ object SdlAudioPlayer extends AudioPlayer {
   private var callbackRegistered            = false
   private def callback(nextSchedule: Long): Future[Unit] = Future {
     if (playQueue.nonEmpty) {
-      if (System.currentTimeMillis() > nextSchedule) {
+      if (System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device.get).toInt < bufferSize) {
         val len  = scala.math.min(bufferSize, playQueue.size)
         val buff = Array.fill(len)(playQueue.dequeueByte())
-        if (SDL_QueueAudio(device.get, buff.asInstanceOf[ByteArray].at(0), buff.size.toUInt) == 0) {
+        if (SDL_QueueAudio(device.get, buff.asInstanceOf[ByteArray].at(0), len.toUInt) == 0) {
           val bufferedMillis = (1000 * len) / sampleRate
-          Some(System.currentTimeMillis() + bufferedMillis - 25)
+          Some(System.currentTimeMillis() + bufferedMillis - preemptiveCallback)
         } else None
       } else Some(nextSchedule)
     } else None
