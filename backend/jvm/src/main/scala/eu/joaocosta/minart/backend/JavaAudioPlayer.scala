@@ -11,7 +11,7 @@ object JavaAudioPlayer extends AudioPlayer {
   private val sampleRate = 44100
   private val bufferSize = 4096
 
-  private val playQueue      = new AudioPlayer.AudioQueue(sampleRate)
+  private val playQueue      = new AudioPlayer.MultiChannelAudioQueue(sampleRate)
   private val format         = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
   private val sourceDataLine = AudioSystem.getSourceDataLine(format)
   private var init           = false
@@ -32,9 +32,11 @@ object JavaAudioPlayer extends AudioPlayer {
     case false => Future.successful(())
   }
 
-  def play(clip: AudioClip): Unit = {
+  def play(clip: AudioClip): Unit = play(clip, 0)
+
+  def play(clip: AudioClip, channel: Int): Unit = {
     val alreadyPlaying = isPlaying()
-    playQueue.enqueue(clip)
+    playQueue.enqueue(clip, channel)
     if (!init) {
       sourceDataLine.open(format, bufferSize)
       sourceDataLine.start()
@@ -48,4 +50,6 @@ object JavaAudioPlayer extends AudioPlayer {
   def isPlaying(): Boolean = playQueue.nonEmpty
 
   def stop(): Unit = playQueue.clear()
+
+  def stop(channel: Int): Unit = playQueue.clear(channel)
 }
