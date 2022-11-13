@@ -45,13 +45,13 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
           case "COMM" =>
             val comm = for {
               _               <- State.check(header.size == 18, s"Invalid COMM chunk size: ${header.size}")
-              numChannels     <- readBENumber(2)
+              numChannels     <- readBENumber(2).validate(_ == 1, c => s"Expected a Mono AIFF file, got $c channels")
               numSampleFrames <- readBENumber(4)
-              sampleSize      <- readBENumber(2)
+              sampleSize      <- readBENumber(2).validate(_ == 8, b => s"Expected a 8 bit AIFF file, got $b bit")
               sampleRate      <- readExtended
             } yield Header(numChannels, numSampleFrames, sampleSize, sampleRate)
             comm.flatMap { c =>
-              if (data.size >= c.sampleSize * c.numSampleFrames)
+              if (data.size >= c.numSampleFrames * c.sampleSize / 8)
                 State.pure(assembleChunks(c, data))
               else loadChunks(Some(c), data)
             }

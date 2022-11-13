@@ -29,4 +29,9 @@ object Sound {
     */
   def loadAiffClip(resource: Resource): Try[AudioClip] =
     loadClip(aiff.AiffAudioFormat.defaultFormat, resource)
+
+  /** Loads an audio clip in the WAV format.
+    */
+  def loadWavClip(resource: Resource): Try[AudioClip] =
+    loadClip(wav.WavAudioFormat.defaultFormat, resource)
 }
