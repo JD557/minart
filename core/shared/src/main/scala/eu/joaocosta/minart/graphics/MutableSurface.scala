@@ -20,64 +20,6 @@ trait MutableSurface extends Surface {
     */
   def fill(color: Color): Unit
 
-  private def unsafeBlit(
-      that: Surface,
-      mask: Option[Color],
-      x: Int,
-      y: Int,
-      cx: Int,
-      cy: Int,
-      maxX: Int,
-      maxY: Int
-  ): Unit = {
-    var dy = 0
-    mask match {
-      case None =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = that.unsafeGetPixel(dx + cx, srcY)
-            putPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
-      case Some(maskColor) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = that.unsafeGetPixel(dx + cx, srcY)
-            if (color != maskColor) putPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
-    }
-  }
-
-  @tailrec
-  private def fullBlit(that: Surface, mask: Option[Color], x: Int, y: Int, cx: Int, cy: Int, cw: Int, ch: Int): Unit = {
-    // Handle negative offsets
-    if (x < 0) fullBlit(that, mask, 0, y, cx - x, cy, cw + x, ch)
-    else if (y < 0) fullBlit(that, mask, x, 0, cx, cy - y, cw, ch + y)
-    else if (cx < 0) fullBlit(that, mask, x - cx, y, 0, cy, cw + cx, ch)
-    else if (cy < 0) fullBlit(that, mask, x, y - cy, cx, 0, cw, ch + cy)
-    else {
-      val maxX = math.min(cw, math.min(that.width - cx, this.width - x))
-      val maxY = math.min(ch, math.min(that.height - cy, this.height - y))
-
-      if (maxX > 0 && maxY > 0) {
-        unsafeBlit(that, mask, x, y, cx, cy, maxX, maxY)
-      }
-    }
-  }
-
   /** Draws a surface on top of this surface.
     *
     * @param that surface to draw
@@ -93,6 +35,6 @@ trait MutableSurface extends Surface {
       that: Surface,
       mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-    fullBlit(that, mask, x, y, cx, cy, cw, ch)
+    Blitter.fullBlit(this, that, mask, x, y, cx, cy, cw, ch)
   }
 }
