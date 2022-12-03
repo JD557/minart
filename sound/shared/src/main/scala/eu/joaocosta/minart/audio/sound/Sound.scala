@@ -34,4 +34,22 @@ object Sound {
     */
   def loadWavClip(resource: Resource): Try[AudioClip] =
     loadClip(wav.WavAudioFormat.defaultFormat, resource)
+
+  /** Stores an audio clip using a custom AudioClipWriter.
+    *
+    * @param writer AudioClipWriter to use
+    * @param clip AudioClip to store
+    * @param resource Resource pointing to the output destination
+    */
+  def storeClip(writer: AudioClipWriter, clip: AudioClip, resource: Resource): Try[Unit] = {
+    writer.storeClip(clip, resource).flatMap {
+      case Left(error)   => Failure(new Exception(error))
+      case Right(result) => Success(result)
+    }
+  }
+
+  /** Stores an audio clip in the WAV format.
+    */
+  def storeWavClip(clip: AudioClip, resource: Resource): Try[Unit] =
+    storeClip(wav.WavAudioFormat.defaultFormat, clip, resource)
 }

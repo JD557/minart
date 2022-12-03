@@ -31,7 +31,7 @@ trait ImageWriter {
   /** Returns the image data as a byte array.
     *
     * @param surface Surface to convert
-    * @return Either a RamSurface with the image data or an error string
+    * @return Either an array with the image data or an error string
     */
   def toByteArray(surface: Surface): Either[String, Array[Byte]] = {
     val os = new ByteArrayOutputStream()
