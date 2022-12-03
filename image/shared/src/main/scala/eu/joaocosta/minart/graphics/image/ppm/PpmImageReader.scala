@@ -3,6 +3,7 @@ package eu.joaocosta.minart.graphics.image.ppm
 import java.io.InputStream
 
 import scala.annotation.tailrec
+import scala.collection.compat._
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
@@ -153,13 +154,7 @@ object PpmImageReader {
 
     def parseNextInt(errorMessage: String): ParseState[String, Int] =
       readNextString.flatMap { str =>
-        val intEither =
-          try {
-            Right(str.toInt)
-          } catch {
-            case _: Throwable =>
-              Left(s"$errorMessage: $str")
-          }
+        val intEither = str.toIntOption.map(int => Right(int)).getOrElse(Left(s"Failed to parse int: $str"))
         State.fromEither(intEither)
       }
   }
