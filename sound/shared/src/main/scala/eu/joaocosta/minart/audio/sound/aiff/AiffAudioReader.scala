@@ -12,7 +12,7 @@ import eu.joaocosta.minart.internal._
 
 /** Audio reader for AIFF files.
   *
-  * https://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/AIFF/Docs/AIFF-1.3.pdf
+  * https://mmsp.ece.mcgill.ca/Documents/AudioFormats/AIFF/Docs/AIFF-1.3.pdf
   */
 trait AiffAudioReader[ByteSeq] extends AudioClipReader {
 
