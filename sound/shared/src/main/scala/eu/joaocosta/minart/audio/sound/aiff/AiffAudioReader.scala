@@ -30,7 +30,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
   } yield ChunkHeader(id, size)
 
   private def assembleChunks(commHeader: Header, data: Vector[Byte]): AudioClip = {
-    AudioClip.fromIndexedSeq(data.map(byte => byte.toDouble / 128), commHeader.sampleRate)
+    AudioClip.fromIndexedSeq(data.map(byte => byte.toDouble / 127), commHeader.sampleRate)
   }
 
   private def loadChunks(
