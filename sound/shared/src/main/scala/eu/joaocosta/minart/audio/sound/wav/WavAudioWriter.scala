@@ -15,6 +15,9 @@ import eu.joaocosta.minart.internal._
 trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
   val byteWriter: ByteWriter[ByteSeq]
 
+  val sampleRate = 44100
+  val chunkSize  = 128
+
   import byteWriter._
 
   @tailrec
@@ -32,8 +35,8 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
   private def storeDataChunk(clip: AudioClip): ByteStreamState[String] =
     for {
       _ <- writeString("data")
-      _ <- writeLENumber(clip.numSamples(44100), 4)
-      _ <- storeData(clip.byteIterator(44100).grouped(128))
+      _ <- writeLENumber(clip.numSamples(sampleRate), 4)
+      _ <- storeData(clip.byteIterator(sampleRate).grouped(chunkSize))
     } yield ()
 
   private def storeFmtChunk(clip: AudioClip): ByteStreamState[String] =
@@ -42,15 +45,15 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
       _ <- writeLENumber(16, 4)
       _ <- writeLENumber(1, 2)
       _ <- writeLENumber(1, 2)
-      _ <- writeLENumber(44100, 4)
-      _ <- writeLENumber(44100, 4)
+      _ <- writeLENumber(sampleRate, 4)
+      _ <- writeLENumber(sampleRate, 4)
       _ <- writeLENumber(1, 2)
       _ <- writeLENumber(8, 2)
     } yield ()
 
   private def storeRiffHeader(clip: AudioClip): ByteStreamState[String] = for {
     _ <- writeString("RIFF")
-    _ <- writeLENumber(36 + clip.numSamples(44100), 4)
+    _ <- writeLENumber(36 + clip.numSamples(sampleRate), 4)
     _ <- writeString("WAVE")
   } yield ()
 
