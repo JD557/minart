@@ -23,7 +23,7 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
 
   private def assembleChunks(header: Header, data: Vector[Byte]): AudioClip = {
     AudioClip.fromIndexedSeq(
-      data.map(byte => (java.lang.Byte.toUnsignedInt(byte) - 127) / 128.0),
+      data.map(byte => (java.lang.Byte.toUnsignedInt(byte) - 127) / 127.0),
       header.sampleRate.toDouble
     )
   }
