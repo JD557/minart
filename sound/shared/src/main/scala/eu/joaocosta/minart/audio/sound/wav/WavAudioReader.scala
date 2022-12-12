@@ -45,7 +45,7 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
               sampleRate    <- readLENumber(4)
               byteRate      <- readLENumber(4)
               blockAlign    <- readLENumber(2)
-              bitsPerSample <- readLENumber(2)
+              bitsPerSample <- readLENumber(2).validate(_ == 8, b => s"Expected 8 bit sound, got $b bit sound")
               _             <- skipBytes(size - 16)
             } yield Header(numChannels, sampleRate, byteRate, blockAlign, bitsPerSample)
             fmt.flatMap { h =>
