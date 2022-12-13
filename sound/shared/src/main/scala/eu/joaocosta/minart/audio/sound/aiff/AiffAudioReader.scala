@@ -30,7 +30,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
   } yield ChunkHeader(id, size)
 
   private def assembleChunks(commHeader: Header, data: Vector[Byte]): Either[String, AudioClip] = {
-    (commHeader.sampleSize match {
+    val eitherSeq: Either[String, Vector[Double]] = commHeader.sampleSize match {
       case 8 =>
         Right(data.map(byte => byte / Byte.MaxValue.toDouble))
       case 16 =>
@@ -59,7 +59,8 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
         )
       case bitrate =>
         Left(s"Unsupported sample size: $bitrate")
-    }).map { seq =>
+    }
+    eitherSeq.right.map { (seq: Vector[Double]) =>
       AudioClip.fromIndexedSeq(
         seq,
         commHeader.sampleRate

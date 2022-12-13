@@ -22,7 +22,7 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
   private val readId = readString(4)
 
   private def assembleChunks(header: Header, data: Vector[Byte]): Either[String, AudioClip] = {
-    (header.bitsPerSample match {
+    val eitherSeq: Either[String, Vector[Double]] = header.bitsPerSample match {
       case 8 =>
         Right(data.map(byte => (java.lang.Byte.toUnsignedInt(byte) - 127) / Byte.MaxValue.toDouble))
       case 16 =>
@@ -51,7 +51,8 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
         )
       case bitrate =>
         Left(s"Unsupported bits per sample: $bitrate")
-    }).map { seq =>
+    }
+    eitherSeq.right.map { (seq: Vector[Double]) =>
       AudioClip.fromIndexedSeq(
         seq,
         header.sampleRate.toDouble
