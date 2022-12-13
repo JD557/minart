@@ -29,8 +29,43 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
     size <- readBENumber(4)
   } yield ChunkHeader(id, size)
 
-  private def assembleChunks(commHeader: Header, data: Vector[Byte]): AudioClip = {
-    AudioClip.fromIndexedSeq(data.map(byte => byte.toDouble / 127), commHeader.sampleRate)
+  private def assembleChunks(commHeader: Header, data: Vector[Byte]): Either[String, AudioClip] = {
+    val eitherSeq: Either[String, Vector[Double]] = commHeader.sampleSize match {
+      case 8 =>
+        Right(data.map(byte => byte / Byte.MaxValue.toDouble))
+      case 16 =>
+        Right(
+          data
+            .grouped(2)
+            .collect { case Vector(high, low) =>
+              (((high & 0xff) << 8) |
+                (low & 0xff)).toShort
+            }
+            .map(_ / Short.MaxValue.toDouble)
+            .toVector
+        )
+      case 32 =>
+        Right(
+          data
+            .grouped(4)
+            .collect { case vec @ Vector(high, midH, midL, low) =>
+              (((high & 0xff) << 24) |
+                ((midH & 0xff) << 16) |
+                ((midL & 0xff) << 8) |
+                ((low & 0xff)))
+            }
+            .map(_ / Int.MaxValue.toDouble)
+            .toVector
+        )
+      case bitrate =>
+        Left(s"Unsupported sample size: $bitrate")
+    }
+    eitherSeq.right.map { (seq: Vector[Double]) =>
+      AudioClip.fromIndexedSeq(
+        seq,
+        commHeader.sampleRate
+      )
+    }
   }
 
   private def loadChunks(
@@ -38,7 +73,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
       data: Vector[Byte] = Vector.empty
   ): ParseState[String, AudioClip] = {
     if (commHeader.exists(comm => data.size >= comm.numSampleFrames * comm.sampleSize / 8))
-      State.pure(assembleChunks(commHeader.get, data))
+      State.fromEither(assembleChunks(commHeader.get, data))
     else
       loadChunkHeader.flatMap { header =>
         header.id match {
@@ -47,12 +82,15 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
               _               <- State.check(header.size == 18, s"Invalid COMM chunk size: ${header.size}")
               numChannels     <- readBENumber(2).validate(_ == 1, c => s"Expected a Mono AIFF file, got $c channels")
               numSampleFrames <- readBENumber(4)
-              sampleSize      <- readBENumber(2).validate(_ == 8, b => s"Expected a 8 bit AIFF file, got $b bit")
-              sampleRate      <- readExtended
+              sampleSize <- readBENumber(2).validate(
+                Set(8, 16, 32),
+                b => s"Expected a 8, 16 or 32 bit AIFF file, got $b bit"
+              )
+              sampleRate <- readExtended
             } yield Header(numChannels, numSampleFrames, sampleSize, sampleRate)
             comm.flatMap { c =>
               if (data.size >= c.numSampleFrames * c.sampleSize / 8)
-                State.pure(assembleChunks(c, data))
+                State.fromEither(assembleChunks(c, data))
               else loadChunks(Some(c), data)
             }
           case "SSND" =>
@@ -64,7 +102,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
             ssnd.flatMap { s =>
               val newData = data ++ s
               if (commHeader.exists(c => newData.size >= c.sampleSize * c.numSampleFrames))
-                State.pure(assembleChunks(commHeader.get, newData))
+                State.fromEither(assembleChunks(commHeader.get, newData))
               else loadChunks(commHeader, newData)
             }
           case "" => State.error("Reached end of file without all required chunks")
