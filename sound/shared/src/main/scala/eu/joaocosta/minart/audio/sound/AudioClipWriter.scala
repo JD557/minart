@@ -35,6 +35,6 @@ trait AudioClipWriter {
     */
   def toByteArray(clip: AudioClip): Either[String, Array[Byte]] = {
     val os = new ByteArrayOutputStream()
-    storeClip(clip, os).right.map(_ => os.toByteArray)
+    storeClip(clip, os).map(_ => os.toByteArray)
   }
 }

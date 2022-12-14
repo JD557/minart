@@ -28,6 +28,6 @@ trait Loop[S] { self =>
     */
   final def withInitialState(state: S): Loop[Unit] = new Loop[Unit] {
     def run(initialState: Unit): Future[Unit] =
-      self.run(state).map(_ => ())(ExecutionContext.global) // TODO this should probably be parasitic
+      self.run(state).map(_ => ())(ExecutionContext.global) // TODO replace with parasitic on 2.13
   }
 }

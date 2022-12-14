@@ -13,11 +13,6 @@ import eu.joaocosta.minart.backend.defaults._
   */
 trait Resource {
 
-  // Required for scala 2.11
-  protected implicit val sourceReleasable: Releasable[Source] = new Releasable[Source] {
-    def release(source: Source) = source.close()
-  }
-
   /** Path to the resource
     */
   def path: String

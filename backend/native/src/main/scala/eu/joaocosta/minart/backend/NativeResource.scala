@@ -20,7 +20,6 @@ final case class NativeResource(resourcePath: String) extends Resource {
 
   def path = "./" + resourcePath
 
-  // TODO use Try(Source.fromResource(resourcePath)).getOrElse(Source.fromFile(path)) on scala 2.12+
   def unsafeInputStream(): InputStream =
     Try(new BufferedInputStream(new FileInputStream(path)))
       .orElse(Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get))

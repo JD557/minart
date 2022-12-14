@@ -42,7 +42,7 @@ private[minart] trait ByteWriter[ByteStream] {
 private[minart] object ByteWriter {
   object IteratorByteWriter extends ByteWriter[Iterator[Array[Byte]]] {
     def toOutputStream[E](data: ByteStreamState[E], os: OutputStream): Either[E, Unit] =
-      data.run(Iterator.empty).right.map { case (s, _) =>
+      data.run(Iterator.empty).map { case (s, _) =>
         s.foreach(bytes => os.write(bytes))
       }
 

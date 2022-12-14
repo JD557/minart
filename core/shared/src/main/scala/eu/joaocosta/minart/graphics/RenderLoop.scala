@@ -61,7 +61,9 @@ trait RenderLoop[S] { self =>
         canvasSettings: Canvas.Settings,
         initialState: Unit
     ): Future[Unit] =
-      self.run(runner, canvasManager, canvasSettings, state).map(_ => ())(ExecutionContext.global)
+      self
+        .run(runner, canvasManager, canvasSettings, state)
+        .map(_ => ())(ExecutionContext.global) // TODO replace with parasitic on 2.13
   }
 }
 
