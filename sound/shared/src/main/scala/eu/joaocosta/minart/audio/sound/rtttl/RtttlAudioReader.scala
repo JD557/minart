@@ -3,6 +3,7 @@ package eu.joaocosta.minart.audio.sound.rtttl
 import java.io.InputStream
 
 import scala.annotation.tailrec
+import scala.collection.compat._
 import scala.io.Source
 import scala.util.Try
 
@@ -26,7 +27,7 @@ trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
     if (defaultSection.size != 3 || defaultSection.forall(_.size != 2)) {
       Left(s"Invalid default section: $defaultValue")
     } else {
-      val defaultSectionMap = defaultSection.map(entry => entry.head -> Try(entry.last.toInt).toOption).toMap
+      val defaultSectionMap = defaultSection.map(entry => entry.head -> entry.last.toIntOption).toMap
       if (defaultSectionMap.valuesIterator.contains(None)) Left("Failed to parse number in header")
       else {
         val duration = defaultSectionMap.get("d").flatten
@@ -77,7 +78,7 @@ trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
       note,
       if (isDotted) { baseDuration + baseDuration / 2 }
       else baseDuration
-    )).run(data.filter(c => c != '.' && c != ' ')).right.map(_._2)
+    )).run(data.filter(c => c != '.' && c != ' ')).map(_._2)
   }
 
   private def sequenceNotes(notes: Array[Either[String, Note]]): Either[String, AudioClip] = {
@@ -99,7 +100,7 @@ trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
       data     <- readNextSection
       notes = data.split(",").map(parseData(header) _)
       clip <- State.fromEither(sequenceNotes(notes))
-    } yield clip).run(bytes).right.map(_._2)
+    } yield clip).run(bytes).map(_._2)
   }
 }
 
@@ -131,7 +132,7 @@ object RtttlAudioReader {
 
     val readNumber: State[String, Nothing, Option[Int]] =
       readWhile(c => c >= '0' && c <= '9').map { values =>
-        if (values.nonEmpty) Some(values.toInt)
+        if (values.nonEmpty) values.toIntOption
         else None
       }
   }

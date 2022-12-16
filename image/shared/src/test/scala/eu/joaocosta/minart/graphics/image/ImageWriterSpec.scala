@@ -11,12 +11,12 @@ object ImageWriterSpec extends BasicTestSuite {
 
   def roundtripTest(baseResource: Resource, imageFormat: ImageReader with ImageWriter) = {
     val (oldPixels, newPixels) = (for {
-      original <- imageFormat.loadImage(baseResource).get.right.toOption
+      original <- imageFormat.loadImage(baseResource).get
       originalPixels = original.getPixels().map(_.toVector)
-      stored <- imageFormat.toByteArray(original).right.toOption
-      loaded <- imageFormat.fromByteArray(stored).right.toOption
+      stored <- imageFormat.toByteArray(original)
+      loaded <- imageFormat.fromByteArray(stored)
       loadedPixels = loaded.getPixels().map(_.toVector)
-    } yield (originalPixels, loadedPixels)).get
+    } yield (originalPixels, loadedPixels)).toOption.get
 
     assert(oldPixels == newPixels)
   }

@@ -60,7 +60,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
       case bitrate =>
         Left(s"Unsupported sample size: $bitrate")
     }
-    eitherSeq.right.map { (seq: Vector[Double]) =>
+    eitherSeq.map { (seq: Vector[Double]) =>
       AudioClip.fromIndexedSeq(
         seq,
         commHeader.sampleRate
@@ -118,7 +118,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
       formChunk <- loadChunkHeader.validate(_.id == "FORM", c => s"Invalid FORM chunk id: ${c.id}")
       formType  <- readId.validate(_ == "AIFF", t => s"Unsupported formType: $t. Only AIFF is supported.")
       clip      <- loadChunks()
-    } yield clip).run(bytes).right.map(_._2)
+    } yield clip).run(bytes).map(_._2)
   }
 
 }

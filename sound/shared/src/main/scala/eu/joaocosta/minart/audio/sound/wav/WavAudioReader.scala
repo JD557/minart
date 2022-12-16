@@ -52,7 +52,7 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
       case bitrate =>
         Left(s"Unsupported bits per sample: $bitrate")
     }
-    eitherSeq.right.map { (seq: Vector[Double]) =>
+    eitherSeq.map { (seq: Vector[Double]) =>
       AudioClip.fromIndexedSeq(
         seq,
         header.sampleRate.toDouble
@@ -112,7 +112,7 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
     (for {
       _    <- loadRiffHeader
       clip <- loadChunks()
-    } yield clip).run(bytes).right.map(_._2)
+    } yield clip).run(bytes).map(_._2)
   }
 
 }
