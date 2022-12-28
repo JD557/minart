@@ -41,15 +41,17 @@ object Audio {
       .zipWith(bass, (high, low) => high * 0.7 + low * 0.3)
 }
 
+val audioPlayer = AudioPlayer.create(AudioPlayer.Settings())
+
 ImpureRenderLoop
   .statelessRenderLoop(
     canvas => {
       // When someone presses "Space", we send our sound wave to the queue
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
-        AudioPlayer().play(Audio.testSample)
+        audioPlayer.play(Audio.testSample)
       // When someone presses "Backspace", we stop the audio player
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
-        AudioPlayer().stop()
+        audioPlayer.stop()
       canvas.clear()
       canvas.fill(Color(0, 128, 0))
       canvas.redraw()

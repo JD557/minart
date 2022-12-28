@@ -7,16 +7,24 @@ import scala.concurrent._
 
 import eu.joaocosta.minart.audio._
 
-object JavaAudioPlayer extends AudioPlayer {
-  private val sampleRate = 44100
-  private val bufferSize = 4096
-
-  private val playQueue      = new AudioPlayer.MultiChannelAudioQueue(sampleRate)
-  private val format         = new AudioFormat(sampleRate.toFloat, 8, 1, true, false)
-  private val sourceDataLine = AudioSystem.getSourceDataLine(format)
-  private var init           = false
+class JavaAudioPlayer() extends LowLevelAudioPlayer {
+  private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
+  private var sourceDataLine: SourceDataLine                = _
 
   private implicit val ec: ExecutionContext = ExecutionContext.global
+
+  protected def unsafeInit(settings: AudioPlayer.Settings): Unit = {
+    val format = new AudioFormat(settings.sampleRate.toFloat, 8, 1, true, false)
+    playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
+    sourceDataLine = AudioSystem.getSourceDataLine(format)
+    sourceDataLine.open(format, settings.bufferSize)
+    sourceDataLine.start()
+  }
+
+  protected def unsafeDestroy(): Unit = {
+    stop()
+    sourceDataLine.close()
+  }
 
   private def callback(): Future[Unit] = Future {
     if (playQueue.nonEmpty) {
@@ -37,14 +45,7 @@ object JavaAudioPlayer extends AudioPlayer {
   def play(clip: AudioClip, channel: Int): Unit = {
     val alreadyPlaying = isPlaying()
     playQueue.enqueue(clip, channel)
-    if (!init) {
-      sourceDataLine.open(format, bufferSize)
-      sourceDataLine.start()
-      init = true
-    }
-    if (!alreadyPlaying) {
-      callback()
-    }
+    if (!alreadyPlaying) callback()
   }
 
   def isPlaying(): Boolean = playQueue.nonEmpty
