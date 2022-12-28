@@ -19,14 +19,16 @@ import eu.joaocosta.minart.backend.defaults._
  */
 val clip = Sound.loadAiffClip(Resource("assets/sample.aiff")).get
 
+val audioPlayer = AudioPlayer.create(AudioPlayer.Settings())
+
 // Same logic as the audio example
 ImpureRenderLoop
   .statelessRenderLoop(
     canvas => {
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
-        AudioPlayer().play(clip)
+        audioPlayer.play(clip)
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
-        AudioPlayer().stop()
+        audioPlayer.stop()
       canvas.clear()
       canvas.fill(Color(0, 128, 0))
       canvas.redraw()

@@ -9,8 +9,8 @@ package object defaults {
   implicit lazy val defaultLoopRunner: DefaultBackend[Any, SdlLoopRunner.type] =
     DefaultBackend.fromConstant(SdlLoopRunner)
 
-  implicit lazy val defaultAudioPlayer: DefaultBackend[Any, SdlAudioPlayer.type] =
-    DefaultBackend.fromConstant(SdlAudioPlayer)
+  implicit lazy val defaultAudioPlayer: DefaultBackend[Any, SdlAudioPlayer] =
+    DefaultBackend.fromFunction((_) => new SdlAudioPlayer())
 
   implicit lazy val defaultPlatform: DefaultBackend[Any, Platform.Native.type] =
     DefaultBackend.fromConstant(Platform.Native)

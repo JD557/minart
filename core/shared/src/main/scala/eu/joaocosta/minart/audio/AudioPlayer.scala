@@ -26,8 +26,15 @@ trait AudioPlayer {
 }
 
 object AudioPlayer {
-  def apply()(implicit backend: DefaultBackend[Any, AudioPlayer]): AudioPlayer =
-    backend.defaultValue()
+
+  /** Returns a new [[AudioPlayer]] for the default backend for the target platform.
+    *
+    * @return [[AudioPlayer]] using the default backend for the target platform
+    */
+  def create(settings: AudioPlayer.Settings)(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
+    AudioPlayerManager().init(settings)
+
+  case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
 
   sealed trait AudioQueue {
     def isEmpty: Boolean
