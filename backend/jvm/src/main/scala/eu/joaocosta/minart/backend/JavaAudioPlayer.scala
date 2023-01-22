@@ -13,12 +13,13 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
 
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  protected def unsafeInit(settings: AudioPlayer.Settings): Unit = {
+  protected def unsafeInit(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
     val format = new AudioFormat(settings.sampleRate.toFloat, 8, 1, true, false)
     playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
     sourceDataLine = AudioSystem.getSourceDataLine(format)
     sourceDataLine.open(format, settings.bufferSize)
     sourceDataLine.start()
+    settings
   }
 
   protected def unsafeDestroy(): Unit = {

@@ -1,44 +1,14 @@
 package eu.joaocosta.minart.graphics
 
 import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.subsystem.LowLevelSubsystem
 
 /** A low-level version of a canvas that provides its own manager.
   */
-trait LowLevelCanvas extends Canvas with AutoCloseable {
-  protected[this] var extendedSettings: LowLevelCanvas.ExtendedSettings = _
-  def settings: Canvas.Settings =
-    if (extendedSettings == null) Canvas.Settings(0, 0)
-    else extendedSettings.settings
-
-  protected def unsafeInit(settings: Canvas.Settings): Unit
-  protected def unsafeDestroy(): Unit
-
-  /** Checks if the window is created or if it has been destroyed
-    */
-  def isCreated(): Boolean = !(extendedSettings == null)
-
-  /** Creates the canvas window.
-    *
-    * Rendering operations can only be called after calling this.
-    */
-  def init(settings: Canvas.Settings): Unit = {
-    if (isCreated()) {
-      close()
-    }
-    if (!isCreated()) {
-      unsafeInit(settings)
-    }
-  }
-
-  /** Destroys the canvas window.
-    *
-    * Calling any operation on this canvas after calling close() without calling
-    * init() has an undefined behavior.
-    */
-  def close(): Unit = if (isCreated()) {
-    unsafeDestroy()
-    extendedSettings = null
-  }
+trait LowLevelCanvas extends Canvas with LowLevelSubsystem.Extended[Canvas.Settings, LowLevelCanvas.ExtendedSettings] {
+  protected lazy val defaultSettings = LowLevelCanvas.ExtendedSettings(Canvas.Settings(0, 0))
+  protected def elideSettings(extendedSettings: LowLevelCanvas.ExtendedSettings): Canvas.Settings =
+    extendedSettings.settings
 }
 
 object LowLevelCanvas {

@@ -67,13 +67,14 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings) = {
+  def unsafeInit(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     SDL_InitSubSystem(SDL_INIT_VIDEO)
     changeSettings(newSettings)
+    extendedSettings
   }
 
-  def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
-    extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+  def changeSettings(newSettings: Canvas.Settings) = if (!isCreated() || newSettings != settings) {
+    _extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
@@ -94,7 +95,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
       SDL_CreateRGBSurface(0.toUInt, newSettings.width, newSettings.height, 32, 0.toUInt, 0.toUInt, 0.toUInt, 0.toUInt)
     )
     keyboardInput = KeyboardInput(Set(), Set(), Set())
-    extendedSettings = extendedSettings.copy(
+    _extendedSettings = extendedSettings.copy(
       windowWidth = windowSurface.w,
       windowHeight = windowSurface.h
     )

@@ -14,8 +14,9 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
   private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
   private var callbackRegistered                            = false
 
-  protected def unsafeInit(settings: AudioPlayer.Settings): Unit = {
+  protected def unsafeInit(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
     playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
+    settings
   }
 
   protected def unsafeDestroy(): Unit = {

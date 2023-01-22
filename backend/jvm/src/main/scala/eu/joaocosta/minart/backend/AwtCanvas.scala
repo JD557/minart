@@ -60,13 +60,14 @@ class AwtCanvas() extends SurfaceBackedCanvas {
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+  def unsafeInit(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     changeSettings(newSettings)
+    extendedSettings
   }
 
-  def changeSettings(newSettings: Canvas.Settings) = {
-    if (extendedSettings == null || newSettings != settings) {
-      extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+  def changeSettings(newSettings: Canvas.Settings): Unit = {
+    if (!isCreated() || newSettings != settings) {
+      _extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
       val image = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_ARGB)
       surface = new BufferedImageSurface(image)
       if (javaCanvas != null) javaCanvas.frame.dispose()
@@ -77,7 +78,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
         newSettings.title,
         this
       )
-      extendedSettings = extendedSettings.copy(
+      _extendedSettings = extendedSettings.copy(
         windowWidth = javaCanvas.getWidth,
         windowHeight = javaCanvas.getHeight
       )

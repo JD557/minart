@@ -44,7 +44,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+  def unsafeInit(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     containerDiv.appendChild(canvas)
@@ -92,12 +92,13 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
         handleMove(ev.clientX.toInt, ev.clientY.toInt)
       }
     )
+    extendedSettings
   }
 
-  def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
+  def changeSettings(newSettings: Canvas.Settings) = if (!isCreated() || newSettings != settings) {
     val oldSettings   = settings
     val clearColorStr = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
-    extendedSettings =
+    _extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
     canvas.width = newSettings.width
     canvas.height = newSettings.height

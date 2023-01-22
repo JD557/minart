@@ -20,7 +20,7 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
   private var callbackRegistered                            = false
 
-  protected def unsafeInit(settings: AudioPlayer.Settings): Unit = {
+  protected def unsafeInit(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
     playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
     SDL_InitSubSystem(SDL_INIT_AUDIO)
     val want = stackalloc[SDL_AudioSpec]()
@@ -31,6 +31,7 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
     want.samples = settings.bufferSize.toUShort
     want.callback = null // Ideally this should use a SDL callback
     device = SDL_OpenAudioDevice(null, 0, want, have, 0)
+    settings
   }
 
   protected def unsafeDestroy(): Unit = {
