@@ -14,7 +14,10 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
   private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
   private var callbackRegistered                            = false
 
-  protected def unsafeInit(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
+  protected def unsafeInit() = {}
+
+  protected def unsafeApplySettings(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
+    // TODO this should probably stop the running audio
     playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
     settings
   }

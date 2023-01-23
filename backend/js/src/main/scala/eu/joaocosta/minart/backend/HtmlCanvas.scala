@@ -44,13 +44,12 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
+  protected def unsafeInit(): Unit = {
     containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     containerDiv.appendChild(canvas)
     childNode = parentNode.appendChild(containerDiv)
     ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-    changeSettings(newSettings)
     dom.document.addEventListener[Event](
       "fullscreenchange",
       (_: Event) => if (dom.document.fullscreenElement == null) changeSettings(settings.copy(fullScreen = false))
@@ -92,13 +91,12 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
         handleMove(ev.clientX.toInt, ev.clientY.toInt)
       }
     )
-    extendedSettings
   }
 
-  def changeSettings(newSettings: Canvas.Settings) = if (!isCreated() || newSettings != settings) {
+  protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val oldSettings   = settings
     val clearColorStr = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
-    _extendedSettings =
+    val extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
     canvas.width = newSettings.width
     canvas.height = newSettings.height
@@ -130,11 +128,12 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     ctx.fillStyle = clearColorStr
     ctx.fillRect(0, 0, newSettings.width, newSettings.height)
     clear(Set(Canvas.Buffer.Backbuffer))
+    extendedSettings
   }
 
   // Cleanup
 
-  def unsafeDestroy(): Unit = if (childNode != null) {
+  protected def unsafeDestroy(): Unit = if (childNode != null) {
     parentNode.removeChild(childNode)
     childNode = null
   }

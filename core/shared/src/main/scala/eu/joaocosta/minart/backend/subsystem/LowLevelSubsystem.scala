@@ -18,6 +18,10 @@ trait LowLevelSubsystem[Settings] extends AutoCloseable {
     */
   def init(settings: Settings): Unit
 
+  /** Changes the settings of the subsystem
+    */
+  def changeSettings(newSettings: Settings): Unit
+
   /** Destroys the subsystem.
     *
     * Calling any operation on this object after calling close() without calling
@@ -39,7 +43,13 @@ object LowLevelSubsystem {
     /** Unsafe implementation of the subsystem init.
       * Should return the new settings
       */
-    protected def unsafeInit(settings: Settings): Settings
+    protected def unsafeInit(): Unit
+
+    /** Configures the subsystem according to the settings and returns the applied settings
+      *
+      * This method assumes that the subsystem is initialized.
+      */
+    protected def unsafeApplySettings(settings: Settings): Settings
 
     /** Unsafe implementation of the subsystem destroy.
       */
@@ -57,9 +67,14 @@ object LowLevelSubsystem {
         close()
       }
       if (!isCreated()) {
-        _settings = unsafeInit(settings)
+        unsafeInit()
+        _settings = unsafeApplySettings(settings)
         _isCreated = true
       }
+    }
+
+    def changeSettings(newSettings: Settings): Unit = if (isCreated() && settings != settings) {
+      _settings = unsafeApplySettings(settings)
     }
 
     def close(): Unit = if (isCreated()) {
@@ -84,9 +99,11 @@ object LowLevelSubsystem {
     protected def defaultSettings: ExtendedSettings
 
     /** Unsafe implementation of the subsystem init.
-      * Should return the new extended settings
       */
-    protected def unsafeInit(settings: Settings): ExtendedSettings
+    protected def unsafeInit(): Unit
+
+    /** Configures the subsystem according to the settings and returns the applied extended settings */
+    protected def unsafeApplySettings(settings: Settings): ExtendedSettings
 
     /** Unsafe implementation of the subsystem destroy.
       */
@@ -105,9 +122,14 @@ object LowLevelSubsystem {
         close()
       }
       if (!isCreated()) {
-        _extendedSettings = unsafeInit(settings)
+        unsafeInit()
+        _extendedSettings = unsafeApplySettings(settings)
         _isCreated = true
       }
+    }
+
+    def changeSettings(newSettings: Settings): Unit = if (isCreated() && newSettings != settings) {
+      _extendedSettings = unsafeApplySettings(settings)
     }
 
     def close(): Unit = if (isCreated()) {

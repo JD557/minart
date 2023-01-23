@@ -20,9 +20,13 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
   private var callbackRegistered                            = false
 
-  protected def unsafeInit(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
-    playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
+  protected def unsafeInit(): Unit = {
     SDL_InitSubSystem(SDL_INIT_AUDIO)
+  }
+
+  protected def unsafeApplySettings(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
+    // TODO this should probably stop the running audio
+    playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
     val want = stackalloc[SDL_AudioSpec]()
     val have = stackalloc[SDL_AudioSpec]()
     want.freq = settings.sampleRate

@@ -67,14 +67,12 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
+  protected def unsafeInit(): Unit = {
     SDL_InitSubSystem(SDL_INIT_VIDEO)
-    changeSettings(newSettings)
-    extendedSettings
   }
 
-  def changeSettings(newSettings: Canvas.Settings) = if (!isCreated() || newSettings != settings) {
-    _extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+  protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
+    val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
@@ -95,11 +93,11 @@ class SdlCanvas() extends SurfaceBackedCanvas {
       SDL_CreateRGBSurface(0.toUInt, newSettings.width, newSettings.height, 32, 0.toUInt, 0.toUInt, 0.toUInt, 0.toUInt)
     )
     keyboardInput = KeyboardInput(Set(), Set(), Set())
-    _extendedSettings = extendedSettings.copy(
+    val fullExtendedSettings = extendedSettings.copy(
       windowWidth = windowSurface.w,
       windowHeight = windowSurface.h
     )
-    (0 until extendedSettings.windowHeight * extendedSettings.windowWidth).foreach { i =>
+    (0 until fullExtendedSettings.windowHeight * fullExtendedSettings.windowWidth).foreach { i =>
       val baseAddr = i * 4
       windowSurface.pixels(baseAddr + 0) = ubyteClearB.toByte
       windowSurface.pixels(baseAddr + 1) = ubyteClearG.toByte
@@ -107,11 +105,12 @@ class SdlCanvas() extends SurfaceBackedCanvas {
       windowSurface.pixels(baseAddr + 3) = 255.toByte
     }
     clear(Set(Canvas.Buffer.Backbuffer))
+    fullExtendedSettings
   }
 
   // Cleanup
 
-  def unsafeDestroy() = {
+  protected def unsafeDestroy() = {
     SDL_Quit()
   }
 
