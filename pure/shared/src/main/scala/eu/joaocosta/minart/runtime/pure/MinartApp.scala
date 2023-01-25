@@ -7,7 +7,7 @@ import eu.joaocosta.minart.runtime._
 /** Entrypoint for pure Minart applications. */
 trait MinartApp {
   type State
-  def canvasManager: CanvasManager
+  def createCanvas: () => LowLevelCanvas
   def canvasSettings: Canvas.Settings
   def loopRunner: LoopRunner
   def initialState: State
@@ -20,7 +20,7 @@ trait MinartApp {
       .statefulRenderLoop[State](renderFrame, frameRate, terminateWhen)
       .run(
         loopRunner,
-        canvasManager,
+        createCanvas,
         canvasSettings,
         initialState
       )

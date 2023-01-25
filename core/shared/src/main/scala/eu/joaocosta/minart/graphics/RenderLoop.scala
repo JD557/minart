@@ -14,21 +14,26 @@ trait RenderLoop[S] { self =>
   /** Runs this render loop with a custom loop runner and canvas manager.
     *
     * @param runner custom loop runner to use
-    * @param canvasManager custom canvas manager to use to create a new canvas
+    * @param createCanvas operation to create a new canvas
     * @param canvasSettings settings to use to build the canvas
     * @param initalState initial render loop state
     */
-  def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings, initialState: S): Future[S]
+  def run(
+      runner: LoopRunner,
+      createCanvas: () => LowLevelCanvas,
+      canvasSettings: Canvas.Settings,
+      initialState: S
+  ): Future[S]
 
   /** Runs this render loop with a custom loop runner and canvas manager.
     *
     * @param runner custom loop runner to use
-    * @param canvasManager custom canvas manager to use to create a new canvas
+    * @param createCanvas operation to create a new canvas
     * @param canvasSettings settings to use to build the canvas
     */
-  final def run(runner: LoopRunner, canvasManager: CanvasManager, canvasSettings: Canvas.Settings)(implicit
+  final def run(runner: LoopRunner, createCanvas: () => LowLevelCanvas, canvasSettings: Canvas.Settings)(implicit
       ev: Unit =:= S
-  ): Future[S] = run(runner, canvasManager, canvasSettings, ev(()))
+  ): Future[S] = run(runner, createCanvas, canvasSettings, ev(()))
 
   /** Runs this render loop.
     *
@@ -39,7 +44,7 @@ trait RenderLoop[S] { self =>
       lr: DefaultBackend[Any, LoopRunner],
       cm: DefaultBackend[Any, LowLevelCanvas]
   ): Future[S] =
-    run(LoopRunner(), CanvasManager(), canvasSettings, initialState)
+    run(LoopRunner(), () => LowLevelCanvas.create(), canvasSettings, initialState)
 
   /** Runs this render loop.
     *
@@ -52,17 +57,17 @@ trait RenderLoop[S] { self =>
 
   /** Converts this render loop to a stateless render loop, with a predefined initial state.
     *
-    * @param initalState initial render loop state
+    * @param state initial render loop state
     */
   def withInitialState(state: S): RenderLoop[Unit] = new RenderLoop[Unit] {
     def run(
         runner: LoopRunner,
-        canvasManager: CanvasManager,
+        createCanvas: () => LowLevelCanvas,
         canvasSettings: Canvas.Settings,
         initialState: Unit
     ): Future[Unit] =
       self
-        .run(runner, canvasManager, canvasSettings, state)
+        .run(runner, createCanvas, canvasSettings, state)
         .map(_ => ())(ExecutionContext.global) // TODO replace with parasitic on 2.13
   }
 }

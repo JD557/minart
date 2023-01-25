@@ -23,11 +23,11 @@ import eu.joaocosta.minart.runtime.pure._
  * To do so, you need to fill the required variables
  */
 object PureColorSquare extends MinartApp {
-  /* The LoopRunner and CanvasManager are low level primitives from the backend.
+  /* The LoopRunner and LowLevelCanvas are low level primitives from the backend.
    * It is recommended to just use the default values here
    */
   val loopRunner    = LoopRunner()
-  val canvasManager = CanvasManager()
+  val createCanvas = () => LowLevelCanvas.create()
 
   /*
    * The state must always be defined.

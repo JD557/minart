@@ -14,11 +14,11 @@ object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
     new RenderLoop[S] {
       def run(
           runner: LoopRunner,
-          canvasManager: CanvasManager,
+          createCanvas: () => LowLevelCanvas,
           canvasSettings: Canvas.Settings,
           initialState: S
       ): Future[S] = {
-        val canvas = canvasManager.init(canvasSettings)
+        val canvas = createCanvas().init(canvasSettings)
         runner
           .finiteLoop(
             (state: S) => renderFrame(canvas, state),

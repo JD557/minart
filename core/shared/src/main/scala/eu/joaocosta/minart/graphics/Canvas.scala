@@ -57,7 +57,7 @@ object Canvas {
     * @return [[Canvas]] using the default backend for the target platform
     */
   def create(settings: Canvas.Settings)(implicit backend: DefaultBackend[Any, LowLevelCanvas]): Canvas =
-    CanvasManager().init(settings)
+    LowLevelCanvas.create().init(settings)
 
   /** A system resource used by the Canvas.
     */

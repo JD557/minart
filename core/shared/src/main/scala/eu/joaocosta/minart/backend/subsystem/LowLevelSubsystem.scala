@@ -16,7 +16,7 @@ trait LowLevelSubsystem[Settings] extends AutoCloseable {
     *
     * Operations can only be called after calling this.
     */
-  def init(settings: Settings): Unit
+  def init(settings: Settings): this.type
 
   /** Changes the settings of the subsystem
     */
@@ -62,7 +62,7 @@ object LowLevelSubsystem {
 
     def isCreated(): Boolean = _isCreated
 
-    def init(settings: Settings): Unit = {
+    def init(settings: Settings): this.type = {
       if (isCreated()) {
         close()
       }
@@ -71,6 +71,7 @@ object LowLevelSubsystem {
         _settings = unsafeApplySettings(settings)
         _isCreated = true
       }
+      this
     }
 
     def changeSettings(newSettings: Settings): Unit = if (isCreated() && settings != settings) {
@@ -117,7 +118,7 @@ object LowLevelSubsystem {
 
     def isCreated(): Boolean = _isCreated
 
-    def init(settings: Settings): Unit = {
+    def init(settings: Settings): this.type = {
       if (isCreated()) {
         close()
       }
@@ -126,6 +127,7 @@ object LowLevelSubsystem {
         _extendedSettings = unsafeApplySettings(settings)
         _isCreated = true
       }
+      this
     }
 
     def changeSettings(newSettings: Settings): Unit = if (isCreated() && newSettings != settings) {
