@@ -3,73 +3,30 @@ package eu.joaocosta.minart.graphics
 import scala.concurrent.{ExecutionContext, Future}
 
 import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.subsystem._
 import eu.joaocosta.minart.runtime._
 
 /** Render loop that keeps an internal state that is passed to every iteration.
-  *
-  * @tparam S State
   */
-trait RenderLoop[S] { self =>
+trait RenderLoop[State, Subsystem] {
 
-  /** Runs this render loop with a custom loop runner and canvas manager.
+  /** Runs this render loop with a custom loop runner and a set of subsystems.
     *
     * @param runner custom loop runner to use
-    * @param createCanvas operation to create a new canvas
-    * @param canvasSettings settings to use to build the canvas
-    * @param initalState initial render loop state
+    * @param createSubsystems operation to create the subsystems
     */
   def run(
       runner: LoopRunner,
-      createCanvas: () => LowLevelCanvas,
-      canvasSettings: Canvas.Settings,
-      initialState: S
-  ): Future[S]
+      createSubsystems: () => Subsystem
+  ): Future[State]
 
-  /** Runs this render loop with a custom loop runner and canvas manager.
-    *
-    * @param runner custom loop runner to use
-    * @param createCanvas operation to create a new canvas
-    * @param canvasSettings settings to use to build the canvas
+  /** Runs this render loop usinf the default loop runner and subsystems.
     */
-  final def run(runner: LoopRunner, createCanvas: () => LowLevelCanvas, canvasSettings: Canvas.Settings)(implicit
-      ev: Unit =:= S
-  ): Future[S] = run(runner, createCanvas, canvasSettings, ev(()))
-
-  /** Runs this render loop.
-    *
-    * @param canvasSettings settings to use to build the canvas
-    * @param initalState initial render loop state
-    */
-  final def run(canvasSettings: Canvas.Settings, initialState: S)(implicit
+  final def run()(implicit
       lr: DefaultBackend[Any, LoopRunner],
-      cm: DefaultBackend[Any, LowLevelCanvas]
-  ): Future[S] =
-    run(LoopRunner(), () => LowLevelCanvas.create(), canvasSettings, initialState)
-
-  /** Runs this render loop.
-    *
-    * @param canvasSettings settings to use to build the canvas
-    */
-  final def run(
-      canvasSettings: Canvas.Settings
-  )(implicit lr: DefaultBackend[Any, LoopRunner], cm: DefaultBackend[Any, LowLevelCanvas], ev: Unit =:= S): Future[S] =
-    run(canvasSettings, ev(()))
-
-  /** Converts this render loop to a stateless render loop, with a predefined initial state.
-    *
-    * @param state initial render loop state
-    */
-  def withInitialState(state: S): RenderLoop[Unit] = new RenderLoop[Unit] {
-    def run(
-        runner: LoopRunner,
-        createCanvas: () => LowLevelCanvas,
-        canvasSettings: Canvas.Settings,
-        initialState: Unit
-    ): Future[Unit] =
-      self
-        .run(runner, createCanvas, canvasSettings, state)
-        .map(_ => ())(ExecutionContext.global) // TODO replace with parasitic on 2.13
-  }
+      ss: DefaultBackend[Any, Subsystem]
+  ): Future[State] =
+    run(LoopRunner(), () => ss.defaultValue())
 }
 
 object RenderLoop {
@@ -86,29 +43,56 @@ object RenderLoop {
       *  terminating when a certain condition is reached.
       *
       * @param renderFrame operation to render the frame and update the state
-      * @param frameRate frame rate limit
       * @param terminateWhen loop termination check
       */
-    def statefulRenderLoop[S](
-        renderFrame: F2[Canvas, S, S],
-        frameRate: LoopFrequency,
-        terminateWhen: S => Boolean = (_: S) => false
-    ): RenderLoop[S]
+    def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
+        renderFrame: F2[Subsystem, State, State],
+        terminateWhen: State => Boolean = (_: State) => false
+    ): RenderLoop.Definition[State, Settings, Subsystem]
 
     /** Creates a render loop that keeps no state.
       *
       * @param renderFrame operation to render the frame
       * @param frameRate frame rate limit
       */
-    def statelessRenderLoop(
-        renderFrame: F1[Canvas, Unit],
-        frameRate: LoopFrequency
-    ): RenderLoop[Unit]
+    def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
+        renderFrame: F1[Subsystem, Unit]
+    ): RenderLoop.Definition[Unit, Settings, Subsystem]
 
-    /** Renders a single frame.
-      *
-      * @param renderFrame operation to render the frame and update the state
-      */
-    def singleFrame(renderFrame: F1[Canvas, Unit]): RenderLoop[Unit]
+    def statefulRenderLoop[State](
+        renderFrame: F2[Canvas, State, State],
+        terminateWhen: State => Boolean = (_: State) => false
+    ): RenderLoop.Definition[State, Canvas.Settings, LowLevelCanvas] =
+      statefulLoop[State, Canvas.Settings, LowLevelCanvas](
+        renderFrame,
+        terminateWhen
+      )
+
+    def statelessRenderLoop(
+        renderFrame: F1[Canvas, Unit]
+    ): RenderLoop.Definition[Unit, Canvas.Settings, LowLevelCanvas] =
+      statelessLoop[Canvas.Settings, LowLevelCanvas](
+        renderFrame
+      )
+  }
+
+  /** Render loop definition that takes the initial settings, initial state
+    * and loop frequency.
+    */
+  trait Definition[State, Settings, Subsystem] {
+
+    /** Applies the following definitions to the render loop */
+    def withDefinitions(
+        initialSettings: Settings,
+        frameRate: LoopFrequency,
+        initialState: State
+    ): RenderLoop[State, Subsystem]
+
+    /** Applies the following definitions to the render loop */
+    def withDefinitions(
+        initialSettings: Settings,
+        frameRate: LoopFrequency
+    )(implicit ev: Unit =:= State): RenderLoop[State, Subsystem] = withDefinitions(initialSettings, frameRate, ev(()))
+
   }
 }

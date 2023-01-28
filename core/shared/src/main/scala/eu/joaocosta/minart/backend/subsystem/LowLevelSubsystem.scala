@@ -140,4 +140,27 @@ object LowLevelSubsystem {
       _extendedSettings = defaultSettings
     }
   }
+
+  final case class Composite[SettingsA, SettingsB, SubsystemA <: LowLevelSubsystem[
+    SettingsA
+  ], SubsystemB <: LowLevelSubsystem[SettingsB]](
+      subsystemA: LowLevelSubsystem[SettingsA],
+      subsystemB: LowLevelSubsystem[SettingsB]
+  ) extends LowLevelSubsystem[(SettingsA, SettingsB)] {
+    def settings: (SettingsA, SettingsB) = (subsystemA.settings, subsystemB.settings)
+    def isCreated(): Boolean             = subsystemA.isCreated() && subsystemB.isCreated()
+    def init(settings: (SettingsA, SettingsB)): this.type = {
+      subsystemA.init(settings._1)
+      subsystemB.init(settings._2)
+      this
+    }
+    def changeSettings(newSettings: (SettingsA, SettingsB)): Unit = {
+      subsystemA.changeSettings(newSettings._1)
+      subsystemB.changeSettings(newSettings._2)
+    }
+    def close(): Unit = {
+      subsystemA.close()
+      subsystemB.close()
+    }
+  }
 }

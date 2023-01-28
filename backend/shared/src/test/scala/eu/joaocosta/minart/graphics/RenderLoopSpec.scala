@@ -35,14 +35,16 @@ object RenderLoopTests extends BasicTestSuite {
           renderCount += 1
           state + 1
         },
-        terminateWhen = _ >= 5,
-        frameRate = LoopFrequency.Uncapped
+        terminateWhen = _ >= 5
+      )
+      .withDefinitions(
+        initialSettings = Canvas.Settings(4, 4),
+        frameRate = LoopFrequency.Uncapped,
+        initialState = 0
       )
       .run(
         runner = LoopRunner(),
-        createCanvas = () => TestCanvas,
-        canvasSettings = Canvas.Settings(4, 4),
-        initialState = 0
+        createSubsystems = () => TestCanvas
       )
       .map { _ =>
         assert(renderCount == 5)

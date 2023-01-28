@@ -2,41 +2,41 @@ package eu.joaocosta.minart.graphics
 
 import scala.concurrent.Future
 
+import eu.joaocosta.minart.backend.subsystem._
 import eu.joaocosta.minart.runtime._
 
 /** A render loop that takes a side-effectful renderFrame operation. */
 object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
-  def statefulRenderLoop[S](
-      renderFrame: (Canvas, S) => S,
-      frameRate: LoopFrequency,
-      terminateWhen: S => Boolean = (_: S) => false
-  ): RenderLoop[S] = {
-    new RenderLoop[S] {
-      def run(
-          runner: LoopRunner,
-          createCanvas: () => LowLevelCanvas,
-          canvasSettings: Canvas.Settings,
-          initialState: S
-      ): Future[S] = {
-        val canvas = createCanvas().init(canvasSettings)
-        runner
-          .finiteLoop(
-            (state: S) => renderFrame(canvas, state),
-            (newState: S) => terminateWhen(newState) || !canvas.isCreated(),
-            frameRate,
-            () => if (canvas.isCreated()) canvas.close()
-          )
-          .run(initialState)
+  def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
+      renderFrame: (Subsystem, State) => State,
+      terminateWhen: State => Boolean = (_: State) => false
+  ): RenderLoop.Definition[State, Settings, Subsystem] = {
+    new RenderLoop.Definition[State, Settings, Subsystem] {
+      def withDefinitions(
+          initialSettings: Settings,
+          frameRate: LoopFrequency,
+          initialState: State
+      ): RenderLoop[State, Subsystem] = new RenderLoop[State, Subsystem] {
+        def run(
+            runner: LoopRunner,
+            createSubsystem: () => Subsystem
+        ): Future[State] = {
+          val subsystem = createSubsystem().init(initialSettings)
+          runner
+            .finiteLoop(
+              (state: State) => renderFrame(subsystem, state),
+              (newState: State) => terminateWhen(newState) || !subsystem.isCreated(),
+              frameRate,
+              () => if (subsystem.isCreated()) subsystem.close()
+            )
+            .run(initialState)
+        }
       }
     }
   }
 
-  def statelessRenderLoop(
-      renderFrame: Canvas => Unit,
-      frameRate: LoopFrequency
-  ): RenderLoop[Unit] =
-    statefulRenderLoop[Unit]((c: Canvas, _: Unit) => renderFrame(c), frameRate)
-
-  def singleFrame(renderFrame: Canvas => Unit): RenderLoop[Unit] =
-    statelessRenderLoop(renderFrame, LoopFrequency.Never)
+  def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
+      renderFrame: Subsystem => Unit
+  ): RenderLoop.Definition[Unit, Settings, Subsystem] =
+    statefulLoop[Unit, Settings, Subsystem]((s: Subsystem, _: Unit) => renderFrame(s))
 }

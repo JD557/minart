@@ -17,12 +17,15 @@ trait MinartApp {
 
   def main(args: Array[String]): Unit = {
     PureRenderLoop
-      .statefulRenderLoop[State](renderFrame, frameRate, terminateWhen)
+      .statefulRenderLoop[State](renderFrame)
+      .withDefinitions(
+        canvasSettings,
+        frameRate,
+        initialState
+      )
       .run(
         loopRunner,
-        createCanvas,
-        canvasSettings,
-        initialState
+        createCanvas
       )
   }
 }
