@@ -37,7 +37,7 @@ object RenderLoopTests extends BasicTestSuite {
         },
         terminateWhen = _ >= 5
       )
-      .withDefinitions(
+      .configure(
         initialSettings = Canvas.Settings(4, 4),
         frameRate = LoopFrequency.Uncapped,
         initialState = 0

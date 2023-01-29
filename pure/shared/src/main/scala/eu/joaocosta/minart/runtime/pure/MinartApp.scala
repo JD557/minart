@@ -18,7 +18,7 @@ trait MinartApp {
   def main(args: Array[String]): Unit = {
     PureRenderLoop
       .statefulRenderLoop[State](renderFrame)
-      .withDefinitions(
+      .configure(
         canvasSettings,
         frameRate,
         initialState

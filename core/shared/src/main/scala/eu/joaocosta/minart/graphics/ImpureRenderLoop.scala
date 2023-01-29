@@ -12,7 +12,7 @@ object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
       terminateWhen: State => Boolean = (_: State) => false
   ): RenderLoop.Definition[State, Settings, Subsystem] = {
     new RenderLoop.Definition[State, Settings, Subsystem] {
-      def withDefinitions(
+      def configure(
           initialSettings: Settings,
           frameRate: LoopFrequency,
           initialState: State
