@@ -16,8 +16,8 @@ trait MinartApp {
   def frameRate: LoopFrequency
 
   def main(args: Array[String]): Unit = {
-    PureRenderLoop
-      .statefulRenderLoop[State](renderFrame)
+    AppLoop
+      .statefulRenderLoop[State, RIO, StateRIO](renderFrame)
       .configure(
         canvasSettings,
         frameRate,

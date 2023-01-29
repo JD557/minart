@@ -1,4 +1,4 @@
-package eu.joaocosta.minart.graphics
+package eu.joaocosta.minart.runtime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -6,10 +6,11 @@ import verify._
 
 import eu.joaocosta.minart.backend._
 import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime._
 
-object RenderLoopTests extends BasicTestSuite {
+object AppLoopLoopSpec extends BasicTestSuite {
 
   object TestCanvas extends SurfaceBackedCanvas {
     protected var surface: RamSurface = _
@@ -29,8 +30,8 @@ object RenderLoopTests extends BasicTestSuite {
 
   testAsync("Have a finiteRenderLoop operation that ends when a certain state is reached") {
     var renderCount: Int = 0
-    ImpureRenderLoop
-      .statefulRenderLoop[Int](
+    AppLoop
+      .statefulRenderLoop(
         renderFrame = (canvas: Canvas, state: Int) => {
           renderCount += 1
           state + 1
