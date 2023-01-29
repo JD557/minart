@@ -6,14 +6,14 @@ import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.runtime.pure._
 
 object PureRenderLoop extends RenderLoop.Builder[RIO, StateRIO] {
-  def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
-      renderFrame: State => RIO[Subsystem, State],
-      terminateWhen: State => Boolean = (_: State) => false
-  ): RenderLoop.Definition[State, Settings, Subsystem] =
-    ImpureRenderLoop.statefulLoop[State, Settings, Subsystem]((canvas, state) => renderFrame(state).run(canvas))
-
-  def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
-      renderFrame: RIO[Subsystem, Unit]
-  ): RenderLoop.Definition[Unit, Settings, Subsystem] =
-    ImpureRenderLoop.statelessLoop(subsystem => renderFrame.run(subsystem))
+  protected val effect = new FrameEffect[RIO, StateRIO] {
+    def contramap[A, AA, B](f: RIO[A, B], g: AA => A): RIO[AA, B] =
+      f.contramap(g)
+    def contramapSubsystem[A, AA, B, C](f: B => RIO[A, C], g: AA => A): B => RIO[AA, C] =
+      (state: B) => f(state).contramap(g)
+    def addState[A, B](f: RIO[A, B]): (Unit) => RIO[A, B] =
+      (_: Unit) => f
+    def unsafeRun[A, B, C](f: B => RIO[A, C], subsystem: A, state: B): C =
+      f(state).run(subsystem)
+  }
 }

@@ -43,6 +43,15 @@ object RenderLoop {
     */
   trait Builder[F1[-_, +_], F2[-_, -_, +_]] {
 
+    protected trait FrameEffect[F1[-_, +_], F2[-_, -_, +_]] {
+      def contramap[A, AA, B](f: F1[A, B], g: AA => A): F1[AA, B]
+      def contramapSubsystem[A, AA, B, C](f: F2[A, B, C], g: AA => A): F2[AA, B, C]
+      def addState[A, B](f: F1[A, B]): F2[A, Unit, B]
+      def unsafeRun[A, B, C](f: F2[A, B, C], subsystem: A, state: B): C
+    }
+
+    protected val effect: FrameEffect[F1, F2]
+
     /** Creates a render loop that keeps and updates a state on every iteration,
       *  terminating when a certain condition is reached.
       *
@@ -52,10 +61,34 @@ object RenderLoop {
       * @param renderFrame operation to render the frame and update the state
       * @param terminateWhen loop termination check
       */
+
     def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
         renderFrame: F2[Subsystem, State, State],
         terminateWhen: State => Boolean = (_: State) => false
-    ): RenderLoop.Definition[State, Settings, Subsystem]
+    ): RenderLoop.Definition[State, Settings, Subsystem] = {
+      new RenderLoop.Definition[State, Settings, Subsystem] {
+        def configure(
+            initialSettings: Settings,
+            frameRate: LoopFrequency,
+            initialState: State
+        ): RenderLoop[State, Subsystem] = new RenderLoop[State, Subsystem] {
+          def run(
+              runner: LoopRunner,
+              createSubsystem: () => Subsystem
+          ): Future[State] = {
+            val subsystem = createSubsystem().init(initialSettings)
+            runner
+              .finiteLoop(
+                (state: State) => effect.unsafeRun(renderFrame, subsystem, state),
+                (newState: State) => terminateWhen(newState) || !subsystem.isCreated(),
+                frameRate,
+                () => if (subsystem.isCreated()) subsystem.close()
+              )
+              .run(initialState)
+          }
+        }
+      }
+    }
 
     /** Creates a render loop that keeps no state.
       *
@@ -67,7 +100,10 @@ object RenderLoop {
       */
     def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
         renderFrame: F1[Subsystem, Unit]
-    ): RenderLoop.Definition[Unit, Settings, Subsystem]
+    ): RenderLoop.Definition[Unit, Settings, Subsystem] =
+      statefulLoop[Unit, Settings, Subsystem](
+        effect.addState(renderFrame)
+      )
 
     /** Creates a render loop with a canvas that keeps and updates a state on every iteration,
       *  terminating when a certain condition is reached.
@@ -128,7 +164,7 @@ object RenderLoop {
       * @param terminateWhen loop termination check
       */
     def statefulAppLoop[State](
-        renderFrame: F2[LowLevelApp, State, State],
+        renderFrame: F2[(Canvas, AudioPlayer), State, State],
         terminateWhen: State => Boolean = (_: State) => false
     ): RenderLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelApp] =
       statefulLoop[
@@ -136,7 +172,12 @@ object RenderLoop {
         (Canvas.Settings, AudioPlayer.Settings),
         LowLevelApp
       ](
-        renderFrame,
+        effect.contramapSubsystem(
+          renderFrame,
+          { case LowLevelSubsystem.Composite(canvas: LowLevelCanvas, audioPlayer: LowLevelAudioPlayer) =>
+            (canvas: Canvas, audioPlayer: AudioPlayer)
+          }
+        ),
         terminateWhen
       )
 
@@ -145,10 +186,15 @@ object RenderLoop {
       * @param renderFrame operation to render the frame
       */
     def statelessAppLoop(
-        renderFrame: F1[LowLevelApp, Unit]
+        renderFrame: F1[(Canvas, AudioPlayer), Unit]
     ): RenderLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelApp] =
       statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelApp](
-        renderFrame
+        effect.contramap(
+          renderFrame,
+          { case LowLevelSubsystem.Composite(canvas: LowLevelCanvas, audioPlayer: LowLevelAudioPlayer) =>
+            (canvas: Canvas, audioPlayer: AudioPlayer)
+          }
+        )
       )
   }
 
