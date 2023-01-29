@@ -6,7 +6,7 @@ import eu.joaocosta.minart.backend.subsystem._
 import eu.joaocosta.minart.runtime._
 
 /** A render loop that takes a side-effectful renderFrame operation. */
-object ImpureRenderLoop extends RenderLoop.Builder[Function1, Function2] {
+object ImpureRenderLoop extends AppLoop.Builder[Function1, Function2] {
   protected val effect = new FrameEffect[Function1, Function2] {
     def contramap[A, AA, B](f: A => B, g: AA => A): AA => B =
       g.andThen(f)

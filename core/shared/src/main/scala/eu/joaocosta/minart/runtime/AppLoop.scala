@@ -1,17 +1,18 @@
-package eu.joaocosta.minart.graphics
+package eu.joaocosta.minart.runtime
 
 import scala.concurrent.{ExecutionContext, Future}
 
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.backend.subsystem._
+import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
-/** Render loop that keeps an internal state that is passed to every iteration.
+/** App loop that keeps an internal state that is passed to every iteration.
   */
-trait RenderLoop[State, Subsystem] {
+trait AppLoop[State, Subsystem] {
 
-  /** Runs this render loop with a custom loop runner and a set of subsystems.
+  /** Runs this app loop with a custom loop runner and a set of subsystems.
     *
     * @param runner custom loop runner to use
     * @param createSubsystems operation to create the subsystems
@@ -21,7 +22,7 @@ trait RenderLoop[State, Subsystem] {
       createSubsystems: () => Subsystem
   ): Future[State]
 
-  /** Runs this render loop usinf the default loop runner and subsystems.
+  /** Runs this app loop usinf the default loop runner and subsystems.
     */
   final def run()(implicit
       lr: DefaultBackend[Any, LoopRunner],
@@ -30,12 +31,12 @@ trait RenderLoop[State, Subsystem] {
     run(LoopRunner(), () => ss.defaultValue())
 }
 
-object RenderLoop {
+object AppLoop {
 
   type LowLevelApp =
     LowLevelSubsystem.Composite[Canvas.Settings, AudioPlayer.Settings, LowLevelCanvas, LowLevelAudioPlayer]
 
-  /** Contains a set of helpful methods to implement basic render
+  /** Contains a set of helpful methods to implement basic app
     * loops in a platform agonstic way.
     *
     * @tparam F1 effect type for stateless loops
@@ -52,7 +53,7 @@ object RenderLoop {
 
     protected val effect: FrameEffect[F1, F2]
 
-    /** Creates a render loop that keeps and updates a state on every iteration,
+    /** Creates an app loop that keeps and updates a state on every iteration,
       *  terminating when a certain condition is reached.
       *
       *  This is a low level operation for custom subsystems. For most use cases,
@@ -65,13 +66,13 @@ object RenderLoop {
     def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
         renderFrame: F2[Subsystem, State, State],
         terminateWhen: State => Boolean = (_: State) => false
-    ): RenderLoop.Definition[State, Settings, Subsystem] = {
-      new RenderLoop.Definition[State, Settings, Subsystem] {
+    ): AppLoop.Definition[State, Settings, Subsystem] = {
+      new AppLoop.Definition[State, Settings, Subsystem] {
         def configure(
             initialSettings: Settings,
             frameRate: LoopFrequency,
             initialState: State
-        ): RenderLoop[State, Subsystem] = new RenderLoop[State, Subsystem] {
+        ): AppLoop[State, Subsystem] = new AppLoop[State, Subsystem] {
           def run(
               runner: LoopRunner,
               createSubsystem: () => Subsystem
@@ -90,7 +91,7 @@ object RenderLoop {
       }
     }
 
-    /** Creates a render loop that keeps no state.
+    /** Creates an app loop that keeps no state.
       *
       *  This is a low level operation for custom subsystems. For most use cases,
       *  [[statelessRenderLoop]], [[statelessAudioLoop]] and [[statelessAppLoop]] are preferred.
@@ -100,7 +101,7 @@ object RenderLoop {
       */
     def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
         renderFrame: F1[Subsystem, Unit]
-    ): RenderLoop.Definition[Unit, Settings, Subsystem] =
+    ): AppLoop.Definition[Unit, Settings, Subsystem] =
       statefulLoop[Unit, Settings, Subsystem](
         effect.addState(renderFrame)
       )
@@ -114,7 +115,7 @@ object RenderLoop {
     def statefulRenderLoop[State](
         renderFrame: F2[Canvas, State, State],
         terminateWhen: State => Boolean = (_: State) => false
-    ): RenderLoop.Definition[State, Canvas.Settings, LowLevelCanvas] =
+    ): AppLoop.Definition[State, Canvas.Settings, LowLevelCanvas] =
       statefulLoop[State, Canvas.Settings, LowLevelCanvas](
         renderFrame,
         terminateWhen
@@ -126,12 +127,12 @@ object RenderLoop {
       */
     def statelessRenderLoop(
         renderFrame: F1[Canvas, Unit]
-    ): RenderLoop.Definition[Unit, Canvas.Settings, LowLevelCanvas] =
+    ): AppLoop.Definition[Unit, Canvas.Settings, LowLevelCanvas] =
       statelessLoop[Canvas.Settings, LowLevelCanvas](
         renderFrame
       )
 
-    /** Creates a render loop with an audio player that keeps and updates a state on every iteration,
+    /** Creates an app loop with an audio player that keeps and updates a state on every iteration,
       *  terminating when a certain condition is reached.
       *
       * @param renderFrame operation to render the frame and update the state
@@ -140,24 +141,24 @@ object RenderLoop {
     def statefulAudioLoop[State](
         renderFrame: F2[AudioPlayer, State, State],
         terminateWhen: State => Boolean = (_: State) => false
-    ): RenderLoop.Definition[State, AudioPlayer.Settings, LowLevelAudioPlayer] =
+    ): AppLoop.Definition[State, AudioPlayer.Settings, LowLevelAudioPlayer] =
       statefulLoop[State, AudioPlayer.Settings, LowLevelAudioPlayer](
         renderFrame,
         terminateWhen
       )
 
-    /** Creates a render loop with an audio playr that keeps no state.
+    /** Creates an aoo loop with an audio player that keeps no state.
       *
       * @param renderFrame operation to render the frame
       */
     def statelessAudioLoop(
         renderFrame: F1[AudioPlayer, Unit]
-    ): RenderLoop.Definition[Unit, AudioPlayer.Settings, LowLevelAudioPlayer] =
+    ): AppLoop.Definition[Unit, AudioPlayer.Settings, LowLevelAudioPlayer] =
       statelessLoop[AudioPlayer.Settings, LowLevelAudioPlayer](
         renderFrame
       )
 
-    /** Creates a render loop with a canvas and an audio player that keeps and updates a state on every iteration,
+    /** Creates an app loop with a canvas and an audio player that keeps and updates a state on every iteration,
       *  terminating when a certain condition is reached.
       *
       * @param renderFrame operation to render the frame and update the state
@@ -166,7 +167,7 @@ object RenderLoop {
     def statefulAppLoop[State](
         renderFrame: F2[(Canvas, AudioPlayer), State, State],
         terminateWhen: State => Boolean = (_: State) => false
-    ): RenderLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelApp] =
+    ): AppLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelApp] =
       statefulLoop[
         State,
         (Canvas.Settings, AudioPlayer.Settings),
@@ -181,13 +182,13 @@ object RenderLoop {
         terminateWhen
       )
 
-    /** Creates a render loop with a canvas and an audio player that keeps no state.
+    /** Creates an app loop with a canvas and an audio player that keeps no state.
       *
       * @param renderFrame operation to render the frame
       */
     def statelessAppLoop(
         renderFrame: F1[(Canvas, AudioPlayer), Unit]
-    ): RenderLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelApp] =
+    ): AppLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelApp] =
       statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelApp](
         effect.contramap(
           renderFrame,
@@ -198,32 +199,32 @@ object RenderLoop {
       )
   }
 
-  /** Render loop definition that takes the initial settings, initial state
+  /** App loop definition that takes the initial settings, initial state
     * and loop frequency.
     */
   trait Definition[State, Settings, Subsystem] {
 
-    /** Applies the following configuration to the render loop definition
+    /** Applies the following configuration to the app loop definition
       *
       * @param initialSettings initial settings of the subsystems
-      * @param frameRate frame rate of the render loop
+      * @param frameRate frame rate of the app loop
       * @param initialState initial state of the loop
       */
     def configure(
         initialSettings: Settings,
         frameRate: LoopFrequency,
         initialState: State
-    ): RenderLoop[State, Subsystem]
+    ): AppLoop[State, Subsystem]
 
-    /** Applies the following configuration to the render loop definition
+    /** Applies the following configuration to the app loop definition
       *
       * @param initialSettings initial settings of the subsystems
-      * @param frameRate frame rate of the render loop
+      * @param frameRate frame rate of the app loop
       */
     def configure(
         initialSettings: Settings,
         frameRate: LoopFrequency
-    )(implicit ev: Unit =:= State): RenderLoop[State, Subsystem] = configure(initialSettings, frameRate, ev(()))
+    )(implicit ev: Unit =:= State): AppLoop[State, Subsystem] = configure(initialSettings, frameRate, ev(()))
 
   }
 }

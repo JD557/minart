@@ -5,7 +5,7 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.runtime.pure._
 
-object PureRenderLoop extends RenderLoop.Builder[RIO, StateRIO] {
+object PureRenderLoop extends AppLoop.Builder[RIO, StateRIO] {
   protected val effect = new FrameEffect[RIO, StateRIO] {
     def contramap[A, AA, B](f: RIO[A, B], g: AA => A): RIO[AA, B] =
       f.contramap(g)
