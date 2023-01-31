@@ -22,9 +22,9 @@ val clip = Sound.loadAiffClip(Resource("assets/sample.aiff")).get
 val audioPlayer = AudioPlayer.create(AudioPlayer.Settings())
 
 // Same logic as the audio example
-ImpureRenderLoop
+AppLoop
   .statelessRenderLoop(
-    canvas => {
+    (canvas: Canvas) => {
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
         audioPlayer.play(clip)
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
@@ -32,7 +32,7 @@ ImpureRenderLoop
       canvas.clear()
       canvas.fill(Color(0, 128, 0))
       canvas.redraw()
-    },
-    LoopFrequency.hz60
+    }
   )
-  .run(Canvas.Settings(width = 128, height = 128))
+  .configure(Canvas.Settings(width = 128, height = 128), LoopFrequency.hz60)
+  .run()

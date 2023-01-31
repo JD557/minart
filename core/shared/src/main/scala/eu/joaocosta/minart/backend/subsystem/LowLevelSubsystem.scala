@@ -74,8 +74,8 @@ object LowLevelSubsystem {
       this
     }
 
-    def changeSettings(newSettings: Settings): Unit = if (isCreated() && settings != settings) {
-      _settings = unsafeApplySettings(settings)
+    def changeSettings(newSettings: Settings): Unit = if (isCreated() && newSettings != settings) {
+      _settings = unsafeApplySettings(newSettings)
     }
 
     def close(): Unit = if (isCreated()) {
@@ -131,7 +131,7 @@ object LowLevelSubsystem {
     }
 
     def changeSettings(newSettings: Settings): Unit = if (isCreated() && newSettings != settings) {
-      _extendedSettings = unsafeApplySettings(settings)
+      _extendedSettings = unsafeApplySettings(newSettings)
     }
 
     def close(): Unit = if (isCreated()) {

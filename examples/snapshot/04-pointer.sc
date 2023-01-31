@@ -21,41 +21,39 @@ import eu.joaocosta.minart.runtime._
   */
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(255, 255, 255))
 
-ImpureRenderLoop
-  .statelessRenderLoop(
-    canvas => {
-      /*
-       * Notice that now we are calling canvas.clear() at the beginning of each frame.
-       * This not only clears the image with the clear color, but also clears some information regarding the input,
-       * such as which keys and buttons were pressed on the previous frame.
-       */
-      canvas.clear()
+AppLoop
+  .statelessRenderLoop((canvas: Canvas) => {
+    /*
+     * Notice that now we are calling canvas.clear() at the beginning of each frame.
+     * This not only clears the image with the clear color, but also clears some information regarding the input,
+     * such as which keys and buttons were pressed on the previous frame.
+     */
+    canvas.clear()
 
-      /*
-       * Then we fetch the mouse with getPointerInput().
-       */
-      val mouse = canvas.getPointerInput()
+    /*
+     * Then we fetch the mouse with getPointerInput().
+     */
+    val mouse = canvas.getPointerInput()
 
-      /*
-       * Then we decide which color we will use for the pointer.
-       * Red if it's pressed, black if it's not.
-       */
-      val mouseColor =
-        if (mouse.isPressed) Color(255, 0, 0)
-        else Color(0, 0, 0)
+    /*
+     * Then we decide which color we will use for the pointer.
+     * Red if it's pressed, black if it's not.
+     */
+    val mouseColor =
+      if (mouse.isPressed) Color(255, 0, 0)
+      else Color(0, 0, 0)
 
-      /*
-       * Then we draw a pixel on the mouse position.
-       */
-      mouse.position.foreach(pos => canvas.putPixel(pos.x, pos.y, mouseColor))
+    /*
+     * Then we draw a pixel on the mouse position.
+     */
+    mouse.position.foreach(pos => canvas.putPixel(pos.x, pos.y, mouseColor))
 
-      /*
-       * Then we call redraw(). Note that here we call clear() first and then redraw().
-       * This reduces frame latency, but increases frame jitter. In some situations, you might prefer to run the redraw
-       * at the beginning of the function.
-       */
-      canvas.redraw()
-    },
-    LoopFrequency.Uncapped // As fast as possible
-  )
-  .run(canvasSettings)
+    /*
+     * Then we call redraw(). Note that here we call clear() first and then redraw().
+     * This reduces frame latency, but increases frame jitter. In some situations, you might prefer to run the redraw
+     * at the beginning of the function.
+     */
+    canvas.redraw()
+  })
+  .configure(canvasSettings, LoopFrequency.Uncapped) // As fast as possible
+  .run()

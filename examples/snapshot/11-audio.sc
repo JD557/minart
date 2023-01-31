@@ -43,9 +43,9 @@ object Audio {
 
 val audioPlayer = AudioPlayer.create(AudioPlayer.Settings())
 
-ImpureRenderLoop
+AppLoop
   .statelessRenderLoop(
-    canvas => {
+    (canvas: Canvas) => {
       // When someone presses "Space", we send our sound wave to the queue
       if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
         audioPlayer.play(Audio.testSample)
@@ -55,7 +55,7 @@ ImpureRenderLoop
       canvas.clear()
       canvas.fill(Color(0, 128, 0))
       canvas.redraw()
-    },
-    LoopFrequency.hz60
+    }
   )
-  .run(Canvas.Settings(width = 128, height = 128))
+  .configure(Canvas.Settings(width = 128, height = 128), LoopFrequency.hz60)
+  .run()

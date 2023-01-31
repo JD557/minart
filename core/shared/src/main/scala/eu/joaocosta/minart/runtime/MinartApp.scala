@@ -1,6 +1,4 @@
-package eu.joaocosta.minart
-
-import eu.joaocosta.minart.runtime._
+package eu.joaocosta.minart.runtime
 
 /** Entrypoint for Minart applications. */
 trait MinartApp[State, Subsystem] {
