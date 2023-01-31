@@ -1,0 +1,18 @@
+package eu.joaocosta.minart
+
+import eu.joaocosta.minart.runtime._
+
+/** Entrypoint for Minart applications. */
+trait MinartApp[State, Subsystem] {
+  def createSubsystem: () => Subsystem
+  def loopRunner: LoopRunner
+  def appLoop: AppLoop[State, Subsystem]
+
+  def main(args: Array[String]): Unit = {
+    appLoop
+      .run(
+        loopRunner,
+        createSubsystem
+      )
+  }
+}
