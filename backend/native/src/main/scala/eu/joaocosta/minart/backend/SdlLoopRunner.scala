@@ -15,22 +15,23 @@ import eu.joaocosta.minart.runtime._
   */
 object SdlLoopRunner extends LoopRunner {
   def finiteLoop[S](
+      initialState: S,
       operation: S => S,
       terminateWhen: S => Boolean,
-      frequency: LoopFrequency,
-      cleanup: () => Unit
-  ): Loop[S] = {
+      cleanup: () => Unit,
+      frequency: LoopFrequency
+  ): Future[S] = {
     frequency match {
       case LoopFrequency.Never =>
-        new NeverRenderLoop(operation, cleanup)
+        new NeverLoop(operation, cleanup).run(initialState)
       case LoopFrequency.Uncapped =>
-        new UncappedRenderLoop(operation, terminateWhen, cleanup)
+        new UncappedLoop(operation, terminateWhen, cleanup).run(initialState)
       case LoopFrequency.LoopDuration(iterationMillis) =>
-        new CappedRenderLoop(operation, terminateWhen, iterationMillis, cleanup)
+        new CappedLoop(operation, terminateWhen, iterationMillis, cleanup).run(initialState)
     }
   }
 
-  final class NeverRenderLoop[S](operation: S => S, cleanup: () => Unit) extends Loop[S] {
+  final class NeverLoop[S](operation: S => S, cleanup: () => Unit) {
     private implicit val ec: ExecutionContext = ExecutionContext.global
     def finiteLoopAux(): Future[Unit] = {
       val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
@@ -50,11 +51,11 @@ object SdlLoopRunner extends LoopRunner {
     }
   }
 
-  final class UncappedRenderLoop[S](
+  final class UncappedLoop[S](
       operation: S => S,
       terminateWhen: S => Boolean,
       cleanup: () => Unit
-  ) extends Loop[S] {
+  ) {
     private implicit val ec: ExecutionContext = ExecutionContext.global
     def run(initialState: S): Future[S] =
       Future(operation(initialState)).flatMap { newState =>
@@ -67,12 +68,12 @@ object SdlLoopRunner extends LoopRunner {
       }
   }
 
-  final class CappedRenderLoop[S](
+  final class CappedLoop[S](
       operation: S => S,
       terminateWhen: S => Boolean,
       iterationMillis: Long,
       cleanup: () => Unit
-  ) extends Loop[S] {
+  ) {
     private implicit val ec: ExecutionContext = ExecutionContext.global
     def finiteLoopAux(state: S, startTime: Long): Future[S] =
       Future {

@@ -118,12 +118,12 @@ object AppLoop {
           val subsystem = createSubsystem().init(initialSettings)
           runner
             .finiteLoop(
+              initialState,
               (state: State) => effect.unsafeRun(renderFrame, subsystem, state),
               (newState: State) => terminateWhen(newState) || !subsystem.isCreated(),
-              frameRate,
-              () => if (subsystem.isCreated()) subsystem.close()
+              () => if (subsystem.isCreated()) subsystem.close(),
+              frameRate
             )
-            .run(initialState)
         }
       }
     }
