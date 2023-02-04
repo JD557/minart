@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.backend.subsystem
 
+import eu.joaocosta.minart.backend.defaults.DefaultBackend
+
 /** A low-level subsystem with init and close operations.
   */
 trait LowLevelSubsystem[Settings] extends AutoCloseable {
@@ -162,5 +164,14 @@ object LowLevelSubsystem {
       subsystemA.close()
       subsystemB.close()
     }
+  }
+  object Composite {
+    implicit def defaultComposite[SettingsA, SettingsB, SubsystemA <: LowLevelSubsystem[
+      SettingsA
+    ], SubsystemB <: LowLevelSubsystem[SettingsB]](implicit
+        sa: DefaultBackend[Any, SubsystemA],
+        sb: DefaultBackend[Any, SubsystemB]
+    ): DefaultBackend[Any, Composite[SettingsA, SettingsB, SubsystemA, SubsystemB]] =
+      DefaultBackend.fromFunction((_) => Composite(sa.defaultValue(), sb.defaultValue()))
   }
 }
