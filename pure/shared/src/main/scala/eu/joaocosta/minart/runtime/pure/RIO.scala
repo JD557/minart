@@ -2,7 +2,7 @@ package eu.joaocosta.minart.runtime.pure
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.runtime.AppLoop.FrameEffect
+import eu.joaocosta.minart.runtime.FrameEffect
 
 /** Representation of an effectful operation, based on Haskell's RIO Monad.
   */
