@@ -47,7 +47,7 @@ val background: Surface = {
 
 AppLoop
   .statefulRenderLoop(
-    (canvas: Canvas, state: Int) => {
+    (state: Int) => (canvas: Canvas) => {
       /*
        * Two surfaces can be combined with the blit operation.
        * Here, we draw the background on the canvas, at position (0, 0)

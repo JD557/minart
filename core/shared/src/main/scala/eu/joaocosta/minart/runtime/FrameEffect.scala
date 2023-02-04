@@ -6,22 +6,16 @@ package eu.joaocosta.minart.runtime
   * `F2[Subsystem, OldState, NewState]` represents a computation that takes a subsystem and an old state returns a
   * new state.
   */
-trait FrameEffect[F1[-_, +_], F2[-_, -_, +_]] {
-  def contramap[A, AA, B](f: F1[A, B], g: AA => A): F1[AA, B]
-  def contramapSubsystem[A, AA, B, C](f: F2[A, B, C], g: AA => A): F2[AA, B, C]
-  def addState[A, B](f: F1[A, B]): F2[A, Unit, B]
-  def unsafeRun[A, B, C](f: F2[A, B, C], subsystem: A, state: B): C
+trait FrameEffect[F[-_, +_]] {
+  def contramap[A, AA, B](f: F[A, B], g: AA => A): F[AA, B]
+  def unsafeRun[A, B](f: F[A, B], subsystem: A): B
 }
 
 object FrameEffect {
-  implicit val functionFrameEffect: FrameEffect[Function1, Function2] = new FrameEffect[Function1, Function2] {
+  implicit val functionFrameEffect: FrameEffect[Function1] = new FrameEffect[Function1] {
     def contramap[A, AA, B](f: A => B, g: AA => A): AA => B =
       g.andThen(f)
-    def contramapSubsystem[A, AA, B, C](f: (A, B) => C, g: AA => A): (AA, B) => C =
-      (subsystem: AA, state: B) => f(g(subsystem), state)
-    def addState[A, B](f: A => B): (A, Unit) => B =
-      (subsystem: A, _: Unit) => f(subsystem)
-    def unsafeRun[A, B, C](f: (A, B) => C, subsystem: A, state: B): C =
-      f(subsystem, state)
+    def unsafeRun[A, B](f: A => B, subsystem: A): B =
+      f(subsystem)
   }
 }

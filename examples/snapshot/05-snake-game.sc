@@ -93,7 +93,7 @@ val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canv
  */
 AppLoop
   .statefulRenderLoop(
-    (canvas: Canvas, state: GameState) => {
+    (state: GameState) => (canvas: Canvas) => {
       canvas.clear()
 
       // We draw the snake body

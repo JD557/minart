@@ -42,7 +42,7 @@ val updatedBitmap = bitmap.view
  */
 AppLoop
   .statefulRenderLoop(
-    (canvas: Canvas, t: Double) => {
+    (t: Double) => (canvas: Canvas) => {
       val frameSin = math.sin(t)
       val frameCos = math.cos(t)
       val zoom     = frameSin + 2.0
