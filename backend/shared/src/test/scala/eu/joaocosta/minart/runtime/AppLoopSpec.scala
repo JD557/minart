@@ -37,7 +37,7 @@ object AppLoopLoopSpec extends BasicTestSuite {
             renderCount += 1
             state + 1
           },
-        terminateWhen = _ >= 5
+        terminateWhen = (state: Int) => state >= 5
       )
       .configure(
         initialSettings = Canvas.Settings(4, 4),
