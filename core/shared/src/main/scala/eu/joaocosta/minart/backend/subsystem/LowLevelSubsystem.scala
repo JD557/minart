@@ -30,6 +30,13 @@ trait LowLevelSubsystem[Settings] extends AutoCloseable {
     * init() has an undefined behavior.
     */
   def close(): Unit
+
+  /** Composes this subsystem with another subsystem
+    */
+  def ++[SettingsB, SubsystemB <: LowLevelSubsystem[SettingsB]](
+      that: SubsystemB
+  ): LowLevelSubsystem.Composite[Settings, SettingsB, this.type, that.type] =
+    LowLevelSubsystem.Composite(this, that)
 }
 
 object LowLevelSubsystem {
@@ -143,9 +150,9 @@ object LowLevelSubsystem {
     }
   }
 
-  case class Composite[SettingsA, SettingsB, SubsystemA <: LowLevelSubsystem[
+  case class Composite[SettingsA, SettingsB, +SubsystemA <: LowLevelSubsystem[
     SettingsA
-  ], SubsystemB <: LowLevelSubsystem[SettingsB]](
+  ], +SubsystemB <: LowLevelSubsystem[SettingsB]](
       subsystemA: SubsystemA,
       subsystemB: SubsystemB
   ) extends LowLevelSubsystem[(SettingsA, SettingsB)] {
@@ -172,6 +179,6 @@ object LowLevelSubsystem {
         sa: DefaultBackend[Any, SubsystemA],
         sb: DefaultBackend[Any, SubsystemB]
     ): DefaultBackend[Any, Composite[SettingsA, SettingsB, SubsystemA, SubsystemB]] =
-      DefaultBackend.fromFunction((_) => Composite(sa.defaultValue(), sb.defaultValue()))
+      DefaultBackend.fromFunction((_) => sa.defaultValue() ++ sb.defaultValue())
   }
 }
