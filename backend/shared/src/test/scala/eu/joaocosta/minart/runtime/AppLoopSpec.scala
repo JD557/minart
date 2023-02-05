@@ -32,10 +32,11 @@ object AppLoopLoopSpec extends BasicTestSuite {
     var renderCount: Int = 0
     AppLoop
       .statefulRenderLoop(
-        renderFrame = (canvas: Canvas, state: Int) => {
-          renderCount += 1
-          state + 1
-        },
+        renderFrame = (state: Int) =>
+          (canvas: Canvas) => {
+            renderCount += 1
+            state + 1
+          },
         terminateWhen = _ >= 5
       )
       .configure(
