@@ -39,19 +39,20 @@ object Audio {
       .zipWith(bass, (high, low) => high * 0.7 + low * 0.3)
 }
 
-// Here we use `statelessAppLoop` so that we get a (canvas, audioPlayer) tuple
-// Unfortunately, we need to add the Function1 here for type inference
+// Here we use `statelessAppLoop` so that we get an object with a `canvas` and an `audioPlayer`
 AppLoop
-  .statelessAppLoop[Function1] { case (canvas: Canvas, audioPlayer: AudioPlayer) =>
+  .statelessAppLoop((system: Canvas with AudioPlayer) => {
     // When someone presses "Space", we send our sound wave to the queue
-    if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
-      audioPlayer.play(Audio.testSample)
+    if (system.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
+      system.play(Audio.testSample)
     // When someone presses "Backspace", we stop the audio player
-    if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
-      audioPlayer.stop()
-    canvas.clear()
-    canvas.fill(Color(0, 128, 0))
-    canvas.redraw()
-  }
+    if (system.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
+      system.stop()
+    system.clear()
+    // Paint green when nothing is playing and red otherwise
+    if (!system.isPlaying()) system.fill(Color(0, 128, 0))
+    else system.fill(Color(128, 0, 0))
+    system.redraw()
+  })
   .configure((Canvas.Settings(width = 128, height = 128), AudioPlayer.Settings()), LoopFrequency.hz60)
   .run()

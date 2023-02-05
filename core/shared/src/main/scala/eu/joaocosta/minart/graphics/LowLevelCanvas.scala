@@ -9,6 +9,10 @@ trait LowLevelCanvas extends Canvas with LowLevelSubsystem.Extended[Canvas.Setti
   protected lazy val defaultSettings = LowLevelCanvas.ExtendedSettings(Canvas.Settings(0, 0))
   protected def elideSettings(extendedSettings: LowLevelCanvas.ExtendedSettings): Canvas.Settings =
     extendedSettings.settings
+
+  /** The settings applied to this canvas.
+    */
+  def canvasSettings: Canvas.Settings = settings
 }
 
 object LowLevelCanvas {

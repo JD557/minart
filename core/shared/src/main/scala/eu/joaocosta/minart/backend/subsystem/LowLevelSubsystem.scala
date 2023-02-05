@@ -143,11 +143,11 @@ object LowLevelSubsystem {
     }
   }
 
-  final case class Composite[SettingsA, SettingsB, SubsystemA <: LowLevelSubsystem[
+  case class Composite[SettingsA, SettingsB, SubsystemA <: LowLevelSubsystem[
     SettingsA
   ], SubsystemB <: LowLevelSubsystem[SettingsB]](
-      subsystemA: LowLevelSubsystem[SettingsA],
-      subsystemB: LowLevelSubsystem[SettingsB]
+      subsystemA: SubsystemA,
+      subsystemB: SubsystemB
   ) extends LowLevelSubsystem[(SettingsA, SettingsB)] {
     def settings: (SettingsA, SettingsB) = (subsystemA.settings, subsystemB.settings)
     def isCreated(): Boolean             = subsystemA.isCreated() && subsystemB.isCreated()

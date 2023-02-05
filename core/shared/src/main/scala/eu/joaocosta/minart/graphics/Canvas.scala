@@ -16,7 +16,7 @@ trait Canvas extends MutableSurface {
 
   /** The settings applied to this canvas.
     */
-  def settings: Canvas.Settings
+  def canvasSettings: Canvas.Settings
 
   /** Changes the settings applied to this canvas.
     *
@@ -24,8 +24,8 @@ trait Canvas extends MutableSurface {
     */
   def changeSettings(newSettings: Canvas.Settings): Unit
 
-  def width: Int  = settings.width
-  def height: Int = settings.height
+  def width: Int  = canvasSettings.width
+  def height: Int = canvasSettings.height
 
   /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
@@ -87,5 +87,4 @@ object Canvas {
       clearColor: Color = Color(255, 255, 255),
       title: String = "Minart"
   )
-
 }

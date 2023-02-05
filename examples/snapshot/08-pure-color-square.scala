@@ -40,7 +40,7 @@ object PureColorSquare extends MinartApp[Unit, LowLevelCanvas] {
   val appLoop =
     AppLoop
       .statelessRenderLoop(
-        CanvasIO.getSettings
+        CanvasIO.canvasSettings
           .map { settings =>
             for {
               x <- (0 until settings.width)
