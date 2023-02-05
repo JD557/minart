@@ -28,7 +28,7 @@ object PureColorSquare extends MinartApp[Unit, LowLevelCanvas] {
   /* The LoopRunner and LowLevelCanvas are low level primitives from the backend.
    * It is recommended to just use the default values here
    */
-  val loopRunner   = LoopRunner()
+  val loopRunner      = LoopRunner()
   val createSubsystem = () => LowLevelCanvas.create()
 
   /** Here we define our app loop, just as we did previously.
