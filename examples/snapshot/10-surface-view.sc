@@ -40,9 +40,9 @@ val updatedBitmap = bitmap.view
  * This allows us to contramap surface views and handling infinite images-
  * Let's see an example of the classic rotozoom effect.
  */
-ImpureRenderLoop
-  .statefulRenderLoop[Double](
-    (canvas, t) => {
+AppLoop
+  .statefulRenderLoop(
+    (t: Double) => (canvas: Canvas) => {
       val frameSin = math.sin(t)
       val frameCos = math.cos(t)
       val zoom     = frameSin + 2.0
@@ -62,7 +62,7 @@ ImpureRenderLoop
       canvas.blit(image)(0, 0)
       canvas.redraw()
       t + 0.01
-    },
-    LoopFrequency.hz60
+    }
   )
-  .run(canvasSettings, 0)
+  .configure(canvasSettings, LoopFrequency.hz60 ,0)
+  .run()

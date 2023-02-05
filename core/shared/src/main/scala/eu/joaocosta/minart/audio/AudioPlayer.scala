@@ -32,7 +32,7 @@ object AudioPlayer {
     * @return [[AudioPlayer]] using the default backend for the target platform
     */
   def create(settings: AudioPlayer.Settings)(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
-    AudioPlayerManager().init(settings)
+    LowLevelAudioPlayer.create().init(settings)
 
   case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
 

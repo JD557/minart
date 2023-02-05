@@ -19,9 +19,10 @@ val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
  */
 val bitmap = Image.loadBmpImage(Resource("assets/scala.bmp")).get
 
-ImpureRenderLoop
-  .singleFrame(canvas => {
+AppLoop
+  .statelessRenderLoop((canvas: Canvas) => {
     canvas.blit(bitmap)(0, 0)
     canvas.redraw()
   })
-  .run(canvasSettings)
+  .configure(canvasSettings, LoopFrequency.Never)
+  .run()

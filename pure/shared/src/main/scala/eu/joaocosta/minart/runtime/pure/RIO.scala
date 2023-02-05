@@ -2,6 +2,8 @@ package eu.joaocosta.minart.runtime.pure
 
 import scala.annotation.tailrec
 
+import eu.joaocosta.minart.runtime.FrameEffect
+
 /** Representation of an effectful operation, based on Haskell's RIO Monad.
   */
 sealed trait RIO[-R, +A] {
@@ -86,4 +88,11 @@ object RIO extends IOOps.IOBaseOps[Any] {
   /** Applies an operation to each element of a `Iterator[A]` and discards the result. */
   def foreach[R, A](it: () => Iterator[A])(f: A => RIO[R, Any]): RIO[R, Unit] =
     access(res => it().foreach(x => f(x).run(res)))
+
+  implicit val effect: FrameEffect[RIO] = new FrameEffect[RIO] {
+    def contramap[A, AA, B](f: RIO[A, B], g: AA => A): RIO[AA, B] =
+      f.contramap(g)
+    def unsafeRun[A, B](f: RIO[A, B], subsystem: A): B =
+      f.run(subsystem)
+  }
 }

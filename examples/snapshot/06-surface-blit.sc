@@ -45,9 +45,9 @@ val background: Surface = {
   surface
 }
 
-ImpureRenderLoop
-  .statefulRenderLoop[Int](
-    (canvas, state) => {
+AppLoop
+  .statefulRenderLoop(
+    (state: Int) => (canvas: Canvas) => {
       /*
        * Two surfaces can be combined with the blit operation.
        * Here, we draw the background on the canvas, at position (0, 0)
@@ -67,6 +67,10 @@ ImpureRenderLoop
       canvas.redraw()
       (state + 1) % (128 - 16)
     },
-    LoopFrequency.hz60
   )
-  .run(canvasSettings, 0)
+  .configure(
+    canvasSettings,
+    LoopFrequency.hz60,
+    0
+  )
+  .run()

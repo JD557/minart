@@ -1,4 +1,4 @@
-package eu.joaocosta.minart.graphics
+package eu.joaocosta.minart.runtime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -6,19 +6,20 @@ import verify._
 
 import eu.joaocosta.minart.backend._
 import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime._
 
-object RenderLoopTests extends BasicTestSuite {
+object AppLoopLoopSpec extends BasicTestSuite {
 
   object TestCanvas extends SurfaceBackedCanvas {
     protected var surface: RamSurface = _
-    def unsafeInit(newSettings: Canvas.Settings): Unit = {
+    def unsafeInit(): Unit            = {}
+    def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
       surface = new RamSurface(newSettings.width, newSettings.height, newSettings.clearColor)
-      extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+      LowLevelCanvas.ExtendedSettings(newSettings)
     }
-    def changeSettings(newSettings: Canvas.Settings) = init(newSettings)
-    def unsafeDestroy(): Unit                        = ()
+    def unsafeDestroy(): Unit = ()
     def clear(buffers: Set[Canvas.Buffer]): Unit = {
       if (buffers.contains(Canvas.Buffer.Backbuffer)) { fill(settings.clearColor) }
     }
@@ -29,20 +30,23 @@ object RenderLoopTests extends BasicTestSuite {
 
   testAsync("Have a finiteRenderLoop operation that ends when a certain state is reached") {
     var renderCount: Int = 0
-    ImpureRenderLoop
-      .statefulRenderLoop[Int](
-        renderFrame = (canvas: Canvas, state: Int) => {
-          renderCount += 1
-          state + 1
-        },
-        terminateWhen = _ >= 5,
-        frameRate = LoopFrequency.Uncapped
+    AppLoop
+      .statefulRenderLoop(
+        renderFrame = (state: Int) =>
+          (canvas: Canvas) => {
+            renderCount += 1
+            state + 1
+          },
+        terminateWhen = (state: Int) => state >= 5
+      )
+      .configure(
+        initialSettings = Canvas.Settings(4, 4),
+        frameRate = LoopFrequency.Uncapped,
+        initialState = 0
       )
       .run(
         runner = LoopRunner(),
-        canvasManager = CanvasManager(() => TestCanvas),
-        canvasSettings = Canvas.Settings(4, 4),
-        initialState = 0
+        createSubsystems = () => TestCanvas
       )
       .map { _ =>
         assert(renderCount == 5)

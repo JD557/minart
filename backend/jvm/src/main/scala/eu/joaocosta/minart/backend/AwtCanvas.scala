@@ -60,40 +60,37 @@ class AwtCanvas() extends SurfaceBackedCanvas {
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings): Unit = {
-    changeSettings(newSettings)
-  }
+  protected def unsafeInit(): Unit = {}
 
-  def changeSettings(newSettings: Canvas.Settings) = {
-    if (extendedSettings == null || newSettings != settings) {
-      extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
-      val image = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_ARGB)
-      surface = new BufferedImageSurface(image)
-      if (javaCanvas != null) javaCanvas.frame.dispose()
-      javaCanvas = new AwtCanvas.InnerCanvas(
-        extendedSettings.scaledWidth,
-        extendedSettings.scaledHeight,
-        newSettings.fullScreen,
-        newSettings.title,
-        this
-      )
-      extendedSettings = extendedSettings.copy(
-        windowWidth = javaCanvas.getWidth,
-        windowHeight = javaCanvas.getHeight
-      )
-      keyListener = new AwtCanvas.KeyListener()
-      mouseListener = new AwtCanvas.MouseListener(javaCanvas, extendedSettings)
-      javaCanvas.addKeyListener(keyListener)
-      javaCanvas.frame.addKeyListener(keyListener)
-      javaCanvas.addMouseListener(mouseListener)
-      javaCanvas.frame.addMouseListener(mouseListener)
-      clear(Set(Canvas.Buffer.Backbuffer))
-    }
+  protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
+    val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
+    val image            = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_ARGB)
+    surface = new BufferedImageSurface(image)
+    if (javaCanvas != null) javaCanvas.frame.dispose()
+    javaCanvas = new AwtCanvas.InnerCanvas(
+      extendedSettings.scaledWidth,
+      extendedSettings.scaledHeight,
+      newSettings.fullScreen,
+      newSettings.title,
+      this
+    )
+    val fullExtendedSettings = extendedSettings.copy(
+      windowWidth = javaCanvas.getWidth,
+      windowHeight = javaCanvas.getHeight
+    )
+    keyListener = new AwtCanvas.KeyListener()
+    mouseListener = new AwtCanvas.MouseListener(javaCanvas, fullExtendedSettings)
+    javaCanvas.addKeyListener(keyListener)
+    javaCanvas.frame.addKeyListener(keyListener)
+    javaCanvas.addMouseListener(mouseListener)
+    javaCanvas.frame.addMouseListener(mouseListener)
+    clear(Set(Canvas.Buffer.Backbuffer))
+    fullExtendedSettings
   }
 
   // Cleanup
 
-  def unsafeDestroy(): Unit = if (javaCanvas != null) {
+  protected def unsafeDestroy(): Unit = if (javaCanvas != null) {
     javaCanvas.frame.dispose()
     javaCanvas = null
   }
