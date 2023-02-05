@@ -21,9 +21,19 @@ final case class AudioWave(wave: Double => Double) extends (Double => Double) {
     */
   def zipWith(that: AudioWave, f: (Double, Double) => Double): AudioWave = AudioWave(t => f(this.wave(t), that.wave(t)))
 
-  /** Returns an AudioClip from this wave */
-  def clip(duration: Double): AudioClip =
-    AudioClip(this, duration)
+  /** Returns a new AudioWave without the first `time` seconds
+    */
+  def drop(time: Double): AudioWave =
+    this.contramap(_ + time)
+
+  /** Returns an AudioClip from this wave with just the first `time` seconds */
+  def take(time: Double): AudioClip =
+    AudioClip(this, time)
+
+  /** Returns an AudioClip from this wave from `start` to `end` */
+  def clip(start: Double, end: Double): AudioClip =
+    if (end <= start) AudioClip.empty
+    else AudioClip(this.drop(start), end - start)
 
   /** Samples this wave at the specified sample rate and returns an iterator of Doubles
     * in the [-1, 1] range.

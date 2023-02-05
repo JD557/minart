@@ -87,7 +87,7 @@ trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
         case (_, Left(error)) => Left(error)
         case (Left(error), _) => Left(error)
         case (Right(acc), Right(note)) =>
-          Right(acc.append(oscilator(note.frequency).clip(note.duration)))
+          Right(acc.append(oscilator(note.frequency).take(note.duration)))
       }
   }
 

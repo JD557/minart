@@ -19,14 +19,14 @@ final case class AudioClip(
     */
   def numSamples(sampleRate: Double): Int = (duration * sampleRate).toInt
 
-  /** Returns a new Audio Wave with the first `time` seconds of this audio wave
+  /** Returns a new Audio Clip with the first `time` seconds of this audio clip
     */
   def take(time: Double): AudioClip = {
     val newDuration = math.max(0.0, math.min(time, duration))
     AudioClip(wave, newDuration)
   }
 
-  /** Returns a new Audio Wave without the first `time` seconds of this audio wave
+  /** Returns a new Audio Clip without the first `time` seconds of this audio clip
     */
   def drop(time: Double): AudioClip = {
     val delta = math.max(0.0, math.min(time, duration))
@@ -74,7 +74,7 @@ final case class AudioClip(
 
   /** Speeds up/down this clip according to a multiplier */
   def changeSpeed(multiplier: Double): AudioClip =
-    wave.contramap(t => multiplier * t).clip(duration / multiplier)
+    wave.contramap(t => multiplier * t).take(duration / multiplier)
 
   /** Returns an audio wave that repeats this clip forever */
   def repeating: AudioWave =
@@ -99,13 +99,13 @@ final case class AudioClip(
 object AudioClip {
 
   def apply(wave: Double => Double, duration: Double): AudioClip =
-    AudioWave(wave).clip(duration)
+    AudioWave(wave).take(duration)
 
   /** Empty audio wave */
   val empty = silence(0.0)
 
   /** Audio wave with just silence for the specified duration */
-  def silence(duration: Double) = AudioWave.silence.clip(duration)
+  def silence(duration: Double) = AudioWave.silence.take(duration)
 
   /** Generates an audio wave for a sequence of samples.
     *
@@ -114,7 +114,7 @@ object AudioClip {
     */
   def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioClip = {
     val duration = data.size / sampleRate
-    AudioWave.fromIndexedSeq(data, sampleRate).clip(duration)
+    AudioWave.fromIndexedSeq(data, sampleRate).take(duration)
   }
 
   private def floorMod(x: Double, y: Double): Double = {
