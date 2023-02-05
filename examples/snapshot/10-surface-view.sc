@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.5.0-SNAPSHOT"
 
 /*
  * It can be quite cumbersome an ineficient to apply multiple transformations to a surface if we just use the getPixel
@@ -41,8 +41,8 @@ val updatedBitmap = bitmap.view
  * Let's see an example of the classic rotozoom effect.
  */
 AppLoop
-  .statefulRenderLoop(
-    (t: Double) => (canvas: Canvas) => {
+  .statefulRenderLoop((t: Double) =>
+    (canvas: Canvas) => {
       val frameSin = math.sin(t)
       val frameCos = math.cos(t)
       val zoom     = frameSin + 2.0
@@ -64,5 +64,5 @@ AppLoop
       t + 0.01
     }
   )
-  .configure(canvasSettings, LoopFrequency.hz60 ,0)
+  .configure(canvasSettings, LoopFrequency.hz60, 0)
   .run()
