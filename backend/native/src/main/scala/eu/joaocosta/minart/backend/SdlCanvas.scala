@@ -121,7 +121,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
       keyboardInput = keyboardInput.clearPressRelease()
     }
     if (buffers.contains(Canvas.Buffer.PointerBuffer)) {
-      pointerInput = pointerInput.clearPressRelease()
+      pointerInput = pointerInput.clearEvents()
     }
     if (handleEvents() && buffers.contains(Canvas.Buffer.Backbuffer)) {
       surface.fill(settings.clearColor)

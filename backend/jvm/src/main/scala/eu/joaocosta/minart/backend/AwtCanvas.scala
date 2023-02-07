@@ -102,7 +102,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
       keyListener.clearPressRelease()
     }
     if (buffers.contains(Canvas.Buffer.PointerBuffer)) {
-      mouseListener.clearPressRelease()
+      mouseListener.clearEvents()
     }
     if (buffers.contains(Canvas.Buffer.Backbuffer)) {
       surface.fill(settings.clearColor)
@@ -233,8 +233,8 @@ object AwtCanvas {
     def mouseClicked(ev: MouseEvent): Unit  = ()
     def mouseEntered(ev: MouseEvent): Unit  = ()
     def mouseExited(ev: MouseEvent): Unit   = ()
-    def clearPressRelease(): Unit = synchronized {
-      state = state.clearPressRelease()
+    def clearEvents(): Unit = synchronized {
+      state = state.clearEvents()
     }
     def getPointerInput(): PointerInput = computeState().move(getMousePos())
   }
