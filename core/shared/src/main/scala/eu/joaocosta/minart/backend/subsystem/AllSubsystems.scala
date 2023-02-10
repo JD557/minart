@@ -34,8 +34,8 @@ private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLeve
     canvas.blit(that, mask)(x, y, cx, cy, cw, ch)
 
   // Surface
-  def getPixels(): Vector[Array[Color]]     = canvas.getPixels()
-  def unsafeGetPixel(x: Int, y: Int): Color = canvas.unsafeGetPixel(x, y)
+  override def getPixels(): Vector[Array[Color]] = canvas.getPixels()
+  def unsafeGetPixel(x: Int, y: Int): Color      = canvas.unsafeGetPixel(x, y)
 
   // AudioPlayer
   def isPlaying(): Boolean                      = audioPlayer.isPlaying()
