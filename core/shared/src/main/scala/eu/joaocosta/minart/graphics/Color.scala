@@ -8,6 +8,12 @@ final class Color private (val argb: Int) {
 
   @inline def rgb: Int = (argb & 0x00ffffff)
 
+  @inline def abgr: Int =
+    (argb & 0xff000000) |   // A
+      (b << 16) |           // B
+      (argb & 0x0000ff00) | // G
+      r                     // R
+
   /** Combines this with another color by summing each RGB value.
     * Values are clamped on overflow.
     */
@@ -73,10 +79,21 @@ object Color {
     new Color((255 << 24) | ((gray & 255) << 16) | ((gray & 255) << 8) | (gray & 255))
 
   /** Creates a new color from a 24bit backed RGB integer.
-    * Ignores the first byte.
+    * Ignores the first byte of a 32bit number.
     */
   @inline def fromRGB(rgb: Int): Color =
     new Color(0xff000000 | rgb)
+
+  /** Creates a new color from a 24bit backed BGR integer.
+    * Ignores the first byte of a 32bit number.
+    */
+  @inline def fromBGR(bgr: Int): Color =
+    new Color(
+      0xff000000 |
+        ((bgr & 0x00ff0000) >> 16) |
+        (bgr & 0x0000ff00) |
+        ((bgr & 0x000000ff)) << 16
+    )
 
   /** Extracts the RGB channels of a color.
     */

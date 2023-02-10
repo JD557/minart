@@ -115,7 +115,7 @@ private[graphics] object Blitter {
 
       if (maxX > 0 && maxY > 0) {
         source match {
-          case ramSurf: RamSurface => unsafeBlitMatrix(dest, ramSurf.data, mask, x, y, cx, cy, maxX, maxY)
+          case ramSurf: RamSurface => unsafeBlitMatrix(dest, ramSurf.dataBuffer, mask, x, y, cx, cy, maxX, maxY)
           case _                   => unsafeBlitSurface(dest, source, mask, x, y, cx, cy, maxX, maxY)
         }
 

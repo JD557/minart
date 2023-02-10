@@ -7,25 +7,22 @@ import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
 /** Mutable image surface backed by an AWT Buffered Image.
   */
 final class BufferedImageSurface(val bufferedImage: BufferedImage) extends MutableSurface {
-  val width               = bufferedImage.getWidth()
-  val height              = bufferedImage.getHeight()
-  private val imagePixels = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
+  val width              = bufferedImage.getWidth()
+  val height             = bufferedImage.getHeight()
+  private val dataBuffer = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
   def unsafeGetPixel(x: Int, y: Int): Color =
-    Color.fromRGB(imagePixels.getElem(y * width + x))
-
-  def getPixels(): Vector[Array[Color]] =
-    imagePixels.getData().iterator.map(Color.fromRGB).grouped(width).map(_.toArray).toVector
+    Color.fromRGB(dataBuffer.getElem(y * width + x))
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     if (x >= 0 && y >= 0 && x < width && y < height)
-      imagePixels
+      dataBuffer
         .setElem(y * width + x, color.argb)
 
   override def fill(color: Color): Unit = {
     var i = 0
     while (i < height * width) {
-      imagePixels.setElem(i, color.argb)
+      dataBuffer.setElem(i, color.argb)
       i += 1
     }
   }
@@ -36,7 +33,7 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
       val lineBase = yy * width
       var xx       = 0
       while (xx < w) {
-        imagePixels.setElem(lineBase + xx + x, color.argb)
+        dataBuffer.setElem(lineBase + xx + x, color.argb)
         xx += 1
       }
       yy += 1

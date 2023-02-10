@@ -14,29 +14,18 @@ import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
   */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with AutoCloseable {
 
-  val width: Int        = data.w
-  val height: Int       = data.h
-  private val lines     = 0 until height
-  private val columns   = 0 until width
-  private val renderer  = SDL_CreateSoftwareRenderer(data)
-  private val pixelsArr = data.pixels.asInstanceOf[Ptr[Int]]
+  val width: Int         = data.w
+  val height: Int        = data.h
+  private val renderer   = SDL_CreateSoftwareRenderer(data)
+  private val dataBuffer = data.pixels.asInstanceOf[Ptr[Int]]
 
   def unsafeGetPixel(x: Int, y: Int): Color = {
-    Color.fromRGB(pixelsArr(y * width + x))
-  }
-
-  def getPixels(): Vector[Array[Color]] = {
-    lines.map { y =>
-      val lineBase = y * width
-      columns.map { x =>
-        Color.fromRGB(pixelsArr(lineBase + x))
-      }.toArray
-    }.toVector
+    Color.fromRGB(dataBuffer(y * width + x))
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     if (data.pixels != null && x >= 0 && y >= 0 && x < width && y < height) {
-      pixelsArr(y * width + x) = color.argb
+      dataBuffer(y * width + x) = color.argb
     }
 
   override def fill(color: Color): Unit = {
