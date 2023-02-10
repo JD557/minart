@@ -15,12 +15,12 @@ class SpriteSheet(surface: Surface, spriteWidth: Int, spriteHeight: Int) {
 
   /** Gets a sprite at a given position in the sheet.
     *
-    *  @param column column of the sprite
     *  @param line line of the sprite
+    *  @param column column of the sprite
     *  @return surface view with the sprite
     */
-  def getSprite(column: Int, line: Int): SurfaceView =
-    surface.view.clip(line * spriteWidth, column * spriteHeight, spriteWidth, spriteHeight)
+  def getSprite(line: Int, column: Int): SurfaceView =
+    surface.view.clip(column * spriteWidth, line * spriteHeight, spriteWidth, spriteHeight)
 
   /** Gets a sprite at the nth position in the sheet.
     *
