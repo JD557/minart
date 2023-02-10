@@ -23,15 +23,15 @@ final class RamSurface(val data: Vector[Array[Color]]) extends MutableSurface {
     if (x >= 0 && y >= 0 && x < width && y < height)
       data(y)(x) = color
 
-  def fill(color: Color): Unit = {
-    var y = 0
-    while (y < height) {
-      var x = 0
-      while (x < width) {
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    var yy = 0
+    while (yy < h) {
+      var xx = 0
+      while (xx < w) {
         data(y)(x) = color
-        x += 1
+        xx += 1
       }
-      y += 1
+      yy += 1
     }
   }
 }

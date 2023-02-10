@@ -22,11 +22,24 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
       imagePixels
         .setElem(y * width + x, color.argb)
 
-  def fill(color: Color): Unit = {
+  override def fill(color: Color): Unit = {
     var i = 0
     while (i < height * width) {
       imagePixels.setElem(i, color.argb)
       i += 1
+    }
+  }
+
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    var yy = 0
+    while (yy < h) {
+      val lineBase = yy * width
+      var xx       = 0
+      while (xx < w) {
+        imagePixels.setElem(lineBase + xx + x, color.argb)
+        xx += 1
+      }
+      yy += 1
     }
   }
 

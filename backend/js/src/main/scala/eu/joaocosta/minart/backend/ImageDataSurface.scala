@@ -40,7 +40,7 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
       data.data(baseAddr + 2) = color.b
     }
 
-  def fill(color: Color): Unit = {
+  override def fill(color: Color): Unit = {
     var base = 0
     while (base < 4 * height * width) {
       data.data(base + 0) = color.r
@@ -48,6 +48,22 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
       data.data(base + 2) = color.b
       data.data(base + 3) = 255
       base += 4
+    }
+  }
+
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    var yy = 0
+    while (yy < h) {
+      val lineBase = yy * width
+      var xx       = 0
+      while (xx < w) {
+        val baseAddr = 4 * (lineBase + xx)
+        data.data(baseAddr + 0) = color.r
+        data.data(baseAddr + 1) = color.g
+        data.data(baseAddr + 2) = color.b
+        xx += 1
+      }
+      yy += 1
     }
   }
 }

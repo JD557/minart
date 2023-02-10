@@ -56,9 +56,15 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
       data.pixels(baseAddr + 3) = 255.toByte
     }
 
-  def fill(color: Color): Unit = {
+  override def fill(color: Color): Unit = {
     SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, 0.toUByte)
     SDL_RenderClear(renderer)
+  }
+
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, 0.toUByte)
+    val rect = stackalloc[SDL_Rect]().init(x, y, w, h)
+    SDL_RenderFillRect(renderer, rect)
   }
 
   override def blit(
