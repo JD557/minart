@@ -18,6 +18,18 @@ trait MSurfaceIOOps extends SurfaceIOOps {
     */
   def putPixel(x: Int, y: Int, color: Color): MSurfaceIO[Unit] = accessMSurface(_.putPixel(x, y, color))
 
+  /** Fill part of the surface with a certain color
+    *
+    * @param color `Color` to fill the surface with
+    * @param x leftmost pixel on the destination surface
+    * @param y topmost pixel on the destination surface
+    * @param w region width
+    * @param h region height
+    */
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): MSurfaceIO[Unit] = accessMSurface(
+    _.fillRegion(x, y, w, h, color)
+  )
+
   /** Fill the surface with a certain color
     *
     * @param color `Color` to fill the surface with
