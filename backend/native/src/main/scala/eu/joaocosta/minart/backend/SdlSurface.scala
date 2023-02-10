@@ -14,46 +14,29 @@ import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
   */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with AutoCloseable {
 
-  val width: Int       = data.w
-  val height: Int      = data.h
-  private val lines    = 0 until height
-  private val columns  = 0 until width
-  private val renderer = SDL_CreateSoftwareRenderer(data)
+  val width: Int        = data.w
+  val height: Int       = data.h
+  private val lines     = 0 until height
+  private val columns   = 0 until width
+  private val renderer  = SDL_CreateSoftwareRenderer(data)
+  private val pixelsArr = data.pixels.asInstanceOf[Ptr[Int]]
 
   def unsafeGetPixel(x: Int, y: Int): Color = {
-    // Assuming a BGRA surface
-    val baseAddr =
-      4 * (y * width + x)
-    Color(
-      (data.pixels(baseAddr + 2) & 0xff),
-      (data.pixels(baseAddr + 1) & 0xff),
-      (data.pixels(baseAddr + 0) & 0xff)
-    )
+    Color.fromRGB(pixelsArr(y * width + x))
   }
 
   def getPixels(): Vector[Array[Color]] = {
     lines.map { y =>
       val lineBase = y * width
       columns.map { x =>
-        val baseAddr = 4 * (lineBase + x)
-        Color(
-          (data.pixels(baseAddr + 2) & 0xff),
-          (data.pixels(baseAddr + 1) & 0xff),
-          (data.pixels(baseAddr + 0) & 0xff)
-        )
+        Color.fromRGB(pixelsArr(lineBase + x))
       }.toArray
     }.toVector
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
     if (data.pixels != null && x >= 0 && y >= 0 && x < width && y < height) {
-      // Assuming a BGRA surface
-      val lineBase = y * width
-      val baseAddr = 4 * (lineBase + x)
-      data.pixels(baseAddr + 0) = color.b.toByte
-      data.pixels(baseAddr + 1) = color.g.toByte
-      data.pixels(baseAddr + 2) = color.r.toByte
-      data.pixels(baseAddr + 3) = 255.toByte
+      pixelsArr(y * width + x) = color.argb
     }
 
   override def fill(color: Color): Unit = {
