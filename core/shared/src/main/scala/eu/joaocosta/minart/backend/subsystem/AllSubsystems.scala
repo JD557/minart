@@ -38,9 +38,11 @@ private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLeve
   def unsafeGetPixel(x: Int, y: Int): Color      = canvas.unsafeGetPixel(x, y)
 
   // AudioPlayer
-  def isPlaying(): Boolean                      = audioPlayer.isPlaying()
-  def play(wave: AudioClip): Unit               = audioPlayer.play(wave)
-  def play(wave: AudioClip, channel: Int): Unit = audioPlayer.play(wave, channel)
-  def stop(): Unit                              = audioPlayer.stop()
-  def stop(channel: Int): Unit                  = audioPlayer.stop(channel)
+  def isPlaying(): Boolean                               = audioPlayer.isPlaying()
+  override def play(clip: AudioClip): Unit               = audioPlayer.play(clip)
+  def play(clip: AudioClip, channel: Int): Unit          = audioPlayer.play(clip, channel)
+  override def play(wave: AudioWave): Unit               = audioPlayer.play(wave)
+  override def play(wave: AudioWave, channel: Int): Unit = audioPlayer.play(wave, channel)
+  def stop(): Unit                                       = audioPlayer.stop()
+  def stop(channel: Int): Unit                           = audioPlayer.stop(channel)
 }

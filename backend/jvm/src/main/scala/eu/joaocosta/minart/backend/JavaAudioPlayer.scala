@@ -8,8 +8,8 @@ import scala.concurrent._
 import eu.joaocosta.minart.audio._
 
 class JavaAudioPlayer() extends LowLevelAudioPlayer {
-  private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
-  private var sourceDataLine: SourceDataLine                = _
+  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
+  private var sourceDataLine: SourceDataLine               = _
 
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
@@ -18,7 +18,7 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
   protected def unsafeApplySettings(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
     // TODO this should probably stop the running audio
     val format = new AudioFormat(settings.sampleRate.toFloat, 8, 1, true, false)
-    playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
+    playQueue = new AudioQueue.MultiChannelAudioQueue(settings.sampleRate)
     sourceDataLine = AudioSystem.getSourceDataLine(format)
     sourceDataLine.open(format, settings.bufferSize)
     sourceDataLine.start()
@@ -43,8 +43,6 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     case true  => callback()
     case false => Future.successful(())
   }
-
-  def play(clip: AudioClip): Unit = play(clip, 0)
 
   def play(clip: AudioClip, channel: Int): Unit = {
     val alreadyPlaying = isPlaying()

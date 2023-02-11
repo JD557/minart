@@ -11,14 +11,14 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
   private lazy val audioCtx      = new AudioContext();
   private val preemptiveCallback = LoopFrequency.hz15.millis
 
-  private var playQueue: AudioPlayer.MultiChannelAudioQueue = _
-  private var callbackRegistered                            = false
+  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
+  private var callbackRegistered                           = false
 
   protected def unsafeInit() = {}
 
   protected def unsafeApplySettings(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
     // TODO this should probably stop the running audio
-    playQueue = new AudioPlayer.MultiChannelAudioQueue(settings.sampleRate)
+    playQueue = new AudioQueue.MultiChannelAudioQueue(settings.sampleRate)
     settings
   }
 
@@ -52,8 +52,6 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
         callbackRegistered = false
       }
     }
-
-  def play(clip: AudioClip): Unit = play(clip, 0)
 
   def play(clip: AudioClip, channel: Int): Unit = {
     playQueue.enqueue(clip, channel)
