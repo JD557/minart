@@ -1,15 +1,27 @@
 package eu.joaocosta.minart.input
 
+import scala.collection.immutable.Queue
+
 import eu.joaocosta.minart.input.KeyboardInput.Key
 
 /** The keyboard input stores the state of the keyboard at a certain point in time.
   * It also accumulates keys that have been pressed and released.
   *
   * @param keysDown keys that are pressed down
-  * @param keysPressed keys that have been pressed
-  * @param keysReleased keys that have been released
+  * @param events ordered press/release keyboard events.
+  *               Note that only the most recent KeyboardInput.maxEvents are guaranteed to be present.
   */
-case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased: Set[Key]) {
+case class KeyboardInput(keysDown: Set[Key], events: Queue[KeyboardInput.Event]) {
+
+  /** Keys that have been pressed */
+  lazy val keysPressed: Set[Key] = events.collect { case KeyboardInput.Event.Pressed(key) =>
+    key
+  }.toSet
+
+  /** Keys that have been released */
+  lazy val keysReleased: Set[Key] = events.collect { case KeyboardInput.Event.Released(key) =>
+    key
+  }.toSet
 
   /** Checks if a key is down. */
   def isDown(key: Key): Boolean = keysDown(key)
@@ -17,23 +29,46 @@ case class KeyboardInput(keysDown: Set[Key], keysPressed: Set[Key], keysReleased
   /** Checks if a key is up. */
   def isUp(key: Key): Boolean = !keysDown(key)
 
+  private def pushEvent(event: KeyboardInput.Event) = {
+    val newQueue = events :+ event
+    if (newQueue.size >= KeyboardInput.maxEvents * 2) this.copy(events = newQueue.drop(KeyboardInput.maxEvents))
+    else this.copy(events = newQueue)
+  }
+
   /** Returns a new state where a key has been pressed. */
   def press(key: Key): KeyboardInput =
-    if (keysDown(key)) this
-    else KeyboardInput(keysDown + key, keysPressed + key, keysReleased - key)
+    if (keysDown(key)) this // Ignore key repeat
+    else pushEvent(KeyboardInput.Event.Pressed(key)).copy(keysDown = keysDown + key)
 
   /** Returns a new state where a key has been released. */
-  def release(key: Key): KeyboardInput = KeyboardInput(keysDown - key, keysPressed - key, keysReleased + key)
+  def release(key: Key): KeyboardInput =
+    pushEvent(KeyboardInput.Event.Released(key)).copy(keysDown = keysDown - key)
 
   /** Clears the `keysPressed` and `keysReleased`. */
-  def clearPressRelease(): KeyboardInput = KeyboardInput(keysDown, Set(), Set())
+  def clearPressRelease(): KeyboardInput = KeyboardInput(keysDown, Queue.empty)
 }
 
 object KeyboardInput {
 
   /** Keyboard Input with everything unset
     */
-  val empty = KeyboardInput(Set(), Set(), Set())
+  val empty = KeyboardInput(Set(), Queue.empty)
+
+  /** Maximum events guaranteed to be stored by KeyboardInput */
+  val maxEvents = 1024
+
+  /** Keyboard Event */
+  sealed trait Event {
+    def key: Key
+  }
+  object Event {
+
+    /** Event representing a key press */
+    final case class Pressed(key: Key) extends Event
+
+    /** Event representing a key release */
+    final case class Released(key: Key) extends Event
+  }
 
   /** Internal trait to store mappings from platform-specific key representations to a [[Key]].
     * This should not have to be used in the application code.

@@ -92,7 +92,6 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     surface = new SdlSurface(
       SDL_CreateRGBSurface(0.toUInt, newSettings.width, newSettings.height, 32, 0.toUInt, 0.toUInt, 0.toUInt, 0.toUInt)
     )
-    keyboardInput = KeyboardInput(Set(), Set(), Set())
     val fullExtendedSettings = extendedSettings.copy(
       windowWidth = windowSurface.w,
       windowHeight = windowSurface.h

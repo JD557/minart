@@ -157,42 +157,20 @@ object AwtCanvas {
   }
 
   private class KeyListener extends JavaKeyListener {
-    private[this] val events = new ConcurrentLinkedQueue[KeyListener.KeyboardEvent]()
-    private[this] var state  = KeyboardInput.empty
+    private[this] var state = KeyboardInput.empty
 
-    private[this] def computeState(): KeyboardInput = synchronized {
-      state = events.asScala.foldLeft(state) {
-        case (st, KeyListener.KeyboardEvent.Pressed(key)) =>
-          st.press(key)
-        case (st, KeyListener.KeyboardEvent.Released(key)) =>
-          st.release(key)
-      }
-      events.clear()
-      state
+    def keyPressed(ev: KeyEvent): Unit = synchronized {
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.press(key))
     }
-
-    private[this] def pushEvent(ev: KeyListener.KeyboardEvent): Unit = {
-      events.add(ev)
-      if (events.size > 20) computeState()
+    def keyReleased(ev: KeyEvent): Unit = synchronized {
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.release(key))
     }
-
-    def keyPressed(ev: KeyEvent): Unit =
-      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => pushEvent(KeyListener.KeyboardEvent.Pressed(key)))
-    def keyReleased(ev: KeyEvent): Unit =
-      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => pushEvent(KeyListener.KeyboardEvent.Released(key)))
     def keyTyped(ev: KeyEvent): Unit = ()
     def clearPressRelease(): Unit = synchronized {
       state = state.clearPressRelease()
     }
-    def getKeyboardInput(): KeyboardInput =
-      computeState()
-  }
-
-  private object KeyListener {
-    sealed trait KeyboardEvent
-    object KeyboardEvent {
-      case class Pressed(key: Key)  extends KeyboardEvent
-      case class Released(key: Key) extends KeyboardEvent
+    def getKeyboardInput(): KeyboardInput = synchronized {
+      state
     }
   }
 
