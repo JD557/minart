@@ -46,7 +46,11 @@ trait Surface {
     *
     * @return color matrix
     */
-  def getPixels(): Vector[Array[Color]]
+  def getPixels(): Vector[Array[Color]] = {
+    Vector.tabulate(height) { y =>
+      Array.tabulate(width)(x => unsafeGetPixel(x, y))
+    }
+  }
 
   /** Copies this surface into a new surface stored in RAM */
   final def toRamSurface(): RamSurface = new RamSurface(getPixels())

@@ -24,12 +24,18 @@ private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLeve
   def redraw(): Unit                           = canvas.redraw()
 
   // MutableSurface
-  def fill(color: Color): Unit                     = canvas.fill(color)
-  def putPixel(x: Int, y: Int, color: Color): Unit = canvas.putPixel(x, y, color)
+  override def fill(color: Color): Unit                              = canvas.fill(color)
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = canvas.fillRegion(x, y, w, h, color)
+  def putPixel(x: Int, y: Int, color: Color): Unit                   = canvas.putPixel(x, y, color)
+  override def blit(
+      that: Surface,
+      mask: Option[Color] = None
+  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
+    canvas.blit(that, mask)(x, y, cx, cy, cw, ch)
 
   // Surface
-  def getPixels(): Vector[Array[Color]]     = canvas.getPixels()
-  def unsafeGetPixel(x: Int, y: Int): Color = canvas.unsafeGetPixel(x, y)
+  override def getPixels(): Vector[Array[Color]] = canvas.getPixels()
+  def unsafeGetPixel(x: Int, y: Int): Color      = canvas.unsafeGetPixel(x, y)
 
   // AudioPlayer
   def isPlaying(): Boolean                      = audioPlayer.isPlaying()

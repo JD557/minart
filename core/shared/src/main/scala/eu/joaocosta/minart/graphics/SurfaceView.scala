@@ -64,9 +64,6 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def transpose: SurfaceView =
     plane.transpose.toSurfaceView(height, width)
 
-  def getPixels(): Vector[Array[Color]] =
-    Vector.tabulate(height)(y => Array.tabulate(width)(x => unsafeGetPixel(x, y)))
-
   override def view: SurfaceView = this
 }
 
