@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.audio
 
+import scala.collection.JavaConverters._
+
 /** Internal AudioQueue abstraction.
   *
   *  This is not expected to be used by user code, but it's helpful to implement custom backends
@@ -23,23 +25,23 @@ object AudioQueue {
 
   class SingleChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val valueQueue = scala.collection.mutable.Queue[Double]()
-    private val clipQueue  = scala.collection.mutable.ArrayDeque[AudioClip]()
+    private val clipQueue  = new java.util.ArrayDeque[AudioClip]() // Use scala's ArrayDeque on 2.13+
 
     def isEmpty = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
-    def size    = valueQueue.size + clipQueue.map(_.numSamples(sampleRate)).sum
+    def size    = valueQueue.size + clipQueue.iterator.asScala.map(_.numSamples(sampleRate)).sum
 
     def enqueue(clip: AudioClip): this.type = synchronized {
-      clipQueue.append(clip)
+      clipQueue.addLast(clip)
       this
     }
     def dequeue(): Double = synchronized {
       if (valueQueue.nonEmpty) {
         valueQueue.dequeue()
-      } else if (clipQueue.nonEmpty) {
-        val nextClip = clipQueue.removeHead()
+      } else if (!clipQueue.isEmpty()) {
+        val nextClip = clipQueue.removeFirst()
         if (nextClip.duration > maxBufferSize) {
           valueQueue ++= nextClip.take(maxBufferSize).iterator(sampleRate)
-          clipQueue.prepend(nextClip.drop(maxBufferSize))
+          clipQueue.addFirst(nextClip.drop(maxBufferSize))
         } else {
           valueQueue ++= nextClip.iterator(sampleRate)
         }
