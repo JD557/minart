@@ -14,12 +14,22 @@ final case class Oscilator(generator: Double => AudioWave) extends (Double => Au
     else if (amplitude == 1.0) generator(frequency)
     else generate(frequency).map(_ * amplitude)
 
-  /** Generates a audio clip with duration up to `duration`, performing a perfect cycle.
+  /** Generates a audio clip with a certain duraiton.
     *
-    *  This is helpful to merge results from oscilators with minimal clipping.
+    * It also allows rounding the duration to the closest cycle, to smoothly merge results from oscilators.
+    *
+    * @param duration duration of the clip
+    * @param frequncy frequency to play
+    * @param amplitude amplitude of the wave
+    * @param roundDuration weather the duration should be rounded down to match a oscilator cycle
     */
-  def generateClip(duration: Double, frequency: Double, amplitude: Double = 1.0): AudioClip = {
-    val finalDuration = (duration * frequency).toInt / frequency
+  def generateClip(
+      duration: Double,
+      frequency: Double,
+      amplitude: Double = 1.0,
+      roundDuration: Boolean = false
+  ): AudioClip = {
+    val finalDuration = if (roundDuration) ((duration * frequency).toInt / frequency) else duration
     generate(frequency, amplitude).take(finalDuration)
   }
 
