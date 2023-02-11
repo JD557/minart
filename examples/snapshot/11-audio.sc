@@ -30,7 +30,10 @@ object Audio {
 
   // We can also use the provided oscilators
   val bass =
-    Oscilator.sin.generate(frequency = 220, amplitude = 1.0).clip(2.0)
+    Oscilator.sin
+      .generateClip(duration = 0.5, frequency = 220, amplitude = 1.0)
+      .append(Oscilator.sin.generateClip(duration = 0.5, frequency = 330, amplitude = 1.0))
+      .append(Oscilator.sin.generateClip(duration = 1.0, frequency = 220, amplitude = 1.0))
 
   // Mix our arpeggio (going up and down) with a low root note
   val testSample =
