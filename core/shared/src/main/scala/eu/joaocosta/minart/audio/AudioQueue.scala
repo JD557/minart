@@ -62,7 +62,7 @@ object AudioQueue {
     def isEmpty = channels.values.forall(_.isEmpty)
     def size =
       if (channels.isEmpty) 0
-      else channels.values.map(_.size).max
+      else channels.values.maxBy(_.size).size
 
     def enqueue(clip: AudioClip): this.type = enqueue(clip, 0)
     def enqueue(clip: AudioClip, channel: Int): this.type = synchronized {
