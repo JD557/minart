@@ -157,64 +157,25 @@ object AwtCanvas {
   }
 
   private class KeyListener extends JavaKeyListener {
-    private[this] val events = new ConcurrentLinkedQueue[KeyListener.KeyboardEvent]()
-    private[this] var state  = KeyboardInput.empty
+    private[this] var state = KeyboardInput.empty
 
-    private[this] def computeState(): KeyboardInput = synchronized {
-      state = events.asScala.foldLeft(state) {
-        case (st, KeyListener.KeyboardEvent.Pressed(key)) =>
-          st.press(key)
-        case (st, KeyListener.KeyboardEvent.Released(key)) =>
-          st.release(key)
-      }
-      events.clear()
-      state
+    def keyPressed(ev: KeyEvent): Unit = synchronized {
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.press(key))
     }
-
-    private[this] def pushEvent(ev: KeyListener.KeyboardEvent): Unit = {
-      events.add(ev)
-      if (events.size > 20) computeState()
+    def keyReleased(ev: KeyEvent): Unit = synchronized {
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.release(key))
     }
-
-    def keyPressed(ev: KeyEvent): Unit =
-      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => pushEvent(KeyListener.KeyboardEvent.Pressed(key)))
-    def keyReleased(ev: KeyEvent): Unit =
-      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => pushEvent(KeyListener.KeyboardEvent.Released(key)))
     def keyTyped(ev: KeyEvent): Unit = ()
     def clearPressRelease(): Unit = synchronized {
       state = state.clearPressRelease()
     }
-    def getKeyboardInput(): KeyboardInput =
-      computeState()
-  }
-
-  private object KeyListener {
-    sealed trait KeyboardEvent
-    object KeyboardEvent {
-      case class Pressed(key: Key)  extends KeyboardEvent
-      case class Released(key: Key) extends KeyboardEvent
+    def getKeyboardInput(): KeyboardInput = synchronized {
+      state
     }
   }
 
   private class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
-    private[this] val events          = new ConcurrentLinkedQueue[MouseListener.MouseEvent]()
     @volatile private[this] var state = PointerInput.empty
-
-    private[this] def computeState(): PointerInput = synchronized {
-      state = events.asScala.foldLeft(state) {
-        case (st, MouseListener.MouseEvent.Pressed(pos)) =>
-          st.move(pos).press
-        case (st, MouseListener.MouseEvent.Released(pos)) =>
-          st.move(pos).release
-      }
-      events.clear()
-      state
-    }
-
-    private[this] def pushEvent(ev: MouseListener.MouseEvent): Unit = {
-      events.add(ev)
-      if (events.size > 20) computeState()
-    }
 
     def getMousePos(): Option[PointerInput.Position] = {
       val point =
@@ -228,22 +189,21 @@ object AwtCanvas {
       }
     }
 
-    def mousePressed(ev: MouseEvent): Unit  = pushEvent(MouseListener.MouseEvent.Pressed(getMousePos()))
-    def mouseReleased(ev: MouseEvent): Unit = pushEvent(MouseListener.MouseEvent.Released(getMousePos()))
-    def mouseClicked(ev: MouseEvent): Unit  = ()
-    def mouseEntered(ev: MouseEvent): Unit  = ()
-    def mouseExited(ev: MouseEvent): Unit   = ()
+    def mousePressed(ev: MouseEvent): Unit =
+      synchronized {
+        state = state.move(getMousePos()).press
+      }
+    def mouseReleased(ev: MouseEvent): Unit = synchronized {
+      state = state.move(getMousePos()).release
+    }
+    def mouseClicked(ev: MouseEvent): Unit = ()
+    def mouseEntered(ev: MouseEvent): Unit = ()
+    def mouseExited(ev: MouseEvent): Unit  = ()
     def clearEvents(): Unit = synchronized {
       state = state.clearEvents()
     }
-    def getPointerInput(): PointerInput = computeState().move(getMousePos())
-  }
-
-  private object MouseListener {
-    sealed trait MouseEvent
-    object MouseEvent {
-      case class Pressed(pos: Option[PointerInput.Position])  extends MouseEvent
-      case class Released(pos: Option[PointerInput.Position]) extends MouseEvent
+    def getPointerInput(): PointerInput = synchronized {
+      state.move(getMousePos())
     }
   }
 }
