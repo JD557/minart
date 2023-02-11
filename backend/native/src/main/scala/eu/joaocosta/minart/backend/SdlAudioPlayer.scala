@@ -73,8 +73,6 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
       Future.successful(())
   }
 
-  def play(clip: AudioClip): Unit = play(clip, 0)
-
   def play(clip: AudioClip, channel: Int): Unit = {
     // SDL_LockAudioDevice(device)
     playQueue.enqueue(clip, channel)

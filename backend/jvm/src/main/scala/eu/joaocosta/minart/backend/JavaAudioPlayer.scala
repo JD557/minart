@@ -44,8 +44,6 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     case false => Future.successful(())
   }
 
-  def play(clip: AudioClip): Unit = play(clip, 0)
-
   def play(clip: AudioClip, channel: Int): Unit = {
     val alreadyPlaying = isPlaying()
     playQueue.enqueue(clip, channel)

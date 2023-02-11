@@ -4,13 +4,25 @@ import eu.joaocosta.minart.backend.defaults._
 
 trait AudioPlayer {
 
-  /** Enqueues an audio clip to be played later.
+  /** Enqueues an audio clip to be played later in channel 0.
     */
-  def play(wave: AudioClip): Unit
+  def play(clip: AudioClip): Unit = play(clip, 0)
 
   /** Enqueues an audio clip to be played later in a certain channel.
     */
-  def play(wave: AudioClip, channel: Int): Unit
+  def play(clip: AudioClip, channel: Int): Unit
+
+  /** Enqueues an audio wave to be played later in channel 0.
+    *  The Audio Wave will play infinitely until stop() is called.
+    */
+  def play(wave: AudioWave): Unit =
+    play(wave, 0)
+
+  /** Enqueues an audio wave to be played later in a certain channel.
+    *  The Audio Wave will play infinitely until stop() is called.
+    */
+  def play(wave: AudioWave, channel: Int): Unit =
+    play(AudioClip(wave, Double.PositiveInfinity))
 
   /** Checks if this player still has data to be played.
     */

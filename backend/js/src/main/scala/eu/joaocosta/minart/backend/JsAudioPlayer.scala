@@ -53,8 +53,6 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
       }
     }
 
-  def play(clip: AudioClip): Unit = play(clip, 0)
-
   def play(clip: AudioClip, channel: Int): Unit = {
     playQueue.enqueue(clip, channel)
     if (!callbackRegistered) {

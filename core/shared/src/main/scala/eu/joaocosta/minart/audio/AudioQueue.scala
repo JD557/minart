@@ -19,23 +19,30 @@ sealed trait AudioQueue {
 
 object AudioQueue {
 
+  private val maxBufferSize: Double = 1.0
+
   class SingleChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val valueQueue = scala.collection.mutable.Queue[Double]()
-    private val clipQueue  = scala.collection.mutable.Queue[AudioClip]()
+    private val clipQueue  = scala.collection.mutable.ArrayDeque[AudioClip]()
 
     def isEmpty = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
     def size    = valueQueue.size + clipQueue.map(_.numSamples(sampleRate)).sum
 
     def enqueue(clip: AudioClip): this.type = synchronized {
-      clipQueue.enqueue(clip)
+      clipQueue.append(clip)
       this
     }
     def dequeue(): Double = synchronized {
       if (valueQueue.nonEmpty) {
         valueQueue.dequeue()
       } else if (clipQueue.nonEmpty) {
-        val nextWave = clipQueue.dequeue()
-        valueQueue ++= nextWave.iterator(sampleRate)
+        val nextClip = clipQueue.removeHead()
+        if (nextClip.duration > maxBufferSize) {
+          valueQueue ++= nextClip.take(maxBufferSize).iterator(sampleRate)
+          clipQueue.prepend(nextClip.drop(maxBufferSize))
+        } else {
+          valueQueue ++= nextClip.iterator(sampleRate)
+        }
         valueQueue.dequeue()
       } else {
         0.0
