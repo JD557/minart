@@ -84,7 +84,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     Plane.MatrixPlane(matrix, this)
 
   /** Translates a plane. */
-  def translate(dx: Int, dy: Int): Plane = contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+  def translate(dx: Double, dy: Double): Plane = contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
 
   /** Flips a plane horizontally. */
   def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
