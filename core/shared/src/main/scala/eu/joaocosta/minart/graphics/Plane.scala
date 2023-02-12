@@ -95,6 +95,9 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   /** Scales a plane. */
   def scale(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
 
+  /** Scales a plane. */
+  def scale(s: Double): Plane = scale(s, s)
+
   /** Rotates a plane. */
   def rotate(theta: Double): Plane = {
     val ct = math.cos(theta)
