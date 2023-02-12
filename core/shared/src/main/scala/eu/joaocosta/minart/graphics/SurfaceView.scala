@@ -53,12 +53,15 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 
   /** Flips a surface horizontally. */
   def flipH: SurfaceView =
-    contramap((x, y) => (width - x - 1, y))
-      .toSurfaceView(width, height)
+    copy(plane = plane.flipH.translate(width, 0))
 
-  /** Flips an surface vertically. */
-  def flipV: SurfaceView = contramap((x, y) => (x, height - y - 1))
-    .toSurfaceView(width, height)
+  /** Flips a surface vertically. */
+  def flipV: SurfaceView =
+    copy(plane = plane.flipV.translate(0, height))
+
+  /** Scales a surface. */
+  def scale(sx: Double, sy: Double): SurfaceView =
+    copy(plane = plane.scale(sx, sy), width = (width * sx).toInt, height = (height * sx).toInt)
 
   /** Transposes a surface. */
   def transpose: SurfaceView =
