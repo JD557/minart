@@ -59,8 +59,54 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   /** Inverts a plane color. */
   def invertColor: Plane = map(_.invert)
 
-  /** Transposes a surface. */
-  def transpose: Plane = contramap((x, y) => (y, x))
+  /** Contramaps this plane using a matrix instead of a function.
+    *
+    *  This method can be chained multiple times efficiently.
+    *
+    * Note that this is *contramaping*. The operation is applied as
+    * [a b c] [dx] = [sx]
+    * [d e f] [dy]   [sy]
+    * [0 0 1] [ 1]   [ 1]
+    *
+    * Where (sx,sy) are the positions in the original plane and (dx, dy) are the positions in the new plane.
+    *
+    * This means that you need to invert the transformations to use the common transformation matrices.
+    *
+    * For example, the matrix:
+    *
+    * [2 0 0] [dx] = [sx]
+    * [0 2 0] [dy]   [sy]
+    * [0 0 1] [ 1]   [ 1]
+    *
+    * Will *scale down* the image, not scale up.
+    */
+  def contramapMatrix(matrix: Matrix) =
+    Plane.MatrixPlane(matrix, this)
+
+  /** Translates a plane. */
+  def translate(dx: Int, dy: Int): Plane = contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+
+  /** Flips a plane horizontally. */
+  def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+
+  /** Flips a plane vertically. */
+  def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+
+  /** Scales a plane. */
+  def scale(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+
+  /** Rotates a plane. */
+  def rotate(theta: Double): Plane = {
+    val ct = math.cos(theta)
+    val st = math.sin(theta)
+    contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+  }
+
+  /** Shears a plane. */
+  def shear(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+
+  /** Transposes a plane. */
+  def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 1))
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner
     *
@@ -85,6 +131,15 @@ object Plane {
     val rem = x % y
     if (rem >= 0) rem
     else rem + y
+  }
+  private[Plane] final case class MatrixPlane(matrix: Matrix, plane: Plane) extends Plane {
+    def getPixel(x: Int, y: Int): Color = {
+      val (xx, yy) = matrix(x, y)
+      plane.getPixel(xx, yy)
+    }
+
+    override def contramapMatrix(matrix: Matrix) =
+      MatrixPlane(this.matrix.multiply(matrix), plane)
   }
 
   /** Creates a plane from a constant color
