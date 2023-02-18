@@ -5,8 +5,8 @@ name := "minart"
 
 ThisBuild / organization       := "eu.joaocosta"
 ThisBuild / publishTo          := sonatypePublishToBundle.value
-ThisBuild / scalaVersion       := "3.2.1"
-ThisBuild / crossScalaVersions := Seq("2.12.17", "2.13.10", "3.2.1")
+ThisBuild / scalaVersion       := "3.2.2"
+ThisBuild / crossScalaVersions := Seq("2.12.17", "2.13.10", "3.2.2")
 ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage           := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
@@ -74,7 +74,7 @@ val publishSettings = Seq(
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang.modules" %%% "scala-collection-compat" % "2.9.0",
-    "org.scala-js"           %%% "scalajs-dom"             % "2.3.0"
+    "org.scala-js"           %%% "scalajs-dom"             % "2.4.0"
   )
 )
 
