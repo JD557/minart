@@ -87,5 +87,17 @@ trait MutableSurfaceTests extends BasicTestSuite {
     assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
     assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
     assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
+
+    surface.blit(source, Some(Color(255, 0, 0)))(0, 0)
+
+    assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
+    assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
+    assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
+
+    surface.blit(source, Some(Color(0, 0, 0)))(0, 0)
+
+    assert(surface.getPixel(0, 0) == Some(Color(255, 0, 0)))
+    assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
+    assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
   }
 }
