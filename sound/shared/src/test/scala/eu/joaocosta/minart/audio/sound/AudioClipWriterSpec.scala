@@ -23,6 +23,10 @@ object AudioClipWriterSpec extends BasicTestSuite {
 
   // Can't load resources in JS tests
   if (Platform() != Platform.JS) {
+    test("Write a AIFF clip") {
+      roundtripTest(Resource("sample-32bit.aiff"), aiff.AiffAudioFormat.defaultFormat)
+    }
+
     test("Write a WAV clip") {
       roundtripTest(Resource("sample-32bit.wav"), wav.WavAudioFormat.defaultFormat)
     }

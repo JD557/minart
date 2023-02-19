@@ -101,13 +101,15 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
             } yield data
             ssnd.flatMap { s =>
               val newData = data ++ s
-              if (commHeader.exists(c => newData.size >= c.sampleSize * c.numSampleFrames))
+              if (commHeader.exists(c => newData.size >= c.numSampleFrames * c.sampleSize / 8))
                 State.fromEither(assembleChunks(commHeader.get, newData))
               else loadChunks(commHeader, newData)
             }
-          case "" => State.error("Reached end of file without all required chunks")
+          case "" =>
+            State.error("Reached end of file without all required chunks")
           case other =>
-            skipBytes(header.paddedSize).flatMap(_ => loadChunks(commHeader, data))
+            if (header.paddedSize == 0) State.error(s"Received invalid chunk: $header")
+            else skipBytes(header.paddedSize).flatMap(_ => loadChunks(commHeader, data))
         }
       }
   }
@@ -125,7 +127,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
 
 object AiffAudioReader {
   case class ChunkHeader(id: String, size: Int) {
-    val paddedSize = if (size % 2 == 0) size else size + 1
+    val paddedSize = size + (size % 2)
   }
 
   private final class ByteFloatOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {

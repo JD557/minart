@@ -82,8 +82,9 @@ val nativeSettings = Seq(
   nativeLinkStubs      := true,
   Compile / nativeMode := "release",
   Test / nativeMode    := "debug",
-  nativeLTO            := "thin",
-  nativeConfig ~= {
+  Compile / nativeLTO  := "thin",
+  Test / nativeLTO     := "none",
+  Test / nativeConfig ~= {
     _.withEmbedResources(true)
   }
 )

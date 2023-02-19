@@ -48,6 +48,11 @@ object Sound {
     }
   }
 
+  /** Stores an audio clip in the AIFF format.
+    */
+  def storeAiffClip(clip: AudioClip, resource: Resource): Try[Unit] =
+    storeClip(aiff.AiffAudioFormat.defaultFormat, clip, resource)
+
   /** Stores an audio clip in the WAV format.
     */
   def storeWavClip(clip: AudioClip, resource: Resource): Try[Unit] =
