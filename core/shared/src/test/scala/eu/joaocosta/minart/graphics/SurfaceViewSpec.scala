@@ -76,4 +76,47 @@ object SurfaceViewSpec extends BasicTestSuite {
     assert(newSurface.height == 2)
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
+
+  test("FlipH mirrors the surface horizontally") {
+    val newSurface =
+      surface.view.flipH.toRamSurface()
+    val newPixels      = newSurface.getPixels()
+    val expectedPixels = originalPixels.map(_.reverse)
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
+  test("FlipV mirrors the surface vertically") {
+    val newSurface =
+      surface.view.flipV.toRamSurface()
+    val newPixels      = newSurface.getPixels()
+    val expectedPixels = originalPixels.reverse
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
+  test("Scale upscales the surface") {
+    val newSurface =
+      surface.view.scale(2.0).toRamSurface()
+
+    assert(newSurface.width == 2 * surface.width)
+    assert(newSurface.height == 2 * surface.height)
+  }
+
+  test("Scale downscales the plane") {
+    val newSurface =
+      surface.view.scale(0.5).toRamSurface()
+
+    assert(newSurface.width == surface.width / 2)
+    assert(newSurface.height == surface.height / 2)
+  }
+
+  test("Transpose transposes the image") {
+    val newSurface =
+      surface.view.transpose.toRamSurface()
+    val newPixels      = newSurface.getPixels()
+    val expectedPixels = originalPixels.transpose
+
+    assert(newSurface.width == surface.height)
+    assert(newSurface.height == surface.width)
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
 }
