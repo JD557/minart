@@ -116,4 +116,71 @@ object PlaneSpec extends BasicTestSuite {
     assert(newSurface.height == 2)
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
+
+  test("Inverting the color updates all colors with the inverse") {
+    assert(Plane.fromConstant(Color(110, 120, 130)).invertColor(100, 100) == Color(110, 120, 130).invert)
+  }
+
+  test("Translation moves all pixels") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.translate(5, 10)
+    assert(original(0, 0) == transformed(5, 10))
+  }
+
+  test("FlipH mirrors the pixels with the Y axis") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.flipH
+    assert(original(5, 10) == transformed(-5, 10))
+  }
+
+  test("FlipV mirrors the pixels with the X axis") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.flipV
+    assert(original(5, 10) == transformed(5, -10))
+  }
+
+  test("Scale upscales the plane") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.scale(2)
+    assert(original(0, 0) == transformed(0, 0))
+    assert(original(0, 0) == transformed(1, 0))
+    assert(original(0, 0) == transformed(0, 1))
+    assert(original(0, 0) == transformed(1, 1))
+
+    assert(original(1, 1) == transformed(2, 2))
+    assert(original(1, 1) == transformed(3, 2))
+    assert(original(1, 1) == transformed(2, 3))
+    assert(original(1, 1) == transformed(3, 3))
+  }
+
+  test("Scale downscales the plane") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.scale(0.5)
+    assert(original(0, 0) == transformed(0, 0))
+    assert(original(2, 2) == transformed(1, 1))
+  }
+
+  test("Rotate moves all pixels clockwise") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.rotate(math.Pi / 2)
+    assert(original(0, 0) == transformed(0, 0))
+    assert(original(5, 3) == transformed(-3, 5))
+  }
+
+  test("Shear moves all pixels") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.shear(1, 0)
+    assert(original(0, 0) == transformed(0, 0))
+    assert(original(0, 1) == transformed(1, 1))
+    assert(original(0, 2) == transformed(2, 2))
+  }
+
+  test("Transpose moves all pixels") {
+    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val transformed = original.transpose
+
+    assert(original(0, 0) == transformed(0, 0))
+    assert(original(0, 1) == transformed(1, 0))
+    assert(original(0, 2) == transformed(2, 0))
+  }
 }

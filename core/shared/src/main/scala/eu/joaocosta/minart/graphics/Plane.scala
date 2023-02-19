@@ -98,10 +98,10 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   /** Scales a plane. */
   def scale(s: Double): Plane = scale(s, s)
 
-  /** Rotates a plane. */
+  /** Rotates a plane by a certain angle (clockwise). */
   def rotate(theta: Double): Plane = {
-    val ct = math.cos(theta)
-    val st = math.sin(theta)
+    val ct = math.cos(-theta)
+    val st = math.sin(-theta)
     contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
   }
 
@@ -109,7 +109,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   def shear(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
 
   /** Transposes a plane. */
-  def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 1))
+  def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner
     *
