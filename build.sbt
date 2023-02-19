@@ -84,7 +84,7 @@ val nativeSettings = Seq(
   Test / nativeMode    := "debug",
   Compile / nativeLTO  := "thin",
   Test / nativeLTO     := "none",
-  nativeConfig ~= {
+  Test / nativeConfig ~= {
     _.withEmbedResources(true)
   }
 )
