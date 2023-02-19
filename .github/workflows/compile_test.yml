@@ -47,8 +47,10 @@ jobs:
     - name: Install scala-native libraries
       if: matrix.platform == 'native'
       run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
+    - name: Compile tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test
   compile-examples:
     name: Compile examples
     runs-on: ubuntu-latest
