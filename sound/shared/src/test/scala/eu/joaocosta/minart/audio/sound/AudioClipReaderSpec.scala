@@ -25,12 +25,12 @@ object AudioClipReaderSpec extends BasicTestSuite {
   if (Platform() != Platform.JS) {
     test("Load an AIFF file") {
       val clip = Sound.loadAiffClip(Resource("sample-32bit.aiff"))
-      testDuration(clip.get, 0.675)
+      testDuration(clip.get, 0.3975)
     }
 
     test("Load a WAV file") {
       val clip = Sound.loadWavClip(Resource("sample-32bit.wav"))
-      testDuration(clip.get, 0.675)
+      testDuration(clip.get, 0.3975)
     }
 
     test("Load the same data from different formats") {
