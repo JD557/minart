@@ -101,13 +101,15 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
             } yield data
             ssnd.flatMap { s =>
               val newData = data ++ s
-              if (commHeader.exists(c => newData.size >= c.sampleSize * c.numSampleFrames))
+              if (commHeader.exists(c => newData.size >= c.numSampleFrames * c.sampleSize / 8))
                 State.fromEither(assembleChunks(commHeader.get, newData))
               else loadChunks(commHeader, newData)
             }
-          case "" => State.error("Reached end of file without all required chunks")
+          case "" =>
+            State.error("Reached end of file without all required chunks")
           case other =>
-            skipBytes(header.paddedSize).flatMap(_ => loadChunks(commHeader, data))
+            if (header.paddedSize == 0) State.error(s"Received invalid chunk: $header")
+            else skipBytes(header.paddedSize).flatMap(_ => loadChunks(commHeader, data))
         }
       }
   }
@@ -116,8 +118,8 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
     val bytes = fromInputStream(is)
     (for {
       formChunk <- loadChunkHeader.validate(_.id == "FORM", c => s"Invalid FORM chunk id: ${c.id}")
-      formType <- readId.validate(_ == "AIFF", t => s"Unsupported formType: $t. Only AIFF is supported.")
-      clip     <- loadChunks()
+      formType  <- readId.validate(_ == "AIFF", t => s"Unsupported formType: $t. Only AIFF is supported.")
+      clip      <- loadChunks()
     } yield clip).run(bytes).map(_._2)
   }
 
