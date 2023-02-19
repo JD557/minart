@@ -96,7 +96,7 @@ object AiffAudioWriter {
       } else if (absX == 0) {
         writeBytes(List.fill(10)(0))
       } else {
-        val exp         = math.getExponent(x)
+        val exp         = java.lang.Math.getExponent(x)
         val mantissa    = (java.lang.Double.doubleToLongBits(x) & 0x000fffffffffffffL) | 0x0010000000000000L
         val newExp      = exp + 16383
         val newMantissa = mantissa << 11
