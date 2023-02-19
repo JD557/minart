@@ -28,7 +28,7 @@ object AppLoopLoopSpec extends BasicTestSuite {
     def getPointerInput(): PointerInput   = PointerInput.empty
   }
 
-  testAsync("Have a finiteRenderLoop operation that ends when a certain state is reached") {
+  testAsync("Have a statefulRenderLoop operation that ends when a certain state is reached") {
     var renderCount: Int = 0
     AppLoop
       .statefulRenderLoop(
