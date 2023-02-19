@@ -5,9 +5,14 @@ import eu.joaocosta.minart.internal._
 
 /** Audio format AIFF files.
   */
-final class AiffAudioFormat[R](val byteReader: ByteReader[R]) extends AiffAudioReader[R]
+final class AiffAudioFormat[R, W](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W])
+    extends AiffAudioReader[R]
+    with AiffAudioWriter[W]
 
 object AiffAudioFormat {
   val defaultFormat =
-    new AiffAudioFormat[ByteReader.CustomInputStream](ByteReader.InputStreamByteReader)
+    new AiffAudioFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
+      ByteReader.InputStreamByteReader,
+      ByteWriter.IteratorByteWriter
+    )
 }

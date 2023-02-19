@@ -125,7 +125,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
 
 object AiffAudioReader {
   case class ChunkHeader(id: String, size: Int) {
-    val paddedSize = if (size % 2 == 0) size else size + 1
+    val paddedSize = size + (size % 2)
   }
 
   private final class ByteFloatOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
