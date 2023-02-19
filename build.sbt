@@ -80,8 +80,7 @@ val jsSettings = Seq(
 
 val nativeSettings = Seq(
   nativeLinkStubs      := true,
-  Compile / nativeMode := "release",
-  Test / nativeMode    := "debug",
+  nativeMode           := "release",
   nativeLTO            := "thin",
   nativeConfig ~= {
     _.withEmbedResources(true)
