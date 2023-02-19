@@ -40,10 +40,11 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
       _ <- writeString("SSND")
       numSamples = clip.numSamples(sampleRate)
       paddedSize = numSamples + (numSamples % 2)
-      _ <- writeBENumber(paddedSize + 8, 4)
+      _ <- writeBENumber(8 + numSamples, 4) // The padding is not included in the chunk size
       _ <- writeBENumber(0, 4)
       _ <- writeBENumber(0, 4)
       _ <- storeData(clip.byteIterator(sampleRate).grouped(chunkSize))
+      _ <- writeBytes(List.fill(numSamples % 2)(0))
     } yield ()
 
   private def storeCommChunk(clip: AudioClip): ByteStreamState[String] =
@@ -62,7 +63,13 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
     _ <- writeString("FORM")
     numSamples = clip.numSamples(sampleRate)
     paddedSize = numSamples + (numSamples % 2)
-    _ <- writeBENumber(4 + 18 + paddedSize + 8, 4)
+    _ <- writeBENumber(
+      4 +                  // FORM TYPE
+        8 + 18 +           // COMM
+        8 + 8 + paddedSize // SSND
+      ,
+      4
+    )
     _ <- writeString("AIFF")
   } yield ()
 

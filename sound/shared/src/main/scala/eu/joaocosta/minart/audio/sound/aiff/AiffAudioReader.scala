@@ -116,8 +116,8 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
     val bytes = fromInputStream(is)
     (for {
       formChunk <- loadChunkHeader.validate(_.id == "FORM", c => s"Invalid FORM chunk id: ${c.id}")
-      formType  <- readId.validate(_ == "AIFF", t => s"Unsupported formType: $t. Only AIFF is supported.")
-      clip      <- loadChunks()
+      formType <- readId.validate(_ == "AIFF", t => s"Unsupported formType: $t. Only AIFF is supported.")
+      clip     <- loadChunks()
     } yield clip).run(bytes).map(_._2)
   }
 
