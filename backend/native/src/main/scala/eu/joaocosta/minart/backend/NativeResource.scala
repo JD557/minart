@@ -24,7 +24,7 @@ final case class NativeResource(resourcePath: String) extends Resource {
     Try(new BufferedInputStream(new FileInputStream(path)))
       .orElse(
         Option(this.getClass().getResourceAsStream("/" + resourcePath))
-          .fold(Failure(new Exception(s"Couldn't open resource: $resourcePath")))(Success.apply)
+          .fold[Try[InputStream]](Failure(new Exception(s"Couldn't open resource: $resourcePath")))(Success.apply)
       )
       .get
   def unsafeOutputStream(): OutputStream = new FileOutputStream(path)
