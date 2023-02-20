@@ -17,20 +17,33 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
 
   val sampleRate = 44100
   val chunkSize  = 128
+  def bitRate: Int
+  require(Set(8, 16, 32).contains(bitRate))
 
   import AiffAudioWriter._
   private val byteFloatOps = new ByteFloatOps(byteWriter)
   import byteWriter._
   import byteFloatOps._
 
+  private def convertSample(x: Double): List[Int] = bitRate match {
+    case 8 =>
+      List(java.lang.Byte.toUnsignedInt((math.min(math.max(-1.0, x), 1.0) * Byte.MaxValue).toByte))
+    case 16 =>
+      val short = (math.min(math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
+      List((short >> 8) & 0xff, short & 0xff)
+    case 32 =>
+      val int = (math.min(math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
+      List((int >> 24) & 0xff, (int >> 16) & 0xff, (int >> 8) & 0xff, int & 0xff)
+  }
+
   @tailrec
   private def storeData(
-      iterator: Iterator[Seq[Byte]],
+      iterator: Iterator[Seq[Double]],
       acc: ByteStreamState[String] = emptyStream
   ): ByteStreamState[String] = {
     if (!iterator.hasNext) acc
     else {
-      val chunk = iterator.next().map(java.lang.Byte.toUnsignedInt)
+      val chunk = iterator.next().flatMap(convertSample)
       storeData(iterator, acc.flatMap(_ => writeBytes(chunk)))
     }
   }
@@ -38,13 +51,13 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
   private def storeSsndChunk(clip: AudioClip): ByteStreamState[String] =
     for {
       _ <- writeString("SSND")
-      numSamples = clip.numSamples(sampleRate)
-      paddedSize = numSamples + (numSamples % 2)
-      _ <- writeBENumber(8 + numSamples, 4) // The padding is not included in the chunk size
+      numBytes   = clip.numSamples(sampleRate) * bitRate / 8
+      paddedSize = numBytes + (numBytes % 2)
+      _ <- writeBENumber(8 + numBytes, 4) // The padding is not included in the chunk size
       _ <- writeBENumber(0, 4)
       _ <- writeBENumber(0, 4)
-      _ <- storeData(clip.byteIterator(sampleRate).grouped(chunkSize))
-      _ <- writeBytes(List.fill(numSamples % 2)(0))
+      _ <- storeData(clip.iterator(sampleRate).grouped(chunkSize))
+      _ <- writeBytes(List.fill(numBytes % 2)(0))
     } yield ()
 
   private def storeCommChunk(clip: AudioClip): ByteStreamState[String] =
@@ -52,16 +65,15 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
       _ <- writeString("COMM")
       _ <- writeBENumber(18, 4)
       _ <- writeBENumber(1, 2)
-      numSamples = clip.numSamples(sampleRate)
-      _ <- writeBENumber(numSamples, 4)
-      _ <- writeBENumber(8, 2)
+      _ <- writeBENumber(clip.numSamples(sampleRate), 4)
+      _ <- writeBENumber(bitRate, 2)
       _ <- writeExtended(sampleRate)
     } yield ()
 
   private def storeFormChunk(clip: AudioClip): ByteStreamState[String] = for {
     _ <- writeString("FORM")
-    numSamples = clip.numSamples(sampleRate)
-    paddedSize = numSamples + (numSamples % 2)
+    numBytes   = clip.numSamples(sampleRate) * bitRate / 8
+    paddedSize = numBytes + (numBytes % 2)
     _ <- writeBENumber(
       4 +                  // FORM TYPE
         8 + 18 +           // COMM

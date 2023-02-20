@@ -30,7 +30,7 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
     val want = stackalloc[SDL_AudioSpec]()
     val have = stackalloc[SDL_AudioSpec]()
     want.freq = settings.sampleRate
-    want.format = AUDIO_S8
+    want.format = AUDIO_S16LSB
     want.channels = 1.toUByte
     want.samples = settings.bufferSize.toUShort
     want.callback = null // Ideally this should use a SDL callback
@@ -56,11 +56,20 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private implicit val ec: ExecutionContext = ExecutionContext.global
   private def callback(nextSchedule: Long): Future[Unit] = Future {
     if (playQueue.nonEmpty) {
-      if (System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < settings.bufferSize) {
-        val len  = scala.math.min(settings.bufferSize, playQueue.size)
-        val buff = Array.fill(len)(playQueue.dequeueByte())
-        if (SDL_QueueAudio(device, buff.asInstanceOf[ByteArray].at(0), len.toUInt) == 0) {
-          val bufferedMillis = (1000 * len) / settings.sampleRate
+      if (
+        System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)
+      ) {
+        val samples = scala.math.min(settings.bufferSize, playQueue.size)
+        val buf = Iterator
+          .fill(samples) {
+            val next  = playQueue.dequeue()
+            val short = (scala.math.min(scala.math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
+            List((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
+          }
+          .flatten
+          .toArray
+        if (SDL_QueueAudio(device, buf.asInstanceOf[ByteArray].at(0), (samples * 2).toUInt) == 0) {
+          val bufferedMillis = (1000 * samples) / settings.sampleRate
           Some(System.currentTimeMillis() + bufferedMillis - preemptiveCallback)
         } else None
       } else Some(nextSchedule)
@@ -85,7 +94,7 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   }
 
   def isPlaying(): Boolean =
-    playQueue.nonEmpty && SDL_GetQueuedAudioSize(device).toInt == 0
+    playQueue.nonEmpty || SDL_GetQueuedAudioSize(device).toInt > 0
 
   def stop(): Unit = {
     playQueue.clear()

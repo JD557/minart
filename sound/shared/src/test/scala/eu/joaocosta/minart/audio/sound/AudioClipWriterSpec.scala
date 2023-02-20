@@ -18,7 +18,8 @@ object AudioClipWriterSpec extends BasicTestSuite {
       loadedWave = loaded.byteIterator(44100).toList
     } yield (originalWave, loadedWave)).toOption.get
 
-    assert(oldWave == newWave)
+    assert(oldWave.size == newWave.size)
+    assert(oldWave.zip(newWave).forall { case (oldS, newS) => math.abs(oldS - newS) <= 1 })
   }
 
   // Can't load resources in JS tests
