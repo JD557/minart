@@ -17,7 +17,7 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
 
   protected def unsafeApplySettings(settings: AudioPlayer.Settings): AudioPlayer.Settings = {
     // TODO this should probably stop the running audio
-    val format = new AudioFormat(settings.sampleRate.toFloat, 8, 1, true, false)
+    val format = new AudioFormat(settings.sampleRate.toFloat, 16, 1, true, false)
     playQueue = new AudioQueue.MultiChannelAudioQueue(settings.sampleRate)
     sourceDataLine = AudioSystem.getSourceDataLine(format)
     sourceDataLine.open(format, settings.bufferSize)
@@ -34,7 +34,14 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     if (playQueue.nonEmpty) {
       val available = sourceDataLine.available()
       if (available > 0) {
-        val buf = Array.fill(available)(playQueue.dequeueByte())
+        val buf = Iterator
+          .fill(available / 2) {
+            val next  = playQueue.dequeue()
+            val short = (math.min(math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
+            List((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
+          }
+          .flatten
+          .toArray
         sourceDataLine.write(buf, 0, available)
       }
       true
