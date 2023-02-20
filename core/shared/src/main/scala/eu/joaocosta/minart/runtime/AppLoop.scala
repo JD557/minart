@@ -71,10 +71,10 @@ object AppLoop {
     * @param terminateWhen loop termination check
     */
 
-  def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings], F[-_, _]](
-      renderFrame: State => F[Subsystem, State],
+  def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
+      renderFrame: State => Subsystem => State,
       terminateWhen: State => Boolean = (_: State) => false
-  )(implicit effect: FrameEffect[F]): AppLoop.Definition[State, Settings, Subsystem] = {
+  ): AppLoop.Definition[State, Settings, Subsystem] = {
     new AppLoop.Definition[State, Settings, Subsystem] {
       def configure(
           initialSettings: Settings,
@@ -89,7 +89,7 @@ object AppLoop {
           runner
             .finiteLoop(
               initialState,
-              (state: State) => effect.unsafeRun(renderFrame(state), subsystem),
+              (state: State) => renderFrame(state)(subsystem),
               (newState: State) => terminateWhen(newState) || !subsystem.isCreated(),
               () => if (subsystem.isCreated()) subsystem.close(),
               frameRate
@@ -107,10 +107,10 @@ object AppLoop {
     * @param renderFrame operation to render the frame
     * @param frameRate frame rate limit
     */
-  def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings], F[-_, _]](
-      renderFrame: F[Subsystem, Unit]
-  )(implicit effect: FrameEffect[F]): AppLoop.Definition[Unit, Settings, Subsystem] =
-    statefulLoop[Unit, Settings, Subsystem, F]((_) => renderFrame)
+  def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
+      renderFrame: Subsystem => Unit
+  ): AppLoop.Definition[Unit, Settings, Subsystem] =
+    statefulLoop[Unit, Settings, Subsystem]((_) => renderFrame)
 
   /** Creates a render loop with a canvas that keeps and updates a state on every iteration,
     *  terminating when a certain condition is reached.
@@ -118,11 +118,11 @@ object AppLoop {
     * @param renderFrame operation to render the frame and update the state
     * @param terminateWhen loop termination check
     */
-  def statefulRenderLoop[State, F[-_, _]](
-      renderFrame: State => F[Canvas, State],
+  def statefulRenderLoop[State](
+      renderFrame: State => Canvas => State,
       terminateWhen: State => Boolean = (_: State) => false
-  )(implicit effect: FrameEffect[F]): AppLoop.Definition[State, Canvas.Settings, LowLevelCanvas] =
-    statefulLoop[State, Canvas.Settings, LowLevelCanvas, F](
+  ): AppLoop.Definition[State, Canvas.Settings, LowLevelCanvas] =
+    statefulLoop[State, Canvas.Settings, LowLevelCanvas](
       renderFrame,
       terminateWhen
     )
@@ -131,10 +131,10 @@ object AppLoop {
     *
     * @param renderFrame operation to render the frame
     */
-  def statelessRenderLoop[F[-_, _]](
-      renderFrame: F[Canvas, Unit]
-  )(implicit effect: FrameEffect[F]): AppLoop.Definition[Unit, Canvas.Settings, LowLevelCanvas] =
-    statelessLoop[Canvas.Settings, LowLevelCanvas, F](
+  def statelessRenderLoop(
+      renderFrame: Canvas => Unit
+  ): AppLoop.Definition[Unit, Canvas.Settings, LowLevelCanvas] =
+    statelessLoop[Canvas.Settings, LowLevelCanvas](
       renderFrame
     )
 
@@ -144,11 +144,11 @@ object AppLoop {
     * @param renderFrame operation to render the frame and update the state
     * @param terminateWhen loop termination check
     */
-  def statefulAudioLoop[State, F[-_, _]](
-      renderFrame: State => F[AudioPlayer, State],
+  def statefulAudioLoop[State](
+      renderFrame: State => AudioPlayer => State,
       terminateWhen: State => Boolean = (_: State) => false
-  )(implicit effect: FrameEffect[F]): AppLoop.Definition[State, AudioPlayer.Settings, LowLevelAudioPlayer] =
-    statefulLoop[State, AudioPlayer.Settings, LowLevelAudioPlayer, F](
+  ): AppLoop.Definition[State, AudioPlayer.Settings, LowLevelAudioPlayer] =
+    statefulLoop[State, AudioPlayer.Settings, LowLevelAudioPlayer](
       renderFrame,
       terminateWhen
     )
@@ -157,12 +157,10 @@ object AppLoop {
     *
     * @param renderFrame operation to render the frame
     */
-  def statelessAudioLoop[F[-_, _]](
-      renderFrame: F[AudioPlayer, Unit]
-  )(implicit
-      effect: FrameEffect[F]
+  def statelessAudioLoop(
+      renderFrame: AudioPlayer => Unit
   ): AppLoop.Definition[Unit, AudioPlayer.Settings, LowLevelAudioPlayer] =
-    statelessLoop[AudioPlayer.Settings, LowLevelAudioPlayer, F](
+    statelessLoop[AudioPlayer.Settings, LowLevelAudioPlayer](
       renderFrame
     )
 
@@ -175,24 +173,14 @@ object AppLoop {
     * @param renderFrame operation to render the frame and update the state
     * @param terminateWhen loop termination check
     */
-  def statefulAppLoop[State, F[-_, _]](
-      renderFrame: State => F[Canvas with AudioPlayer, State],
+  def statefulAppLoop[State](
+      renderFrame: State => (Canvas with AudioPlayer) => State,
       terminateWhen: State => Boolean = (_: State) => false
-  )(implicit
-      effect: FrameEffect[F]
   ): AppLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
-    statefulLoop[
-      State,
-      (Canvas.Settings, AudioPlayer.Settings),
-      LowLevelAllSubsystems,
-      F
-    ](
-      (state: State) =>
-        effect
-          .contramap(
-            renderFrame(state),
-            { case LowLevelSubsystem.Composite(canvas, audioPlayer) => new AllSubsystems(canvas, audioPlayer) }
-          ),
+    statefulLoop[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
+      (state: State) => { case LowLevelSubsystem.Composite(canvas, audioPlayer) =>
+        renderFrame(state)(new AllSubsystems(canvas, audioPlayer))
+      },
       terminateWhen
     )
 
@@ -200,16 +188,11 @@ object AppLoop {
     *
     * @param renderFrame operation to render the frame
     */
-  def statelessAppLoop[F[-_, _]](
-      renderFrame: F[Canvas with AudioPlayer, Unit]
-  )(implicit
-      effect: FrameEffect[F]
+  def statelessAppLoop(
+      renderFrame: (Canvas with AudioPlayer) => Unit
   ): AppLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
-    statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems, F](
-      effect.contramap(
-        renderFrame,
-        { case LowLevelSubsystem.Composite(canvas, audioPlayer) => new AllSubsystems(canvas, audioPlayer) }
-      )
+    statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
+      { case LowLevelSubsystem.Composite(canvas, audioPlayer) => renderFrame(new AllSubsystems(canvas, audioPlayer)) }
     )
 
 }
