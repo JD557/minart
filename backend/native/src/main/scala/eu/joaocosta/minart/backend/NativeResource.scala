@@ -4,7 +4,7 @@ import java.io.{BufferedInputStream, File, FileInputStream, FileOutputStream, In
 
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 import eu.joaocosta.minart.runtime.Resource
 
@@ -22,7 +22,10 @@ final case class NativeResource(resourcePath: String) extends Resource {
 
   def unsafeInputStream(): InputStream =
     Try(new BufferedInputStream(new FileInputStream(path)))
-      .orElse(Try(Option(this.getClass().getResourceAsStream("/" + resourcePath)).get))
+      .orElse(
+        Option(this.getClass().getResourceAsStream("/" + resourcePath))
+          .fold[Try[InputStream]](Failure(new Exception(s"Couldn't open resource: $resourcePath")))(Success.apply)
+      )
       .get
   def unsafeOutputStream(): OutputStream = new FileOutputStream(path)
 
