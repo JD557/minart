@@ -76,6 +76,7 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 object SurfaceView {
   private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
 
+  /** Generates a surface view from a surface */
   def apply(surface: Surface): SurfaceView =
     SurfaceView(Plane.fromSurfaceWithFallback(surface, defaultColor), surface.width, surface.height)
 }

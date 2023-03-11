@@ -3,7 +3,7 @@ package eu.joaocosta.minart.audio
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.backend.subsystem.LowLevelSubsystem
 
-/** A low-level version of a audio player that provides its own manager.
+/** A low-level version of a audio player with init and close methods.
   */
 trait LowLevelAudioPlayer extends AudioPlayer with LowLevelSubsystem.Simple[AudioPlayer.Settings] {
   protected lazy val defaultSettings: AudioPlayer.Settings = AudioPlayer.Settings()

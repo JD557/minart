@@ -1,11 +1,15 @@
 package eu.joaocosta.minart.graphics
 
-/* A procedurally generated infinite surface.
- *
- * Can be clipped to create a surface.
- */
+/** A procedurally generated infinite surface.
+  *
+  * Can be clipped to create a surface.
+  */
 trait Plane extends Function2[Int, Int, Color] { outer =>
+
+  /** Returns the color at position (x, y). */
   def apply(x: Int, y: Int): Color = getPixel(x, y)
+
+  /** Returns the color at position (x, y). */
   def getPixel(x: Int, y: Int): Color
 
   /** Maps the colors from this plane. */
@@ -108,10 +112,10 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   /** Shears a plane. */
   def shear(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
 
-  /** Transposes a plane. */
+  /** Transposes a plane (switches the x and y coordinates). */
   def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
 
-  /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner
+  /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner.
     *
     * @param width surface view width
     * @param height surface view height
@@ -119,7 +123,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   final def toSurfaceView(width: Int, height: Int): SurfaceView =
     SurfaceView(this, width, height)
 
-  /** Converts this plane to a RAM surface, assuming (0, 0) as the top-left corner
+  /** Converts this plane to a RAM surface, assuming (0, 0) as the top-left corner.
     *
     * @param width surface width
     * @param height surface height
@@ -145,7 +149,7 @@ object Plane {
       MatrixPlane(this.matrix.multiply(matrix), plane)
   }
 
-  /** Creates a plane from a constant color
+  /** Creates a plane from a constant color.
     *
     * @param constant constant color
     */
@@ -153,9 +157,9 @@ object Plane {
     def getPixel(x: Int, y: Int): Color = color
   }
 
-  /** Creates a plane from a generator function
+  /** Creates a plane from a generator function.
     *
-    * @param generator generator function
+    * @param generator generator function from (x, y) to a color
     */
   def fromFunction(generator: (Int, Int) => Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = {

@@ -4,10 +4,10 @@ package eu.joaocosta.minart.graphics
   */
 trait Surface {
 
-  /** The surface width */
+  /** The surface width. */
   def width: Int
 
-  /** The surface height */
+  /** The surface height. */
   def height: Int
 
   /** Returns a view over this surface.
@@ -52,6 +52,6 @@ trait Surface {
     }
   }
 
-  /** Copies this surface into a new surface stored in RAM */
+  /** Copies this surface into a new surface stored in RAM. */
   final def toRamSurface(): RamSurface = new RamSurface(getPixels())
 }

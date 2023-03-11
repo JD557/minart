@@ -18,3 +18,5 @@ The Minart project is divided in multiple small packages:
   You can skip it if you plan to just write impure code or bring your own IO implementation.
 - `minart-image`: Contains logic to load and store images in PPM, BMP or QOI format.
   You can skip it if you don't plan to read or write any images.
+- `minart-sound`: Contains logic to load and store sound files in WAV, AIFF or RTTTL format.
+  You can skip it if you don't plan to read or write any sound files.

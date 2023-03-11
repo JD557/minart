@@ -14,7 +14,7 @@ trait MutableSurface extends Surface {
     */
   def putPixel(x: Int, y: Int, color: Color): Unit
 
-  /** Fill part of the surface with a certain color
+  /** Fill part of the surface with a certain color.
     *
     * @param color `Color` to fill the surface with
     * @param x leftmost pixel on the destination surface
@@ -24,7 +24,7 @@ trait MutableSurface extends Surface {
     */
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit
 
-  /** Fill the whole surface with a certain color
+  /** Fill the whole surface with a certain color.
     *
     * @param color `Color` to fill the surface with
     */

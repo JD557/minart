@@ -65,7 +65,7 @@ object AppLoop {
     *  terminating when a certain condition is reached.
     *
     *  This is a low level operation for custom subsystems. For most use cases,
-    *  [[statefulRenderLoop]], [[statefulAudioLoop]] and [[statefullAppLoop]] are preferred.
+    *  [[statefulRenderLoop]], [[statefulAudioLoop]] and [[statefulAppLoop]] are preferred.
     *
     * @param renderFrame operation to render the frame and update the state
     * @param terminateWhen loop termination check

@@ -5,8 +5,8 @@ import eu.joaocosta.minart.input._
 
 /** Window with a canvas that can be painted.
   *
-  * The Canvas is the main concept behind minart, providing access to both
-  * rendering and input functionallity.
+  * The Canvas provides access to both rendering and input functionallity,
+  * as the input must be tied to a window
   *
   * A canvas represents a window with a `width * height` pixels.
   * There's also a `scale` variable that controls the integer scaling

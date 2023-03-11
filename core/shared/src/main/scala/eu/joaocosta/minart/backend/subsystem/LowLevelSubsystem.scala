@@ -6,21 +6,26 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
   */
 trait LowLevelSubsystem[Settings] extends AutoCloseable {
 
-  /** Returns the current settings
+  /** Returns the current settings.
     */
   def settings: Settings
 
-  /** Checks if the subsystem is created or if it has been destroyed
+  /** Checks if the subsystem is created or if it has been destroyed.
     */
   def isCreated(): Boolean
 
   /** Creates the subsystem.
     *
     * Operations can only be called after calling this.
+    *
+    * @param settings settings used to configure the subsystem
+    * @return this subsystem
     */
   def init(settings: Settings): this.type
 
-  /** Changes the settings of the subsystem
+  /** Changes the settings of the subsystem.
+    *
+    *  @param newSettings new settings to apply
     */
   def changeSettings(newSettings: Settings): Unit
 
@@ -41,7 +46,7 @@ trait LowLevelSubsystem[Settings] extends AutoCloseable {
 
 object LowLevelSubsystem {
 
-  /** Simple low-level subsystem, with basic settings
+  /** Simple low-level subsystem, with basic settings.
     */
   trait Simple[Settings] extends LowLevelSubsystem[Settings] {
 
@@ -50,11 +55,10 @@ object LowLevelSubsystem {
     protected def defaultSettings: Settings
 
     /** Unsafe implementation of the subsystem init.
-      * Should return the new settings
       */
     protected def unsafeInit(): Unit
 
-    /** Configures the subsystem according to the settings and returns the applied settings
+    /** Configures the subsystem according to the settings and returns the applied settings.
       *
       * This method assumes that the subsystem is initialized.
       */
@@ -100,7 +104,7 @@ object LowLevelSubsystem {
     */
   trait Extended[Settings, ExtendedSettings] extends LowLevelSubsystem[Settings] {
 
-    /** Convert the extended settings into settings
+    /** Convert the extended settings into settings.
       */
     protected def elideSettings(extendedSettings: ExtendedSettings): Settings
 
@@ -112,7 +116,7 @@ object LowLevelSubsystem {
       */
     protected def unsafeInit(): Unit
 
-    /** Configures the subsystem according to the settings and returns the applied extended settings */
+    /** Configures the subsystem according to the settings and returns the applied extended settings. */
     protected def unsafeApplySettings(settings: Settings): ExtendedSettings
 
     /** Unsafe implementation of the subsystem destroy.
@@ -150,6 +154,10 @@ object LowLevelSubsystem {
     }
   }
 
+  /** Subsystem that composes two subsystems.
+    *
+    * It is configured via a tuple containing the settings of both subsystems.
+    */
   case class Composite[SettingsA, SettingsB, +SubsystemA <: LowLevelSubsystem[
     SettingsA
   ], +SubsystemB <: LowLevelSubsystem[SettingsB]](
