@@ -21,3 +21,6 @@ To know more about the library and how to get started check the [microsite](http
 * Surface blitting (with a mask)
 * Surface views and infinite planes
 * Reading and Writing PPM, BMP and QOI images
+* Audio playback (mono)
+* Procedural audio generation
+* Reading and Writing WAV, AIFF and RTTTL sound files

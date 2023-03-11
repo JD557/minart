@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio
 
-/** Infinite audio Wave represented by a continuous function.
+/** Infinite audio wave represented by a continuous function from time (in seconds) to amplitude (in [-1, 1]).
   *
   * @param wave continuous function representing the wave
   */
@@ -70,7 +70,7 @@ object AudioWave {
   /** Generates an audio wave for a sequence of samples.
     * Every value outside of the sequence is zero.
     *
-    * @param data indexed sequence of samples
+    * @param data indexed sequence of samples (with amplitude between [-1.0, 1.0])
     * @param sampleRate sample rate used in the sequence
     */
   def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioWave =

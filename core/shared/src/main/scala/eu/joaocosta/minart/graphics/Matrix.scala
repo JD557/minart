@@ -1,11 +1,15 @@
 package eu.joaocosta.minart.graphics
 
-/** Affine Transformatiom matrix of the form
+/** Affine Transformation matrix of the form:
+  *  ```
   *  [a b c]
   *  [d e f]
   *  [0 0 1]
+  *  ```
   */
 final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) {
+
+  /** Multiplies this matrix with another matrix. */
   def multiply(that: Matrix) =
     Matrix(
       this.a * that.a + this.b * that.d,
@@ -15,8 +19,12 @@ final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f
       this.d * that.b + this.e * that.e,
       this.d * that.c + this.e * that.f + this.f
     )
+
+  /** Applies the transformation to (x, y). */
   def apply(x: Double, y: Double): (Double, Double) =
     (a * x + b * y + c * 1, d * x + e * y + f * 1)
+
+  /** Applies the transformation to (x, y). */
   def apply(x: Int, y: Int): (Int, Int) = {
     val res = apply(x.toDouble, y.toDouble)
     (res._1.toInt, res._2.toInt)

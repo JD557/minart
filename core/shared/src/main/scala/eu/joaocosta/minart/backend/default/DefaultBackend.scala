@@ -3,7 +3,7 @@ package eu.joaocosta.minart.backend.defaults
 import scala.annotation.implicitNotFound
 
 /** Typeclass to fetch an implicit default backend (e.g. Canvas or RenderLoop) for a cetain platform.
-  * This is used to power the `Backend.apply()` implementations.
+  * This is used to power the `Backend.apply()`/`Backend.create(settings)` implementations.
   * Ideally, an end user of the library should not need to implement this.
   */
 @implicitNotFound(

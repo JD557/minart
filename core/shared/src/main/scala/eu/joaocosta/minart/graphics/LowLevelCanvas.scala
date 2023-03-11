@@ -3,7 +3,7 @@ package eu.joaocosta.minart.graphics
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.backend.subsystem.LowLevelSubsystem
 
-/** A low-level version of a canvas that provides its own manager.
+/** A low-level version of a canvas with init and close methods.
   */
 trait LowLevelCanvas extends Canvas with LowLevelSubsystem.Extended[Canvas.Settings, LowLevelCanvas.ExtendedSettings] {
   protected lazy val defaultSettings = LowLevelCanvas.ExtendedSettings(Canvas.Settings(0, 0))

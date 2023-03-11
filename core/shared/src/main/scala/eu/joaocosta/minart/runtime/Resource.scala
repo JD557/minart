@@ -9,7 +9,7 @@ import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.backend.defaults._
 
-/** Resource that can be loaded
+/** Resource that can be loaded.
   */
 trait Resource {
 

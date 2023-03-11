@@ -98,16 +98,20 @@ final case class AudioClip(
 
 object AudioClip {
 
+  /** Creates an audio clip from a wave and a duration
+    * @param wave function from time in seconds and amplitude in [-1, 1]
+    * @param duration clip duration
+    */
   def apply(wave: Double => Double, duration: Double): AudioClip =
     AudioWave(wave).take(duration)
 
-  /** Empty audio wave */
+  /** Empty audio clip */
   val empty = silence(0.0)
 
-  /** Audio wave with just silence for the specified duration */
+  /** Audio clip with just silence for the specified duration */
   def silence(duration: Double) = AudioWave.silence.take(duration)
 
-  /** Generates an audio wave for a sequence of samples.
+  /** Generates an audio clip for a sequence of samples.
     *
     * @param data indexed sequence of samples
     * @param sampleRate sample rate used in the sequence

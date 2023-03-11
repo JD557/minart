@@ -5,10 +5,10 @@ import scala.collection.immutable.Queue
 /** The pointer input stores the state of the mouse (or similar device) at a certain point in time.
   * It also accumulates points that have been pressed and released.
   *
-  * @param position the current pointer position
+  * @param position the current pointer position.
   * @param events points where the pointer was pressed/released (the boolean indicates pressed when true, released when false).
-  *               Note that only the most recent PointerInput.maxEvents are guaranteed to be present.
-  * @param pressedOn if defined, it means the mouse is currently down and was pressed at that position. Otherwise, the mouse is currently up
+  *               Note that only the most recent `PointerInput.maxEvents` are guaranteed to be present.
+  * @param pressedOn if defined, it means the mouse is currently down and was pressed at that position. Otherwise, the mouse is currently up.
   */
 case class PointerInput(
     position: Option[PointerInput.Position],
