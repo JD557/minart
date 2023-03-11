@@ -18,7 +18,7 @@ External dependencies are kept to a minimum, to keep the resulting binaries smal
 
 For extreme cases, it's also possible to only import a subset of features.
 
-## Graphic features
+## Graphics
 
 Minart comes out of the box with some basic graphic features, such as:
   - Double buffered canvas
@@ -47,7 +47,7 @@ A `Resource` abstraction provides a backend-agnostic way to load and store resou
 
 Codecs for some image formats (PPM, BMP and QOI) is also included.
 
-## Minart Runtime and other runtimes
+## Minart runtime and other runtimes
 
 Minart comes with it's own runtime that abstracts away the application loop logic (so that applications can be cross-compiled).
 

@@ -27,3 +27,11 @@ The examples in [`examples/release`](https://github.com/JD557/minart/tree/master
 while the examples in [`examples/snapshot`](https://github.com/JD557/minart/tree/master/examples/snapshot) target the code in the repository.
 
 All the examples are `.sc` files that can be executed via [scala-cli](https://scala-cli.virtuslab.org/).
+
+## General recommendations
+
+It is strongly recommended to use `fullLinkJs` for Scala.js releases and
+`release-full` for Scala native, as those can lead to huge speedups.
+
+Since Scala Native `release-full` can be quite slow, it might be useful to use the
+JVM version during development and only building the native version once in a while.
