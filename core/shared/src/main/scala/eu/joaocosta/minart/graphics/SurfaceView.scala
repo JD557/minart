@@ -61,7 +61,7 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 
   /** Scales a surface. */
   def scale(sx: Double, sy: Double): SurfaceView =
-    copy(plane = plane.scale(sx, sy), width = (width * sx).toInt, height = (height * sx).toInt)
+    copy(plane = plane.scale(sx, sy), width = (width * sx).toInt, height = (height * sy).toInt)
 
   /** Scales a surface. */
   def scale(s: Double): SurfaceView = scale(s, s)

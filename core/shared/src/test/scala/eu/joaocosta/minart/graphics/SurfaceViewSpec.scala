@@ -109,6 +109,14 @@ object SurfaceViewSpec extends BasicTestSuite {
     assert(newSurface.height == surface.height / 2)
   }
 
+  test("Scale upscale/downscales the plane across independent axis") {
+    val newSurface =
+      surface.view.scale(0.5, 2.0).toRamSurface()
+
+    assert(newSurface.width == surface.width / 2)
+    assert(newSurface.height == surface.height * 2)
+  }
+
   test("Transpose transposes the image") {
     val newSurface =
       surface.view.transpose.toRamSurface()
