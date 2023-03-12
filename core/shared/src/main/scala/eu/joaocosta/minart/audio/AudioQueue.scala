@@ -28,7 +28,14 @@ object AudioQueue {
     private val clipQueue  = new java.util.ArrayDeque[AudioClip]() // Use scala's ArrayDeque on 2.13+
 
     def isEmpty = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
-    def size    = valueQueue.size + clipQueue.iterator.asScala.map(_.numSamples(sampleRate)).sum
+    def size = clipQueue.iterator.asScala.foldLeft(valueQueue.size) { case (acc, clip) =>
+      if (acc == Int.MaxValue || clip.duration.isInfinite) Int.MaxValue
+      else {
+        val newValue = acc + clip.numSamples(sampleRate)
+        if (newValue < 0) Int.MaxValue
+        else newValue
+      }
+    }
 
     def enqueue(clip: AudioClip): this.type = synchronized {
       clipQueue.addLast(clip)

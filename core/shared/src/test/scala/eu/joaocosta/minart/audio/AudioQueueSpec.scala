@@ -11,6 +11,16 @@ object AudioQueueSpec extends BasicTestSuite {
     assert(queue.dequeue() == 0)
   }
 
+  test("An single channel audio queue has size Int.MaxValue") {
+    val queue = new AudioQueue.SingleChannelAudioQueue(1)
+    queue.enqueue(AudioWave.silence.take(Double.PositiveInfinity))
+    assert(queue.size == Int.MaxValue)
+    assert(queue.isEmpty == false)
+    queue.dequeue()
+    assert(queue.size == Int.MaxValue)
+    assert(queue.isEmpty == false)
+  }
+
   test("A single channel audio queue correctly samples audio") {
     val clip = AudioClip(x => x / 2.0, 2.0)
 
