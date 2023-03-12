@@ -32,7 +32,7 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
     var yy = 0
     while (yy < h) {
-      val start = yy * width + x
+      val start = (yy + y) * width + x
       dataBuffer.fill(color.abgr, start, start + w)
       yy += 1
     }
