@@ -12,13 +12,32 @@ trait AudioPlayerIOOps {
   def accessAudioPlayer[A](f: AudioPlayer => A): AudioPlayerIO[A] =
     RIO.access[AudioPlayer, A](f)
 
-  /** Enqueues an audio clip to be played later.
+  /** Enqueues an audio clip to be played later in channel 0.
+    *
+    *  @param clip audio clip to play
     */
-  def play(wave: AudioClip): AudioPlayerIO[Unit] = accessAudioPlayer(_.play(wave))
+  def play(clip: AudioClip): AudioPlayerIO[Unit] = accessAudioPlayer(_.play(clip))
 
   /** Enqueues an audio clip to be played later in a certain channel.
+    *
+    *  @param clip audio clip to play
+    *  @param channel channel where to play the audio clip
     */
-  def play(wave: AudioClip, channel: Int): AudioPlayerIO[Unit] = accessAudioPlayer(_.play(wave, channel))
+  def play(clip: AudioClip, channel: Int): AudioPlayerIO[Unit] = accessAudioPlayer(_.play(clip, channel))
+
+  /** Enqueues an audio wave to be played later in channel 0.
+    * The Audio Wave will play infinitely until stop() is called.
+    *
+    *  @param wave audio wave to play
+    */
+  def play(wave: AudioWave): AudioPlayerIO[Unit] = accessAudioPlayer(_.play(wave))
+
+  /** Enqueues an audio wave to be played later in a certain channel.
+    *  The Audio Wave will play infinitely until stop() is called.
+    *  @param wave audio wave to play
+    *  @param channel channel where to play the audio wave
+    */
+  def play(wave: AudioWave, channel: Int): AudioPlayerIO[Unit] = accessAudioPlayer(_.play(wave, channel))
 
   /** Checks if this player still has data to be played.
     */
