@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.5.0-SNAPSHOT"
 
 /*
  * Writing directly to a canvas pixel by pixel worked fine in the previous examples, but
@@ -45,9 +45,9 @@ val background: Surface = {
   surface
 }
 
-ImpureRenderLoop
-  .statefulRenderLoop[Int](
-    (canvas, state) => {
+AppLoop
+  .statefulRenderLoop((state: Int) =>
+    (canvas: Canvas) => {
       /*
        * Two surfaces can be combined with the blit operation.
        * Here, we draw the background on the canvas, at position (0, 0)
@@ -66,7 +66,11 @@ ImpureRenderLoop
       canvas.blit(image, Some(Color(0, 0, 0)))((128 - 16 - 1) - state, state, 4, 4, 8, 8)
       canvas.redraw()
       (state + 1) % (128 - 16)
-    },
-    LoopFrequency.hz60
+    }
   )
-  .run(canvasSettings, 0)
+  .configure(
+    canvasSettings,
+    LoopFrequency.hz60,
+    0
+  )
+  .run()

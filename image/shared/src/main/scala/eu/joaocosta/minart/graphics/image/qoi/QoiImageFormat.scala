@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image.qoi
 
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image format for QOI files.
   */

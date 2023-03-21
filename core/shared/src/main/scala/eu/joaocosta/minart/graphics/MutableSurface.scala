@@ -14,69 +14,21 @@ trait MutableSurface extends Surface {
     */
   def putPixel(x: Int, y: Int, color: Color): Unit
 
-  /** Fill the surface with a certain color
+  /** Fill part of the surface with a certain color.
+    *
+    * @param color `Color` to fill the surface with
+    * @param x leftmost pixel on the destination surface
+    * @param y topmost pixel on the destination surface
+    * @param w region width
+    * @param h region height
+    */
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit
+
+  /** Fill the whole surface with a certain color.
     *
     * @param color `Color` to fill the surface with
     */
-  def fill(color: Color): Unit
-
-  private def unsafeBlit(
-      that: Surface,
-      mask: Option[Color],
-      x: Int,
-      y: Int,
-      cx: Int,
-      cy: Int,
-      maxX: Int,
-      maxY: Int
-  ): Unit = {
-    var dy = 0
-    mask match {
-      case None =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = that.unsafeGetPixel(dx + cx, srcY)
-            putPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
-      case Some(maskColor) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = that.unsafeGetPixel(dx + cx, srcY)
-            if (color != maskColor) putPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
-    }
-  }
-
-  @tailrec
-  private def fullBlit(that: Surface, mask: Option[Color], x: Int, y: Int, cx: Int, cy: Int, cw: Int, ch: Int): Unit = {
-    // Handle negative offsets
-    if (x < 0) fullBlit(that, mask, 0, y, cx - x, cy, cw + x, ch)
-    else if (y < 0) fullBlit(that, mask, x, 0, cx, cy - y, cw, ch + y)
-    else if (cx < 0) fullBlit(that, mask, x - cx, y, 0, cy, cw + cx, ch)
-    else if (cy < 0) fullBlit(that, mask, x, y - cy, cx, 0, cw, ch + cy)
-    else {
-      val maxX = math.min(cw, math.min(that.width - cx, this.width - x))
-      val maxY = math.min(ch, math.min(that.height - cy, this.height - y))
-
-      if (maxX > 0 && maxY > 0) {
-        unsafeBlit(that, mask, x, y, cx, cy, maxX, maxY)
-      }
-    }
-  }
+  def fill(color: Color): Unit = fillRegion(0, 0, width, height, color)
 
   /** Draws a surface on top of this surface.
     *
@@ -93,25 +45,6 @@ trait MutableSurface extends Surface {
       that: Surface,
       mask: Option[Color] = None
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-    fullBlit(that, mask, x, y, cx, cy, cw, ch)
-  }
-
-  /** Draws a surface on top of this surface and masks the pixels with a certain color.
-    *
-    * @param that surface to draw
-    * @param mask color to usa as a mask
-    * @param x leftmost pixel on the destination surface
-    * @param y topmost pixel on the destination surface
-    * @param cx leftmost pixel on the source surface
-    * @param cy topmost pixel on the source surface
-    * @param cw clip width of the source surface
-    * @param ch clip height of the source surface
-    */
-  @deprecated("Use blit instead")
-  def blitWithMask(
-      that: Surface,
-      mask: Color
-  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
-    blit(that, Some(mask))(x, y, cx, cy, cw, ch)
+    Blitter.fullBlit(this, that, mask, x, y, cx, cy, cw, ch)
   }
 }

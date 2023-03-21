@@ -5,8 +5,8 @@ import eu.joaocosta.minart.input._
 
 /** Window with a canvas that can be painted.
   *
-  * The Canvas is the main concept behind minart, providing access to both
-  * rendering and input functionallity.
+  * The Canvas provides access to both rendering and input functionallity,
+  * as the input must be tied to a window
   *
   * A canvas represents a window with a `width * height` pixels.
   * There's also a `scale` variable that controls the integer scaling
@@ -16,7 +16,7 @@ trait Canvas extends MutableSurface {
 
   /** The settings applied to this canvas.
     */
-  def settings: Canvas.Settings
+  def canvasSettings: Canvas.Settings
 
   /** Changes the settings applied to this canvas.
     *
@@ -24,8 +24,8 @@ trait Canvas extends MutableSurface {
     */
   def changeSettings(newSettings: Canvas.Settings): Unit
 
-  def width: Int  = settings.width
-  def height: Int = settings.height
+  def width: Int  = canvasSettings.width
+  def height: Int = canvasSettings.height
 
   /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
@@ -57,7 +57,7 @@ object Canvas {
     * @return [[Canvas]] using the default backend for the target platform
     */
   def create(settings: Canvas.Settings)(implicit backend: DefaultBackend[Any, LowLevelCanvas]): Canvas =
-    CanvasManager().init(settings)
+    LowLevelCanvas.create().init(settings)
 
   /** A system resource used by the Canvas.
     */
@@ -87,5 +87,4 @@ object Canvas {
       clearColor: Color = Color(255, 255, 255),
       title: String = "Minart"
   )
-
 }

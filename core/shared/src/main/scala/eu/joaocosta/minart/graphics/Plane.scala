@@ -1,11 +1,15 @@
 package eu.joaocosta.minart.graphics
 
-/* A procedurally generated infinite surface.
- *
- * Can be clipped to create a surface.
- */
+/** A procedurally generated infinite surface.
+  *
+  * Can be clipped to create a surface.
+  */
 trait Plane extends Function2[Int, Int, Color] { outer =>
+
+  /** Returns the color at position (x, y). */
   def apply(x: Int, y: Int): Color = getPixel(x, y)
+
+  /** Returns the color at position (x, y). */
   def getPixel(x: Int, y: Int): Color
 
   /** Maps the colors from this plane. */
@@ -13,7 +17,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y))
   }
 
-  /* Flatmaps this plane */
+  /** Flatmaps this plane */
   final def flatMap(f: Color => (Int, Int) => Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y)).apply(x, y)
   }
@@ -59,10 +63,59 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   /** Inverts a plane color. */
   def invertColor: Plane = map(_.invert)
 
-  /** Transposes a surface. */
-  def transpose: Plane = contramap((x, y) => (y, x))
+  /** Contramaps this plane using a matrix instead of a function.
+    *
+    *  This method can be chained multiple times efficiently.
+    *
+    * Note that this is *contramaping*. The operation is applied as
+    * [a b c] [dx] = [sx]
+    * [d e f] [dy]   [sy]
+    * [0 0 1] [ 1]   [ 1]
+    *
+    * Where (sx,sy) are the positions in the original plane and (dx, dy) are the positions in the new plane.
+    *
+    * This means that you need to invert the transformations to use the common transformation matrices.
+    *
+    * For example, the matrix:
+    *
+    * [2 0 0] [dx] = [sx]
+    * [0 2 0] [dy]   [sy]
+    * [0 0 1] [ 1]   [ 1]
+    *
+    * Will *scale down* the image, not scale up.
+    */
+  def contramapMatrix(matrix: Matrix) =
+    Plane.MatrixPlane(matrix, this)
 
-  /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner
+  /** Translates a plane. */
+  def translate(dx: Double, dy: Double): Plane = contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+
+  /** Flips a plane horizontally. */
+  def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+
+  /** Flips a plane vertically. */
+  def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+
+  /** Scales a plane. */
+  def scale(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+
+  /** Scales a plane. */
+  def scale(s: Double): Plane = scale(s, s)
+
+  /** Rotates a plane by a certain angle (clockwise). */
+  def rotate(theta: Double): Plane = {
+    val ct = math.cos(-theta)
+    val st = math.sin(-theta)
+    contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+  }
+
+  /** Shears a plane. */
+  def shear(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+
+  /** Transposes a plane (switches the x and y coordinates). */
+  def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+
+  /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner.
     *
     * @param width surface view width
     * @param height surface view height
@@ -70,7 +123,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   final def toSurfaceView(width: Int, height: Int): SurfaceView =
     SurfaceView(this, width, height)
 
-  /** Converts this plane to a RAM surface, assuming (0, 0) as the top-left corner
+  /** Converts this plane to a RAM surface, assuming (0, 0) as the top-left corner.
     *
     * @param width surface width
     * @param height surface height
@@ -86,8 +139,17 @@ object Plane {
     if (rem >= 0) rem
     else rem + y
   }
+  private[Plane] final case class MatrixPlane(matrix: Matrix, plane: Plane) extends Plane {
+    def getPixel(x: Int, y: Int): Color = {
+      val (xx, yy) = matrix(x, y)
+      plane.getPixel(xx, yy)
+    }
 
-  /** Creates a plane from a constant color
+    override def contramapMatrix(matrix: Matrix) =
+      MatrixPlane(this.matrix.multiply(matrix), plane)
+  }
+
+  /** Creates a plane from a constant color.
     *
     * @param constant constant color
     */
@@ -95,9 +157,9 @@ object Plane {
     def getPixel(x: Int, y: Int): Color = color
   }
 
-  /** Creates a plane from a generator function
+  /** Creates a plane from a generator function.
     *
-    * @param generator generator function
+    * @param generator generator function from (x, y) to a color
     */
   def fromFunction(generator: (Int, Int) => Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = {

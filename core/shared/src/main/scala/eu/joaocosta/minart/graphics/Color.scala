@@ -1,12 +1,28 @@
 package eu.joaocosta.minart.graphics
 
-/** RGB Color */
+/** Representation of a RGB Color.
+  * @param argb this color packed as a 32 bit integer in ARGB.
+  */
 final class Color private (val argb: Int) {
+
+  /** The red channel value. */
   @inline def r: Int = (argb & 0x00ff0000) >> 16
+
+  /** The green channel value. */
   @inline def g: Int = (argb & 0x0000ff00) >> 8
+
+  /** The green channel value. */
   @inline def b: Int = (argb & 0x000000ff)
 
+  /** This color packed as a 32 bit integer in RGB (with the first byte set to 0). */
   @inline def rgb: Int = (argb & 0x00ffffff)
+
+  /** This color packed as a 32 bit integer in ABGR. */
+  @inline def abgr: Int =
+    (argb & 0xff000000) |   // A
+      (b << 16) |           // B
+      (argb & 0x0000ff00) | // G
+      r                     // R
 
   /** Combines this with another color by summing each RGB value.
     * Values are clamped on overflow.
@@ -38,7 +54,7 @@ final class Color private (val argb: Int) {
       (this.b * that.b) / 255
     )
 
-  /** Inverts this color by inverting every RGB channel
+  /** Inverts this color by inverting every RGB channel.
     */
   def invert: Color = Color(255 - r, 255 - g, 255 - b)
 
@@ -56,27 +72,38 @@ object Color {
   def apply(r: Int, g: Int, b: Int): Color =
     new Color((255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255))
 
-  /** Creates a new color from RGB values (assuming unsinged bytes on the [0-255] range)
+  /** Creates a new color from RGB values (assuming unsinged bytes on the [0-255] range).
     */
   def apply(r: Byte, g: Byte, b: Byte): Color =
     new Color((255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255))
 
-  /** Creates a new color from a grayscale value (on the [0-255] range)
-    *  Overflow/Underflow will wrap around.
+  /** Creates a new color from a grayscale value (on the [0-255] range).
+    * Overflow/Underflow will wrap around.
     */
   def grayscale(gray: Int): Color =
     new Color((255 << 24) | ((gray & 255) << 16) | ((gray & 255) << 8) | (gray & 255))
 
-  /** Creates a new color from a grayscale value (assuming unsigned bytes on the [0-255] range)
+  /** Creates a new color from a grayscale value (assuming unsigned bytes on the [0-255] range).
     */
   def grayscale(gray: Byte): Color =
     new Color((255 << 24) | ((gray & 255) << 16) | ((gray & 255) << 8) | (gray & 255))
 
   /** Creates a new color from a 24bit backed RGB integer.
-    * Ignores the first byte.
+    * Ignores the first byte of a 32bit number.
     */
   @inline def fromRGB(rgb: Int): Color =
     new Color(0xff000000 | rgb)
+
+  /** Creates a new color from a 24bit backed BGR integer.
+    * Ignores the first byte of a 32bit number.
+    */
+  @inline def fromBGR(bgr: Int): Color =
+    new Color(
+      0xff000000 |
+        ((bgr & 0x00ff0000) >> 16) |
+        (bgr & 0x0000ff00) |
+        ((bgr & 0x000000ff)) << 16
+    )
 
   /** Extracts the RGB channels of a color.
     */

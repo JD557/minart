@@ -6,7 +6,7 @@ name := "minart"
 ThisBuild / organization       := "eu.joaocosta"
 ThisBuild / publishTo          := sonatypePublishToBundle.value
 ThisBuild / scalaVersion       := "3.2.2"
-ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.17", "2.13.10", "3.2.2")
+ThisBuild / crossScalaVersions := Seq("2.12.17", "2.13.10", "3.2.2")
 ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage           := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
@@ -82,8 +82,9 @@ val nativeSettings = Seq(
   nativeLinkStubs      := true,
   Compile / nativeMode := "release",
   Test / nativeMode    := "debug",
-  nativeLTO            := "thin",
-  nativeConfig ~= {
+  Compile / nativeLTO  := "thin",
+  Test / nativeLTO     := "none",
+  Test / nativeConfig ~= {
     _.withEmbedResources(true)
   }
 )
@@ -96,8 +97,8 @@ lazy val root =
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
-    .dependsOn(core, backend, pure, image)
-    .aggregate(core, backend, pure, image)
+    .dependsOn(core, backend, pure, image, sound)
+    .aggregate(core, backend, pure, image, sound)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -134,13 +135,23 @@ lazy val pure =
 
 lazy val image =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .dependsOn(core)
-    .dependsOn(backend % "test")
+    .dependsOn(core, backend % "test")
     .settings(name := "minart-image")
     .settings(sharedSettings)
     .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart Image"))
+    .jsSettings(jsSettings)
+    .nativeSettings(nativeSettings)
+
+lazy val sound =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+    .dependsOn(core, backend % "test")
+    .settings(name := "minart-sound")
+    .settings(sharedSettings)
+    .settings(testSettings)
+    .settings(publishSettings)
+    .settings(docSettings("Minart Sound"))
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 

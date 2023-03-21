@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.5.0-SNAPSHOT"
 
 /*
  * In this next example, we are going to do draw the same colored square, but now in a portable way.
@@ -10,6 +10,7 @@
  */
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.runtime._
 
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
 
@@ -19,15 +20,15 @@ val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
  * The problem comes from writing a render loop.
  * Some platforms don't support thread sleep, or require some event loop to be polled.
  *
- * As such, Minart comes with some helpful RenderLoop abstractions, which handle canvas
+ * As such, Minart comes with some helpful AppLoop abstractions, which handle canvas
  * creation, destruction and the render loop itself.
  *
- * Here we will use the singleFrame operation, which will show a single image and then wait
- * for the window to be closed.
+ * Here we will use the statelessRenderLoop operation with LoopFrequency.Never,
+ * which will show a single image and then wait for the window to be closed.
  */
 
-ImpureRenderLoop
-  .singleFrame(canvas => {
+AppLoop
+  .statelessRenderLoop((canvas: Canvas) => {
     for {
       x <- (0 until canvas.width)
       y <- (0 until canvas.height)
@@ -38,4 +39,5 @@ ImpureRenderLoop
     }
     canvas.redraw()
   })
-  .run(canvasSettings)
+  .configure(canvasSettings, LoopFrequency.Never)
+  .run()

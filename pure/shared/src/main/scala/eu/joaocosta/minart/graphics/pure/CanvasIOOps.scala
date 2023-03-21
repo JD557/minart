@@ -12,7 +12,7 @@ trait CanvasIOOps extends MSurfaceIOOps {
   def accessCanvas[A](f: Canvas => A): CanvasIO[A] = RIO.access[Canvas, A](f)
 
   /** Fetches the canvas settings. */
-  val getSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.settings)
+  val canvasSettings: CanvasIO[Canvas.Settings] = accessCanvas(_.canvasSettings)
 
   /** Changes the settings applied to the canvas.
     *

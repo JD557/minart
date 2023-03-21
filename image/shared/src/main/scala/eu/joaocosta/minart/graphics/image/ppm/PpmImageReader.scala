@@ -7,7 +7,7 @@ import scala.collection.compat._
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image reader for PGM/PPM files.
   *
@@ -90,8 +90,6 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
   }
 
   private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
-    val byteStringOps = new PpmImageReader.ByteStringOps(byteReader)
-    import byteStringOps._
     (
       for {
         magic  <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
@@ -107,7 +105,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    loadHeader(bytes).right.flatMap { case (data, header) =>
+    loadHeader(bytes).flatMap { case (data, header) =>
       val numPixels = header.width * header.height
       val pixels = header.magic match {
         case "P2" =>
@@ -121,7 +119,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
         case fmt =>
           Left(s"Invalid pixel format: $fmt")
       }
-      pixels.right.flatMap { case (_, pixelMatrix) =>
+      pixels.flatMap { case (_, pixelMatrix) =>
         if (pixelMatrix.size != header.height)
           Left(s"Invalid number of lines: Got ${pixelMatrix.size}, expected ${header.height}")
         else if (pixelMatrix.nonEmpty && pixelMatrix.last.size != header.width)

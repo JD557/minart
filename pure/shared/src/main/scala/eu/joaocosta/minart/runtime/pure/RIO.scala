@@ -4,7 +4,10 @@ import scala.annotation.tailrec
 
 /** Representation of an effectful operation, based on Haskell's RIO Monad.
   */
-sealed trait RIO[-R, +A] {
+sealed trait RIO[-R, +A] extends Function1[R, A] {
+
+  /** Alias for run, so that RIO can be executed as a function. */
+  final def apply(resource: R): A = run(resource)
 
   /** Runs this operation. */
   @tailrec

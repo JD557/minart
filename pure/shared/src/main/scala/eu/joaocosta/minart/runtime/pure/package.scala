@@ -10,4 +10,7 @@ package object pure {
   /** Object containing the operations that act on a Resource.
     */
   object ResourceIO extends ResourceIOOps with IOOps[Resource]
+
+  /** Alias for `State => RIO[R, A]` */
+  type StateRIO[-R, -State, +A] = Function1[State, RIO[R, A]]
 }

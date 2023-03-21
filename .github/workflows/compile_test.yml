@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        scala: ["2.11", "2.12", "2.13", "3.2"]
+        scala: ["2.12", "2.13", "3.2"]
         platform: [JVM, JS, Native]
 
     env:
@@ -23,9 +23,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8 and SBT
-      uses: olafurpg/setup-scala@v13
+      uses: actions/setup-java@v2
       with:
-        java-version: adopt@1.8
+        distribution: temurin
+        java-version: 8
     - name: Cache Coursier
       uses: actions/cache@v1
       with:
@@ -46,8 +47,10 @@ jobs:
     - name: Install scala-native libraries
       if: matrix.platform == 'native'
       run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
+    - name: Compile tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile $PROJECT/test
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test
   compile-examples:
     name: Compile examples
     runs-on: ubuntu-latest
@@ -58,9 +61,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8 and SBT
-      uses: olafurpg/setup-scala@v13
+      uses: actions/setup-java@v2
       with:
-        java-version: adopt@1.8
+        distribution: temurin
+        java-version: 8
     - name: Cache Coursier
       uses: actions/cache@v1
       with:
@@ -100,9 +104,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8 and SBT
-      uses: olafurpg/setup-scala@v13
+      uses: actions/setup-java@v2
       with:
-        java-version: adopt@1.8
+        distribution: temurin
+        java-version: 8
     - name: Cache Coursier
       uses: actions/cache@v1
       with:

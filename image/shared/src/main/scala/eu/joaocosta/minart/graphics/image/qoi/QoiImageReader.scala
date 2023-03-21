@@ -6,7 +6,7 @@ import scala.collection.compat.immutable.LazyList
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image reader for QOI files.
   */
@@ -106,11 +106,10 @@ trait QoiImageReader[Container] extends ImageReader {
     ops
       .foldLeft[Either[String, QoiState]](Right(QoiState())) { case (eitherState, eitherOp) =>
         for {
-          state <- eitherState.right
-          op    <- eitherOp.right
+          state <- eitherState
+          op    <- eitherOp
         } yield nextState(state, op)
       }
-      .right
       .flatMap { finalState =>
         val expectedPixels = (header.width * header.height).toInt
         Either.cond(
@@ -151,7 +150,7 @@ trait QoiImageReader[Container] extends ImageReader {
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    loadHeader(bytes).right.flatMap { case (data, header) =>
+    loadHeader(bytes).flatMap { case (data, header) =>
       asSurface(loadOps(data), header)
     }
   }

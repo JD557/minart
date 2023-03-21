@@ -18,7 +18,7 @@ External dependencies are kept to a minimum, to keep the resulting binaries smal
 
 For extreme cases, it's also possible to only import a subset of features.
 
-## Out of the box graphic features
+## Graphics
 
 Minart comes out of the box with some basic graphic features, such as:
   - Double buffered canvas
@@ -28,14 +28,32 @@ Minart comes out of the box with some basic graphic features, such as:
 It also includes **Surface views** and **Planes** which makes it possible to manipulate
 (possibly unbounded) images with familiar operations such as `map` and `flatMap`.
 
+## Audio
+
+Minart has support for multi-channel mono audio playback.
+
+It also includes multiple abstractions, such as oscilators and audio waves, to
+simplify procedural audio generation.
+
 ## Input handling
 
 Minart comes with some helpers to handle Keyboard and pointer input.
 
 Not only is mouse input supported, but touch screen input also comes for free.
 
-### Resource loading
+## Resource loading
 
 A `Resource` abstraction provides a backend-agnostic way to load and store resources.
 
 Codecs for some image formats (PPM, BMP and QOI) is also included.
+
+## Minart runtime and other runtimes
+
+Minart comes with it's own runtime that abstracts away the application loop logic (so that applications can be cross-compiled).
+
+However, you are free to use your own runtime (such as Tyrian or Cats Effect). The basic structure of an application is:
+
+- Create low level versions of the subsystems you want (e.g. `val canvas = LowLevelCanvas.create()`)
+- Initialize the subsystems (e.g. `canvas.init(settings)`)
+- Run your application loop
+- Close the subsystems (e.g. `canvas.close`)

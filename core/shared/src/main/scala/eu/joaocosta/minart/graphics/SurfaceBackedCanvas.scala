@@ -12,10 +12,13 @@ trait SurfaceBackedCanvas extends LowLevelCanvas {
   def unsafeGetPixel(x: Int, y: Int): Color =
     surface.unsafeGetPixel(x, y)
 
-  def getPixels(): Vector[Array[Color]] =
+  override def getPixels(): Vector[Array[Color]] =
     surface.getPixels()
 
-  def fill(color: Color): Unit =
+  def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit =
+    surface.fillRegion(x, y, w, h, color)
+
+  override def fill(color: Color): Unit =
     surface.fill(color)
 
   override def blit(

@@ -39,6 +39,11 @@ trait MutableSurfaceTests extends BasicTestSuite {
     assert(surface.getPixels().flatten.forall(_ == Color(1, 2, 3)))
     surface.fill(Color(3, 2, 1))
     assert(surface.getPixels().flatten.forall(_ == Color(3, 2, 1)))
+
+    surface.fillRegion(0, 0, 1, 2, Color(1, 1, 1))
+    assert(surface.getPixel(0, 0) == Some(Color(1, 1, 1)))
+    assert(surface.getPixel(0, 1) == Some(Color(1, 1, 1)))
+    assert(surface.getPixel(1, 0) == Some(Color(3, 2, 1)))
   }
 
   test("Combine two surfaces without blowing up") {
@@ -80,6 +85,18 @@ trait MutableSurfaceTests extends BasicTestSuite {
     surface.blit(source)(1, 1)
 
     assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
+    assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
+    assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
+
+    surface.blit(source, Some(Color(255, 0, 0)))(0, 0)
+
+    assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
+    assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
+    assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
+
+    surface.blit(source, Some(Color(0, 0, 0)))(0, 0)
+
+    assert(surface.getPixel(0, 0) == Some(Color(255, 0, 0)))
     assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
     assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
   }

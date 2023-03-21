@@ -15,7 +15,7 @@ object ColorSpec extends BasicTestSuite {
 
   test("Can be created from grayscale values") {
     val colorInt  = Color.grayscale(130)
-    val colorByte = Color.grayscale(130)
+    val colorByte = Color.grayscale(130.toByte)
     assert(colorInt == colorByte)
     assert(colorInt.r == 130 && colorInt.g == 130 && colorInt.b == 130)
   }
@@ -24,6 +24,17 @@ object ColorSpec extends BasicTestSuite {
     val color    = Color(110, 120, 130)
     val newColor = Color.fromRGB(color.argb)
     assert(color == newColor)
+  }
+
+  test("Can be created from raw BGR values") {
+    val color    = Color(110, 120, 130)
+    val newColor = Color.fromBGR(color.abgr)
+    assert(color == newColor)
+  }
+
+  test("Can be unnapplied") {
+    val Color(r, g, b) = Color(110, 120, 130)
+    assert(r == 110 && g == 120 && b == 130)
   }
 
   test("Can be summed/subtracted without overflowing/underflowing") {
@@ -54,5 +65,4 @@ object ColorSpec extends BasicTestSuite {
 
     assert(color == Color(255, 127, 0))
   }
-
 }

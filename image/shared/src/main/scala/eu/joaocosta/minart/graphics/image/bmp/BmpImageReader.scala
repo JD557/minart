@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.graphics.image.helpers._
+import eu.joaocosta.minart.internal._
 
 /** Image reader for BMP files.
   *
@@ -112,7 +112,7 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
 
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    loadHeader(bytes).right.flatMap { case (data, header) =>
+    loadHeader(bytes).flatMap { case (data, header) =>
       val numPixels = header.width * header.height
       val pixels = header.bitsPerPixel match {
         case 24 =>
@@ -134,7 +134,7 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
         case bpp =>
           Left(s"Invalid bits per pixel: $bpp")
       }
-      pixels.right.flatMap { case (_, pixelMatrix) =>
+      pixels.flatMap { case (_, pixelMatrix) =>
         if (pixelMatrix.size != header.height)
           Left(s"Invalid number of lines: Got ${pixelMatrix.size}, expected ${header.height}")
         else if (pixelMatrix.nonEmpty && pixelMatrix.last.size != header.width)

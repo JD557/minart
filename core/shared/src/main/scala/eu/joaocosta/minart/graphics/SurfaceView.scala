@@ -53,19 +53,22 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 
   /** Flips a surface horizontally. */
   def flipH: SurfaceView =
-    contramap((x, y) => (width - x - 1, y))
-      .toSurfaceView(width, height)
+    copy(plane = plane.flipH.translate(width - 1, 0))
 
-  /** Flips an surface vertically. */
-  def flipV: SurfaceView = contramap((x, y) => (x, height - y - 1))
-    .toSurfaceView(width, height)
+  /** Flips a surface vertically. */
+  def flipV: SurfaceView =
+    copy(plane = plane.flipV.translate(0, height - 1))
+
+  /** Scales a surface. */
+  def scale(sx: Double, sy: Double): SurfaceView =
+    copy(plane = plane.scale(sx, sy), width = (width * sx).toInt, height = (height * sy).toInt)
+
+  /** Scales a surface. */
+  def scale(s: Double): SurfaceView = scale(s, s)
 
   /** Transposes a surface. */
   def transpose: SurfaceView =
     plane.transpose.toSurfaceView(height, width)
-
-  def getPixels(): Vector[Array[Color]] =
-    Vector.tabulate(height)(y => Array.tabulate(width)(x => unsafeGetPixel(x, y)))
 
   override def view: SurfaceView = this
 }
@@ -73,6 +76,7 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 object SurfaceView {
   private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
 
+  /** Generates a surface view from a surface */
   def apply(surface: Surface): SurfaceView =
     SurfaceView(Plane.fromSurfaceWithFallback(surface, defaultColor), surface.width, surface.height)
 }

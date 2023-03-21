@@ -2,7 +2,10 @@ package eu.joaocosta.minart.runtime
 
 import scala.concurrent.duration._
 
-/** Definition of a loop iteration frequency. */
+/** Definition of a loop iteration frequency.
+  *
+  *  This is commonly used to represent the desired framerate.
+  */
 sealed trait LoopFrequency {
 
   /** Returns the duration of each loop interval */

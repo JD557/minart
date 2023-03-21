@@ -30,7 +30,4 @@ package object pure {
   /** Object containing the operations that act on a Canvas.
     */
   object CanvasIO extends CanvasIOOps with IOOps[Canvas]
-
-  /** Alias for `State => RIO[Canvas, A]` */
-  type StateCanvasIO[-Canvas, -State, +A] = Function1[State, RIO[Canvas, A]]
 }

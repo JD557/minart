@@ -15,7 +15,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
   // Rendering resources
 
   private[this] var containerDiv: dom.HTMLDivElement  = _
-  private[this] var canvas: JsCanvas                  = _
+  private[this] var jsCanvas: JsCanvas                = _
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _
   protected var surface: ImageDataSurface             = _
@@ -27,7 +27,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
   private[this] var rawPointerPos: (Int, Int)    = _
   private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).flatMap { case (x, y) =>
     val (offsetX, offsetY) = {
-      val canvasRect = canvas.getBoundingClientRect()
+      val canvasRect = jsCanvas.getBoundingClientRect()
       (canvasRect.left.toInt, canvasRect.top.toInt)
     }
     val xx = (x - offsetX) / settings.scale
@@ -44,13 +44,12 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     this.init(settings)
   }
 
-  def unsafeInit(newSettings: Canvas.Settings): Unit = {
+  protected def unsafeInit(): Unit = {
     containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
-    canvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
-    containerDiv.appendChild(canvas)
+    jsCanvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
+    containerDiv.appendChild(jsCanvas)
     childNode = parentNode.appendChild(containerDiv)
-    ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-    changeSettings(newSettings)
+    ctx = jsCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     dom.document.addEventListener[Event](
       "fullscreenchange",
       (_: Event) => if (dom.document.fullscreenElement == null) changeSettings(settings.copy(fullScreen = false))
@@ -86,7 +85,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
       }
     )
     dom.document.addEventListener[PointerEvent]("pointercancel", (_: PointerEvent) => handleRelease())
-    canvas.addEventListener[PointerEvent](
+    jsCanvas.addEventListener[PointerEvent](
       "pointermove",
       (ev: PointerEvent) => {
         handleMove(ev.clientX.toInt, ev.clientY.toInt)
@@ -94,14 +93,14 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     )
   }
 
-  def changeSettings(newSettings: Canvas.Settings) = if (extendedSettings == null || newSettings != settings) {
+  protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val oldSettings   = settings
     val clearColorStr = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
-    extendedSettings =
+    val extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
-    canvas.width = newSettings.width
-    canvas.height = newSettings.height
-    canvas.style =
+    jsCanvas.width = newSettings.width
+    jsCanvas.height = newSettings.height
+    jsCanvas.style =
       s"width:${extendedSettings.scaledWidth}px;height:${extendedSettings.scaledHeight}px;image-rendering:pixelated;"
     ctx.imageSmoothingEnabled = false
 
@@ -129,11 +128,12 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     ctx.fillStyle = clearColorStr
     ctx.fillRect(0, 0, newSettings.width, newSettings.height)
     clear(Set(Canvas.Buffer.Backbuffer))
+    extendedSettings
   }
 
   // Cleanup
 
-  def unsafeDestroy(): Unit = if (childNode != null) {
+  protected def unsafeDestroy(): Unit = if (childNode != null) {
     parentNode.removeChild(childNode)
     childNode = null
   }
@@ -145,7 +145,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
       keyboardInput = keyboardInput.clearPressRelease()
     }
     if (buffers.contains(Canvas.Buffer.PointerBuffer)) {
-      pointerInput = pointerInput.clearPressRelease()
+      pointerInput = pointerInput.clearEvents()
     }
     if (buffers.contains(Canvas.Buffer.Backbuffer)) {
       surface.fill(settings.clearColor)

@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.5.0-SNAPSHOT"
 
 /*
  * Now that we learned the basics of animation and input handling, we are almost ready to make a game.
@@ -91,9 +91,9 @@ val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canv
  * This is very similar to the statelessRenderLoop, but now our render function takes a canvas and a state,
  * and it returns the next state.
  */
-ImpureRenderLoop
-  .statefulRenderLoop[GameState](
-    (canvas, state) => {
+AppLoop
+  .statefulRenderLoop(
+    (state: GameState) => (canvas: Canvas) => {
       canvas.clear()
 
       // We draw the snake body
@@ -118,9 +118,10 @@ ImpureRenderLoop
       if (state.gameOver) initialState
       else state.updateSnakeDir(canvas.getKeyboardInput()).nextState
     },
-    LoopFrequency.fromHz(15) // 15 FPS
   )
-  .run(
+  .configure(
     canvasSettings,
-    initialState // Notice that the run function now needs an initialState
+    LoopFrequency.fromHz(15), // 15 FPS
+    initialState // Notice that the configure function now needs an initialState
   )
+  .run()
