@@ -12,7 +12,7 @@ lazy val root =
     .settings(
       Seq(
         libraryDependencies ++= List(
-          "eu.joaocosta" %%% "minart" % "0.4.3"
+          "eu.joaocosta" %%% "minart" % "0.5.0-RC1"
         )
       )
     )
@@ -26,7 +26,7 @@ lazy val root =
         nativeLinkStubs := true,
         nativeMode      := "release",
         nativeLTO       := "thin",
-        nativeGC        := "immix"
+        nativeGC        := "commix"
       )
     )
     .settings(name := "$name$ Root")

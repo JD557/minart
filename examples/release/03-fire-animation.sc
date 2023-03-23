@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.3"
+//> using lib "eu.joaocosta::minart::0.5.0-RC1"
 
 /*
  * In the previous examples we just drew a static image on the screen.
@@ -44,44 +44,42 @@ def automata(backbuffer: Vector[Array[Color]], x: Int, y: Int): Color = {
 
 /*
  * Now, here's the important part.
- * Instead of using the singleFrame method, we now use the statelessRenderLoop.
+ * Instead of using the LoopFrequency.Never, we now use the LoopFrequency.hz60.
  * This will run our rendering function on each frame, with a specified delay.
  */
-ImpureRenderLoop
-  .statelessRenderLoop(
-    canvas => {
+AppLoop
+  .statelessRenderLoop((canvas: Canvas) => {
 
-      // We set some pixels to always be white, so that the fire keeps growing from there
-      // Add bottom fire root
-      for {
-        x <- (0 until canvas.width)
-        y <- (canvas.height - 4 until canvas.height)
-      } {
-        canvas.putPixel(x, y, Color(255, 255, 255))
-      }
+    // We set some pixels to always be white, so that the fire keeps growing from there
+    // Add bottom fire root
+    for {
+      x <- (0 until canvas.width)
+      y <- (canvas.height - 4 until canvas.height)
+    } {
+      canvas.putPixel(x, y, Color(255, 255, 255))
+    }
 
-      // Add middle fire root
-      for {
-        x <- (0 until canvas.width)
-        y <- (0 until canvas.height)
-        dist = math.pow(x - canvas.width / 2, 2) + math.pow(y - canvas.height / 2, 2)
-      } {
-        if (dist > 25 && dist <= 100) canvas.putPixel(x, y, Color(255, 255, 255))
-      }
+    // Add middle fire root
+    for {
+      x <- (0 until canvas.width)
+      y <- (0 until canvas.height)
+      dist = math.pow(x - canvas.width / 2, 2) + math.pow(y - canvas.height / 2, 2)
+    } {
+      if (dist > 25 && dist <= 100) canvas.putPixel(x, y, Color(255, 255, 255))
+    }
 
-      /** The getPixels method returns all pixels from the canvas.
-        *  We'll pass this to our automata
-        */
-      val backbuffer = canvas.getPixels()
-      for {
-        x <- (0 until canvas.width)
-        y <- (0 until (canvas.height - 1)).reverse
-      } {
-        val color = automata(backbuffer, x, y)
-        canvas.putPixel(x, y, color)
-      }
-      canvas.redraw()
-    },
-    LoopFrequency.hz60 // Try to run at 60 F*S
-  )
-  .run(canvasSettings)
+    /** The getPixels method returns all pixels from the canvas.
+      *  We'll pass this to our automata
+      */
+    val backbuffer = canvas.getPixels()
+    for {
+      x <- (0 until canvas.width)
+      y <- (0 until (canvas.height - 1)).reverse
+    } {
+      val color = automata(backbuffer, x, y)
+      canvas.putPixel(x, y, color)
+    }
+    canvas.redraw()
+  })
+  .configure(canvasSettings, LoopFrequency.hz60) // Try to run at 60 FPS
+  .run()

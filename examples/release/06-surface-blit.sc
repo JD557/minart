@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.3"
+//> using lib "eu.joaocosta::minart::0.5.0-RC1"
 
 /*
  * Writing directly to a canvas pixel by pixel worked fine in the previous examples, but
@@ -33,7 +33,7 @@ val image = new RamSurface(
  * Also, by returning a Surface instead of MutableSurface, we make sure that no one else can mutate it.
  */
 val background: Surface = {
-  val surface = new RamSurface(Vector.fill(canvasSettings.height)(Array.fill(canvasSettings.width)(Color(0, 0, 0))))
+  val surface = new RamSurface(canvasSettings.width, canvasSettings.height, Color(0, 0, 0))
   for {
     x <- (0 until surface.width)
     y <- (0 until surface.height)
@@ -45,9 +45,9 @@ val background: Surface = {
   surface
 }
 
-ImpureRenderLoop
-  .statefulRenderLoop[Int](
-    (canvas, state) => {
+AppLoop
+  .statefulRenderLoop((state: Int) =>
+    (canvas: Canvas) => {
       /*
        * Two surfaces can be combined with the blit operation.
        * Here, we draw the background on the canvas, at position (0, 0)
@@ -66,7 +66,11 @@ ImpureRenderLoop
       canvas.blit(image, Some(Color(0, 0, 0)))((128 - 16 - 1) - state, state, 4, 4, 8, 8)
       canvas.redraw()
       (state + 1) % (128 - 16)
-    },
-    LoopFrequency.hz60
+    }
   )
-  .run(canvasSettings, 0)
+  .configure(
+    canvasSettings,
+    LoopFrequency.hz60,
+    0
+  )
+  .run()

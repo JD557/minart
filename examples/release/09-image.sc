@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.3"
+//> using lib "eu.joaocosta::minart::0.5.0-RC1"
 
 /*
  * It is sometimes convenient to load images from external resources.
@@ -19,9 +19,10 @@ val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
  */
 val bitmap = Image.loadBmpImage(Resource("assets/scala.bmp")).get
 
-ImpureRenderLoop
-  .singleFrame(canvas => {
+AppLoop
+  .statelessRenderLoop((canvas: Canvas) => {
     canvas.blit(bitmap)(0, 0)
     canvas.redraw()
   })
-  .run(canvasSettings)
+  .configure(canvasSettings, LoopFrequency.Never)
+  .run()

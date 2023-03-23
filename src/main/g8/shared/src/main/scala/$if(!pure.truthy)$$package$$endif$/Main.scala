@@ -2,13 +2,14 @@ package $package$
 
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.runtime._
 
 object Main {
   val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
 
   def main(args: Array[String]): Unit = {
-    ImpureRenderLoop
-      .singleFrame(canvas => {
+    AppLoop
+      .statelessRenderLoop((canvas: Canvas) => {
         for {
           x <- (0 until canvas.width)
           y <- (0 until canvas.height)
@@ -19,6 +20,7 @@ object Main {
         }
         canvas.redraw()
       })
-      .run(canvasSettings)
+      .configure(canvasSettings, LoopFrequency.Never)
+      .run()
   }
 }
