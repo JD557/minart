@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.4.3"
+//> using lib "eu.joaocosta::minart::0.5.0-RC1"
 
 /*
  * It can be quite cumbersome an ineficient to apply multiple transformations to a surface if we just use the getPixel
@@ -40,17 +40,18 @@ val updatedBitmap = bitmap.view
  * This allows us to contramap surface views and handling infinite images-
  * Let's see an example of the classic rotozoom effect.
  */
-ImpureRenderLoop
-  .statefulRenderLoop[Double](
-    (canvas, t) => {
+AppLoop
+  .statefulRenderLoop((t: Double) =>
+    (canvas: Canvas) => {
       val frameSin = math.sin(t)
       val frameCos = math.cos(t)
-      val zoom     = frameSin + 2.0
+      val zoom     = 1.0 / (frameSin + 2.0)
 
       val image = Plane
-        .fromSurfaceWithRepetition(updatedBitmap)                  // Create an inifinitePlane from our surface
-        .contramap((x, y) => ((x * zoom).toInt, (y * zoom).toInt)) // Apply zooming logic
-        .contramap((x, y) => ((x * frameCos - y * frameSin).toInt, (x * frameSin + y * frameCos).toInt)) // Rotatiion
+        .fromSurfaceWithRepetition(updatedBitmap)                         // Create an inifinitePlane from our surface
+        .scale(zoom, zoom)                                                // scale
+        .rotate(t)                                                        // rotate
+        .contramap((x, y) => (x + (5 * math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
         .flatMap(color =>
           (x, y) => // Add a crazy checkerboard effect
             if (x % 32 < 16 != y % 32 < 16) color.invert
@@ -62,7 +63,7 @@ ImpureRenderLoop
       canvas.blit(image)(0, 0)
       canvas.redraw()
       t + 0.01
-    },
-    LoopFrequency.hz60
+    }
   )
-  .run(canvasSettings, 0)
+  .configure(canvasSettings, LoopFrequency.hz60, 0)
+  .run()
