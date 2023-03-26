@@ -13,6 +13,12 @@ class SpriteSheet(surface: Surface, spriteWidth: Int, spriteHeight: Int) {
   /** How many sprites are stored on each line */
   val spritesPerLine = surface.width / spriteWidth
 
+  /** How many sprites are stored on each column */
+  val spritesPerColumn = surface.height / spriteHeight
+
+  /** How many sprites are stored */
+  val size = spritesPerColumn * spritesPerLine
+
   /** Gets a sprite at a given position in the sheet.
     *
     *  @param line line of the sprite

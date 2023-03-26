@@ -12,6 +12,14 @@ object SpriteSheetSpec extends BasicTestSuite {
     )
   ).view.scale(2, 4).toRamSurface()
 
+  test("Compute the number of sprites") {
+    val spriteSheet = new SpriteSheet(surface, 2, 4)
+
+    assert(spriteSheet.spritesPerLine == 3)
+    assert(spriteSheet.spritesPerColumn == 2)
+    assert(spriteSheet.size == 6)
+  }
+
   test("Fetch sprite by position") {
     val spriteSheet = new SpriteSheet(surface, 2, 4)
 
