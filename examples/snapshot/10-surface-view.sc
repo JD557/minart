@@ -48,10 +48,10 @@ AppLoop
       val zoom     = 1.0 / (frameSin + 2.0)
 
       val image = Plane
-        .fromSurfaceWithRepetition(updatedBitmap) // Create an inifinitePlane from our surface
-        .scale(zoom, zoom) // scale
-        .rotate(t) // rotate
-        .contramap((x, y) => (x + (5 * math.sin(t + y/10.0)).toInt, y)) // Wobbly effect
+        .fromSurfaceWithRepetition(updatedBitmap)                         // Create an inifinitePlane from our surface
+        .scale(zoom, zoom)                                                // scale
+        .rotate(t)                                                        // rotate
+        .contramap((x, y) => (x + (5 * math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
         .flatMap(color =>
           (x, y) => // Add a crazy checkerboard effect
             if (x % 32 < 16 != y % 32 < 16) color.invert
