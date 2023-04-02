@@ -5,9 +5,9 @@ import eu.joaocosta.minart.internal._
 
 /** Audio format RTTTL files.
   */
-final class RtttlAudioFormat[R](val oscilator: Oscilator, val byteReader: ByteReader[R]) extends RtttlAudioReader[R]
+final class RtttlAudioFormat[R](val oscilator: Oscillator, val byteReader: ByteReader[R]) extends RtttlAudioReader[R]
 
 object RtttlAudioFormat {
   val defaultFormat =
-    new RtttlAudioFormat[ByteReader.CustomInputStream](Oscilator.sin, ByteReader.InputStreamByteReader)
+    new RtttlAudioFormat[ByteReader.CustomInputStream](Oscillator.sin, ByteReader.InputStreamByteReader)
 }
