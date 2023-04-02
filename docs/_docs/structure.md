@@ -34,7 +34,7 @@ A `Canvas` is a special type of `MutableSurface`, which represents a window.
 This package contains all abstractions related to audio playback.
 
 An `AudioWave` is an infinite wave of audio.
-It is usually be generated from an `Oscilator`, but it can also be generated from a sequence of samples (padding with silence)
+It is usually be generated from an `Oscillator`, but it can also be generated from a sequence of samples (padding with silence)
 
 An `AudioClip` is an `AudioWave` clipped to a certain duration.
 
