@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0-RC1"
+//> using lib "eu.joaocosta::minart::0.5.0"
 
 /*
  * Welcome to the minart tutorial!

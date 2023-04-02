@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0-RC1"
+//> using lib "eu.joaocosta::minart::0.5.0"
 
 /** Here we'll see how to generate and play audio
   *
@@ -28,14 +28,14 @@ object Audio {
   val arpeggio: AudioClip =
     AudioWave((t: Double) => math.sin(song(t) * 6.28 * t)).take(1.0)
 
-  // We can also use the provided oscillators
+  // We can also use the provided oscilators
   val bass =
-    Oscilator.sin
+    Oscillator.sin
       .generateClip(duration = 0.5, frequency = 220, amplitude = 1.0)
-      .append(Oscilator.sin.generateClip(duration = 0.5, frequency = 330, amplitude = 1.0))
-      .append(Oscilator.sin.generateClip(duration = 1.0, frequency = 220, amplitude = 1.0))
+      .append(Oscillator.sin.generateClip(duration = 0.5, frequency = 330, amplitude = 1.0))
+      .append(Oscillator.sin.generateClip(duration = 1.0, frequency = 220, amplitude = 1.0))
 
-  // Mix our arpeggio (going up and down) with a bass line
+  // Mix our arpeggio (going up and down) with a low root note
   val testSample =
     arpeggio
       .append(arpeggio.reverse)
