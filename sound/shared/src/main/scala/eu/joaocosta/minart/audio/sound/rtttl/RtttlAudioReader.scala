@@ -16,7 +16,7 @@ import eu.joaocosta.minart.internal._
 trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
 
   val byteReader: ByteReader[ByteSeq]
-  val oscilator: Oscilator
+  val oscilator: Oscillator
   import RtttlAudioReader._
   private val byteStringOps = new ByteStringOps(byteReader)
   import byteReader._
