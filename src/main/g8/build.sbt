@@ -12,7 +12,7 @@ lazy val root =
     .settings(
       Seq(
         libraryDependencies ++= List(
-          "eu.joaocosta" %%% "minart" % "0.5.0-RC1"
+          "eu.joaocosta" %%% "minart" % "0.5.0"
         )
       )
     )
