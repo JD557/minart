@@ -44,4 +44,9 @@ object AudioClipSpec extends BasicTestSuite {
     val clipB = AudioClip(x => x / 4.0, 3.0)
     assert((clipA.append(clipB)).duration == 5.0)
   }
+
+  test("Repeating a clip correcty updates the duration") {
+    val clipA = AudioClip(x => x / 2.0, 2.0)
+    assert(clipA.repeating(5).duration == 10.0)
+  }
 }

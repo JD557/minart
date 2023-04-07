@@ -80,6 +80,10 @@ final case class AudioClip(
   def repeating: AudioWave =
     wave.contramap(t => AudioClip.floorMod(t, duration))
 
+  /** Returns an audio wave that repeats this clip a certain number of times */
+  def repeating(times: Int): AudioClip =
+    repeating.take(duration * times)
+
   /** Samples this wave at the specified sample rate and returns an iterator of Doubles
     * in the [-1, 1] range.
     */
