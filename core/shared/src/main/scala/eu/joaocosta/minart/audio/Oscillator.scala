@@ -55,7 +55,7 @@ object Oscillator {
   val sin: Oscillator =
     Oscillator { frequency =>
       val k = frequency * 2 * math.Pi
-      AudioWave(t => math.sin(k * t))
+      AudioWave.fromFunction(t => math.sin(k * t))
     }
 
   /** Square wave oscilator */
@@ -69,5 +69,5 @@ object Oscillator {
 
   /** Sawtooth wave oscilator */
   val sawtooth: Oscillator =
-    Oscillator(frequency => AudioWave(t => 2 * floorMod(t * frequency, 1) - 1))
+    Oscillator(frequency => AudioWave.fromFunction(t => 2 * floorMod(t * frequency, 1) - 1))
 }
