@@ -26,7 +26,7 @@ object Audio {
 
   // Here we generate a sin wave with the frequencies from our song
   val arpeggio: AudioClip =
-    AudioWave((t: Double) => math.sin(song(t) * 6.28 * t)).take(1.0)
+    AudioWave.fromFunction((t: Double) => math.sin(song(t) * 6.28 * t)).take(1.0)
 
   // We can also use the provided oscilators
   val bass =

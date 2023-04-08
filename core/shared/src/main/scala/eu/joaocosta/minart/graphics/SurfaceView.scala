@@ -14,8 +14,8 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def map(f: Color => Color): SurfaceView = copy(plane.map(f))
 
   /** Flatmaps the inner plane of this surface view */
-  def flatMap(f: Color => (Int, Int) => Color): SurfaceView =
-    copy(plane.flatMap(x => f(x)))
+  def flatMap(f: Color => Plane): SurfaceView =
+    copy(plane = plane.flatMap(f))
 
   /** Contramaps the positions from this surface view. */
   def contramap(f: (Int, Int) => (Int, Int)): Plane =
