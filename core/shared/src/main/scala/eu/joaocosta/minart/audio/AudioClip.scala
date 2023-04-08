@@ -8,9 +8,9 @@ package eu.joaocosta.minart.audio
 final case class AudioClip(
     wave: AudioWave,
     duration: Double
-) extends (Double => Double) {
+) {
 
-  def apply(t: Double): Double =
+  def getAmplitude(t: Double): Double =
     if (t < 0 || t > duration) 0.0
     else (wave(t))
 

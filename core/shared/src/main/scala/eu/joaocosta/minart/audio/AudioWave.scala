@@ -99,8 +99,19 @@ object AudioWave {
     }
   }
 
+  /** Creates an audio wave from an audio clip.
+    * Every amplitude outside of the clip duration is set to 0.
+    *
+    * @param audioClip reference clip
+    */
+  def fromAudioClip(audioClip: AudioClip): AudioWave = new AudioWave {
+    def getAmplitude(t: Double): Double = {
+      audioClip.getAmplitude(t)
+    }
+  }
+
   /** Generates an audio wave for a sequence of samples.
-    * Every value outside of the sequence is zero.
+    * Every value outside of the sequence is 0.
     *
     * @param data indexed sequence of samples (with amplitude between [-1.0, 1.0])
     * @param sampleRate sample rate used in the sequence
