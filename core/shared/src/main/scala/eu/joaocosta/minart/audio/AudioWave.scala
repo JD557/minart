@@ -21,6 +21,13 @@ final case class AudioWave(wave: Double => Double) extends (Double => Double) {
     */
   def zipWith(that: AudioWave, f: (Double, Double) => Double): AudioWave = AudioWave(t => f(this.wave(t), that.wave(t)))
 
+  /** Coflatmaps this wave with a AudioWave => Double function.
+    * Effectively, each sample of the new wave is computed from a translated wave, which can be used to
+    * implement convolutions.
+    */
+  def coflatMap(f: AudioWave => Double): AudioWave =
+    AudioWave(t => f(AudioWave((dt: Double) => wave(t + dt))))
+
   /** Returns a new AudioWave without the first `time` seconds
     */
   def drop(time: Double): AudioWave =

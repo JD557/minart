@@ -106,6 +106,23 @@ object PlaneSpec extends BasicTestSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
+  test("Coflatmapping it updates the colors based on the kernel") {
+    val newSurface =
+      Plane
+        .fromSurfaceWithRepetition(surface)
+        .coflatMap(img => img(1, 2))
+        .toRamSurface(surface.width, surface.height)
+    val newPixels = newSurface.getPixels()
+    val expectedPixels =
+      Plane
+        .fromSurfaceWithRepetition(surface)
+        .translate(-1, -2)
+        .toRamSurface(surface.width, surface.height)
+        .getPixels()
+
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
   test("Clipping clips the view") {
     val newSurface =
       Plane.fromSurfaceWithRepetition(surface).clip(5, 5, 2, 2).toRamSurface()
