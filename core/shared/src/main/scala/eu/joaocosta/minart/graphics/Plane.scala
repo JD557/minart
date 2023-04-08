@@ -51,6 +51,16 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     height = that.height
   )
 
+  /** Coflatmaps this plane with a Plane => Color function.
+    * Effectively, each pixel of the new plane is computed from a translated plane, which can be used to
+    * implement convolutions.
+    */
+  final def coflatMap(f: Plane => Color): Plane =
+    new Plane {
+      def getPixel(x: Int, y: Int): Color =
+        f((dx: Int, dy: Int) => outer.getPixel(x + dx, y + dy))
+    }
+
   final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     if (cx == 0 && cy == 0) toSurfaceView(cw, ch)
     else

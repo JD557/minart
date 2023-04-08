@@ -52,6 +52,12 @@ AppLoop
         .scale(zoom, zoom)                                                // scale
         .rotate(t)                                                        // rotate
         .contramap((x, y) => (x + (5 * math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
+        .coflatMap { img =>                                               // Average blur
+          val window = (-1 to 1).flatMap(x => (-1 to 1).map(y => img(x, y)))
+          window.foldLeft(Color(0, 0, 0)) { case (Color(r, g, b), Color(rr, gg, bb)) =>
+            Color(r + rr / window.size, g + gg / window.size, g + gg / window.size)
+          }
+        }
         .flatMap(color =>
           (x, y) => // Add a crazy checkerboard effect
             if (x % 32 < 16 != y % 32 < 16) color.invert
