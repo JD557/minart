@@ -143,12 +143,6 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 }
 
 object Plane {
-  private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
-  private def floorMod(x: Int, y: Int): Int = {
-    val rem = x % y
-    if (rem >= 0) rem
-    else rem + y
-  }
   private[Plane] final case class MatrixPlane(matrix: Matrix, plane: Plane) extends Plane {
     def getPixel(x: Int, y: Int): Color = {
       val (xx, yy) = matrix(x, y)
@@ -190,20 +184,7 @@ object Plane {
   /** Creates a plane from a surface, by repeating that surface accross both axis.
     * @param surface reference surface
     */
+  @deprecated("Use surface.view.repeating")
   def fromSurfaceWithRepetition(surface: Surface): Plane =
-    if (surface.width <= 0 || surface.height <= 0)
-      new Plane {
-        def getPixel(x: Int, y: Int): Color = defaultColor
-      }
-    else
-      new Plane {
-        def getPixel(x: Int, y: Int): Color = {
-          surface
-            .getPixel(
-              floorMod(x, surface.width),
-              floorMod(y, surface.height)
-            )
-            .getOrElse(defaultColor)
-        }
-      }
+    surface.view.repeating
 }

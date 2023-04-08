@@ -42,9 +42,9 @@ final case class AudioClip(
   def flatMap(f: Double => AudioWave): AudioClip =
     AudioClip(wave.flatMap(f), duration)
 
-  /** Contramaps the values of the wave of this clip. The duration stays unchanged */
-  def contramap(f: Double => Double): AudioClip =
-    AudioClip(wave.contramap(f), duration)
+  /** Contramaps the values of the wave of this clip */
+  def contramap(f: Double => Double): AudioWave =
+    wave.contramap(f)
 
   /** Combines this clip with another by combining their values using the given function.
     */
@@ -70,15 +70,16 @@ final case class AudioClip(
 
   /** Returns a reversed version of this wave */
   def reverse: AudioClip =
-    contramap(t => duration - t)
+    contramap(t => duration - t).take(duration)
 
   /** Speeds up/down this clip according to a multiplier */
   def changeSpeed(multiplier: Double): AudioClip =
-    wave.contramap(t => multiplier * t).take(duration / multiplier)
+    contramap(t => multiplier * t).take(duration / multiplier)
 
   /** Returns an audio wave that repeats this clip forever */
   def repeating: AudioWave =
-    wave.contramap(t => AudioClip.floorMod(t, duration))
+    if (duration <= 0) AudioWave.silence
+    else contramap(t => AudioClip.floorMod(t, duration))
 
   /** Returns an audio wave that repeats this clip a certain number of times */
   def repeating(times: Int): AudioClip =

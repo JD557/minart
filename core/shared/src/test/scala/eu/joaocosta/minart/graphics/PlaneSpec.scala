@@ -29,7 +29,7 @@ object PlaneSpec extends BasicTestSuite {
   }
 
   test("Can be created from a surface with repetition") {
-    val plane = Plane.fromSurfaceWithRepetition(surface)
+    val plane = surface.view.repeating
     assert(plane.getPixel(1, 2) == surface.getPixel(1, 2).get)
     assert(plane.getPixel(1 + 8, 2 + 16) == surface.getPixel(1, 2).get)
     assert(plane.getPixel(1 - 8, 2 - 16) == surface.getPixel(1, 2).get)
@@ -37,8 +37,7 @@ object PlaneSpec extends BasicTestSuite {
 
   test("Mapping it updates the colors") {
     val newSurface =
-      Plane
-        .fromSurfaceWithRepetition(surface)
+      surface.view.repeating
         .map(_.invert)
         .toRamSurface(surface.width, surface.height)
     val newPixels      = newSurface.getPixels()
@@ -51,8 +50,7 @@ object PlaneSpec extends BasicTestSuite {
 
   test("Flatmapping it updates the colors based on the position") {
     val newSurface =
-      Plane
-        .fromSurfaceWithRepetition(surface)
+      surface.view.repeating
         .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
         .toRamSurface(surface.width, surface.height)
     val newPixels = newSurface.getPixels()
@@ -66,8 +64,7 @@ object PlaneSpec extends BasicTestSuite {
 
   test("Contramapping updates the positions") {
     val newSurface =
-      Plane
-        .fromSurfaceWithRepetition(surface)
+      surface.view.repeating
         .contramap((x, y) => (y, x))
         .toRamSurface(surface.height, surface.width)
     val newPixels      = newSurface.getPixels()
@@ -79,7 +76,8 @@ object PlaneSpec extends BasicTestSuite {
   }
 
   test("Zipping combines two planes") {
-    val plane = Plane.fromSurfaceWithRepetition(surface)
+    val plane =
+      surface.view.repeating
     val newSurface =
       plane
         .zipWith(plane, (c1: Color, c2: Color) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
@@ -93,7 +91,8 @@ object PlaneSpec extends BasicTestSuite {
   }
 
   test("Zipping combines a plane and a surface") {
-    val plane = Plane.fromSurfaceWithRepetition(surface)
+    val plane =
+      surface.view.repeating
     val newSurface =
       plane
         .zipWith(surface, (c1: Color, c2: Color) => Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b))
@@ -108,14 +107,12 @@ object PlaneSpec extends BasicTestSuite {
 
   test("Coflatmapping it updates the colors based on the kernel") {
     val newSurface =
-      Plane
-        .fromSurfaceWithRepetition(surface)
+      surface.view.repeating
         .coflatMap(img => img(1, 2))
         .toRamSurface(surface.width, surface.height)
     val newPixels = newSurface.getPixels()
     val expectedPixels =
-      Plane
-        .fromSurfaceWithRepetition(surface)
+      surface.view.repeating
         .translate(-1, -2)
         .toRamSurface(surface.width, surface.height)
         .getPixels()
@@ -125,7 +122,9 @@ object PlaneSpec extends BasicTestSuite {
 
   test("Clipping clips the view") {
     val newSurface =
-      Plane.fromSurfaceWithRepetition(surface).clip(5, 5, 2, 2).toRamSurface()
+      surface.view.repeating
+        .clip(5, 5, 2, 2)
+        .toRamSurface()
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.slice(5, 7).map(_.slice(5, 7))
 
@@ -139,25 +138,29 @@ object PlaneSpec extends BasicTestSuite {
   }
 
   test("Translation moves all pixels") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.translate(5, 10)
     assert(original(0, 0) == transformed(5, 10))
   }
 
   test("FlipH mirrors the pixels with the Y axis") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.flipH
     assert(original(5, 10) == transformed(-5, 10))
   }
 
   test("FlipV mirrors the pixels with the X axis") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.flipV
     assert(original(5, 10) == transformed(5, -10))
   }
 
   test("Scale upscales the plane") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.scale(2)
     assert(original(0, 0) == transformed(0, 0))
     assert(original(0, 0) == transformed(1, 0))
@@ -171,21 +174,24 @@ object PlaneSpec extends BasicTestSuite {
   }
 
   test("Scale downscales the plane") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.scale(0.5)
     assert(original(0, 0) == transformed(0, 0))
     assert(original(2, 2) == transformed(1, 1))
   }
 
   test("Rotate moves all pixels clockwise") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.rotate(math.Pi / 2)
     assert(original(0, 0) == transformed(0, 0))
     assert(original(5, 3) == transformed(-3, 5))
   }
 
   test("Shear moves all pixels") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.shear(1, 0)
     assert(original(0, 0) == transformed(0, 0))
     assert(original(0, 1) == transformed(1, 1))
@@ -193,7 +199,8 @@ object PlaneSpec extends BasicTestSuite {
   }
 
   test("Transpose moves all pixels") {
-    val original    = Plane.fromSurfaceWithRepetition(surface)
+    val original =
+      surface.view.repeating
     val transformed = original.transpose
 
     assert(original(0, 0) == transformed(0, 0))

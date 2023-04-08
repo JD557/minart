@@ -5,7 +5,7 @@ package eu.joaocosta.minart.graphics
   *
   *  This can have a performance impact. However, a new RAM surface with the operations already applied can be constructed using `toRamSurface`
   */
-final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surface {
+final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surface { outer =>
 
   def unsafeGetPixel(x: Int, y: Int): Color =
     plane.getPixel(x, y)
@@ -70,11 +70,30 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def transpose: SurfaceView =
     plane.transpose.toSurfaceView(height, width)
 
+  /** Returns a plane that repeats this surface forever */
+  def repeating: Plane =
+    if (width <= 0 || height <= 0) Plane.fromConstant(SurfaceView.defaultColor)
+    else
+      new Plane {
+        def getPixel(x: Int, y: Int): Color = {
+          outer.plane.getPixel(SurfaceView.floorMod(x, outer.width), SurfaceView.floorMod(y, outer.height))
+        }
+      }
+
+  /** Repeats this surface xTimes on the x axis and yTimes on the yAxis */
+  def repeating(xTimes: Int, yTimes: Int): SurfaceView =
+    repeating.toSurfaceView(width * xTimes, height * yTimes)
+
   override def view: SurfaceView = this
 }
 
 object SurfaceView {
   private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
+  private def floorMod(x: Int, y: Int): Int = {
+    val rem = x % y
+    if (rem >= 0) rem
+    else rem + y
+  }
 
   /** Generates a surface view from a surface */
   def apply(surface: Surface): SurfaceView =
