@@ -184,7 +184,7 @@ object Plane {
     */
   def fromSurfaceWithFallback(surface: Surface, fallback: Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = {
-      surface.getPixel(x, y).getOrElse(fallback)
+      surface.getPixelOrElse(x, y, fallback)
     }
   }
 
