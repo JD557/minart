@@ -34,6 +34,16 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView =
     copy(plane = plane.zipWith(that, f))
 
+  /** Coflatmaps this plane with a SurfaceView => Color function.
+    * Effectively, each pixel of the new view is computed from a translated view, which can be used to
+    * implement convolutions.
+    */
+  def coflatMap(f: SurfaceView => Color): SurfaceView =
+    copy(plane = new Plane {
+      def getPixel(x: Int, y: Int): Color =
+        f(outer.clip(x, y, width - x, height - y))
+    })
+
   /** Clips this view to a chosen rectangle
     *
     * @param cx leftmost pixel on the surface
@@ -45,7 +55,7 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     val newWidth  = math.min(cw, this.width - cx)
     val newHeight = math.min(ch, this.height - cy)
     if (cx == 0 && cy == 0 && newWidth == width && newHeight == height) this
-    else plane.clip(cx, cy, cw, ch)
+    else plane.clip(cx, cy, newWidth, newHeight)
   }
 
   /** Inverts a surface color. */
