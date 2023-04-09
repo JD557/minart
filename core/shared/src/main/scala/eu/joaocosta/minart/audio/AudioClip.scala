@@ -97,6 +97,11 @@ final case class AudioClip(
   def repeating(times: Int): AudioClip =
     repeating.take(duration * times)
 
+  /** Returns an audio wave that clamps this clip when out of bounds */
+  def clamped: AudioWave =
+    if (duration <= 0) AudioWave.silence
+    else contramap(t => AudioClip.clamp(0.0, t, duration))
+
   /** Samples this wave at the specified sample rate and returns an iterator of Doubles
     * in the [-1, 1] range.
     */
@@ -136,4 +141,7 @@ object AudioClip {
     if (rem >= 0) rem
     else rem + y
   }
+
+  private def clamp(minValue: Double, value: Double, maxValue: Double): Double =
+    math.max(0, math.min(value, maxValue))
 }
