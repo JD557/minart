@@ -61,6 +61,13 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
         f((dx: Int, dy: Int) => outer.getPixel(x + dx, y + dy))
     }
 
+  /** Clips this plane to a chosen rectangle
+    *
+    * @param cx leftmost pixel on the surface
+    * @param cy topmost pixel on the surface
+    * @param cw clip width
+    * @param ch clip height
+    */
   final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     if (cx == 0 && cy == 0) toSurfaceView(cw, ch)
     else

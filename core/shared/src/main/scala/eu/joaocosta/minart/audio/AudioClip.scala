@@ -8,7 +8,7 @@ package eu.joaocosta.minart.audio
 final case class AudioClip(
     wave: AudioWave,
     duration: Double
-) {
+) { outer =>
 
   def getAmplitude(t: Double): Double =
     if (t < 0 || t > duration) 0.0
@@ -57,6 +57,18 @@ final case class AudioClip(
     */
   def zipWith(that: AudioWave, f: (Double, Double) => Double): AudioClip =
     AudioClip(this.wave.zipWith(that, f), duration)
+
+  /** Coflatmaps this clip with a AudioClip => Double function.
+    * Effectively, each sample of the new clip is computed from a translated clip, which can be used to
+    * implement convolutions.
+    */
+  final def coflatMap(f: AudioClip => Double): AudioClip =
+    AudioClip(
+      new AudioWave {
+        def getAmplitude(t: Double): Double = f(outer.drop(t))
+      },
+      duration
+    )
 
   /** Appends an AudioClip to this one */
   def append(that: AudioClip): AudioClip =

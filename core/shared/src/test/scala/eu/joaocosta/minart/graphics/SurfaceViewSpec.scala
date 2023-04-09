@@ -66,6 +66,22 @@ object SurfaceViewSpec extends BasicTestSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
+  test("Coflatmapping it updates the colors based on the kernel") {
+    val newSurface =
+      surface.view
+        .coflatMap(img => img.getPixel(1, 2).getOrElse(Color(50, 150, 200)))
+        .toRamSurface()
+    val newPixels = newSurface.getPixels()
+    val expectedPixels =
+      Plane
+        .fromSurfaceWithFallback(surface, Color(50, 150, 200))
+        .translate(-1, -2)
+        .toRamSurface(surface.width, surface.height)
+        .getPixels()
+
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
   test("The clip view clips a surface") {
     val newSurface =
       surface.view.clip(5, 5, 2, 2).toRamSurface()
