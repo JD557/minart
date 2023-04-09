@@ -94,6 +94,15 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def repeating(xTimes: Int, yTimes: Int): SurfaceView =
     repeating.toSurfaceView(width * xTimes, height * yTimes)
 
+  /** Forces the surface to be computed and returns a new view.
+    * Equivalent to `toRamSurface().view`.
+    *
+    * This can be particularly useful to force the computation before a heavy
+    * coflatMap (e.g. a convolution with a large kernel) to avoid recomputing
+    * the same pixel multiple times.
+    */
+  def precompute: SurfaceView = toRamSurface().view
+
   override def view: SurfaceView = this
 }
 
