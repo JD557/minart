@@ -106,7 +106,7 @@ object AudioWave {
     */
   def fromAudioClip(audioClip: AudioClip): AudioWave = new AudioWave {
     def getAmplitude(t: Double): Double = {
-      audioClip.getAmplitude(t)
+      audioClip.getAmplitudeOrElse(t)
     }
   }
 
