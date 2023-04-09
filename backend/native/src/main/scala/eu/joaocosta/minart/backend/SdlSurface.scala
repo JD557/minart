@@ -24,7 +24,7 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
   }
 
   def putPixel(x: Int, y: Int, color: Color): Unit =
-    if (data.pixels != null && x >= 0 && y >= 0 && x < width && y < height) {
+    if (x >= 0 && y >= 0 && x < width && y < height) {
       dataBuffer(y * width + x) = color.argb
     }
 
