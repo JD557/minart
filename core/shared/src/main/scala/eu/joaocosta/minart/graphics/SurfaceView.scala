@@ -94,6 +94,16 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   def repeating(xTimes: Int, yTimes: Int): SurfaceView =
     repeating.toSurfaceView(width * xTimes, height * yTimes)
 
+  /** Returns a plane that clamps this surface when out of bounds */
+  def clamped: Plane =
+    if (width <= 0 || height <= 0) Plane.fromConstant(SurfaceView.defaultColor)
+    else
+      new Plane {
+        def getPixel(x: Int, y: Int): Color = {
+          outer.plane.getPixel(SurfaceView.clamp(0, x, outer.width - 1), SurfaceView.clamp(0, y, outer.height - 1))
+        }
+      }
+
   /** Forces the surface to be computed and returns a new view.
     * Equivalent to `toRamSurface().view`.
     *
@@ -113,6 +123,8 @@ object SurfaceView {
     if (rem >= 0) rem
     else rem + y
   }
+  private def clamp(minValue: Int, value: Int, maxValue: Int): Int =
+    math.max(0, math.min(value, maxValue))
 
   /** Generates a surface view from a surface */
   def apply(surface: Surface): SurfaceView =
