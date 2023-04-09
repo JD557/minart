@@ -36,9 +36,21 @@ trait Surface {
     * @param y pixel y position
     * @return pixel color
     */
-  def getPixel(x: Int, y: Int): Option[Color] =
+  final def getPixel(x: Int, y: Int): Option[Color] =
     if (x >= 0 && y >= 0 && x < width && y < height) Some(unsafeGetPixel(x, y))
     else None
+
+  /** Gets the color from the this surface, falling back to a default color when out of bounds.
+    * Similar to `getPixel(x, y).getOrElse(fallback)`, but avoids an allocation.
+    *
+    * @param x pixel x position
+    * @param y pixel y position
+    * @param fallback fallback color
+    * @return pixel color
+    */
+  final def getPixelOrElse(x: Int, y: Int, fallback: Color = Color(0, 0, 0)): Color =
+    if (x >= 0 && y >= 0 && x < width && y < height) unsafeGetPixel(x, y)
+    else fallback
 
   /** Returns the pixels from this surface.
     * This operation can be perfomance intensive, so it might be worthwile
