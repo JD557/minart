@@ -10,7 +10,7 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.runtime._
 
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
 /*
  * Notice the use of Resource here.

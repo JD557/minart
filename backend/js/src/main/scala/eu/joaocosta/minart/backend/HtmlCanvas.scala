@@ -30,8 +30,8 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
       val canvasRect = jsCanvas.getBoundingClientRect()
       (canvasRect.left.toInt, canvasRect.top.toInt)
     }
-    val xx = (x - offsetX) / settings.scale
-    val yy = (y - offsetY) / settings.scale
+    val xx = (x - offsetX) / extendedSettings.scale
+    val yy = (y - offsetY) / extendedSettings.scale
     if (xx >= 0 && yy >= 0 && xx < settings.width && yy < settings.height)
       Some(PointerInput.Position(xx, yy))
     else None
