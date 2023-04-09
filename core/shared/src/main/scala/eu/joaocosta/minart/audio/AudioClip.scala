@@ -10,9 +10,22 @@ final case class AudioClip(
     duration: Double
 ) { outer =>
 
-  def getAmplitude(t: Double): Double =
-    if (t < 0 || t > duration) 0.0
-    else (wave(t))
+  /** Gets the amplitude at a certain point in time
+    *  @param t time in seconds
+    *  @return amplitude
+    */
+  def getAmplitude(t: Double): Option[Double] =
+    if (t < 0 || t > duration) None
+    else Some(wave(t))
+
+  /** Gets the amplitude at a certain point in time, falling back to a default value when out of bounds.
+    * Similar to `getAmplitude(t).getOrElse(fallback)`, but avoids an allocation.
+    *  @param t time in seconds
+    *  @return amplitude
+    */
+  def getAmplitudeOrElse(t: Double, fallback: Double = 0.0): Double =
+    if (t < 0 || t > duration) fallback
+    else wave(t)
 
   /** Returns the number of samples required to store this wave at a certain
     * sample rate.
@@ -97,6 +110,11 @@ final case class AudioClip(
   def repeating(times: Int): AudioClip =
     repeating.take(duration * times)
 
+  /** Returns an audio wave that clamps this clip when out of bounds */
+  def clamped: AudioWave =
+    if (duration <= 0) AudioWave.silence
+    else contramap(t => AudioClip.clamp(0.0, t, duration))
+
   /** Samples this wave at the specified sample rate and returns an iterator of Doubles
     * in the [-1, 1] range.
     */
@@ -136,4 +154,7 @@ object AudioClip {
     if (rem >= 0) rem
     else rem + y
   }
+
+  private def clamp(minValue: Double, value: Double, maxValue: Double): Double =
+    math.max(0, math.min(value, maxValue))
 }
