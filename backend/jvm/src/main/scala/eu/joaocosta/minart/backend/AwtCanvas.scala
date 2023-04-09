@@ -183,8 +183,8 @@ object AwtCanvas {
         else canvas.getMousePosition()
       Option(point).map { p =>
         PointerInput.Position(
-          (p.x - extendedSettings.canvasX) / extendedSettings.settings.scale,
-          (p.y - extendedSettings.canvasY) / extendedSettings.settings.scale
+          (p.x - extendedSettings.canvasX) / extendedSettings.scale,
+          (p.y - extendedSettings.canvasY) / extendedSettings.scale
         )
       }
     }

@@ -26,7 +26,7 @@ import eu.joaocosta.minart.graphics._
  * Those will be covered in more detail in a future example. Right now, you can see that this will create a 512x512
  * window with a 128x128 canvas (each pixel in the canvas will be a 4x4 square on the screen).
  */
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
 /*
  * Then we need to create our Canvas.

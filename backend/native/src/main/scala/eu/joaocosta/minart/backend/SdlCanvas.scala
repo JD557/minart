@@ -30,8 +30,8 @@ class SdlCanvas() extends SurfaceBackedCanvas {
   private[this] def cleanPointerPos: Option[PointerInput.Position] = if (isCreated())
     Option(rawPointerPos).map { case (x, y) =>
       PointerInput.Position(
-        (x - extendedSettings.canvasX) / settings.scale,
-        (y - extendedSettings.canvasY) / settings.scale
+        (x - extendedSettings.canvasX) / extendedSettings.scale,
+        (y - extendedSettings.canvasY) / extendedSettings.scale
       )
     }
   else None

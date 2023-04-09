@@ -15,7 +15,7 @@ import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.runtime._
 
 // First, let's load our example scala logo image
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(0, 0, 0))
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(0, 0, 0))
 val bitmap         = Image.loadBmpImage(Resource("assets/scala.bmp")).get
 
 /*

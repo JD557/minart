@@ -31,14 +31,26 @@ object LowLevelCanvas {
       windowWidth: Int,
       windowHeight: Int
   ) {
-    val scaledWidth  = settings.width * settings.scale
-    val scaledHeight = settings.height * settings.scale
+    val scale = settings.scale match {
+      case Some(scale)                  => scale
+      case None if !settings.fullScreen => 1
+      case _ =>
+        val wScale = windowWidth / settings.width
+        val hScale = windowHeight / settings.height
+        math.max(1, math.min(wScale, hScale))
+    }
+    val scaledWidth  = settings.width * scale
+    val scaledHeight = settings.height * scale
     val canvasX      = (windowWidth - scaledWidth) / 2
     val canvasY      = (windowHeight - scaledHeight) / 2
   }
 
   object ExtendedSettings {
     def apply(settings: Canvas.Settings): ExtendedSettings =
-      ExtendedSettings(settings, settings.width * settings.scale, settings.height * settings.scale)
+      ExtendedSettings(
+        settings,
+        settings.width * settings.scale.getOrElse(1),
+        settings.height * settings.scale.getOrElse(1)
+      )
   }
 }
