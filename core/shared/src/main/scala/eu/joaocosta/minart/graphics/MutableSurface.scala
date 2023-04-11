@@ -6,13 +6,27 @@ import scala.annotation.tailrec
   */
 trait MutableSurface extends Surface {
 
+  /** Puts a pixel in the surface in an unsafe way.
+    *
+    * This operation is unsafe: writing a out of bounds pixel has undefined behavior.
+    * You should only use this if the performance of `putPixel` is not acceptable.
+    *
+    * @param x pixel x position
+    * @param y pixel y position
+    * @return pixel color
+    */
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit
+
   /** Put a pixel in the surface with a certain color.
     *
     * @param x pixel x position
     * @param y pixel y position
     * @param color `Color` to apply to the pixel
     */
-  def putPixel(x: Int, y: Int, color: Color): Unit
+  final def putPixel(x: Int, y: Int, color: Color): Unit =
+    if (x >= 0 && y >= 0 && x < width && y < height) {
+      unsafePutPixel(x, y, color)
+    }
 
   /** Fill part of the surface with a certain color.
     *
