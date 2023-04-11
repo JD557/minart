@@ -19,10 +19,7 @@ final class Color private (val argb: Int) {
 
   /** This color packed as a 32 bit integer in ABGR. */
   @inline def abgr: Int =
-    (argb & 0xff000000) |   // A
-      (b << 16) |           // B
-      (argb & 0x0000ff00) | // G
-      r                     // R
+    (argb & 0xff00ff00) | (b << 16) | r
 
   /** Combines this with another color by summing each RGB value.
     * Values are clamped on overflow.
