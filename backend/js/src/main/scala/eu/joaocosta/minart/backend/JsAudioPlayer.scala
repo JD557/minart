@@ -26,11 +26,11 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
     stop()
   }
 
-  private val callback: (Double, Int) => () => Unit = (startTime: Double, consumed: Int) =>
+  private val callback: (Double) => () => Unit = (startTime: Double) =>
     () => {
       if (playQueue.nonEmpty) {
         val batchSize   = math.min(settings.bufferSize, playQueue.size)
-        val duration    = (1000.0 * batchSize) / settings.sampleRate
+        val duration    = batchSize.toDouble / settings.sampleRate
         val audioSource = audioCtx.createBufferSource()
         val buffer      = audioCtx.createBuffer(1, batchSize, settings.sampleRate)
         val channelData = buffer.getChannelData(0)
@@ -39,15 +39,11 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
         }
         audioSource.buffer = buffer
         audioSource.connect(audioCtx.destination)
-        if (consumed == 0) {
-          audioSource.start()
-          window.setTimeout(callback(audioCtx.currentTime, batchSize), duration - preemptiveCallback)
-        } else {
-          audioSource.start(startTime + consumed.toDouble / settings.sampleRate)
-          val nextTarget    = (startTime + (consumed + batchSize).toDouble / settings.sampleRate)
-          val sleepDuration = (nextTarget - audioCtx.currentTime) * 1000 - preemptiveCallback
-          window.setTimeout(callback(startTime, consumed + batchSize), sleepDuration)
-        }
+        val clampedStart = math.max(audioCtx.currentTime, startTime)
+        audioSource.start(clampedStart)
+        val nextTarget    = clampedStart + duration
+        val sleepDuration = 1000 * (nextTarget - audioCtx.currentTime) - preemptiveCallback
+        window.setTimeout(callback(nextTarget), sleepDuration)
       } else {
         callbackRegistered = false
       }
@@ -57,7 +53,7 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
     playQueue.enqueue(clip, channel)
     if (!callbackRegistered) {
       callbackRegistered = true
-      callback(0.0, 0)()
+      callback(0.0)()
     }
   }
 
