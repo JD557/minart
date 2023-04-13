@@ -49,7 +49,8 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
     jsCanvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     containerDiv.appendChild(jsCanvas)
     childNode = parentNode.appendChild(containerDiv)
-    ctx = jsCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    ctx =
+      jsCanvas.getContext("2d", new js.Object { val alpha: Boolean = false }).asInstanceOf[dom.CanvasRenderingContext2D]
     dom.document.addEventListener[Event](
       "fullscreenchange",
       (_: Event) => if (dom.document.fullscreenElement == null) changeSettings(settings.copy(fullScreen = false))

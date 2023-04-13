@@ -16,14 +16,9 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
   val height: Int        = data.height
   private val dataBuffer = new Int32Array(data.data.asInstanceOf[Uint8ClampedArray].buffer)
 
-  def unsafeGetPixel(x: Int, y: Int): Color = {
-    Color.fromBGR(dataBuffer(y * width + x))
-  }
+  def unsafeGetPixel(x: Int, y: Int): Color = Color.fromBGR(dataBuffer(y * width + x))
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
-    if (x >= 0 && y >= 0 && x < width && y < height) {
-      dataBuffer(y * width + x) = color.abgr
-    }
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y * width + x) = color.abgr
 
   override def fill(color: Color): Unit = {
     dataBuffer.fill(color.abgr)

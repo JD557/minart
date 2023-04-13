@@ -27,7 +27,7 @@ private[graphics] object Blitter {
           while (dx < maxX) {
             val destX = dx + x
             val color = source.unsafeGetPixel(dx + cx, srcY)
-            dest.putPixel(destX, destY, color)
+            dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
           dy += 1
@@ -40,7 +40,7 @@ private[graphics] object Blitter {
           while (dx < maxX) {
             val destX = dx + x
             val color = source.unsafeGetPixel(dx + cx, srcY)
-            if (color != maskColor) dest.putPixel(destX, destY, color)
+            if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
           dy += 1
@@ -70,7 +70,7 @@ private[graphics] object Blitter {
           while (dx < maxX) {
             val destX = dx + x
             val color = line(dx + cx)
-            dest.putPixel(destX, destY, color)
+            dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
           dy += 1
@@ -84,7 +84,7 @@ private[graphics] object Blitter {
           while (dx < maxX) {
             val destX = dx + x
             val color = line(dx + cx)
-            if (color != maskColor) dest.putPixel(destX, destY, color)
+            if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
           dy += 1

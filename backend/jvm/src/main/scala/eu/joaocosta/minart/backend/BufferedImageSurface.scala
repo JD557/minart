@@ -14,10 +14,7 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
   def unsafeGetPixel(x: Int, y: Int): Color =
     Color.fromRGB(dataBuffer.getElem(y * width + x))
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
-    if (x >= 0 && y >= 0 && x < width && y < height)
-      dataBuffer
-        .setElem(y * width + x, color.argb)
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer.setElem(y * width + x, color.argb)
 
   override def fill(color: Color): Unit = {
     var i = 0

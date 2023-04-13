@@ -6,8 +6,8 @@ trait SurfaceBackedCanvas extends LowLevelCanvas {
 
   protected def surface: MutableSurface
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
-    surface.putPixel(x, y, color)
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit =
+    surface.unsafePutPixel(x, y, color)
 
   def unsafeGetPixel(x: Int, y: Int): Color =
     surface.unsafeGetPixel(x, y)

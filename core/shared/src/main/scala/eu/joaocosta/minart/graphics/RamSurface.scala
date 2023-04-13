@@ -19,9 +19,7 @@ final class RamSurface(val dataBuffer: Vector[Array[Color]]) extends MutableSurf
 
   override def getPixels(): Vector[Array[Color]] = dataBuffer.map(_.clone())
 
-  def putPixel(x: Int, y: Int, color: Color): Unit =
-    if (x >= 0 && y >= 0 && x < width && y < height)
-      dataBuffer(y)(x) = color
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y)(x) = color
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
     var yy = 0

@@ -26,7 +26,7 @@ private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLeve
   // MutableSurface
   override def fill(color: Color): Unit                              = canvas.fill(color)
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = canvas.fillRegion(x, y, w, h, color)
-  def putPixel(x: Int, y: Int, color: Color): Unit                   = canvas.putPixel(x, y, color)
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit             = canvas.unsafePutPixel(x, y, color)
   override def blit(
       that: Surface,
       mask: Option[Color] = None
