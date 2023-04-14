@@ -43,7 +43,7 @@ final case class AudioClip(
     */
   def drop(time: Double): AudioClip = {
     val delta = math.max(0.0, math.min(time, duration))
-    AudioClip(wave.contramap(_ + delta), duration - delta)
+    AudioClip(wave.drop(delta), duration - delta)
   }
 
   /** Maps the values of this wave.
@@ -104,7 +104,30 @@ final case class AudioClip(
   /** Returns an audio wave that repeats this clip forever */
   def repeating: AudioWave =
     if (duration <= 0) AudioWave.silence
-    else contramap(t => AudioClip.floorMod(t, duration))
+    else
+      new AudioWave {
+        def getAmplitude(t: Double): Double = wave.getAmplitude(AudioClip.floorMod(t, duration))
+        override def iterator(sampleRate: Double) = new Iterator[Double] {
+          var it = outer.iterator(sampleRate)
+          def hasNext = if (it.hasNext) true
+          else {
+            it = outer.iterator(sampleRate)
+            it.hasNext
+          }
+          def next() = {
+            if (it.hasNext) it.next()
+            else {
+              it = outer.iterator(sampleRate)
+              it.next()
+            }
+          }
+          override def drop(n: Int): Iterator[Double] = {
+            val realN = n % numSamples(sampleRate)
+            super.drop(realN)
+          }
+        }
+        override def toString = s"repeat($outer)"
+      }
 
   /** Returns an audio wave that repeats this clip a certain number of times */
   def repeating(times: Int): AudioClip =
