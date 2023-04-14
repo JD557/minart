@@ -105,7 +105,7 @@ object AudioWave {
   private[AudioWave] object EmptyAudioWave extends AudioWave {
     def getAmplitude(t: Double)               = 0.0
     override def drop(time: Double)           = this
-    override def iterator(sampleRate: Double) = Iterator.empty
+    override def iterator(sampleRate: Double) = Iterator.continually(0.0)
     override def toString                     = "<silence>"
   }
 
