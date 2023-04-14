@@ -82,7 +82,7 @@ trait AudioWave extends (Double => Double) { outer =>
 }
 
 object AudioWave {
-  private[this] final class DropAudioWave(inner: AudioWave, shift: Double) extends AudioWave {
+  private[AudioWave] final class DropAudioWave(inner: AudioWave, shift: Double) extends AudioWave {
     def getAmplitude(t: Double): Double = inner.getAmplitude(t + shift)
     override def drop(time: Double)     = new DropAudioWave(inner, shift + time)
     override def iterator(sampleRate: Double) =
@@ -90,7 +90,7 @@ object AudioWave {
     override def toString = s"DropAudioWave($inner, $shift)"
   }
 
-  private[this] final class SampledAudioWave(data: IndexedSeq[Double], sampleRate: Double) extends AudioWave {
+  private[AudioWave] final class SampledAudioWave(data: IndexedSeq[Double], sampleRate: Double) extends AudioWave {
     def getAmplitude(t: Double): Double =
       data.applyOrElse((t * sampleRate).toInt, (_: Int) => 0.0)
     override def drop(time: Double) = new SampledAudioWave(data.drop((time * sampleRate).toInt), sampleRate)
@@ -102,13 +102,15 @@ object AudioWave {
     override def toString = s"SampledAudioWave(<${data.size} samples>, $sampleRate)"
   }
 
-  /** Audio wave with just silence */
-  val silence = new AudioWave {
+  private[AudioWave] object EmptyAudioWave extends AudioWave {
     def getAmplitude(t: Double)               = 0.0
     override def drop(time: Double)           = this
     override def iterator(sampleRate: Double) = Iterator.empty
     override def toString                     = "<silence>"
   }
+
+  /** Audio wave with just silence */
+  val silence = EmptyAudioWave
 
   /** Creates an audio wave from a generator function.
     *
