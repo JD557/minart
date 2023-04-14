@@ -43,8 +43,7 @@ trait AudioWave extends (Double => Double) { outer =>
 
   /** Returns a new AudioWave without the first `time` seconds
     */
-  final def drop(time: Double): AudioWave =
-    this.contramap(_ + time)
+  def drop(time: Double): AudioWave = new AudioWave.DropAudioWave(this, time)
 
   /** Returns an AudioClip from this wave with just the first `time` seconds */
   final def take(time: Double): AudioClip =
@@ -58,11 +57,11 @@ trait AudioWave extends (Double => Double) { outer =>
   /** Samples this wave at the specified sample rate and returns an iterator of Doubles
     * in the [-1, 1] range.
     */
-  final def iterator(sampleRate: Double): Iterator[Double] = {
+  def iterator(sampleRate: Double): Iterator[Double] = {
     val stepSize = 1.0 / sampleRate
     new Iterator[Double] {
-      var position  = 0
-      def hasNext() = true
+      var position = 0
+      def hasNext  = true
       def next() = {
         val res = getAmplitude(position * stepSize)
         position += 1
@@ -83,10 +82,32 @@ trait AudioWave extends (Double => Double) { outer =>
 }
 
 object AudioWave {
+  private[this] final class DropAudioWave(inner: AudioWave, shift: Double) extends AudioWave {
+    def getAmplitude(t: Double): Double = inner.getAmplitude(t + shift)
+    override def drop(time: Double)     = new DropAudioWave(inner, shift + time)
+    override def iterator(sampleRate: Double) =
+      inner.iterator(sampleRate).drop((sampleRate * shift).toInt)
+    override def toString = s"DropAudioWave($inner, $shift)"
+  }
+
+  private[this] final class SampledAudioWave(data: IndexedSeq[Double], sampleRate: Double) extends AudioWave {
+    def getAmplitude(t: Double): Double =
+      data.applyOrElse((t * sampleRate).toInt, (_: Int) => 0.0)
+    override def drop(time: Double) = new SampledAudioWave(data.drop((time * sampleRate).toInt), sampleRate)
+    override def iterator(sampleRate: Double) = {
+      if (sampleRate == this.sampleRate) {
+        data.iterator
+      } else super.iterator(sampleRate)
+    }
+    override def toString = s"SampledAudioWave(<${data.size} samples>, $sampleRate)"
+  }
 
   /** Audio wave with just silence */
   val silence = new AudioWave {
-    def getAmplitude(t: Double) = 0.0
+    def getAmplitude(t: Double)               = 0.0
+    override def drop(time: Double)           = this
+    override def iterator(sampleRate: Double) = Iterator.empty
+    override def toString                     = "<silence>"
   }
 
   /** Creates an audio wave from a generator function.
@@ -116,9 +137,5 @@ object AudioWave {
     * @param data indexed sequence of samples (with amplitude between [-1.0, 1.0])
     * @param sampleRate sample rate used in the sequence
     */
-  def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioWave =
-    new AudioWave {
-      def getAmplitude(t: Double): Double =
-        data.applyOrElse((t * sampleRate).toInt, (_: Int) => 0.0)
-    }
+  def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioWave = new SampledAudioWave(data, sampleRate)
 }
