@@ -21,7 +21,7 @@ sealed trait AudioQueue {
 
 object AudioQueue {
 
-  private val maxBufferSize: Double = 1.0
+  private val maxBufferSize: Double = 10.0
 
   class SingleChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val valueQueue = scala.collection.mutable.Queue[Double]()
