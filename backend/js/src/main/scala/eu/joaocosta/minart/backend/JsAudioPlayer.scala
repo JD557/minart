@@ -28,7 +28,7 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
 
   private val callback: (Double) => () => Unit = (startTime: Double) =>
     () => {
-      if (playQueue.nonEmpty) {
+      if (playQueue.nonEmpty()) {
         val batchSize   = math.min(settings.bufferSize, playQueue.size)
         val duration    = batchSize.toDouble / settings.sampleRate
         val audioSource = audioCtx.createBufferSource()
@@ -57,7 +57,7 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
     }
   }
 
-  def isPlaying(): Boolean = playQueue.nonEmpty
+  def isPlaying(): Boolean = playQueue.nonEmpty()
 
   def isPlaying(channel: Int): Boolean = playQueue.nonEmpty(channel)
 
