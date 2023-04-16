@@ -25,9 +25,9 @@ final class RamSurface(val dataBuffer: Vector[Array[Color]]) extends MutableSurf
     var yy = 0
     while (yy < h) {
       var xx   = 0
-      val line = dataBuffer(yy)
+      val line = dataBuffer(y + yy)
       while (xx < w) {
-        line(xx) = color
+        line(x + xx) = color
         xx += 1
       }
       yy += 1
