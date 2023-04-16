@@ -7,8 +7,8 @@ import scala.collection.JavaConverters._
   *  This is not expected to be used by user code, but it's helpful to implement custom backends
   */
 sealed trait AudioQueue {
-  def isEmpty: Boolean
-  def nonEmpty: Boolean = !isEmpty
+  def isEmpty(): Boolean
+  def nonEmpty(): Boolean = !isEmpty()
   def size: Int
 
   def enqueue(clip: AudioClip): this.type
@@ -27,7 +27,7 @@ object AudioQueue {
     private val valueQueue = scala.collection.mutable.Queue[Double]()
     private val clipQueue  = new java.util.ArrayDeque[AudioClip]() // Use scala's ArrayDeque on 2.13+
 
-    def isEmpty = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
+    def isEmpty() = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
     def size = clipQueue.iterator.asScala.foldLeft(valueQueue.size) { case (acc, clip) =>
       if (acc == Int.MaxValue || clip.duration.isInfinite) Int.MaxValue
       else {
@@ -68,7 +68,9 @@ object AudioQueue {
   class MultiChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val channels = scala.collection.mutable.Map[Int, AudioQueue]()
 
-    def isEmpty = channels.values.forall(_.isEmpty)
+    def isEmpty()              = channels.values.forall(_.isEmpty())
+    def isEmpty(channel: Int)  = channels.get(channel).map(_.isEmpty()).getOrElse(true)
+    def nonEmpty(channel: Int) = !isEmpty(channel)
     def size =
       if (channels.isEmpty) 0
       else channels.values.maxBy(_.size).size

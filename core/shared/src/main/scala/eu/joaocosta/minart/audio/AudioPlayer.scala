@@ -43,6 +43,13 @@ trait AudioPlayer {
     */
   def isPlaying(): Boolean
 
+  /** Checks if a channel still has data to be played.
+    *
+    *  @param channel channel to check
+    *  @return true of the channel is still playing, false otherwise
+    */
+  def isPlaying(channel: Int): Boolean
+
   /** Stops playback and removes all enqueued waves.
     */
   def stop(): Unit

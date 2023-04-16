@@ -55,7 +55,7 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   }*/
   private implicit val ec: ExecutionContext = ExecutionContext.global
   private def callback(nextSchedule: Long): Future[Unit] = Future {
-    if (playQueue.nonEmpty) {
+    if (playQueue.nonEmpty()) {
       if (
         System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)
       ) {
@@ -94,7 +94,10 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   }
 
   def isPlaying(): Boolean =
-    playQueue.nonEmpty || SDL_GetQueuedAudioSize(device).toInt > 0
+    playQueue.nonEmpty() || SDL_GetQueuedAudioSize(device).toInt > 0
+
+  def isPlaying(channel: Int): Boolean =
+    playQueue.nonEmpty(channel)
 
   def stop(): Unit = {
     playQueue.clear()

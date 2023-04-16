@@ -31,7 +31,7 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
   }
 
   private def callback(): Future[Unit] = Future {
-    if (playQueue.nonEmpty) {
+    if (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
       if (available > 0) {
         val buf = Iterator
@@ -57,7 +57,9 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     if (!alreadyPlaying) callback()
   }
 
-  def isPlaying(): Boolean = playQueue.nonEmpty
+  def isPlaying(): Boolean = playQueue.nonEmpty()
+
+  def isPlaying(channel: Int): Boolean = playQueue.nonEmpty(channel)
 
   def stop(): Unit = playQueue.clear()
 
