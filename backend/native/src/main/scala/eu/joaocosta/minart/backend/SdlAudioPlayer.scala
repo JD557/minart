@@ -96,6 +96,9 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   def isPlaying(): Boolean =
     playQueue.nonEmpty || SDL_GetQueuedAudioSize(device).toInt > 0
 
+  def isPlaying(channel: Int): Boolean =
+    playQueue.nonEmpty(channel)
+
   def stop(): Unit = {
     playQueue.clear()
     SDL_ClearQueuedAudio(device)

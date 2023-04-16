@@ -68,7 +68,9 @@ object AudioQueue {
   class MultiChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val channels = scala.collection.mutable.Map[Int, AudioQueue]()
 
-    def isEmpty = channels.values.forall(_.isEmpty)
+    def isEmpty                = channels.values.forall(_.isEmpty)
+    def isEmpty(channel: Int)  = channels.get(channel).map(_.isEmpty).getOrElse(true)
+    def nonEmpty(channel: Int) = !isEmpty(channel)
     def size =
       if (channels.isEmpty) 0
       else channels.values.maxBy(_.size).size

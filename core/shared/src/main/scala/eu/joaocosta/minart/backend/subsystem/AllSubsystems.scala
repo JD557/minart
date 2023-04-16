@@ -39,6 +39,7 @@ private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLeve
 
   // AudioPlayer
   def isPlaying(): Boolean                               = audioPlayer.isPlaying()
+  def isPlaying(channel: Int): Boolean                   = audioPlayer.isPlaying(channel)
   override def play(clip: AudioClip): Unit               = audioPlayer.play(clip)
   def play(clip: AudioClip, channel: Int): Unit          = audioPlayer.play(clip, channel)
   override def play(wave: AudioWave): Unit               = audioPlayer.play(wave)

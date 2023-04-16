@@ -43,6 +43,12 @@ trait AudioPlayerIOOps {
     */
   val isPlaying: AudioPlayerIO[Boolean] = accessAudioPlayer(_.isPlaying())
 
+  /** Checks if a channel still has data to be played.
+    *
+    *  @param channel channel to check
+    */
+  def isPlaying(channel: Int): AudioPlayerIO[Boolean] = accessAudioPlayer(_.isPlaying(channel))
+
   /** Stops playback and removes all enqueued waves.
     */
   val stop: AudioPlayerIO[Unit] = accessAudioPlayer(_.stop())

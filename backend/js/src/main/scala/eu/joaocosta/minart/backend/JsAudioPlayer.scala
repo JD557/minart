@@ -59,6 +59,8 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
 
   def isPlaying(): Boolean = playQueue.nonEmpty
 
+  def isPlaying(channel: Int): Boolean = playQueue.nonEmpty(channel)
+
   def stop(): Unit = playQueue.clear()
 
   def stop(channel: Int): Unit = playQueue.clear(channel)
