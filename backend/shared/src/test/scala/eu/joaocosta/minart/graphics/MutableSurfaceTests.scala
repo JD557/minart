@@ -44,6 +44,15 @@ trait MutableSurfaceTests extends BasicTestSuite {
     assert(surface.getPixel(0, 0) == Some(Color(1, 1, 1)))
     assert(surface.getPixel(0, 1) == Some(Color(1, 1, 1)))
     assert(surface.getPixel(1, 0) == Some(Color(3, 2, 1)))
+
+    surface.fillRegion(1, 1, 1, 1, Color(2, 2, 2))
+    assert(surface.getPixel(0, 0) == Some(Color(1, 1, 1)))
+    assert(surface.getPixel(0, 1) == Some(Color(1, 1, 1)))
+    assert(surface.getPixel(1, 0) == Some(Color(3, 2, 1)))
+    assert(surface.getPixel(1, 1) == Some(Color(2, 2, 2)))
+
+    surface.fillRegion(-100, -100, 100, 100, Color(0, 0, 0))
+    assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
   }
 
   test("Combine two surfaces without blowing up") {

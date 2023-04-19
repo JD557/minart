@@ -25,12 +25,16 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
   }
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    val _x = math.max(x, 0)
+    val _y = math.max(y, 0)
+    val _w = math.min(w, width - _x)
+    val _h = math.min(h, height - _y)
     var yy = 0
-    while (yy < h) {
-      val lineBase = (yy + y) * width
+    while (yy < _h) {
+      val lineBase = (yy + _y) * width
       var xx       = 0
-      while (xx < w) {
-        dataBuffer.setElem(lineBase + xx + x, color.argb)
+      while (xx < _w) {
+        dataBuffer.setElem(lineBase + xx + _x, color.argb)
         xx += 1
       }
       yy += 1
