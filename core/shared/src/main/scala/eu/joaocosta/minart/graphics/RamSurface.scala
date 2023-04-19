@@ -22,12 +22,16 @@ final class RamSurface(val dataBuffer: Vector[Array[Color]]) extends MutableSurf
   def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y)(x) = color
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    val _x = math.max(x, 0)
+    val _y = math.max(y, 0)
+    val _w = math.min(w, width - _x)
+    val _h = math.min(h, height - _y)
     var yy = 0
-    while (yy < h) {
+    while (yy < _h) {
       var xx   = 0
-      val line = dataBuffer(y + yy)
-      while (xx < w) {
-        line(x + xx) = color
+      val line = dataBuffer(_y + yy)
+      while (xx < _w) {
+        line(_x + xx) = color
         xx += 1
       }
       yy += 1

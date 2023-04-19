@@ -31,8 +31,12 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
   }
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
+    val _x = math.max(x, 0)
+    val _y = math.max(y, 0)
+    val _w = math.min(w, width - _x)
+    val _h = math.min(h, height - _y)
     SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, 0.toUByte)
-    val rect = stackalloc[SDL_Rect]().init(x, y, w, h)
+    val rect = stackalloc[SDL_Rect]().init(_x, _y, _w, _h)
     SDL_RenderFillRect(renderer, rect)
   }
 
