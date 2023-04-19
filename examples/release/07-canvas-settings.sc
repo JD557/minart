@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /** On some occasions, we might need to change our canvas settings.
   * Here's how to do it.
@@ -12,11 +12,11 @@ import eu.joaocosta.minart.runtime._
 /** Let's define some settings.
   * Note that one of those will actually go fullScreen.
   */
-val settingsA = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(128, 255, 128))
-val settingsB = Canvas.Settings(width = 640, height = 480, scale = 1, clearColor = Color(128, 255, 128))
+val settingsA = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(128, 255, 128))
+val settingsB = Canvas.Settings(width = 640, height = 480, scale = None, clearColor = Color(128, 255, 128))
 val settingsC =
-  Canvas.Settings(width = 128, height = 128, scale = 4, fullScreen = true, clearColor = Color(128, 255, 128))
-val settingsD = Canvas.Settings(width = 640, height = 480, scale = 1, fullScreen = true, clearColor = Color(0, 0, 0))
+  Canvas.Settings(width = 128, height = 128, scale = Some(4), fullScreen = true, clearColor = Color(128, 255, 128))
+val settingsD = Canvas.Settings(width = 640, height = 480, scale = None, fullScreen = true, clearColor = Color(0, 0, 0))
 
 AppLoop
   .statelessRenderLoop((canvas: Canvas) => {

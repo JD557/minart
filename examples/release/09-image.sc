@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /*
  * It is sometimes convenient to load images from external resources.
@@ -10,7 +10,7 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.runtime._
 
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
 /*
  * Notice the use of Resource here.

@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /*
  * It can be quite cumbersome an ineficient to apply multiple transformations to a surface if we just use the getPixel
@@ -15,7 +15,7 @@ import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.runtime._
 
 // First, let's load our example scala logo image
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(0, 0, 0))
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(0, 0, 0))
 val bitmap         = Image.loadBmpImage(Resource("assets/scala.bmp")).get
 
 /*
@@ -46,11 +46,21 @@ AppLoop
       val frameSin = math.sin(t)
       val frameCos = math.cos(t)
       val zoom     = 1.0 / (frameSin + 2.0)
+      val convolutionWindow = for {
+        x <- (-1 to 1)
+        y <- (-1 to 1)
+      } yield (x, y)
 
-      val image = Plane
-        .fromSurfaceWithRepetition(updatedBitmap)                         // Create an inifinitePlane from our surface
-        .scale(zoom, zoom)                                                // scale
-        .rotate(t)                                                        // rotate
+      val image = updatedBitmap.view.repeating // Create an inifinite Plane from our surface
+        .scale(zoom, zoom)  // Scale
+        .coflatMap { img => // Average blur
+          convolutionWindow.iterator
+            .map { case (x, y) => img(x, y) }
+            .foldLeft(Color(0, 0, 0)) { case (Color(r, g, b), Color(rr, gg, bb)) =>
+              Color(r + rr / 9, g + gg / 9, g + gg / 9)
+            }
+        }
+        .rotate(t)                                                        // Rotate
         .contramap((x, y) => (x + (5 * math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
         .flatMap(color =>
           (x, y) => // Add a crazy checkerboard effect

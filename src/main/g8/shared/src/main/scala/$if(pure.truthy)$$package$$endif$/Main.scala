@@ -8,7 +8,7 @@ import eu.joaocosta.minart.runtime._
 object Main extends MinartApp[Unit, LowLevelCanvas] {
   val loopRunner      = LoopRunner()
   val createSubsystem = () => LowLevelCanvas.create()
-  val canvasSettings  = Canvas.Settings(width = 128, height = 128, scale = 4)
+  val canvasSettings  = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
   val appLoop =
     AppLoop

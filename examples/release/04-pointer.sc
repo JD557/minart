@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /*
  * Now that we learned the basics of animation, we can start to look at more dynamic applications.
@@ -19,7 +19,7 @@ import eu.joaocosta.minart.runtime._
 /** Note the adition of clearColor here.
   * This is the color of the canvas when nothing is drawn.
   */
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4, clearColor = Color(255, 255, 255))
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(255, 255, 255))
 
 AppLoop
   .statelessRenderLoop((canvas: Canvas) => {

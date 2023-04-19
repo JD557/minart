@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /*
  * In the previous examples we just drew a static image on the screen.
@@ -17,7 +17,7 @@ import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
-val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
+val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
 /*
  * This is just the function to define the fire animation, you can skip over this step.

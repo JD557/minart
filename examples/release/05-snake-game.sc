@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /*
  * Now that we learned the basics of animation and input handling, we are almost ready to make a game.
@@ -21,7 +21,7 @@ import eu.joaocosta.minart.runtime._
  * Again, let's define our canvas settings.
  * This time we'll use a smaller resolution with a larger scale.
  */
-val canvasSettings = Canvas.Settings(width = 32, height = 32, scale = 16, clearColor = Color(0, 0, 0))
+val canvasSettings = Canvas.Settings(width = 32, height = 32, scale = Some(16), clearColor = Color(0, 0, 0))
 
 /**
  * Then we define our game logic, this is an implementation of the classic snake game.

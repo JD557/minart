@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /*
  * Some people might prefer to code using a "programs as values" approach.
@@ -52,5 +52,5 @@ object PureColorSquare extends MinartApp[Unit, LowLevelCanvas] {
           .flatMap(CanvasIO.sequence)
           .andThen(CanvasIO.redraw)
       )
-      .configure(Canvas.Settings(width = 128, height = 128, scale = 4), LoopFrequency.Never)
+      .configure(Canvas.Settings(width = 128, height = 128, scale = Some(4)), LoopFrequency.Never)
 }

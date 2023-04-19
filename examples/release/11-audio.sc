@@ -1,5 +1,5 @@
 //> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.0"
+//> using lib "eu.joaocosta::minart::0.5.1"
 
 /** Here we'll see how to generate and play audio
   *
@@ -26,7 +26,7 @@ object Audio {
 
   // Here we generate a sin wave with the frequencies from our song
   val arpeggio: AudioClip =
-    AudioWave((t: Double) => math.sin(song(t) * 6.28 * t)).take(1.0)
+    AudioWave.fromFunction((t: Double) => math.sin(song(t) * 6.28 * t)).take(1.0)
 
   // We can also use the provided oscilators
   val bass =

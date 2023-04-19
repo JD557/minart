@@ -5,7 +5,7 @@ import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
 object Main {
-  val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = 4)
+  val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
   def main(args: Array[String]): Unit = {
     AppLoop
