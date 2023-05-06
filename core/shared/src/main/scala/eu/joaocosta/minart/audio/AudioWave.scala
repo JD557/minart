@@ -85,9 +85,7 @@ object AudioWave {
   private[AudioWave] final class DropAudioWave(inner: AudioWave, shift: Double) extends AudioWave {
     def getAmplitude(t: Double): Double = inner.getAmplitude(t + shift)
     override def drop(time: Double)     = new DropAudioWave(inner, shift + time)
-    override def iterator(sampleRate: Double) =
-      inner.iterator(sampleRate).drop((sampleRate * shift).toInt)
-    override def toString = s"DropAudioWave($inner, $shift)"
+    override def toString               = s"DropAudioWave($inner, $shift)"
   }
 
   private[AudioWave] final class SampledAudioWave(data: IndexedSeq[Double], sampleRate: Double) extends AudioWave {
