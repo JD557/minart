@@ -48,8 +48,8 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
   private def storeDataChunk(clip: AudioClip): ByteStreamState[String] =
     for {
       _ <- writeString("data")
-      _ <- writeLENumber(clip.numSamples(sampleRate) * bitRate / 8, 4)
-      _ <- storeData(clip.iterator(sampleRate).grouped(chunkSize))
+      _ <- writeLENumber(Sampler.numSamples(clip, sampleRate) * bitRate / 8, 4)
+      _ <- storeData(Sampler.sampleClip(clip, sampleRate).grouped(chunkSize))
     } yield ()
 
   private def storeFmtChunk(clip: AudioClip): ByteStreamState[String] =
@@ -66,7 +66,7 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
 
   private def storeRiffHeader(clip: AudioClip): ByteStreamState[String] = for {
     _ <- writeString("RIFF")
-    _ <- writeLENumber(36 + clip.numSamples(sampleRate) * bitRate / 8, 4)
+    _ <- writeLENumber(36 + Sampler.numSamples(clip, sampleRate) * bitRate / 8, 4)
     _ <- writeString("WAVE")
   } yield ()
 

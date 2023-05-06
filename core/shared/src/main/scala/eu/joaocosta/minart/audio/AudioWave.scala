@@ -54,30 +54,6 @@ trait AudioWave extends (Double => Double) { outer =>
     if (end <= start) AudioClip.empty
     else AudioClip(this.drop(start), end - start)
 
-  /** Samples this wave at the specified sample rate and returns an iterator of Doubles
-    * in the [-1, 1] range.
-    */
-  def iterator(sampleRate: Double): Iterator[Double] = {
-    val stepSize = 1.0 / sampleRate
-    new Iterator[Double] {
-      var position = 0
-      def hasNext  = true
-      def next() = {
-        val res = getAmplitude(position * stepSize)
-        position += 1
-        res
-      }
-    }
-  }
-
-  /** Samples this wave at the specified sample rate and returns an iterator of Bytes
-    * in the [-127, 127] range.
-    */
-  final def byteIterator(sampleRate: Double): Iterator[Byte] = {
-    iterator(sampleRate)
-      .map(x => (math.min(math.max(-1.0, x), 1.0) * 127).toByte)
-  }
-
   override def toString = s"AudioWave(<function1>)"
 }
 
@@ -91,20 +67,13 @@ object AudioWave {
   private[AudioWave] final class SampledAudioWave(data: IndexedSeq[Double], sampleRate: Double) extends AudioWave {
     def getAmplitude(t: Double): Double =
       data.applyOrElse((t * sampleRate).toInt, (_: Int) => 0.0)
-    override def drop(time: Double) = new SampledAudioWave(data.drop((time * sampleRate).toInt), sampleRate)
-    override def iterator(sampleRate: Double) = {
-      if (sampleRate == this.sampleRate) {
-        data.iterator
-      } else super.iterator(sampleRate)
-    }
     override def toString = s"SampledAudioWave(<${data.size} samples>, $sampleRate)"
   }
 
   private[AudioWave] object EmptyAudioWave extends AudioWave {
-    def getAmplitude(t: Double)               = 0.0
-    override def drop(time: Double)           = this
-    override def iterator(sampleRate: Double) = Iterator.continually(0.0)
-    override def toString                     = "<silence>"
+    def getAmplitude(t: Double)     = 0.0
+    override def drop(time: Double) = this
+    override def toString           = "<silence>"
   }
 
   /** Audio wave with just silence */

@@ -27,11 +27,6 @@ final case class AudioClip(
     if (t < 0 || t > duration) fallback
     else wave(t)
 
-  /** Returns the number of samples required to store this wave at a certain
-    * sample rate.
-    */
-  def numSamples(sampleRate: Double): Int = (duration * sampleRate).toInt
-
   /** Returns a new Audio Clip with the first `time` seconds of this audio clip
     */
   def take(time: Double): AudioClip = {
@@ -107,26 +102,6 @@ final case class AudioClip(
     else
       new AudioWave {
         def getAmplitude(t: Double): Double = wave.getAmplitude(AudioClip.floorMod(t, duration))
-        override def iterator(sampleRate: Double) = new Iterator[Double] {
-          var it = outer.iterator(sampleRate)
-          def hasNext = if (it.hasNext) true
-          else {
-            it = outer.iterator(sampleRate)
-            it.hasNext
-          }
-          def next() = {
-            if (it.hasNext) it.next()
-            else {
-              it = outer.iterator(sampleRate)
-              it.next()
-            }
-          }
-          override def drop(n: Int): Iterator[Double] = {
-            val realN = n % numSamples(sampleRate)
-            super.drop(realN)
-          }
-        }
-        override def toString = s"repeat($outer)"
       }
 
   /** Returns an audio wave that repeats this clip a certain number of times */
@@ -137,19 +112,6 @@ final case class AudioClip(
   def clamped: AudioWave =
     if (duration <= 0) AudioWave.silence
     else contramap(t => AudioClip.clamp(0.0, t, duration))
-
-  /** Samples this wave at the specified sample rate and returns an iterator of Doubles
-    * in the [-1, 1] range.
-    */
-  def iterator(sampleRate: Double): Iterator[Double] =
-    wave.iterator(sampleRate).take(numSamples(sampleRate))
-
-  /** Samples this wave at the specified sample rate and returns an iterator of Bytes
-    * in the [-127, 127] range.
-    */
-  def byteIterator(sampleRate: Double): Iterator[Byte] =
-    iterator(sampleRate)
-      .map(x => (math.min(math.max(-1.0, x), 1.0) * 127).toByte)
 
   override def toString = s"AudioClip($wave,$duration)"
 }

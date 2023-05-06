@@ -6,11 +6,11 @@ object AudioClipSpec extends BasicTestSuite {
 
   test("An audio clip is correctly sampled") {
     val clip = AudioClip(x => x / 2.0, 2.0)
-    assert(clip.numSamples(1) == 2)
-    assert(clip.iterator(1).toList == List(0.0, 0.5))
+    assert(Sampler.numSamples(clip, 1) == 2)
+    assert(Sampler.sampleClip(clip, 1).toList == List(0.0, 0.5))
 
-    assert(clip.numSamples(2) == 4)
-    assert(clip.iterator(2).toList == List(0.0, 0.25, 0.5, 0.75))
+    assert(Sampler.numSamples(clip, 2) == 4)
+    assert(Sampler.sampleClip(clip, 2).toList == List(0.0, 0.25, 0.5, 0.75))
   }
 
   test("take and drop correctly update the durations") {
@@ -25,7 +25,7 @@ object AudioClipSpec extends BasicTestSuite {
   test("The map operation maps all values") {
     val clip = AudioClip(x => x / 2.0, 2.0)
     val f    = (x: Double) => x / 2.0
-    assert(clip.map(f).iterator(100).toList == clip.iterator(100).toList.map(f))
+    assert(Sampler.sampleClip(clip.map(f), 100).toList == Sampler.sampleClip(clip, 100).toList.map(f))
   }
 
   test("The zipWith operation combines two clips") {
@@ -35,7 +35,9 @@ object AudioClipSpec extends BasicTestSuite {
     val newClip = clipA.zipWith(clipB, _ + _)
     assert(newClip.duration == 2.0)
     assert(
-      newClip.iterator(1).toList == clipA.iterator(1).zip(clipB.iterator(1)).map { case (x, y) => x + y }.toList
+      Sampler
+        .sampleClip(newClip, 1)
+        .toList == Sampler.sampleClip(clipA, 1).zip(Sampler.sampleClip(clipB, 1)).map { case (x, y) => x + y }.toList
     )
   }
 

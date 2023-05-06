@@ -12,8 +12,9 @@ object AudioClipReaderSpec extends BasicTestSuite {
 
   def sameClip(results: List[AudioClip]): Unit = {
     results.sliding(2).foreach {
-      case clip1 :: clip2 :: _ => assert(clip1.iterator(44100).toList == clip2.iterator(44100).toList)
-      case _                   => ()
+      case clip1 :: clip2 :: _ =>
+        assert(Sampler.sampleClip(clip1, 44100).toList == Sampler.sampleClip(clip2, 44100).toList)
+      case _ => ()
     }
   }
 
