@@ -15,6 +15,7 @@ ThisBuild / scmInfo := Some(
     "scm:git@github.com:JD557/minart.git"
   )
 )
+ThisBuild / versionScheme := Some("semver-spec")
 
 ThisBuild / autoAPIMappings := true
 ThisBuild / scalacOptions ++= Seq(
