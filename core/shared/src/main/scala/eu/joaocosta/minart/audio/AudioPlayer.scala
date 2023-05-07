@@ -35,7 +35,7 @@ trait AudioPlayer {
     *  @param channel channel where to play the audio wave
     */
   def play(wave: AudioWave, channel: Int): Unit =
-    play(AudioClip(wave, Double.PositiveInfinity))
+    play(AudioClip(wave, Double.PositiveInfinity), channel)
 
   /** Checks if this player still has data to be played.
     *

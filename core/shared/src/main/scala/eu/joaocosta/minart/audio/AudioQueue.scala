@@ -31,7 +31,7 @@ object AudioQueue {
     def size = clipQueue.iterator.asScala.foldLeft(valueQueue.size) { case (acc, clip) =>
       if (acc == Int.MaxValue || clip.duration.isInfinite) Int.MaxValue
       else {
-        val newValue = acc + clip.numSamples(sampleRate)
+        val newValue = acc + Sampler.numSamples(clip, sampleRate)
         if (newValue < 0) Int.MaxValue
         else newValue
       }
@@ -47,10 +47,10 @@ object AudioQueue {
       } else if (!clipQueue.isEmpty()) {
         val nextClip = clipQueue.removeFirst()
         if (nextClip.duration > maxBufferSize) {
-          valueQueue ++= nextClip.take(maxBufferSize).iterator(sampleRate)
+          valueQueue ++= Sampler.sampleClip(nextClip.take(maxBufferSize), sampleRate)
           clipQueue.addFirst(nextClip.drop(maxBufferSize))
         } else {
-          valueQueue ++= nextClip.iterator(sampleRate)
+          valueQueue ++= Sampler.sampleClip(nextClip, sampleRate)
         }
         valueQueue.dequeue()
       } else {
