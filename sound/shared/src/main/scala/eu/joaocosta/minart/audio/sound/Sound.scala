@@ -35,6 +35,11 @@ object Sound {
   def loadWavClip(resource: Resource): Try[AudioClip] =
     loadClip(wav.WavAudioFormat.defaultFormat, resource)
 
+  /** Loads an audio clip in the QOA format.
+    */
+  def loadQoaClip(resource: Resource): Try[AudioClip] =
+    loadClip(qoa.QoaAudioFormat.defaultFormat, resource)
+
   /** Stores an audio clip using a custom AudioClipWriter.
     *
     * @param writer AudioClipWriter to use
