@@ -70,7 +70,7 @@ final case class AudioClip(
     * Effectively, each sample of the new clip is computed from a translated clip, which can be used to
     * implement convolutions.
     */
-  final def coflatMap(f: AudioClip => Double): AudioClip =
+  def coflatMap(f: AudioClip => Double): AudioClip =
     AudioClip(
       new AudioWave {
         def getAmplitude(t: Double): Double = f(outer.drop(t))
