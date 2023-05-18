@@ -81,14 +81,14 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
     weights = Vector(weight0, weight1, weight2, weight3).map(_.toShort)
   )
 
-  private def loadChunks(
+  private def loadFrames(
       remainingFrames: Int,
       clip: AudioClip = AudioClip.empty
   ): ParseState[String, AudioClip] = {
     if (remainingFrames == 0)
       State.pure(clip)
     else {
-      val shortClip = for {
+      val nextClip = for {
         numChannels <- readBENumber(1).validate(_ == 1, c => s"Expected a Mono QOA file, got $c channels")
         sampleRate  <- readBENumber(3)
         samples     <- readBENumber(2)
@@ -96,14 +96,15 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
         frameSize <- readBENumber(2)
         state     <- loadState
         slices    <- loadSlices(state, numSlices)
-      } yield AudioClip.fromIndexedSeq(slices._2.map(_.toDouble / Short.MaxValue).toVector, sampleRate)
-      shortClip.flatMap(c => loadChunks(remainingFrames - 1, clip.append(c)))
+        subClip = AudioClip.fromIndexedSeq(slices._2.map(_.toDouble / Short.MaxValue).toVector, sampleRate)
+      } yield if (remainingFrames <= 1) Sampler.resample(clip.append(subClip), sampleRate) else clip.append(subClip)
+      nextClip.flatMap(c => loadFrames(remainingFrames - 1, c))
     }
   }
 
   private val loadQoaHeader: ParseState[String, Long] = for {
-    _       <- readString(4).validate(_ == "qoaf", m => s"Unsupported magic value: $m. Expected qoaf")
-    samples <- readBENumber(4)
+    _       <- readString(4).validate(_ == "qoaf", m => s"Unsupported magic value: $m. Expected qoaf.")
+    samples <- readBENumber(4).validate(_ > 0, _ => "Streaming QOA files are not supported.")
   } yield samples
 
   def loadClip(is: InputStream): Either[String, AudioClip] = {
@@ -111,7 +112,7 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
     (for {
       samples <- loadQoaHeader
       frames = math.ceil(samples / (256.0 * 20)).toInt
-      clip <- loadChunks(frames)
+      clip <- loadFrames(frames)
     } yield clip).run(bytes).map(_._2)
   }
 
