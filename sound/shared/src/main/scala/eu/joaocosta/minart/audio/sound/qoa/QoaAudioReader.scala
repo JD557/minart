@@ -92,10 +92,11 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
         numChannels <- readBENumber(1).validate(_ == 1, c => s"Expected a Mono QOA file, got $c channels")
         sampleRate  <- readBENumber(3)
         samples     <- readBENumber(2)
-        frameSize   <- readBENumber(2)
-        state       <- loadState
-        slice       <- loadSlices(state)
-      } yield AudioClip.fromIndexedSeq(slice._2.map(_.toDouble / Short.MaxValue).toVector, sampleRate)
+        numSlices = math.min(math.ceil(samples / 20.0).toInt, 256)
+        frameSize <- readBENumber(2)
+        state     <- loadState
+        slices    <- loadSlices(state, numSlices)
+      } yield AudioClip.fromIndexedSeq(slices._2.map(_.toDouble / Short.MaxValue).toVector, sampleRate)
       shortClip.flatMap(c => loadChunks(remainingFrames - 1, clip.append(c)))
     }
   }
