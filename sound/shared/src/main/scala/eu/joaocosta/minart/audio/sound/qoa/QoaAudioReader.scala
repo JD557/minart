@@ -83,22 +83,26 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
 
   private def loadFrames(
       remainingFrames: Int,
-      clip: AudioClip = AudioClip.empty
+      acc: Vector[Double] = Vector.empty,
+      sampleRate: Int = 0
   ): ParseState[String, AudioClip] = {
     if (remainingFrames == 0)
-      State.pure(clip)
+      State.pure(AudioClip.fromIndexedSeq(acc, sampleRate))
     else {
-      val nextClip = for {
+      val frameData = for {
         numChannels <- readBENumber(1).validate(_ == 1, c => s"Expected a Mono QOA file, got $c channels")
-        sampleRate  <- readBENumber(3)
-        samples     <- readBENumber(2)
+        newSampleRate <- readBENumber(3).validate(
+          s => sampleRate == 0 || s == sampleRate,
+          s => s"Sample rate changed mid file. Expected $sampleRate, got $s"
+        )
+        samples <- readBENumber(2)
         numSlices = math.min(math.ceil(samples / 20.0).toInt, 256)
         frameSize <- readBENumber(2)
         state     <- loadState
         slices    <- loadSlices(state, numSlices)
-        subClip = AudioClip.fromIndexedSeq(slices._2.map(_.toDouble / Short.MaxValue).toVector, sampleRate)
-      } yield if (remainingFrames <= 1) Sampler.resample(clip.append(subClip), sampleRate) else clip.append(subClip)
-      nextClip.flatMap(c => loadFrames(remainingFrames - 1, c))
+        newSamples = slices._2.map(_.toDouble / Short.MaxValue)
+      } yield (acc ++ newSamples, newSampleRate)
+      frameData.flatMap { case (nextClip, newSampleRate) => loadFrames(remainingFrames - 1, nextClip, newSampleRate) }
     }
   }
 
