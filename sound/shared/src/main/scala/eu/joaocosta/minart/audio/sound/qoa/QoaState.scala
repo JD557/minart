@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.audio.sound.qoa
 
 final case class QoaState(history: Vector[Short] = Vector(0, 0, 0, 0), weights: Vector[Short] = Vector(0, 0, 0, 0)) {
-  lazy val prediction: Int = history.zip(weights).map(_.toInt * _.toInt).sum >> 13
+  lazy val prediction: Int = history.zip(weights).map { case (h, w) => h.toInt * w.toInt }.sum >> 13
   def update(sample: Short, residual: Int): QoaState = {
     val delta = residual >> 4
     val newWeights = history.zip(weights).map { case (h, w) =>
