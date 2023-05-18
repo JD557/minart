@@ -31,4 +31,10 @@ object Sampler {
   def sampleClip(clip: AudioClip, sampleRate: Double): Iterator[Double] =
     sampleWave(clip.wave, sampleRate).take(numSamples(clip, sampleRate))
 
+  /** Resamples this audio clip with a specified frame rate.
+    * This can be useful, for example, to avoid recomputing transformations
+    * every time the clip is played.
+    */
+  def resample(clip: AudioClip, sampleRate: Double): AudioClip =
+    AudioClip.fromIndexedSeq(sampleClip(clip, sampleRate).toVector, sampleRate)
 }
