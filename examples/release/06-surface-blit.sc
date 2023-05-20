@@ -1,5 +1,5 @@
-//> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.1"
+//> using scala "3.2.2"
+//> using lib "eu.joaocosta::minart::0.5.2"
 
 /*
  * Writing directly to a canvas pixel by pixel worked fine in the previous examples, but
