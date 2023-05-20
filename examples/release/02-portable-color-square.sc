@@ -1,5 +1,5 @@
-//> using scala "3.2.0"
-//> using lib "eu.joaocosta::minart::0.5.1"
+//> using scala "3.2.2"
+//> using lib "eu.joaocosta::minart::0.5.2"
 
 /*
  * In this next example, we are going to do draw the same colored square, but now in a portable way.
