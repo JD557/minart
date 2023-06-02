@@ -1,4 +1,4 @@
-//> using scala "3.2.2"
+//> using scala "3.3.0"
 //> using lib "eu.joaocosta::minart::0.5.3-SNAPSHOT"
 
 /** Here we'll see how to generate and play audio
