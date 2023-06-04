@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.runtime
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.backend.defaults._

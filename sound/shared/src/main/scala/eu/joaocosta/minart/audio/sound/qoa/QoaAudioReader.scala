@@ -3,8 +3,6 @@ package eu.joaocosta.minart.audio.sound.qoa
 import java.io.InputStream
 
 import scala.annotation.tailrec
-import scala.io.Source
-import scala.math.BigDecimal.apply
 
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.audio.sound._

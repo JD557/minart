@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import scala.annotation.tailrec
-
 /** A surface that can be drawn on using mutable operations.
   */
 trait MutableSurface extends Surface {

@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.backend
 
-import scala.annotation.tailrec
 import scala.concurrent._
 import scala.scalanative.libc.stdlib._
 import scala.scalanative.unsafe._
