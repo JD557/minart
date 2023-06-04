@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.backend
 
-import scala.scalajs.js
-
 import org.scalajs.dom._
 
 import eu.joaocosta.minart.audio._

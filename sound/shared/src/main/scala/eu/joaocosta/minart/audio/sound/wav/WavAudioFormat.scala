@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.audio.sound.wav
 
-import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.internal._
 
 /** Audio format WAV files.

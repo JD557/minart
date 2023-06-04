@@ -10,14 +10,12 @@ import java.awt.event.{
 }
 import java.awt.image.BufferedImage
 import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
-import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.{JFrame, WindowConstants}
 
 import scala.collection.JavaConverters._
 
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input.KeyboardInput.Key
 import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.

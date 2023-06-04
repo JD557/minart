@@ -24,11 +24,10 @@ ThisBuild / scalacOptions ++= Seq(
   "-language:higherKinds",
   "-unchecked"
 )
-ThisBuild / scalafmtOnCompile                              := true
-ThisBuild / semanticdbEnabled                              := true
-ThisBuild / semanticdbVersion                              := scalafixSemanticdb.revision
-ThisBuild / scalafixOnCompile                              := true
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+ThisBuild / scalafmtOnCompile := true
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalafixOnCompile := true
 
 val siteSettings = Seq(
   Compile / doc / scalacOptions ++= (

@@ -1,6 +1,5 @@
 package eu.joaocosta.minart.backend
 
-import java.io._
 import javax.sound.sampled._
 
 import scala.concurrent._

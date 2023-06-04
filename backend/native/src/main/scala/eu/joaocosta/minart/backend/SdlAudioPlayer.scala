@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.backend
 
 import scala.concurrent._
-import scala.scalanative.libc._
-import scala.scalanative.libc.stdlib.malloc
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._

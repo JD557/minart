@@ -2,8 +2,6 @@ package eu.joaocosta.minart.graphics.image.qoi
 
 import java.io.InputStream
 
-import scala.collection.compat.immutable.LazyList
-
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.internal._

@@ -1,7 +1,6 @@
 package eu.joaocosta.minart.audio.pure
 
 import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime.pure._
 
 /** Representation of an audio player operation, with the common Monad operations.

@@ -4,7 +4,6 @@ import java.io.{InputStream, OutputStream}
 
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.Using.Releasable
 import scala.util.{Try, Using}
 
 import eu.joaocosta.minart.backend.defaults._

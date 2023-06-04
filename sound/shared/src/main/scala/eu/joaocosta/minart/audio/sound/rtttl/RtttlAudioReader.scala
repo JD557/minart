@@ -2,10 +2,7 @@ package eu.joaocosta.minart.audio.sound.rtttl
 
 import java.io.InputStream
 
-import scala.annotation.tailrec
 import scala.collection.compat._
-import scala.io.Source
-import scala.util.Try
 
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.audio.sound._
