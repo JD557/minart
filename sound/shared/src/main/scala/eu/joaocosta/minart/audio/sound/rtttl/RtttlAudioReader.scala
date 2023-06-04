@@ -2,6 +2,8 @@ package eu.joaocosta.minart.audio.sound.rtttl
 
 import java.io.InputStream
 
+import scala.collection.compat._
+
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.audio.sound._
 import eu.joaocosta.minart.internal._
