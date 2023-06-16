@@ -54,7 +54,7 @@ def docSettings(projectName: String) = Seq(
 
 val sharedSettings = Seq(
   libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.10.0")
+    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.11.0")
 )
 
 val testSettings = Seq(
@@ -73,7 +73,7 @@ val publishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.10.0",
+    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.11.0",
     "org.scala-js"           %%% "scalajs-dom"             % "2.6.0"
   )
 )
