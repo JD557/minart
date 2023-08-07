@@ -25,7 +25,7 @@ val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 def automata(backbuffer: Vector[Array[Color]], x: Int, y: Int): Color = {
   // For each pixel, we fetch the colors 3 pixels below (SW, S, SE)
   val neighbors =
-    (math.max(0, x - 1) to math.min(x + 1, canvasSettings.width - 1)).toList.map { xx =>
+    (Math.max(0, x - 1) to Math.min(x + 1, canvasSettings.width - 1)).toList.map { xx =>
       backbuffer(y + 1)(xx)
     }
   // We compute some random loss
@@ -36,7 +36,7 @@ def automata(backbuffer: Vector[Array[Color]], x: Int, y: Int): Color = {
 
   // Then we generate a nice yelow-red tint based on the temperature
   Color(
-    math.min(255, temperature * 1.6).toInt,
+    Math.min(255, temperature * 1.6).toInt,
     (temperature * 0.8).toInt,
     (temperature * 0.6).toInt
   )
@@ -63,7 +63,7 @@ AppLoop
     for {
       x <- (0 until canvas.width)
       y <- (0 until canvas.height)
-      dist = math.pow(x - canvas.width / 2, 2) + math.pow(y - canvas.height / 2, 2)
+      dist = Math.pow(x - canvas.width / 2, 2) + Math.pow(y - canvas.height / 2, 2)
     } {
       if (dist > 25 && dist <= 100) canvas.putPixel(x, y, Color(255, 255, 255))
     }

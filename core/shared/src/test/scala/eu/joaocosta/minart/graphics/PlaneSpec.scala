@@ -184,7 +184,7 @@ object PlaneSpec extends BasicTestSuite {
   test("Rotate moves all pixels clockwise") {
     val original =
       surface.view.repeating
-    val transformed = original.rotate(math.Pi / 2)
+    val transformed = original.rotate(Math.PI / 2)
     assert(original(0, 0) == transformed(0, 0))
     assert(original(5, 3) == transformed(-3, 5))
   }

@@ -43,8 +43,8 @@ val updatedBitmap = bitmap.view
 AppLoop
   .statefulRenderLoop((t: Double) =>
     (canvas: Canvas) => {
-      val frameSin = math.sin(t)
-      val frameCos = math.cos(t)
+      val frameSin = Math.sin(t)
+      val frameCos = Math.cos(t)
       val zoom     = 1.0 / (frameSin + 2.0)
       val convolutionWindow = for {
         x <- (-1 to 1)
@@ -61,7 +61,7 @@ AppLoop
             }
         }
         .rotate(t)                                                        // Rotate
-        .contramap((x, y) => (x + (5 * math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
+        .contramap((x, y) => (x + (5 * Math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
         .flatMap(color =>
           (x, y) => // Add a crazy checkerboard effect
             if (x % 32 < 16 != y % 32 < 16) color.invert

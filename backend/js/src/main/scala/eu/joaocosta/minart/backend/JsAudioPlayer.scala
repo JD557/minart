@@ -27,7 +27,7 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
   private val callback: (Double) => () => Unit = (startTime: Double) =>
     () => {
       if (playQueue.nonEmpty()) {
-        val batchSize   = math.min(settings.bufferSize, playQueue.size)
+        val batchSize   = Math.min(settings.bufferSize, playQueue.size)
         val duration    = batchSize.toDouble / settings.sampleRate
         val audioSource = audioCtx.createBufferSource()
         val buffer      = audioCtx.createBuffer(1, batchSize, settings.sampleRate)
@@ -37,7 +37,7 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
         }
         audioSource.buffer = buffer
         audioSource.connect(audioCtx.destination)
-        val clampedStart = math.max(audioCtx.currentTime, startTime)
+        val clampedStart = Math.max(audioCtx.currentTime, startTime)
         audioSource.start(clampedStart)
         val nextTarget    = clampedStart + duration
         val sleepDuration = 1000 * (nextTarget - audioCtx.currentTime) - preemptiveCallback

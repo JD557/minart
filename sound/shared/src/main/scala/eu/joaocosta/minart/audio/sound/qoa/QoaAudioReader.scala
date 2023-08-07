@@ -27,13 +27,13 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
     residuals match {
       case Nil => (state, acc.reverse)
       case r :: rs =>
-        val sample = math.min(math.max(Short.MinValue, state.prediction + r), Short.MaxValue).toShort
+        val sample = Math.min(Math.max(Short.MinValue, state.prediction + r), Short.MaxValue).toShort
         predict(rs, state.update(sample, r), sample :: acc)
     }
 
   private def loadSlice(state: QoaState): ParseState[String, (QoaState, List[Short])] = readBytes(8).map { bytes =>
     val sfQuant          = (bytes(0) & 0xf0) >> 4
-    val dequantizedScale = math.round(math.pow(sfQuant + 1, 2.75))
+    val dequantizedScale = Math.round(Math.pow(sfQuant + 1, 2.75))
     val longResiduals =
       (bytes(0) & 0x0f).toLong << (8 * 7) |
         (bytes(1) & 0xff).toLong << (8 * 6) |
@@ -49,7 +49,7 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
     }
     val scaledResiduals = dequantizedResiduals.map { res =>
       val scaled = dequantizedScale * res
-      (if (scaled < 0) math.ceil(scaled - 0.5) else math.floor(scaled + 0.5)).toInt
+      (if (scaled < 0) Math.ceil(scaled - 0.5) else Math.floor(scaled + 0.5)).toInt
     }
     predict(scaledResiduals, state)
   }
@@ -94,7 +94,7 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
           s => s"Sample rate changed mid file. Expected $sampleRate, got $s"
         )
         samples <- readBENumber(2)
-        numSlices = math.min(math.ceil(samples / 20.0).toInt, 256)
+        numSlices = Math.min(Math.ceil(samples / 20.0).toInt, 256)
         frameSize <- readBENumber(2)
         state     <- loadState
         slices    <- loadSlices(state, numSlices)
@@ -113,7 +113,7 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
     val bytes = fromInputStream(is)
     (for {
       samples <- loadQoaHeader
-      frames = math.ceil(samples / (256.0 * 20)).toInt
+      frames = Math.ceil(samples / (256.0 * 20)).toInt
       clip <- loadFrames(frames)
     } yield clip).run(bytes).map(_._2)
   }

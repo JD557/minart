@@ -30,14 +30,14 @@ final case class AudioClip(
   /** Returns a new Audio Clip with the first `time` seconds of this audio clip
     */
   def take(time: Double): AudioClip = {
-    val newDuration = math.max(0.0, math.min(time, duration))
+    val newDuration = Math.max(0.0, Math.min(time, duration))
     AudioClip(wave, newDuration)
   }
 
   /** Returns a new Audio Clip without the first `time` seconds of this audio clip
     */
   def drop(time: Double): AudioClip = {
-    val delta = math.max(0.0, math.min(time, duration))
+    val delta = Math.max(0.0, Math.min(time, duration))
     AudioClip(wave.drop(delta), duration - delta)
   }
 
@@ -57,7 +57,7 @@ final case class AudioClip(
   /** Combines this clip with another by combining their values using the given function.
     */
   def zipWith(that: AudioClip, f: (Double, Double) => Double): AudioClip = {
-    val newDuration = math.min(this.duration, that.duration)
+    val newDuration = Math.min(this.duration, that.duration)
     AudioClip(this.wave.zipWith(that.wave, f), newDuration)
   }
 
@@ -151,5 +151,5 @@ object AudioClip {
   }
 
   private def clamp(minValue: Double, value: Double, maxValue: Double): Double =
-    math.max(0, math.min(value, maxValue))
+    Math.max(0, Math.min(value, maxValue))
 }

@@ -24,12 +24,12 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>
-      List((math.min(math.max(-1.0, x), 1.0) * Byte.MaxValue).toInt + 127)
+      List((Math.min(Math.max(-1.0, x), 1.0) * Byte.MaxValue).toInt + 127)
     case 16 =>
-      val short = (math.min(math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
+      val short = (Math.min(Math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
       List(short & 0xff, (short >> 8) & 0xff)
     case 32 =>
-      val int = (math.min(math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
+      val int = (Math.min(Math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
       List(int & 0xff, (int >> 8) & 0xff, (int >> 16) & 0xff, (int >> 24) & 0xff)
   }
 
