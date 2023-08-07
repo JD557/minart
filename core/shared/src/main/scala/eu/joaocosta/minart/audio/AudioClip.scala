@@ -141,7 +141,8 @@ object AudioClip {
     * @param clips clips to mix
     */
   def mix(clips: Seq[AudioClip]): AudioClip =
-    AudioWave.mix(clips.map(_.wave)).take(clips.map(_.duration).minOption.getOrElse(0))
+    if (clips.isEmpty) AudioClip.empty
+    else AudioWave.mix(clips.map(_.wave)).take(clips.map(_.duration).min)
 
   private def floorMod(x: Double, y: Double): Double = {
     val rem = x % y
