@@ -16,9 +16,10 @@ object LoopFrequency {
 
   /** Frequency defined by duration.
     *
-    * @param millis duration in millis
+    * @param nanos duration in nanoseconds
     */
-  final case class LoopDuration(millis: Long) extends LoopFrequency {
+  final case class LoopDuration(nanos: Long) extends LoopFrequency {
+    val millis                     = nanos / 1000000
     def toDuration: FiniteDuration = millis.milliseconds
   }
 
@@ -61,6 +62,6 @@ object LoopFrequency {
   def fromHz(hz: Int): LoopFrequency = {
     if (hz <= 0) Never
     else if (1000 / hz == 0) Uncapped
-    else LoopDuration(1000 / hz)
+    else LoopDuration(1000000000 / hz)
   }
 }
