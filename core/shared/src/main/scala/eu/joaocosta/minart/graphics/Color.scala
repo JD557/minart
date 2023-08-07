@@ -26,9 +26,9 @@ final class Color private (val argb: Int) {
     */
   def +(that: Color): Color =
     Color(
-      math.min(this.r + that.r, 255).toInt,
-      math.min(this.g + that.g, 255).toInt,
-      math.min(this.b + that.b, 255).toInt
+      Math.min(this.r + that.r, 255).toInt,
+      Math.min(this.g + that.g, 255).toInt,
+      Math.min(this.b + that.b, 255).toInt
     )
 
   /** Combines this with another color by subtracting each RGB value.
@@ -36,9 +36,9 @@ final class Color private (val argb: Int) {
     */
   def -(that: Color): Color =
     Color(
-      math.max(this.r - that.r, 0).toInt,
-      math.max(this.g - that.g, 0).toInt,
-      math.max(this.b - that.b, 0).toInt
+      Math.max(this.r - that.r, 0).toInt,
+      Math.max(this.g - that.g, 0).toInt,
+      Math.max(this.b - that.b, 0).toInt
     )
 
   /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).

@@ -26,8 +26,8 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     plane
       .zipWith(that, f)
       .copy(
-        width = math.min(that.width, width),
-        height = math.min(that.height, height)
+        width = Math.min(that.width, width),
+        height = Math.min(that.height, height)
       )
 
   /** Combines this view with a plane by combining their colors with the given function. */
@@ -52,8 +52,8 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     * @param ch clip height
     */
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView = {
-    val newWidth  = math.min(cw, this.width - cx)
-    val newHeight = math.min(ch, this.height - cy)
+    val newWidth  = Math.min(cw, this.width - cx)
+    val newHeight = Math.min(ch, this.height - cy)
     if (cx == 0 && cy == 0 && newWidth == width && newHeight == height) this
     else plane.clip(cx, cy, newWidth, newHeight)
   }
@@ -124,7 +124,7 @@ object SurfaceView {
     else rem + y
   }
   private def clamp(minValue: Int, value: Int, maxValue: Int): Int =
-    math.max(0, math.min(value, maxValue))
+    Math.max(0, Math.min(value, maxValue))
 
   /** Generates a surface view from a surface */
   def apply(surface: Surface): SurfaceView =

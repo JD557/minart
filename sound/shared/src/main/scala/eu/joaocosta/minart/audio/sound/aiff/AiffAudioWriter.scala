@@ -27,12 +27,12 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>
-      List(java.lang.Byte.toUnsignedInt((math.min(math.max(-1.0, x), 1.0) * Byte.MaxValue).toByte))
+      List(java.lang.Byte.toUnsignedInt((Math.min(Math.max(-1.0, x), 1.0) * Byte.MaxValue).toByte))
     case 16 =>
-      val short = (math.min(math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
+      val short = (Math.min(Math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
       List((short >> 8) & 0xff, short & 0xff)
     case 32 =>
-      val int = (math.min(math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
+      val int = (Math.min(Math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
       List((int >> 24) & 0xff, (int >> 16) & 0xff, (int >> 8) & 0xff, int & 0xff)
   }
 

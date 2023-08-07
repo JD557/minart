@@ -14,7 +14,7 @@ sealed trait AudioQueue {
   def enqueue(clip: AudioClip): this.type
   def dequeue(): Double
   def dequeueByte(): Byte = {
-    (math.min(math.max(-1.0, dequeue()), 1.0) * 127).toByte
+    (Math.min(Math.max(-1.0, dequeue()), 1.0) * 127).toByte
   }
   def clear(): this.type
 }
@@ -82,7 +82,7 @@ object AudioQueue {
       this
     }
     def dequeue(): Double = synchronized {
-      math.max(-1.0, math.min(channels.values.map(_.dequeue()).sum, 1.0))
+      Math.max(-1.0, Math.min(channels.values.map(_.dequeue()).sum, 1.0))
     }
 
     def clear(): this.type = synchronized {

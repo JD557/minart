@@ -25,10 +25,10 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
   }
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
-    val _x = math.max(x, 0)
-    val _y = math.max(y, 0)
-    val _w = math.min(w, width - _x)
-    val _h = math.min(h, height - _y)
+    val _x = Math.max(x, 0)
+    val _y = Math.max(y, 0)
+    val _w = Math.min(w, width - _x)
+    val _h = Math.min(h, height - _y)
     var yy = 0
     while (yy < _h) {
       val start = (yy + _y) * width + _x

@@ -37,7 +37,7 @@ object LowLevelCanvas {
       case _ =>
         val wScale = windowWidth / settings.width
         val hScale = windowHeight / settings.height
-        math.max(1, math.min(wScale, hScale))
+        Math.max(1, Math.min(wScale, hScale))
     }
     val scaledWidth  = settings.width * scale
     val scaledHeight = settings.height * scale
