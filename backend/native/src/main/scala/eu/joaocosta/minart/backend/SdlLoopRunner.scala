@@ -25,8 +25,8 @@ object SdlLoopRunner extends LoopRunner {
         new NeverLoop(operation, cleanup).run(initialState)
       case LoopFrequency.Uncapped =>
         new UncappedLoop(operation, terminateWhen, cleanup).run(initialState)
-      case LoopFrequency.LoopDuration(iterationMillis) =>
-        new CappedLoop(operation, terminateWhen, iterationMillis, cleanup).run(initialState)
+      case freq @ LoopFrequency.LoopDuration(_) =>
+        new CappedLoop(operation, terminateWhen, freq.millis, cleanup).run(initialState)
     }
   }
 

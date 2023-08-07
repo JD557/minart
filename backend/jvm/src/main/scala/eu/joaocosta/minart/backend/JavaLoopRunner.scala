@@ -20,8 +20,8 @@ object JavaLoopRunner extends LoopRunner {
         new NeverLoop(operation).run(initialState)
       case LoopFrequency.Uncapped =>
         new UncappedLoop(operation, terminateWhen, cleanup).run(initialState)
-      case LoopFrequency.LoopDuration(iterationMillis) =>
-        new CappedLoop(operation, terminateWhen, iterationMillis, cleanup).run(initialState)
+      case LoopFrequency.LoopDuration(iterationNanos) =>
+        new CappedLoop(operation, terminateWhen, iterationNanos, cleanup).run(initialState)
     }
   }
 
@@ -51,17 +51,23 @@ object JavaLoopRunner extends LoopRunner {
   final class CappedLoop[S](
       operation: S => S,
       terminateWhen: S => Boolean,
-      iterationMillis: Long,
+      iterationNanos: Long,
       cleanup: () => Unit
   ) {
+
+    private val busyLoopNanos = 10 * 1000000 // 10 ms
+
     @tailrec
     def finiteLoopAux(state: S): S = {
-      val startTime = System.currentTimeMillis()
+      val startTime = System.nanoTime()
       val newState  = operation(state)
       if (!terminateWhen(newState)) {
-        val endTime  = System.currentTimeMillis()
-        val waitTime = iterationMillis - (endTime - startTime)
-        if (waitTime > 0) blocking { Thread.sleep(waitTime) }
+        val goalNanos  = startTime + iterationNanos
+        val sleepNanos = goalNanos - startTime - busyLoopNanos
+        if (sleepNanos > 0) {
+          blocking { Thread.sleep(sleepNanos / 1000000) }
+        }
+        while (System.nanoTime() - goalNanos < 0) {}
         finiteLoopAux(newState)
       } else newState
     }
