@@ -107,4 +107,21 @@ object AudioWave {
     * @param sampleRate sample rate used in the sequence
     */
   def fromIndexedSeq(data: IndexedSeq[Double], sampleRate: Double): AudioWave = new SampledAudioWave(data, sampleRate)
+
+  /** Generates an audio wave by mixing a sequence of waves.
+    *
+    * @param waves waves to mix
+    */
+  def mix(waves: Seq[AudioWave]): AudioWave = new AudioWave {
+    private val waveArray = waves.toArray
+    def getAmplitude(t: Double): Double = {
+      var res: Double = 0.0
+      var i: Int      = 0
+      while (i < waveArray.size) {
+        res += waveArray(i).getAmplitude(t)
+        i += 1
+      }
+      math.max(-1.0, math.min(res, 1.0))
+    }
+  }
 }

@@ -134,6 +134,16 @@ object AudioClip {
     AudioWave.fromIndexedSeq(data, sampleRate).take(duration)
   }
 
+  /** Generates an audio clip by mixing a sequence of clips.
+    *
+    *  The duration is defined by the smallest clip.
+    *
+    * @param clips clips to mix
+    */
+  def mix(clips: Seq[AudioClip]): AudioClip =
+    if (clips.isEmpty) AudioClip.empty
+    else AudioWave.mix(clips.map(_.wave)).take(clips.map(_.duration).min)
+
   private def floorMod(x: Double, y: Double): Double = {
     val rem = x % y
     if (rem >= 0) rem

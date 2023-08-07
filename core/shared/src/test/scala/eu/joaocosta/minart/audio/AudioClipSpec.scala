@@ -51,4 +51,17 @@ object AudioClipSpec extends BasicTestSuite {
     val clipA = AudioClip(x => x / 2.0, 2.0)
     assert(clipA.repeating(5).duration == 10.0)
   }
+
+  test("The mix operation combines multiple clips") {
+    val clipA = AudioClip(x => x / 4.0, 2.0)
+    val clipB = AudioClip(x => x / 8.0, 3.0)
+
+    val newClip = AudioClip.mix(List(clipA, clipB))
+    assert(newClip.duration == 2.0)
+    assert(
+      Sampler
+        .sampleClip(newClip, 1)
+        .toList == Sampler.sampleClip(clipA, 1).zip(Sampler.sampleClip(clipB, 1)).map { case (x, y) => x + y }.toList
+    )
+  }
 }
