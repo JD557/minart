@@ -5,12 +5,13 @@ import javax.sound.sampled._
 import scala.concurrent._
 
 import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.runtime._
 
 class JavaAudioPlayer() extends LowLevelAudioPlayer {
-  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
-  private var sourceDataLine: SourceDataLine               = _
+  private val preemptiveCallback             = LoopFrequency.hz15.millis
+  private var sourceDataLine: SourceDataLine = _
 
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
 
   protected def unsafeInit(): Unit = {}
 
@@ -29,25 +30,28 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     sourceDataLine.close()
   }
 
+  private implicit val ec: ExecutionContext = ExecutionContext.global
   private def callback(): Future[Unit] = Future {
-    if (playQueue.nonEmpty()) {
+    while (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
       if (available > 0) {
+        val samples = math.min(playQueue.size, available / 2)
         val buf = Iterator
-          .fill(available / 2) {
+          .fill(samples) {
             val next  = playQueue.dequeue()
             val short = (math.min(math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
             List((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
           }
           .flatten
           .toArray
-        sourceDataLine.write(buf, 0, available)
+        sourceDataLine.write(buf, 0, samples * 2)
+        val bufferedMillis = (1000 * samples) / settings.sampleRate
+        blocking {
+          Thread.sleep(math.max(0, bufferedMillis - preemptiveCallback))
+        }
       }
-      true
-    } else false
-  }.flatMap {
-    case true  => callback()
-    case false => Future.successful(())
+    }
+    ()
   }
 
   def play(clip: AudioClip, channel: Int): Unit = {
