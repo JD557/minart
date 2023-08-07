@@ -54,12 +54,12 @@ object Oscillator {
   /** Sin wave oscillator */
   val sin: Oscillator =
     Oscillator { frequency =>
-      val k = frequency * 2 * math.Pi
-      AudioWave.fromFunction(t => math.sin(k * t))
+      val k = frequency * 2 * Math.PI
+      AudioWave.fromFunction(t => Math.sin(k * t))
     }
 
   /** Square wave oscilator */
-  val square: Oscillator = sin.map(math.signum)
+  val square: Oscillator = sin.map(Math.signum)
 
   private def floorMod(x: Double, y: Double): Double = {
     val rem = x % y

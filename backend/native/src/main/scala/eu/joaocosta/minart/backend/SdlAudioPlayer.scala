@@ -57,11 +57,11 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
       if (
         System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)
       ) {
-        val samples = scala.math.min(settings.bufferSize, playQueue.size)
+        val samples = Math.min(settings.bufferSize, playQueue.size)
         val buf = Iterator
           .fill(samples) {
             val next  = playQueue.dequeue()
-            val short = (scala.math.min(scala.math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
+            val short = (Math.min(Math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
             List((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
           }
           .flatten

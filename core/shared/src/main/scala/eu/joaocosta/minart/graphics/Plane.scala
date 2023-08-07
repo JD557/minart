@@ -121,8 +121,8 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 
   /** Rotates a plane by a certain angle (clockwise). */
   def rotate(theta: Double): Plane = {
-    val ct = math.cos(-theta)
-    val st = math.sin(-theta)
+    val ct = Math.cos(-theta)
+    val st = Math.sin(-theta)
     contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
   }
 

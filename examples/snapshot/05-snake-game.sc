@@ -59,7 +59,7 @@ final case class GameState(
       else snakeSize
     val newBoard = board
         .updated(snakeHead.y, board(snakeHead.y).updated(snakeHead.x, snakeSize))
-        .map(_.map(life => math.max(0, life - 1)))
+        .map(_.map(life => Math.max(0, life - 1)))
     copy(
       board = newBoard,
       snakeHead = Position(mod(snakeHead.x + snakeDir.x, boardWidth), mod(snakeHead.y + snakeDir.y, boardHeight)),

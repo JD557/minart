@@ -21,12 +21,12 @@ object Audio {
       else if (t < 0.5) 4          // C#
       else if (t < 0.7) 7          // E
       else 12                      // A
-    math.pow(2, note / 12.0) * 440 // Convert the notes to frequencies (equal temperament)
+    Math.pow(2, note / 12.0) * 440 // Convert the notes to frequencies (equal temperament)
   }
 
   // Here we generate a sin wave with the frequencies from our song
   val arpeggio: AudioClip =
-    AudioWave.fromFunction((t: Double) => math.sin(song(t) * 6.28 * t)).take(1.0)
+    AudioWave.fromFunction((t: Double) => Math.sin(song(t) * 6.28 * t)).take(1.0)
 
   // We can also use the provided oscilators
   val bass =

@@ -35,11 +35,11 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     while (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
       if (available > 0) {
-        val samples = math.min(playQueue.size, available / 2)
+        val samples = Math.min(playQueue.size, available / 2)
         val buf = Iterator
           .fill(samples) {
             val next  = playQueue.dequeue()
-            val short = (math.min(math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
+            val short = (Math.min(Math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
             List((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
           }
           .flatten
@@ -47,7 +47,7 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
         sourceDataLine.write(buf, 0, samples * 2)
         val bufferedMillis = (1000 * samples) / settings.sampleRate
         blocking {
-          Thread.sleep(math.max(0, bufferedMillis - preemptiveCallback))
+          Thread.sleep(Math.max(0, bufferedMillis - preemptiveCallback))
         }
       }
     }

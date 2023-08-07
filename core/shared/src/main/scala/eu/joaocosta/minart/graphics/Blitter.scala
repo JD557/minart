@@ -110,8 +110,8 @@ private[graphics] object Blitter {
     else if (cx < 0) fullBlit(dest, source, mask, x - cx, y, 0, cy, cw + cx, ch)
     else if (cy < 0) fullBlit(dest, source, mask, x, y - cy, cx, 0, cw, ch + cy)
     else {
-      val maxX = math.min(cw, math.min(source.width - cx, dest.width - x))
-      val maxY = math.min(ch, math.min(source.height - cy, dest.height - y))
+      val maxX = Math.min(cw, Math.min(source.width - cx, dest.width - x))
+      val maxY = Math.min(ch, Math.min(source.height - cy, dest.height - y))
 
       if (maxX > 0 && maxY > 0) {
         source match {

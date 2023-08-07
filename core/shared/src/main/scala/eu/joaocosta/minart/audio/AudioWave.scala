@@ -121,7 +121,7 @@ object AudioWave {
         res += waveArray(i).getAmplitude(t)
         i += 1
       }
-      math.max(-1.0, math.min(res, 1.0))
+      Math.max(-1.0, Math.min(res, 1.0))
     }
   }
 }
