@@ -6,7 +6,7 @@ import scala.scalanative.unsigned._
 import sdl2.Extras._
 import sdl2.SDL._
 
-import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
+import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
 
 /** Mutabe surface backed by an SDL surface.
   *
@@ -42,15 +42,16 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
 
   override def blit(
       that: Surface,
-      mask: Option[Color] = None
-  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = that match {
-    case img: SdlSurface if mask.isEmpty =>
-      val srcRect = stackalloc[SDL_Rect]().init(cx, cy, cw, ch)
-      val dstRect = stackalloc[SDL_Rect]().init(x, y, cw, ch)
-      SDL_UpperBlit(img.data, srcRect, this.data, dstRect)
-    case _ =>
-      super.blit(that, mask)(x, y, cx, cy, cw, ch)
-  }
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
+    (that, blendMode) match {
+      case (img: SdlSurface, BlendMode.Copy) =>
+        val srcRect = stackalloc[SDL_Rect]().init(cx, cy, cw, ch)
+        val dstRect = stackalloc[SDL_Rect]().init(x, y, cw, ch)
+        SDL_UpperBlit(img.data, srcRect, this.data, dstRect)
+      case _ =>
+        super.blit(that, blendMode)(x, y, cx, cy, cw, ch)
+    }
 
   def close(): Unit = {
     SDL_FreeSurface(data)

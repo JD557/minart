@@ -29,9 +29,9 @@ private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLeve
   def unsafePutPixel(x: Int, y: Int, color: Color): Unit             = canvas.unsafePutPixel(x, y, color)
   override def blit(
       that: Surface,
-      mask: Option[Color] = None
+      blendMode: BlendMode = BlendMode.Copy
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
-    canvas.blit(that, mask)(x, y, cx, cy, cw, ch)
+    canvas.blit(that, blendMode)(x, y, cx, cy, cw, ch)
 
   // Surface
   override def getPixels(): Vector[Array[Color]] = canvas.getPixels()
