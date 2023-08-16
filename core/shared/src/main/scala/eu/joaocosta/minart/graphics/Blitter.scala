@@ -45,6 +45,38 @@ private[graphics] object Blitter {
           }
           dy += 1
         }
+      case BlendMode.AlphaTest(alpha) =>
+        while (dy < maxY) {
+          val srcY  = dy + cy
+          val destY = dy + y
+          var dx    = 0
+          while (dx < maxX) {
+            val destX = dx + x
+            val color = source.unsafeGetPixel(dx + cx, srcY)
+            if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
+        }
+      case BlendMode.PremultAlphaAdd =>
+        while (dy < maxY) {
+          val srcY  = dy + cy
+          val destY = dy + y
+          var dx    = 0
+          while (dx < maxX) {
+            val destX       = dx + x
+            val colorSource = source.unsafeGetPixel(dx + cx, srcY)
+            val colorDest   = dest.unsafeGetPixel(destX, destY)
+            val color = Color(
+              (colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r,
+              (colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g,
+              (colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b
+            )
+            dest.unsafePutPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
+        }
     }
   }
 
@@ -85,6 +117,40 @@ private[graphics] object Blitter {
             val destX = dx + x
             val color = line(dx + cx)
             if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
+        }
+      case BlendMode.AlphaTest(alpha) =>
+        while (dy < maxY) {
+          val srcY  = dy + cy
+          val destY = dy + y
+          val line  = source(srcY)
+          var dx    = 0
+          while (dx < maxX) {
+            val destX = dx + x
+            val color = line(dx + cx)
+            if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
+        }
+      case BlendMode.PremultAlphaAdd =>
+        while (dy < maxY) {
+          val srcY  = dy + cy
+          val destY = dy + y
+          val line  = source(srcY)
+          var dx    = 0
+          while (dx < maxX) {
+            val destX       = dx + x
+            val colorSource = line(dx + cx)
+            val colorDest   = dest.unsafeGetPixel(destX, destY)
+            val color = Color(
+              (colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r,
+              (colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g,
+              (colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b
+            )
+            dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
           dy += 1
