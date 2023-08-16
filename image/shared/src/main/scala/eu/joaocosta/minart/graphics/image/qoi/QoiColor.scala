@@ -9,7 +9,7 @@ private[qoi] final class QoiColor private (val argb: Int) {
   @inline def b: Int = (argb & 0x000000ff)
 
   def hash        = (r * 3 + g * 5 + b * 7 + a * 11) % 64
-  def minartColor = Color.fromRGB(argb)
+  def minartColor = Color.fromARGB(argb)
 
   override def toString: String = s"QoiColor($r,$g,$b)"
   override def hashCode(): Int  = hash

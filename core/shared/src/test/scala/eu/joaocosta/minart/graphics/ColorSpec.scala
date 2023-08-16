@@ -13,6 +13,13 @@ object ColorSpec extends BasicTestSuite {
     assert(colorInt.r == 110 && colorInt.g == 120 && colorInt.b == 130)
   }
 
+  test("Can be created from RGBA values") {
+    val colorInt  = Color(110, 120, 130, 140)
+    val colorByte = Color(110.toByte, 120.toByte, 130.toByte, 140.toByte)
+    assert(colorInt == colorByte)
+    assert(colorInt.r == 110 && colorInt.g == 120 && colorInt.b == 130 && colorInt.a == 140)
+  }
+
   test("Can be created from grayscale values") {
     val colorInt  = Color.grayscale(130)
     val colorByte = Color.grayscale(130.toByte)
@@ -26,9 +33,21 @@ object ColorSpec extends BasicTestSuite {
     assert(color == newColor)
   }
 
+  test("Can be created from raw ARGB values") {
+    val color    = Color(110, 120, 130, 140)
+    val newColor = Color.fromARGB(color.argb)
+    assert(color == newColor)
+  }
+
   test("Can be created from raw BGR values") {
     val color    = Color(110, 120, 130)
     val newColor = Color.fromBGR(color.abgr)
+    assert(color == newColor)
+  }
+
+  test("Can be created from raw ABGR values") {
+    val color    = Color(110, 120, 130, 140)
+    val newColor = Color.fromABGR(color.abgr)
     assert(color == newColor)
   }
 
@@ -64,5 +83,24 @@ object ColorSpec extends BasicTestSuite {
     val color = Color(0, 128, 255).invert
 
     assert(color == Color(255, 127, 0))
+  }
+
+  test("Operations either ignore or keep the alpha as specified") {
+    val colorA = Color(0, 0, 0, 100)
+    val colorB = Color(0, 0, 0, 200)
+
+    assert((colorA + colorB).a == 255)
+    assert((colorA :+ colorB).a == 100)
+    assert((colorA +: colorB).a == 200)
+
+    assert((colorA - colorB).a == 255)
+    assert((colorA :- colorB).a == 100)
+    assert((colorA -: colorB).a == 200)
+
+    assert((colorA * colorB).a == 255)
+    assert((colorA :* colorB).a == 100)
+    assert((colorA *: colorB).a == 200)
+
+    assert(colorA.invert.a == 100)
   }
 }
