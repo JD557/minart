@@ -68,9 +68,9 @@ private[graphics] object Blitter {
             val colorSource = source.unsafeGetPixel(dx + cx, srcY)
             val colorDest   = dest.unsafeGetPixel(destX, destY)
             val color = Color(
-              (colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r,
-              (colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g,
-              (colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b
+              Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
+              Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
+              Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
             )
             dest.unsafePutPixel(destX, destY, color)
             dx += 1
@@ -146,9 +146,9 @@ private[graphics] object Blitter {
             val colorSource = line(dx + cx)
             val colorDest   = dest.unsafeGetPixel(destX, destY)
             val color = Color(
-              (colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r,
-              (colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g,
-              (colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b
+              Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
+              Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
+              Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
             )
             dest.unsafePutPixel(destX, destY, color)
             dx += 1

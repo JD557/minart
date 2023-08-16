@@ -149,6 +149,9 @@ final class Color private (val argb: Int) {
   def premultiplyAlpha: Color =
     this :* Color.grayscale(a)
 
+  def copy(r: Int = this.r, g: Int = this.g, b: Int = this.b, a: Int = this.a) =
+    Color(r, g, b, a)
+
   override def toString: String =
     if (a == 255) s"Color($r,$g,$b)"
     else s"Color($r,$g,$b,$a)"
