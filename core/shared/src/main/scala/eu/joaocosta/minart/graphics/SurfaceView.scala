@@ -61,6 +61,13 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
   /** Inverts a surface color. */
   def invertColor: SurfaceView = map(_.invert)
 
+  /** Premultiplies the color channels with the alpha channel.
+    *
+    * If this surface is going to be used multiple times, it is usually recommended
+    * to store this as a temporary surface instead of using a surface view.
+    */
+  def premultiplyAlpha: SurfaceView = map(_.premultiplyAlpha)
+
   /** Flips a surface horizontally. */
   def flipH: SurfaceView =
     copy(plane = plane.flipH.translate(width - 1, 0))

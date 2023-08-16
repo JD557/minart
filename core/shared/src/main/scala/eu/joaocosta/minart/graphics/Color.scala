@@ -144,6 +144,11 @@ final class Color private (val argb: Int) {
     */
   def invert: Color = Color(255 - r, 255 - g, 255 - b, a)
 
+  /** Multiplies all channels by the alpha.
+    */
+  def premultiplyAlpha: Color =
+    this :* Color.grayscale(a)
+
   override def toString: String =
     if (a == 255) s"Color($r,$g,$b)"
     else s"Color($r,$g,$b,$a)"

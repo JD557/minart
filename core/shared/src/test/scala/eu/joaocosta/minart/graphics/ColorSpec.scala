@@ -85,6 +85,12 @@ object ColorSpec extends BasicTestSuite {
     assert(color == Color(255, 127, 0))
   }
 
+  test("Can be premultiplied") {
+    val color = Color(0, 128, 255, 128).premultiplyAlpha
+
+    assert(color == Color(0, 64, 128, 128))
+  }
+
   test("Operations either ignore or keep the alpha as specified") {
     val colorA = Color(0, 0, 0, 100)
     val colorB = Color(0, 0, 0, 200)
