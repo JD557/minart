@@ -38,6 +38,7 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       bmpTest("scala", 128, 128)
       bmpTest("scala-rect", 77, 119)
+      testSize(List(Image.loadBmpImage(Resource(s"alpha/bmp-32bit.bmp"))), 507, 200)
       // Native tests in debug require a large heap here
       if (Platform() != Platform.Native) bmpTest("lausanne", 640, 480)
     }
@@ -81,6 +82,7 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       qoiTest("scala", 128, 128)
       qoiTest("scala-rect", 77, 119)
+      testSize(List(Image.loadQoiImage(Resource(s"alpha/qoi-32bit.qoi"))), 507, 200)
       // Native tests in debug require a large heap here
       if (Platform() != Platform.Native) qoiTest("lausanne", 640, 480)
     }
@@ -101,6 +103,15 @@ object ImageReaderSpec extends BasicTestSuite {
           Image.loadBmpImage(Resource("scala-rect/bmp-24bit.bmp")).get,
           Image.loadPpmImage(Resource("scala-rect/ppm-p3.ppm")).get,
           Image.loadQoiImage(Resource("scala-rect/qoi-24bit.qoi")).get
+        )
+      )
+    }
+
+    test("Load the same data from different formats (transparent image)") {
+      sameImage(
+        List(
+          Image.loadBmpImage(Resource("alpha/bmp-32bit.bmp")).get,
+          Image.loadQoiImage(Resource("alpha/qoi-32bit.qoi")).get
         )
       )
     }
