@@ -47,9 +47,27 @@ trait MSurfaceIOOps extends SurfaceIOOps {
     * @param cw clip width of the source surface
     * @param ch clip height of the source surface
     */
+  @deprecated("Use blendMode instead of mask")
   def blit(
       that: Surface,
-      mask: Option[Color] = None
-  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): MSurfaceIO[Unit] =
+      mask: Option[Color]
+  )(x: Int, y: Int, cx: Int, cy: Int, cw: Int, ch: Int): MSurfaceIO[Unit] =
     accessMSurface(_.blit(that, mask)(x, y, cx, cy, cw, ch))
+
+  /** Draws a surface on top of this surface.
+    *
+    * @param that surface to draw
+    * @param blendMode blend strategy to use
+    * @param x leftmost pixel on the destination surface
+    * @param y topmost pixel on the destination surface
+    * @param cx leftmost pixel on the source surface
+    * @param cy topmost pixel on the source surface
+    * @param cw clip width of the source surface
+    * @param ch clip height of the source surface
+    */
+  def blit(
+      that: Surface,
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): MSurfaceIO[Unit] =
+    accessMSurface(_.blit(that, blendMode)(x, y, cx, cy, cw, ch))
 }
