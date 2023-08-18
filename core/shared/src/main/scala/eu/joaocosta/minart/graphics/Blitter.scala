@@ -58,7 +58,7 @@ private[graphics] object Blitter {
           }
           dy += 1
         }
-      case BlendMode.PremultAlphaAdd =>
+      case BlendMode.AlphaAdd =>
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
@@ -135,7 +135,7 @@ private[graphics] object Blitter {
           }
           dy += 1
         }
-      case BlendMode.PremultAlphaAdd =>
+      case BlendMode.AlphaAdd =>
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y

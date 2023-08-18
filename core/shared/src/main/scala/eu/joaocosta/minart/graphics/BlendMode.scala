@@ -13,6 +13,8 @@ object BlendMode {
   /** Copy all pixels with alpha greater than the provided value */
   final case class AlphaTest(alpha: Int) extends BlendMode
 
-  /** Blends the surfaces assuming that the source uses premultiplied alpha */
-  case object PremultAlphaAdd extends BlendMode
+  /** Blends the surfaces using weighted adition: dstColor * (1-srcAlpha) + srcColor
+    *  This behaves as normal alpha blending if the source uses premultiplied alpha.
+    */
+  case object AlphaAdd extends BlendMode
 }
