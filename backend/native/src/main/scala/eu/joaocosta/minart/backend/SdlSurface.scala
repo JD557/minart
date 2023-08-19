@@ -14,19 +14,20 @@ import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
   */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with AutoCloseable {
 
-  val width: Int         = data.w
-  val height: Int        = data.h
-  private val renderer   = SDL_CreateSoftwareRenderer(data)
+  val width: Int       = data.w
+  val height: Int      = data.h
+  private val renderer = SDL_CreateSoftwareRenderer(data)
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE)
   private val dataBuffer = data.pixels.asInstanceOf[Ptr[Int]]
 
   def unsafeGetPixel(x: Int, y: Int): Color = {
-    Color.fromRGB(dataBuffer(y * width + x))
+    Color.fromARGB(dataBuffer(y * width + x))
   }
 
   def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y * width + x) = color.argb
 
   override def fill(color: Color): Unit = {
-    SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, 0.toUByte)
+    SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, color.a.toUByte)
     SDL_RenderClear(renderer)
   }
 
@@ -35,7 +36,7 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
     val _y = Math.max(y, 0)
     val _w = Math.min(w, width - _x)
     val _h = Math.min(h, height - _y)
-    SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, 0.toUByte)
+    SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, color.a.toUByte)
     val rect = stackalloc[SDL_Rect]().init(_x, _y, _w, _h)
     SDL_RenderFillRect(renderer, rect)
   }

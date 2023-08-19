@@ -12,7 +12,7 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
   private val dataBuffer = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
   def unsafeGetPixel(x: Int, y: Int): Color =
-    Color.fromRGB(dataBuffer.getElem(y * width + x))
+    Color.fromARGB(dataBuffer.getElem(y * width + x))
 
   def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer.setElem(y * width + x, color.argb)
 
