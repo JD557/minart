@@ -92,8 +92,8 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     surface = new SdlSurface(
       SDL_CreateRGBSurface(
         0.toUInt,
-        64,
-        48,
+        newSettings.width,
+        newSettings.height,
         32,
         0x00ff0000.toUInt,
         0x0000ff00.toUInt,
