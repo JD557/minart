@@ -23,7 +23,7 @@ trait SurfaceBackedCanvas extends LowLevelCanvas {
 
   override def blit(
       that: Surface,
-      mask: Option[Color] = None
+      blendMode: BlendMode = BlendMode.Copy
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
-    surface.blit(that, mask)(x, y, cx, cy, cw, ch)
+    surface.blit(that, blendMode)(x, y, cx, cy, cw, ch)
 }

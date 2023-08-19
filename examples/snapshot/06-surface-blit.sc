@@ -60,10 +60,10 @@ AppLoop
        */
       canvas.blit(image)(state, state, 4, 4, 8, 8)
       /*
-       * Finally, the blit operation supports an optional color to act as a mask.
-       * Pixels with this color are ignored, working as a transparent.
+       * The blit operation supports an optional blend mode..
+       * In ColorMask, pixels with the mask color are ignored, working as a transparent.
        */
-      canvas.blit(image, Some(Color(0, 0, 0)))((128 - 16 - 1) - state, state, 4, 4, 8, 8)
+      canvas.blit(image, BlendMode.ColorMask(Color(0, 0, 0)))((128 - 16 - 1) - state, state, 4, 4, 8, 8)
       canvas.redraw()
       (state + 1) % (128 - 16)
     }

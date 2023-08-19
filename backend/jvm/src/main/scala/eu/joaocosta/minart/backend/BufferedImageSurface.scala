@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import java.awt.image.{BufferedImage, DataBufferInt}
 
-import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
+import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
 
 /** Mutable image surface backed by an AWT Buffered Image.
   */
@@ -12,7 +12,7 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
   private val dataBuffer = bufferedImage.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
 
   def unsafeGetPixel(x: Int, y: Int): Color =
-    Color.fromRGB(dataBuffer.getElem(y * width + x))
+    Color.fromARGB(dataBuffer.getElem(y * width + x))
 
   def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer.setElem(y * width + x, color.argb)
 
@@ -43,10 +43,10 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
 
   override def blit(
       that: Surface,
-      mask: Option[Color] = None
+      blendMode: BlendMode = BlendMode.Copy
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
-    that match {
-      case img: BufferedImageSurface if mask.isEmpty =>
+    (that, blendMode) match {
+      case (img: BufferedImageSurface, BlendMode.Copy) =>
         val g = bufferedImage.createGraphics()
         g.drawImage(
           img.bufferedImage,
@@ -62,6 +62,6 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
         )
         g.dispose()
       case _ =>
-        super.blit(that, mask)(x, y, cx, cy, cw, ch)
+        super.blit(that, blendMode)(x, y, cx, cy, cw, ch)
     }
 }
