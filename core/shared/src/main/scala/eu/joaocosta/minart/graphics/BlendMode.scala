@@ -1,7 +1,18 @@
 package eu.joaocosta.minart.graphics
 
-/** Blend strategy to be used by the blitter */
-sealed trait BlendMode {
+/** Blend strategy to be used to combine two colors
+  *
+  * Note that while this trait is unsealed, backends can provide opimized implementations
+  * for the default blend modes.
+  * As such, those should always be prefered to custom ones.
+  */
+trait BlendMode {
+
+  /** Blends two colors
+    *
+    * @param src the color to overlay
+    * @param dst the color to blend into
+    */
   def blend(src: => Color, dst: => Color): Color
 }
 object BlendMode {
