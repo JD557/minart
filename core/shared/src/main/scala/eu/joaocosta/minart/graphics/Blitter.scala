@@ -77,6 +77,19 @@ private[graphics] object Blitter {
           }
           dy += 1
         }
+      case blendMode => // Custom BlendMode
+        while (dy < maxY) {
+          val srcY  = dy + cy
+          val destY = dy + y
+          var dx    = 0
+          while (dx < maxX) {
+            val destX = dx + x
+            val color = blendMode.blend(source.unsafeGetPixel(dx + cx, srcY), dest.unsafeGetPixel(destX, destY))
+            dest.unsafePutPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
+        }
     }
   }
 
@@ -150,6 +163,20 @@ private[graphics] object Blitter {
               Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
               Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
             )
+            dest.unsafePutPixel(destX, destY, color)
+            dx += 1
+          }
+          dy += 1
+        }
+      case blendMode => // Custom BlendMode
+        while (dy < maxY) {
+          val srcY  = dy + cy
+          val destY = dy + y
+          val line  = source(srcY)
+          var dx    = 0
+          while (dx < maxX) {
+            val destX = dx + x
+            val color = blendMode.blend(line(dx + cx), dest.unsafeGetPixel(destX, destY))
             dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
