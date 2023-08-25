@@ -133,6 +133,18 @@ object PlaneSpec extends BasicTestSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
+  test("Overlay combines a plane and a surface") {
+    val plane =
+      surface.view.repeating
+    val newPlane =
+      plane.overlay(surface)(2, 2)
+
+    assert(newPlane(0, 0) == surface.unsafeGetPixel(0, 0))
+    assert(newPlane(1, 1) == surface.unsafeGetPixel(1, 1))
+    assert(newPlane(2, 2) == surface.unsafeGetPixel(0, 0))
+    assert(newPlane(3, 3) == surface.unsafeGetPixel(1, 1))
+  }
+
   test("Inverting the color updates all colors with the inverse") {
     assert(Plane.fromConstant(Color(110, 120, 130)).invertColor(100, 100) == Color(110, 120, 130).invert)
   }

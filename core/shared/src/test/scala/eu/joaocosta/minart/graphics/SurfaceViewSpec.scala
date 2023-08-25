@@ -93,6 +93,22 @@ object SurfaceViewSpec extends BasicTestSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
+  test("Overlay combines two surfaces") {
+    val newSurface =
+      surface.view.overlay(surface)(2, 2).toRamSurface()
+
+    val newPixels = newSurface.getPixels()
+    val expectedPixels =
+      originalPixels.take(2) ++
+        originalPixels.drop(2).zip(originalPixels).map { case (oldLine, newLine) =>
+          oldLine.take(2) ++ newLine.dropRight(2)
+        }
+
+    assert(newSurface.width == surface.width)
+    assert(newSurface.height == surface.height)
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
   test("FlipH mirrors the surface horizontally") {
     val newSurface =
       surface.view.flipH.toRamSurface()
