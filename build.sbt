@@ -3,12 +3,11 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 name := "minart"
 
-ThisBuild / organization       := "eu.joaocosta"
-ThisBuild / publishTo          := sonatypePublishToBundle.value
-ThisBuild / scalaVersion       := "3.3.0"
-ThisBuild / crossScalaVersions := Seq("2.12.18", "2.13.11", "3.3.0")
-ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
-ThisBuild / homepage           := Some(url("https://github.com/JD557/minart"))
+ThisBuild / organization := "eu.joaocosta"
+ThisBuild / publishTo    := sonatypePublishToBundle.value
+ThisBuild / scalaVersion := "3.3.0"
+ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / homepage     := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
     url("https://github.com/JD557/minart"),
@@ -30,32 +29,21 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 
 val siteSettings = Seq(
-  Compile / doc / scalacOptions ++= (
-    if (scalaBinaryVersion.value.startsWith("3"))
-      Seq("-siteroot", "docs")
-    else Seq()
-  )
+  Compile / doc / scalacOptions ++= Seq("-siteroot", "docs")
 )
 
 def docSettings(projectName: String) = Seq(
-  Compile / doc / scalacOptions ++= (
-    if (scalaBinaryVersion.value.startsWith("3"))
-      Seq(
-        "-project",
-        projectName,
-        "-project-version",
-        version.value,
-        "-social-links:" +
-          "github::https://github.com/JD557/Minart"
-      )
-    else Seq()
+  Compile / doc / scalacOptions ++= Seq(
+    "-project",
+    projectName,
+    "-project-version",
+    version.value,
+    "-social-links:" +
+      "github::https://github.com/JD557/Minart"
   )
 )
 
-val sharedSettings = Seq(
-  libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.11.0")
-)
+val sharedSettings = Seq()
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
@@ -73,8 +61,7 @@ val publishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.11.0",
-    "org.scala-js"           %%% "scalajs-dom"             % "2.6.0"
+    "org.scala-js" %%% "scalajs-dom" % "2.6.0"
   )
 )
 
@@ -156,7 +143,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommandAndRemaining("publishSigned"),
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,

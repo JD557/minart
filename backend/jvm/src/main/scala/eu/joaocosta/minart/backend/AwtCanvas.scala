@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage
 import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
 import javax.swing.{JFrame, WindowConstants}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.graphics._
