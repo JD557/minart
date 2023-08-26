@@ -58,6 +58,18 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     else plane.clip(cx, cy, newWidth, newHeight)
   }
 
+  /** Overlays a surface on top of this view.
+    *
+    * Similar to MutableSurface#blit, but for surface views.
+    *
+    * @param that surface to overlay
+    * @param blendMode blend strategy to use
+    * @param x leftmost pixel on the destination plane
+    * @param y topmost pixel on the destination plane
+    */
+  final def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
+    copy(plane = plane.overlay(that, blendMode)(x, y))
+
   /** Inverts a surface color. */
   def invertColor: SurfaceView = map(_.invert)
 

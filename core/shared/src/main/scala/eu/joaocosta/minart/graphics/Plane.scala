@@ -77,6 +77,25 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
         }
       }.toSurfaceView(cw, ch)
 
+  /** Overlays a surface on top of this plane.
+    *
+    * Similar to MutableSurface#blit, but for surface views and planes.
+    *
+    * @param that surface to overlay
+    * @param blendMode blend strategy to use
+    * @param x leftmost pixel on the destination plane
+    * @param y topmost pixel on the destination plane
+    */
+  final def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): Plane =
+    new Plane {
+      def getPixel(dx: Int, dy: Int): Color = {
+        if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
+          blendMode.blend(that.unsafeGetPixel(dx - x, dy - y), outer.getPixel(dx, dy))
+        else
+          outer.getPixel(dx, dy)
+      }
+    }
+
   /** Inverts a plane color. */
   def invertColor: Plane = map(_.invert)
 
