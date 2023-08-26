@@ -3,7 +3,6 @@ package eu.joaocosta.minart.graphics.image.ppm
 import java.io.InputStream
 
 import scala.annotation.tailrec
-import scala.collection.compat._
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
