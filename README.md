@@ -20,7 +20,7 @@ To know more about the library and how to get started check the [microsite](http
 * Double buffered canvas
 * Integer scaling
 * Keyboard and pointer input
-* Surface blitting (with a mask)
+* Surface blitting (with multiple blending modes)
 * Surface views and infinite planes
 * Reading and Writing PPM, BMP and QOI images
 * Audio playback (mono)

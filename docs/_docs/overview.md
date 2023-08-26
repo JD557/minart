@@ -23,7 +23,7 @@ For extreme cases, it's also possible to only import a subset of features.
 Minart comes out of the box with some basic graphic features, such as:
   - Double buffered canvas
   - Integer scaling
-  - Surface blitting (with a mask)
+  - Surface blitting (with multiple blending modes)
 
 It also includes **Surface views** and **Planes** which makes it possible to manipulate
 (possibly unbounded) images with familiar operations such as `map` and `flatMap`.
