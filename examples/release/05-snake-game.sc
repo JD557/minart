@@ -1,5 +1,5 @@
 //> using scala "3.3.0"
-//> using lib "eu.joaocosta::minart::0.5.2"
+//> using lib "eu.joaocosta::minart::0.5.3"
 
 /*
  * Now that we learned the basics of animation and input handling, we are almost ready to make a game.
@@ -59,7 +59,7 @@ final case class GameState(
       else snakeSize
     val newBoard = board
         .updated(snakeHead.y, board(snakeHead.y).updated(snakeHead.x, snakeSize))
-        .map(_.map(life => math.max(0, life - 1)))
+        .map(_.map(life => Math.max(0, life - 1)))
     copy(
       board = newBoard,
       snakeHead = Position(mod(snakeHead.x + snakeDir.x, boardWidth), mod(snakeHead.y + snakeDir.y, boardHeight)),
