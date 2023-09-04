@@ -2,9 +2,7 @@ package eu.joaocosta.minart.graphics
 
 import scala.util.Random
 
-import verify._
-
-object MatrixSpec extends BasicTestSuite {
+class MatrixSpec extends munit.FunSuite {
 
   test("Can be applied") {
     // [1 2 3] [3] = [10] (1*3 + 2*2 + 3*1)

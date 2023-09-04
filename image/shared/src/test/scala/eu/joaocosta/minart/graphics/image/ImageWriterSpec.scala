@@ -2,12 +2,10 @@ package eu.joaocosta.minart.graphics.image
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
-import verify._
-
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime._
 
-object ImageWriterSpec extends BasicTestSuite {
+class ImageWriterSpec extends munit.FunSuite {
 
   def roundtripTest(baseResource: Resource, imageFormat: ImageReader with ImageWriter) = {
     val (oldPixels, newPixels) = (for {

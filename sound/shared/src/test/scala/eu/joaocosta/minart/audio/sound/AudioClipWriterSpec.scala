@@ -2,13 +2,11 @@ package eu.joaocosta.minart.audio.sound
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
-import verify._
-
 import eu.joaocosta.minart.audio.Sampler
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime._
 
-object AudioClipWriterSpec extends BasicTestSuite {
+class AudioClipWriterSpec extends munit.FunSuite {
 
   def roundtripTest(baseResource: Resource, audioClipFormat: AudioClipReader with AudioClipWriter) = {
     val (oldWave, newWave) = (for {

@@ -6,7 +6,7 @@ import sdl2.SDL._
 
 import eu.joaocosta.minart.backend._
 
-object SdlImageSurfaceSpec extends MutableSurfaceTests {
+class SdlImageSurfaceSpec extends MutableSurfaceTests {
   lazy val surface = new SdlSurface(
     SDL_CreateRGBSurface(
       0.toUInt,

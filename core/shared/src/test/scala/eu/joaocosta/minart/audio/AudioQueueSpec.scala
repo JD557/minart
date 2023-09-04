@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import verify._
-
-object AudioQueueSpec extends BasicTestSuite {
+class AudioQueueSpec extends munit.FunSuite {
 
   test("An empty single channel audio queue returns 0") {
     val queue = new AudioQueue.SingleChannelAudioQueue(1)
