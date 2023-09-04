@@ -2,13 +2,11 @@ package eu.joaocosta.minart.graphics.image
 
 import scala.util.Try
 
-import verify._
-
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
-object ImageReaderSpec extends BasicTestSuite {
+class ImageReaderSpec extends munit.FunSuite {
 
   def sameImage(results: List[RamSurface]): Unit = {
     results.sliding(2).foreach {

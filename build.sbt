@@ -47,9 +47,9 @@ val sharedSettings = Seq()
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "com.eed3si9n.verify" %%% "verify" % "1.0.0" % Test
+    "org.scalameta" %%% "munit" % "1.0.0-M8" % Test
   ),
-  testFrameworks += new TestFramework("verify.runner.Framework"),
+  testFrameworks += new TestFramework("munit.Framework"),
   Test / scalacOptions ++= Seq("-Yrangepos")
 )
 

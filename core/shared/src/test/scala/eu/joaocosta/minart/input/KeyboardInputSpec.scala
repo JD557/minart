@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.input
 
-import verify._
-
-object KeyboardInputSpec extends BasicTestSuite {
+class KeyboardInputSpec extends munit.FunSuite {
 
   test("Correctly captures key presses and releases") {
     val input = KeyboardInput.empty

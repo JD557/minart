@@ -2,15 +2,13 @@ package eu.joaocosta.minart.runtime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import verify._
-
 import eu.joaocosta.minart.backend._
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime._
 
-object AppLoopLoopSpec extends BasicTestSuite {
+class AppLoopSpec extends munit.FunSuite {
 
   object TestCanvas extends SurfaceBackedCanvas {
     protected var surface: RamSurface = _
@@ -28,28 +26,31 @@ object AppLoopLoopSpec extends BasicTestSuite {
     def getPointerInput(): PointerInput   = PointerInput.empty
   }
 
-  testAsync("Have a statefulRenderLoop operation that ends when a certain state is reached") {
-    var renderCount: Int = 0
-    AppLoop
-      .statefulRenderLoop(
-        renderFrame = (state: Int) =>
-          (canvas: Canvas) => {
-            renderCount += 1
-            state + 1
-          },
-        terminateWhen = (state: Int) => state >= 5
-      )
-      .configure(
-        initialSettings = Canvas.Settings(4, 4),
-        frameRate = LoopFrequency.Uncapped,
-        initialState = 0
-      )
-      .run(
-        runner = LoopRunner(),
-        createSubsystems = () => TestCanvas
-      )
-      .map { _ =>
-        assert(renderCount == 5)
-      }
+  // See https://github.com/scala-native/scala-native/issues/3464
+  if (Platform() != Platform.Native) {
+    test("Have a statefulRenderLoop operation that ends when a certain state is reached") {
+      var renderCount: Int = 0
+      AppLoop
+        .statefulRenderLoop(
+          renderFrame = (state: Int) =>
+            (canvas: Canvas) => {
+              renderCount += 1
+              state + 1
+            },
+          terminateWhen = (state: Int) => state >= 5
+        )
+        .configure(
+          initialSettings = Canvas.Settings(4, 4),
+          frameRate = LoopFrequency.Uncapped,
+          initialState = 0
+        )
+        .run(
+          runner = LoopRunner(),
+          createSubsystems = () => TestCanvas
+        )
+        .map { _ =>
+          assert(renderCount == 5)
+        }
+    }
   }
 }

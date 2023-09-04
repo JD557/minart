@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import verify._
-
-trait MutableSurfaceTests extends BasicTestSuite {
+trait MutableSurfaceTests extends munit.FunSuite {
 
   def surface: MutableSurface
 
