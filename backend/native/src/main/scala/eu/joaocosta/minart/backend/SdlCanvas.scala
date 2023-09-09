@@ -89,6 +89,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
       )
     }
     windowSurface = SDL_GetWindowSurface(window)
+    SDL_SetSurfaceBlendMode(windowSurface, SDL_BLENDMODE_NONE)
     surface = new SdlSurface(
       SDL_CreateRGBSurface(
         0.toUInt,
@@ -101,6 +102,7 @@ class SdlCanvas() extends SurfaceBackedCanvas {
         0xff000000.toUInt
       )
     )
+    SDL_SetSurfaceBlendMode(surface.data, SDL_BLENDMODE_NONE)
     val fullExtendedSettings = extendedSettings.copy(
       windowWidth = windowSurface.w,
       windowHeight = windowSurface.h
