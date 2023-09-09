@@ -5,8 +5,9 @@ import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
-import sdl2.Extras._
-import sdl2.SDL._
+import sdl2.all._
+import sdl2.enumerations.SDL_AudioFormat._
+import sdl2.enumerations.SDL_InitFlag._
 
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.runtime._
@@ -27,11 +28,11 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
     playQueue = new AudioQueue.MultiChannelAudioQueue(settings.sampleRate)
     val want = stackalloc[SDL_AudioSpec]()
     val have = stackalloc[SDL_AudioSpec]()
-    want.freq = settings.sampleRate
-    want.format = AUDIO_S16LSB
-    want.channels = 1.toUByte
-    want.samples = settings.bufferSize.toUShort
-    want.callback = null // Ideally this should use a SDL callback
+    (!want).freq = settings.sampleRate
+    (!want).format = AUDIO_S16LSB
+    (!want).channels = 1.toUByte
+    (!want).samples = settings.bufferSize.toUShort
+    (!want).callback = SDL_AudioCallback(null) // Ideally this should use a SDL callback
     device = SDL_OpenAudioDevice(null, 0, want, have, 0)
     settings
   }
