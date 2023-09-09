@@ -3,8 +3,12 @@ package eu.joaocosta.minart.backend
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
-import sdl2.Extras._
-import sdl2.SDL._
+import sdl2.all._
+import sdl2.enumerations.SDL_BlendMode._
+import sdl2.enumerations.SDL_EventType._
+import sdl2.enumerations.SDL_InitFlag._
+import sdl2.enumerations.SDL_KeyCode._
+import sdl2.enumerations.SDL_WindowFlags._
 
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
@@ -40,13 +44,17 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     val event              = stackalloc[SDL_Event]()
     var keepGoing: Boolean = isCreated()
     while (keepGoing && SDL_PollEvent(event) != 0) {
-      event.type_ match {
+      SDL_EventType.define((!event).`type`) match {
         case SDL_KEYDOWN =>
-          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.press(k))
+          SdlKeyMapping
+            .getKey(SDL_KeyCode.define((!event).key.keysym.sym))
+            .foreach(k => keyboardInput = keyboardInput.press(k))
         case SDL_KEYUP =>
-          SdlKeyMapping.getKey(event.key.keysym.sym).foreach(k => keyboardInput = keyboardInput.release(k))
+          SdlKeyMapping
+            .getKey(SDL_KeyCode.define((!event).key.keysym.sym))
+            .foreach(k => keyboardInput = keyboardInput.release(k))
         case SDL_MOUSEMOTION =>
-          rawPointerPos = (event.motion.x, event.motion.y)
+          rawPointerPos = ((!event).motion.x, (!event).motion.y)
         case SDL_MOUSEBUTTONDOWN =>
           pointerInput = pointerInput.move(cleanPointerPos).press
         case SDL_MOUSEBUTTONUP =>
@@ -80,12 +88,12 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     Zone { implicit z =>
       window = SDL_CreateWindow(
         toCString(newSettings.title),
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
+        0x2fff0000, // SDL_WINDOWPOS_CENTERED
+        0x2fff0000, // SDL_WINDOWPOS_CENTERED
         extendedSettings.scaledWidth,
         extendedSettings.scaledHeight,
-        if (extendedSettings.settings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
-        else SDL_WINDOW_SHOWN
+        (if (extendedSettings.settings.fullScreen) SDL_WINDOW_FULLSCREEN_DESKTOP
+         else SDL_WINDOW_SHOWN).value.toUInt
       )
     }
     windowSurface = SDL_GetWindowSurface(window)
@@ -104,15 +112,15 @@ class SdlCanvas() extends SurfaceBackedCanvas {
     )
     SDL_SetSurfaceBlendMode(surface.data, SDL_BLENDMODE_NONE)
     val fullExtendedSettings = extendedSettings.copy(
-      windowWidth = windowSurface.w,
-      windowHeight = windowSurface.h
+      windowWidth = (!windowSurface).w,
+      windowHeight = (!windowSurface).h
     )
     (0 until fullExtendedSettings.windowHeight * fullExtendedSettings.windowWidth).foreach { i =>
       val baseAddr = i * 4
-      windowSurface.pixels(baseAddr + 0) = ubyteClearB.toByte
-      windowSurface.pixels(baseAddr + 1) = ubyteClearG.toByte
-      windowSurface.pixels(baseAddr + 2) = ubyteClearR.toByte
-      windowSurface.pixels(baseAddr + 3) = 255.toByte
+      (!windowSurface).pixels(baseAddr + 0) = ubyteClearB.toByte
+      (!windowSurface).pixels(baseAddr + 1) = ubyteClearG.toByte
+      (!windowSurface).pixels(baseAddr + 2) = ubyteClearR.toByte
+      (!windowSurface).pixels(baseAddr + 3) = 255.toByte
     }
     clear(Set(Canvas.Buffer.Backbuffer))
     fullExtendedSettings
@@ -140,12 +148,11 @@ class SdlCanvas() extends SurfaceBackedCanvas {
 
   def redraw(): Unit = {
     if (handleEvents()) {
-      val windowRect = stackalloc[SDL_Rect]().init(
-        extendedSettings.canvasX,
-        extendedSettings.canvasY,
-        extendedSettings.scaledWidth,
-        extendedSettings.scaledHeight
-      )
+      val windowRect = stackalloc[SDL_Rect]()
+      (!windowRect).x = extendedSettings.canvasX
+      (!windowRect).y = extendedSettings.canvasY
+      (!windowRect).w = extendedSettings.scaledWidth
+      (!windowRect).h = extendedSettings.scaledHeight
       SDL_UpperBlitScaled(surface.data, null, windowSurface, windowRect)
       SDL_UpdateWindowSurface(window)
     }

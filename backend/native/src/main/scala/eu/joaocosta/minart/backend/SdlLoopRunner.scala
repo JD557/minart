@@ -5,8 +5,8 @@ import scala.scalanative.libc.stdlib._
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
-import sdl2.Extras._
-import sdl2.SDL._
+import sdl2.all._
+import sdl2.enumerations.SDL_EventType._
 
 import eu.joaocosta.minart.runtime._
 
@@ -34,7 +34,7 @@ object SdlLoopRunner extends LoopRunner {
     private implicit val ec: ExecutionContext = ExecutionContext.global
     def finiteLoopAux(): Future[Unit] = {
       val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
-      Future { SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT }.flatMap { quit =>
+      Future { SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT }.flatMap { quit =>
         if (quit) {
           free(event.asInstanceOf[Ptr[Byte]])
           Future.successful(())
