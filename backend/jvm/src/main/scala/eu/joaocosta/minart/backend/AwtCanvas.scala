@@ -9,7 +9,16 @@ import java.awt.event.{
   WindowEvent
 }
 import java.awt.image.BufferedImage
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
+import java.awt.{
+  AlphaComposite,
+  Canvas => JavaCanvas,
+  Color => JavaColor,
+  Dimension,
+  Graphics,
+  Graphics2D,
+  GraphicsEnvironment,
+  MouseInfo
+}
 import javax.swing.{JFrame, WindowConstants}
 
 import scala.jdk.CollectionConverters._
@@ -62,7 +71,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
 
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
-    val image            = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_ARGB)
+    val image            = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_RGB)
     surface = new BufferedImageSurface(image)
     if (javaCanvas != null) javaCanvas.frame.dispose()
     javaCanvas = new AwtCanvas.InnerCanvas(

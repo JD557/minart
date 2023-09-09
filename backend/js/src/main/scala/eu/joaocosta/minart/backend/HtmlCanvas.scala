@@ -18,7 +18,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
   private[this] var jsCanvas: JsCanvas                = _
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _
-  protected var surface: ImageDataSurface             = _
+  protected var surface: ImageDataOpaqueSurface       = _
 
   // Input resources
 
@@ -109,7 +109,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
       if (newSettings.fullScreen)
         s"display:flex;justify-content:center;align-items:center;background:$clearColorStr;"
       else ""
-    surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
+    surface = new ImageDataOpaqueSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
 
     if (oldSettings.fullScreen != newSettings.fullScreen) {
       if (newSettings.fullScreen) {

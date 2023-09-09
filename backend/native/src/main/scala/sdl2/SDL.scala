@@ -483,6 +483,7 @@ object SDL {
       dst: Ptr[SDL_Surface],
       dstrect: Ptr[SDL_Rect]
   ): Int = extern
+  def SDL_SetSurfaceBlendMode(surface: Ptr[SDL_Surface], blendMode: SDL_BlendMode): Int = extern
 
   /** ************************************
     * *********** SDL_render.h *************
