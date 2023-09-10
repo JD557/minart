@@ -36,7 +36,7 @@ object AppLoop {
   /** App loop definition that takes the initial settings, initial state
     * and loop frequency.
     */
-  trait Definition[State, Settings, Subsystem] {
+  trait Definition[State, Subsystem <: LowLevelSubsystem[_]] {
 
     /** Applies the following configuration to the app loop definition
       *
@@ -45,7 +45,7 @@ object AppLoop {
       * @param initialState initial state of the loop
       */
     def configure(
-        initialSettings: Settings,
+        initialSettings: LowLevelSubsystem.SettingsOf[Subsystem],
         frameRate: LoopFrequency,
         initialState: State
     ): AppLoop[State, Subsystem]
@@ -56,26 +56,16 @@ object AppLoop {
       * @param frameRate frame rate of the app loop
       */
     def configure(
-        initialSettings: Settings,
+        initialSettings: LowLevelSubsystem.SettingsOf[Subsystem],
         frameRate: LoopFrequency
     )(implicit ev: Unit =:= State): AppLoop[State, Subsystem] = configure(initialSettings, frameRate, ev(()))
   }
 
-  /** Creates an app loop that keeps and updates a state on every iteration,
-    *  terminating when a certain condition is reached.
-    *
-    *  This is a low level operation for custom subsystems. For most use cases,
-    *  [[statefulRenderLoop]], [[statefulAudioLoop]] and [[statefulAppLoop]] are preferred.
-    *
-    * @param renderFrame operation to render the frame and update the state
-    * @param terminateWhen loop termination check
-    */
-
-  def statefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
+  private def fullStatefulLoop[State, Settings, Subsystem <: LowLevelSubsystem[Settings]](
       renderFrame: State => Subsystem => State,
       terminateWhen: State => Boolean = (_: State) => false
-  ): AppLoop.Definition[State, Settings, Subsystem] = {
-    new AppLoop.Definition[State, Settings, Subsystem] {
+  ): AppLoop.Definition[State, Subsystem] = {
+    new AppLoop.Definition[State, Subsystem] {
       def configure(
           initialSettings: Settings,
           frameRate: LoopFrequency,
@@ -99,6 +89,22 @@ object AppLoop {
     }
   }
 
+  /** Creates an app loop that keeps and updates a state on every iteration,
+    *  terminating when a certain condition is reached.
+    *
+    *  This is a low level operation for custom subsystems. For most use cases,
+    *  [[statefulRenderLoop]], [[statefulAudioLoop]] and [[statefulAppLoop]] are preferred.
+    *
+    * @param renderFrame operation to render the frame and update the state
+    * @param terminateWhen loop termination check
+    */
+
+  def statefulLoop[State, Subsystem <: LowLevelSubsystem[_]](
+      renderFrame: State => Subsystem => State,
+      terminateWhen: State => Boolean = (_: State) => false
+  ): AppLoop.Definition[State, Subsystem] =
+    fullStatefulLoop[State, LowLevelSubsystem.SettingsOf[Subsystem], Subsystem](renderFrame, terminateWhen)
+
   /** Creates an app loop that keeps no state.
     *
     *  This is a low level operation for custom subsystems. For most use cases,
@@ -107,10 +113,10 @@ object AppLoop {
     * @param renderFrame operation to render the frame
     * @param frameRate frame rate limit
     */
-  def statelessLoop[Settings, Subsystem <: LowLevelSubsystem[Settings]](
+  def statelessLoop[Subsystem <: LowLevelSubsystem[_]](
       renderFrame: Subsystem => Unit
-  ): AppLoop.Definition[Unit, Settings, Subsystem] =
-    statefulLoop[Unit, Settings, Subsystem]((_) => renderFrame)
+  ): AppLoop.Definition[Unit, Subsystem] =
+    fullStatefulLoop[Unit, LowLevelSubsystem.SettingsOf[Subsystem], Subsystem]((_) => renderFrame)
 
   /** Creates a render loop with a canvas that keeps and updates a state on every iteration,
     *  terminating when a certain condition is reached.
@@ -121,8 +127,8 @@ object AppLoop {
   def statefulRenderLoop[State](
       renderFrame: State => Canvas => State,
       terminateWhen: State => Boolean = (_: State) => false
-  ): AppLoop.Definition[State, Canvas.Settings, LowLevelCanvas] =
-    statefulLoop[State, Canvas.Settings, LowLevelCanvas](
+  ): AppLoop.Definition[State, LowLevelCanvas] =
+    statefulLoop[State, LowLevelCanvas](
       renderFrame,
       terminateWhen
     )
@@ -133,8 +139,8 @@ object AppLoop {
     */
   def statelessRenderLoop(
       renderFrame: Canvas => Unit
-  ): AppLoop.Definition[Unit, Canvas.Settings, LowLevelCanvas] =
-    statelessLoop[Canvas.Settings, LowLevelCanvas](
+  ): AppLoop.Definition[Unit, LowLevelCanvas] =
+    statelessLoop[LowLevelCanvas](
       renderFrame
     )
 
@@ -147,8 +153,8 @@ object AppLoop {
   def statefulAudioLoop[State](
       renderFrame: State => AudioPlayer => State,
       terminateWhen: State => Boolean = (_: State) => false
-  ): AppLoop.Definition[State, AudioPlayer.Settings, LowLevelAudioPlayer] =
-    statefulLoop[State, AudioPlayer.Settings, LowLevelAudioPlayer](
+  ): AppLoop.Definition[State, LowLevelAudioPlayer] =
+    statefulLoop[State, LowLevelAudioPlayer](
       renderFrame,
       terminateWhen
     )
@@ -159,8 +165,8 @@ object AppLoop {
     */
   def statelessAudioLoop(
       renderFrame: AudioPlayer => Unit
-  ): AppLoop.Definition[Unit, AudioPlayer.Settings, LowLevelAudioPlayer] =
-    statelessLoop[AudioPlayer.Settings, LowLevelAudioPlayer](
+  ): AppLoop.Definition[Unit, LowLevelAudioPlayer] =
+    statelessLoop[LowLevelAudioPlayer](
       renderFrame
     )
 
@@ -176,8 +182,8 @@ object AppLoop {
   def statefulAppLoop[State](
       renderFrame: State => (Canvas with AudioPlayer) => State,
       terminateWhen: State => Boolean = (_: State) => false
-  ): AppLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
-    statefulLoop[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
+  ): AppLoop.Definition[State, LowLevelAllSubsystems] =
+    statefulLoop[State, LowLevelAllSubsystems](
       (state: State) => { case LowLevelSubsystem.Composite(canvas, audioPlayer) =>
         renderFrame(state)(new AllSubsystems(canvas, audioPlayer))
       },
@@ -190,8 +196,8 @@ object AppLoop {
     */
   def statelessAppLoop(
       renderFrame: (Canvas with AudioPlayer) => Unit
-  ): AppLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
-    statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
+  ): AppLoop.Definition[Unit, LowLevelAllSubsystems] =
+    statelessLoop[LowLevelAllSubsystems](
       { case LowLevelSubsystem.Composite(canvas, audioPlayer) => renderFrame(new AllSubsystems(canvas, audioPlayer)) }
     )
 

@@ -46,6 +46,10 @@ trait LowLevelSubsystem[Settings] extends AutoCloseable {
 
 object LowLevelSubsystem {
 
+  type SettingsOf[Subsystem] = Subsystem match {
+    case LowLevelSubsystem[x] => x
+  }
+
   /** Simple low-level subsystem, with basic settings.
     */
   trait Simple[Settings] extends LowLevelSubsystem[Settings] {
