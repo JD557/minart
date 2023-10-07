@@ -6,13 +6,10 @@ import eu.joaocosta.minart.internal._
   *
   * Supports reading uncompressed 24/32bit Windows BMPs and writing uncompressed 24 bit Windows BMPs.
   */
-final class BmpImageFormat[R, W](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W])
-    extends BmpImageReader[R]
-    with BmpImageWriter[W]
+final class BmpImageFormat[W](val byteWriter: ByteWriter[W]) extends BmpImageReader with BmpImageWriter[W]
 
 object BmpImageFormat {
-  val defaultFormat = new BmpImageFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
-    ByteReader.InputStreamByteReader,
+  val defaultFormat = new BmpImageFormat[Iterator[Array[Byte]]](
     ByteWriter.IteratorByteWriter
   )
 

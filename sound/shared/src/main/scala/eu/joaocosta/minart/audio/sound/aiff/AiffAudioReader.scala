@@ -10,13 +10,11 @@ import eu.joaocosta.minart.internal._
   *
   * https://mmsp.ece.mcgill.ca/Documents/AudioFormats/AIFF/Docs/AIFF-1.3.pdf
   */
-trait AiffAudioReader[ByteSeq] extends AudioClipReader {
+trait AiffAudioReader extends AudioClipReader {
 
-  val byteReader: ByteReader[ByteSeq]
   import AiffAudioReader._
-  private val byteFloatOps = new ByteFloatOps(byteReader)
-  import byteReader._
-  import byteFloatOps._
+  import ByteReader._
+  import ByteFloatOps._
 
   private val readId = readString(4)
 
@@ -110,7 +108,7 @@ trait AiffAudioReader[ByteSeq] extends AudioClipReader {
       }
   }
 
-  def loadClip(is: InputStream): Either[String, AudioClip] = {
+  final def loadClip(is: InputStream): Either[String, AudioClip] = {
     val bytes = fromInputStream(is)
     (for {
       formChunk <- loadChunkHeader.validate(_.id == "FORM", c => s"Invalid FORM chunk id: ${c.id}")
@@ -126,8 +124,8 @@ object AiffAudioReader {
     val paddedSize = size + (size % 2)
   }
 
-  private final class ByteFloatOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
-    import byteReader._
+  private object ByteFloatOps {
+    import ByteReader._
     // Ported from https://github.com/python/cpython/blob/dcb342b5f9d931b030ca310bf3e175bbc54df5aa/Lib/aifc.py#L184-L199
     val readExtended: ParseState[String, Double] = for {
       head <- readBENumber(2)

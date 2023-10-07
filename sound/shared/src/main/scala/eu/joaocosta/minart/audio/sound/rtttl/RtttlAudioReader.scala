@@ -8,14 +8,12 @@ import eu.joaocosta.minart.internal._
 
 /** Audio reader for RTTTL files.
   */
-trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
+trait RtttlAudioReader extends AudioClipReader {
 
-  val byteReader: ByteReader[ByteSeq]
   val oscilator: Oscillator
   import RtttlAudioReader._
-  private val byteStringOps = new ByteStringOps(byteReader)
-  import byteReader._
-  import byteStringOps._
+  import ByteReader._
+  import ByteStringOps._
 
   private def parseHeader(jintu: String, defaultValue: String): Either[String, Header] = {
     val defaultSection = defaultValue.split(",").map(_.split("="))
@@ -86,7 +84,7 @@ trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
       }
   }
 
-  def loadClip(is: InputStream): Either[String, AudioClip] = {
+  final def loadClip(is: InputStream): Either[String, AudioClip] = {
     val bytes = fromInputStream(is)
     (for {
       jintu    <- readNextSection
@@ -109,8 +107,8 @@ object RtttlAudioReader {
     }
   }
 
-  private final class ByteStringOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
-    import byteReader._
+  private object ByteStringOps {
+    import ByteReader._
     private val separator = ':'.toInt
 
     val readNextSection: ParseState[String, String] =

@@ -4,14 +4,13 @@ import eu.joaocosta.minart.internal._
 
 /** Audio format WAV files.
   */
-final class WavAudioFormat[R, W](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W], val bitRate: Int)
-    extends WavAudioReader[R]
+final class WavAudioFormat[W](val byteWriter: ByteWriter[W], val bitRate: Int)
+    extends WavAudioReader
     with WavAudioWriter[W]
 
 object WavAudioFormat {
   val defaultFormat =
-    new WavAudioFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
-      ByteReader.InputStreamByteReader,
+    new WavAudioFormat[Iterator[Array[Byte]]](
       ByteWriter.IteratorByteWriter,
       16
     )

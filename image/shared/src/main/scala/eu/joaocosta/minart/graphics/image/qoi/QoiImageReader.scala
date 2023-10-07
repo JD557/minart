@@ -8,12 +8,10 @@ import eu.joaocosta.minart.internal._
 
 /** Image reader for QOI files.
   */
-trait QoiImageReader[Container] extends ImageReader {
-  val byteReader: ByteReader[Container]
-
+trait QoiImageReader extends ImageReader {
   import QoiImageFormat._
   import QoiImageReader._
-  import byteReader._
+  import ByteReader._
 
   // Binary helpers
   private def wrapAround(b: Int): Int                = b & 0x0ff
@@ -87,9 +85,9 @@ trait QoiImageReader[Container] extends ImageReader {
     }
   }
 
-  private def loadOps(bytes: Container): Iterator[Either[String, Op]] = new Iterator[Either[String, Op]] {
+  private def loadOps(bytes: CustomInputStream): Iterator[Either[String, Op]] = new Iterator[Either[String, Op]] {
     var currBytes = bytes
-    def hasNext   = !byteReader.isEmpty(currBytes)
+    def hasNext   = !ByteReader.isEmpty(currBytes)
     def next(): Either[String, Op] =
       opFromBytes.run(currBytes) match {
         case Left(error) => Left(error)
@@ -125,7 +123,7 @@ trait QoiImageReader[Container] extends ImageReader {
       }
   }
 
-  private def loadHeader(bytes: Container): ParseResult[Header] = {
+  private def loadHeader(bytes: CustomInputStream): ParseResult[Header] = {
     (
       for {
         magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
@@ -146,7 +144,7 @@ trait QoiImageReader[Container] extends ImageReader {
     ).run(bytes)
   }
 
-  def loadImage(is: InputStream): Either[String, RamSurface] = {
+  final def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
       asSurface(loadOps(data), header)
