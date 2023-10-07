@@ -61,12 +61,13 @@ object Canvas {
 
   /** A system resource used by the Canvas.
     */
-  sealed trait Buffer
-  object Buffer {
-    case object Backbuffer     extends Buffer
-    case object KeyboardBuffer extends Buffer
-    case object PointerBuffer  extends Buffer
+  enum Buffer {
+    case Backbuffer
+    case KeyboardBuffer
+    case PointerBuffer
+  }
 
+  object Buffer {
     val all: Set[Buffer] = Set(Backbuffer, KeyboardBuffer, PointerBuffer)
   }
 
