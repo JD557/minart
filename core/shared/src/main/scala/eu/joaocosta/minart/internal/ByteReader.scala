@@ -126,14 +126,14 @@ private[minart] object ByteReader {
     }
 
     def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
-      val byteArr    = Array.ofDim[Byte](n)
-      val resultSize = bytes.read(byteArr)
+      val byteArr = Array.ofDim[Byte](n)
+      bytes.read(byteArr)
       bytes -> byteArr.map(b => java.lang.Byte.toUnsignedInt(b))
     }
 
     def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
-      val byteArr    = Array.ofDim[Byte](n)
-      val resultSize = bytes.read(byteArr)
+      val byteArr = Array.ofDim[Byte](n)
+      bytes.read(byteArr)
       bytes -> byteArr
     }
 

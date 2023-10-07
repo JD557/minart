@@ -6,7 +6,6 @@ import eu.joaocosta.minart.backend._
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
-import eu.joaocosta.minart.runtime._
 
 class AppLoopSpec extends munit.FunSuite {
 

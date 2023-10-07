@@ -105,7 +105,7 @@ object RtttlAudioReader {
       case None => 0.0
       case Some(n) =>
         val a1 = 55
-        Math.pow(2, (octave - 1) + n / 12.0) * 55
+        Math.pow(2, (octave - 1) + n / 12.0) * a1
     }
   }
 

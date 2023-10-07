@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import scala.util.Random
-
 class MatrixSpec extends munit.FunSuite {
 
   test("Can be applied") {

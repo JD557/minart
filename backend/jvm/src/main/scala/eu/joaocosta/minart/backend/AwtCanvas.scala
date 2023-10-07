@@ -9,16 +9,7 @@ import java.awt.event.{
   WindowEvent
 }
 import java.awt.image.BufferedImage
-import java.awt.{
-  AlphaComposite,
-  Canvas => JavaCanvas,
-  Color => JavaColor,
-  Dimension,
-  Graphics,
-  Graphics2D,
-  GraphicsEnvironment,
-  MouseInfo
-}
+import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
 import javax.swing.{JFrame, WindowConstants}
 
 import scala.jdk.CollectionConverters._

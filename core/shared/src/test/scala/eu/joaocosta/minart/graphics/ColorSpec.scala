@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.graphics
 
-import scala.util.Random
-
 class ColorSpec extends munit.FunSuite {
 
   test("Can be created from RGB values") {

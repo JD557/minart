@@ -3,7 +3,6 @@ package eu.joaocosta.minart.backend.subsystem
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.backend.defaults.DefaultBackend
 import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
 
 /** Aggregation of all subsystems.
   */

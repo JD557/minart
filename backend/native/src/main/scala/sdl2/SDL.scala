@@ -3349,7 +3349,6 @@ object aliases:
 object structs:
   import _root_.sdl2.enumerations.*
   import _root_.sdl2.aliases.*
-  import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
 
   /** [bindgen] header: ./SDL_system.h
@@ -6510,10 +6509,8 @@ object structs:
     given _tag: Tag[_SDL_iconv_t] = Tag.materializeCStruct0Tag
 
 object unions:
-  import _root_.sdl2.enumerations.*
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
-  import _root_.sdl2.unions.*
 
   /** General event structure
     *
