@@ -80,71 +80,70 @@ object KeyboardInput {
 
   /** Platform-agnostic identifier for a keyboard key.
     */
-  sealed trait Key
-  object Key {
-    case object A extends Key
-    case object B extends Key
-    case object C extends Key
-    case object D extends Key
-    case object E extends Key
-    case object F extends Key
-    case object G extends Key
-    case object H extends Key
-    case object I extends Key
-    case object J extends Key
-    case object K extends Key
-    case object L extends Key
-    case object M extends Key
-    case object N extends Key
-    case object O extends Key
-    case object P extends Key
-    case object Q extends Key
-    case object R extends Key
-    case object S extends Key
-    case object T extends Key
-    case object U extends Key
-    case object V extends Key
-    case object W extends Key
-    case object X extends Key
-    case object Y extends Key
-    case object Z extends Key
+  enum Key {
+    case A
+    case B
+    case C
+    case D
+    case E
+    case F
+    case G
+    case H
+    case I
+    case J
+    case K
+    case L
+    case M
+    case N
+    case O
+    case P
+    case Q
+    case R
+    case S
+    case T
+    case U
+    case V
+    case W
+    case X
+    case Y
+    case Z
 
-    case object Digit0 extends Key
-    case object Digit1 extends Key
-    case object Digit2 extends Key
-    case object Digit3 extends Key
-    case object Digit4 extends Key
-    case object Digit5 extends Key
-    case object Digit6 extends Key
-    case object Digit7 extends Key
-    case object Digit8 extends Key
-    case object Digit9 extends Key
+    case Digit0
+    case Digit1
+    case Digit2
+    case Digit3
+    case Digit4
+    case Digit5
+    case Digit6
+    case Digit7
+    case Digit8
+    case Digit9
 
-    case object NumPad0 extends Key
-    case object NumPad1 extends Key
-    case object NumPad2 extends Key
-    case object NumPad3 extends Key
-    case object NumPad4 extends Key
-    case object NumPad5 extends Key
-    case object NumPad6 extends Key
-    case object NumPad7 extends Key
-    case object NumPad8 extends Key
-    case object NumPad9 extends Key
+    case NumPad0
+    case NumPad1
+    case NumPad2
+    case NumPad3
+    case NumPad4
+    case NumPad5
+    case NumPad6
+    case NumPad7
+    case NumPad8
+    case NumPad9
 
-    case object Space     extends Key
-    case object Tab       extends Key
-    case object Enter     extends Key
-    case object Backspace extends Key
+    case Space
+    case Tab
+    case Enter
+    case Backspace
 
-    case object Escape extends Key
-    case object Shift  extends Key
-    case object Ctrl   extends Key
-    case object Alt    extends Key
-    case object Meta   extends Key
+    case Escape
+    case Shift
+    case Ctrl
+    case Alt
+    case Meta
 
-    case object Up    extends Key
-    case object Down  extends Key
-    case object Left  extends Key
-    case object Right extends Key
+    case Up
+    case Down
+    case Left
+    case Right
   }
 }
