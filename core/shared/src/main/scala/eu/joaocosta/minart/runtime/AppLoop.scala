@@ -164,9 +164,6 @@ object AppLoop {
       renderFrame
     )
 
-  type LowLevelAllSubsystems =
-    LowLevelSubsystem.Composite[Canvas.Settings, AudioPlayer.Settings, LowLevelCanvas, LowLevelAudioPlayer]
-
   /** Creates an app loop with a canvas and an audio player that keeps and updates a state on every iteration,
     *  terminating when a certain condition is reached.
     *
@@ -174,13 +171,11 @@ object AppLoop {
     * @param terminateWhen loop termination check
     */
   def statefulAppLoop[State](
-      renderFrame: State => (Canvas with AudioPlayer) => State,
+      renderFrame: State => (CanvasSubsystem with AudioPlayerSubsystem) => State,
       terminateWhen: State => Boolean = (_: State) => false
   ): AppLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
     statefulLoop[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
-      (state: State) => { case LowLevelSubsystem.Composite(canvas, audioPlayer) =>
-        renderFrame(state)(new AllSubsystems(canvas, audioPlayer))
-      },
+      renderFrame,
       terminateWhen
     )
 
@@ -189,10 +184,10 @@ object AppLoop {
     * @param renderFrame operation to render the frame
     */
   def statelessAppLoop(
-      renderFrame: (Canvas with AudioPlayer) => Unit
+      renderFrame: (CanvasSubsystem with AudioPlayerSubsystem) => Unit
   ): AppLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
     statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
-      { case LowLevelSubsystem.Composite(canvas, audioPlayer) => renderFrame(new AllSubsystems(canvas, audioPlayer)) }
+      renderFrame
     )
 
 }

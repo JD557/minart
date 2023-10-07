@@ -8,10 +8,11 @@
   */
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.runtime._
-import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.subsystem._
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.runtime._
 
 /** Just like loading an image, we can load sound resources
   */
@@ -19,15 +20,16 @@ val clip = Sound.loadAiffClip(Resource("assets/sample.aiff")).get
 
 // Same logic as the audio example
 AppLoop
-  .statelessAppLoop((system: Canvas with AudioPlayer) => {
-    if (system.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
-      system.play(clip)
-    if (system.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
-      system.stop()
-    system.clear()
-    if (!system.isPlaying()) system.fill(Color(0, 128, 0))
-    else system.fill(Color(128, 0, 0))
-    system.redraw()
+  .statelessAppLoop((system: CanvasSubsystem with AudioPlayerSubsystem) => {
+    import system._
+    if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
+      audioPlayer.play(clip)
+    if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
+      audioPlayer.stop()
+    canvas.clear()
+    if (!audioPlayer.isPlaying()) canvas.fill(Color(0, 128, 0))
+    else canvas.fill(Color(128, 0, 0))
+    canvas.redraw()
   })
   .configure((Canvas.Settings(width = 128, height = 128), AudioPlayer.Settings()), LoopFrequency.hz60)
   .run()

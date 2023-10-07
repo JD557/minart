@@ -6,17 +6,6 @@ import eu.joaocosta.minart.input._
 
 /** Internal object with an intersection of all subsystems.
   */
-private[minart] class AllSubsystems(canvas: LowLevelCanvas, audioPlayer: LowLevelAudioPlayer)
-    extends LowLevelSubsystem.Composite[Canvas.Settings, AudioPlayer.Settings, LowLevelCanvas, LowLevelAudioPlayer](
-      canvas,
-      audioPlayer
-    )
-    with Canvas
-    with AudioPlayer {
-
-  private val _canvas: Canvas = canvas // Export only Canvas methods
-  export _canvas.*
-
-  private val _audioPlayer: AudioPlayer = audioPlayer // Export only AudioPlayer methods
-  export _audioPlayer.*
-}
+private[minart] class AllSubsystems(_canvas: LowLevelCanvas, _audioPlayer: LowLevelAudioPlayer)
+    extends CanvasSubsystem(_canvas)
+    with AudioPlayerSubsystem(_audioPlayer)
