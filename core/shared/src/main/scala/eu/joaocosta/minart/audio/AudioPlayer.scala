@@ -12,7 +12,7 @@ trait AudioPlayer {
     *
     *  @param clip audio clip to play
     */
-  def play(clip: AudioClip): Unit = play(clip, 0)
+  final def play(clip: AudioClip): Unit = play(clip, 0)
 
   /** Enqueues an audio clip to be played later in a certain channel.
     *
@@ -26,15 +26,14 @@ trait AudioPlayer {
     *
     *  @param wave audio wave to play
     */
-  def play(wave: AudioWave): Unit =
-    play(wave, 0)
+  final def play(wave: AudioWave): Unit = play(wave, 0)
 
   /** Enqueues an audio wave to be played later in a certain channel.
     *  The Audio Wave will play infinitely until stop() is called.
     *  @param wave audio wave to play
     *  @param channel channel where to play the audio wave
     */
-  def play(wave: AudioWave, channel: Int): Unit =
+  final def play(wave: AudioWave, channel: Int): Unit =
     play(AudioClip(wave, Double.PositiveInfinity), channel)
 
   /** Checks if this player still has data to be played.
@@ -71,5 +70,5 @@ object AudioPlayer {
   def create(settings: AudioPlayer.Settings)(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
     LowLevelAudioPlayer.create().init(settings)
 
-  case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
+  final case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
 }

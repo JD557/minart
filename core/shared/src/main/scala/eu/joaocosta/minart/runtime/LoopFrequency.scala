@@ -34,19 +34,19 @@ object LoopFrequency {
   }
 
   /** 60 Hz. */
-  final val hz60: LoopDuration = fromHz(60).asInstanceOf[LoopDuration]
+  val hz60: LoopDuration = fromHz(60).asInstanceOf[LoopDuration]
 
   /** 50 Hz. */
-  final val hz50: LoopDuration = fromHz(50).asInstanceOf[LoopDuration]
+  val hz50: LoopDuration = fromHz(50).asInstanceOf[LoopDuration]
 
   /** 30 Hz. */
-  final val hz30: LoopDuration = fromHz(30).asInstanceOf[LoopDuration]
+  val hz30: LoopDuration = fromHz(30).asInstanceOf[LoopDuration]
 
   /** 24 Hz. */
-  final val hz24: LoopDuration = fromHz(24).asInstanceOf[LoopDuration]
+  val hz24: LoopDuration = fromHz(24).asInstanceOf[LoopDuration]
 
   /** 15 Hz. */
-  final val hz15: LoopDuration = fromHz(15).asInstanceOf[LoopDuration]
+  val hz15: LoopDuration = fromHz(15).asInstanceOf[LoopDuration]
 
   /** Builds a [[LoopFrequency]] from a Scala duration.
     *

@@ -11,7 +11,7 @@ import eu.joaocosta.minart.input.KeyboardInput.Key
   * @param events ordered press/release keyboard events.
   *               Note that only the most recent `KeyboardInput.maxEvents` are guaranteed to be present.
   */
-case class KeyboardInput(keysDown: Set[Key], events: Queue[KeyboardInput.Event]) {
+final case class KeyboardInput(keysDown: Set[Key], events: Queue[KeyboardInput.Event]) {
 
   /** Keys that have been pressed */
   lazy val keysPressed: Set[Key] = events.collect { case KeyboardInput.Event.Pressed(key) =>

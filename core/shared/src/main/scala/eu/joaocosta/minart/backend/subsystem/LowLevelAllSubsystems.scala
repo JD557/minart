@@ -6,7 +6,7 @@ import eu.joaocosta.minart.graphics._
 
 /** Aggregation of all subsystems.
   */
-case class LowLevelAllSubsystems(
+final case class LowLevelAllSubsystems(
     lowLevelCanvas: LowLevelCanvas,
     lowLevelAudioPlayer: LowLevelAudioPlayer
 ) extends AllSubsystems(lowLevelCanvas, lowLevelAudioPlayer)

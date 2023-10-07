@@ -8,7 +8,7 @@ import eu.joaocosta.minart.input.KeyboardInput._
 /** Key mappings for the Native platform, backed by SDL.
   */
 object SdlKeyMapping extends KeyMapping[SDL_KeyCode] {
-  protected final val mappings: Map[SDL_KeyCode, Key] = Map(
+  protected val mappings: Map[SDL_KeyCode, Key] = Map(
     SDLK_a            -> Key.A,
     SDLK_b            -> Key.B,
     SDLK_c            -> Key.C,

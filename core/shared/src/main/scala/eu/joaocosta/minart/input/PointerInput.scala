@@ -10,7 +10,7 @@ import scala.collection.immutable.Queue
   *               Note that only the most recent `PointerInput.maxEvents` are guaranteed to be present.
   * @param pressedOn if defined, it means the mouse is currently down and was pressed at that position. Otherwise, the mouse is currently up.
   */
-case class PointerInput(
+final case class PointerInput(
     position: Option[PointerInput.Position],
     events: Queue[PointerInput.Event],
     pressedOn: Option[PointerInput.Position]

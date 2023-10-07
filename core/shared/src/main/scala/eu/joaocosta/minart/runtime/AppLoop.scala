@@ -55,7 +55,7 @@ object AppLoop {
       * @param initialSettings initial settings of the subsystems
       * @param frameRate frame rate of the app loop
       */
-    def configure(
+    final def configure(
         initialSettings: Settings,
         frameRate: LoopFrequency
     )(implicit ev: Unit =:= State): AppLoop[State, Subsystem] = configure(initialSettings, frameRate, ev(()))

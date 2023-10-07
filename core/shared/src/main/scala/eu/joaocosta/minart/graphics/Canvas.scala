@@ -24,8 +24,8 @@ trait Canvas extends MutableSurface {
     */
   def changeSettings(newSettings: Canvas.Settings): Unit
 
-  def width: Int  = canvasSettings.width
-  def height: Int = canvasSettings.height
+  final def width: Int  = canvasSettings.width
+  final def height: Int = canvasSettings.height
 
   /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
@@ -80,7 +80,7 @@ object Canvas {
     * @param clearColor The color to be used when the canvas is cleared
     * @param title The title to use if this Canvas needs to create a window
     */
-  case class Settings(
+  final case class Settings(
       width: Int,
       height: Int,
       scale: Option[Int] = None,
