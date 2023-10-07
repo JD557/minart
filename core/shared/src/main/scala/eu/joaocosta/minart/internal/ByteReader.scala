@@ -30,36 +30,36 @@ private[minart] trait ByteReader[ByteSeq] {
   def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]]
 
   /** Does nothing */
-  val noop: ParseState[Nothing, Unit] = skipBytes(0)
+  final val noop: ParseState[Nothing, Unit] = skipBytes(0)
 
   /** Read a String from N Bytes */
-  def readString(n: Int): ParseState[Nothing, String] =
+  final def readString(n: Int): ParseState[Nothing, String] =
     readBytes(n).map { bytes => bytes.map(_.toChar).mkString("") }
 
   /** Read a Integer N Bytes (Little Endian) */
-  def readLENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
+  final def readLENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
     bytes.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
 
   /** Read a Integer N Bytes as a Long (Little Endian) */
-  def readLENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
+  final def readLENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
     bytes.zipWithIndex.map { case (num, idx) => num.toLong << (idx * 8) }.sum
   }
 
   /** Read a Integer N Bytes (Big Endian) */
-  def readBENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
+  final def readBENumber(n: Int): ParseState[Nothing, Int] = readBytes(n).map { bytes =>
     bytes.reverse.zipWithIndex.map { case (num, idx) => num.toInt << (idx * 8) }.sum
   }
 
   /** Read a Integer N Bytes as a Long (Big Endian) */
-  def readBENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
+  final def readBENumberLong(n: Int): ParseState[Nothing, Long] = readBytes(n).map { bytes =>
     bytes.reverse.zipWithIndex.map { case (num, idx) => num.toLong << (idx * 8) }.sum
   }
 }
 
 private[minart] object ByteReader {
 
-  class CustomInputStream(inner: InputStream) extends InputStream {
+  final class CustomInputStream(inner: InputStream) extends InputStream {
     var hasBuffer: Boolean                  = false
     var buffer: Int                         = 0
     override def available(): Int           = inner.available() + (if (hasBuffer) 1 else 0)
