@@ -12,13 +12,10 @@ import eu.joaocosta.minart.internal._
   *
   * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
-trait PpmImageReader[ByteSeq] extends ImageReader {
-  val byteReader: ByteReader[ByteSeq]
-
+trait PpmImageReader extends ImageReader {
   import PpmImageReader._
-  private val byteStringOps = new ByteStringOps(byteReader)
-  import byteReader._
-  import byteStringOps._
+  import ByteReader._
+  import ByteStringOps._
 
   // P2
   private val loadStringGrayscalePixel: ParseState[String, Color] =
@@ -55,7 +52,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
   @tailrec
   private def loadPixelLine(
       loadColor: ParseState[String, Color],
-      data: ByteSeq,
+      data: CustomInputStream,
       remainingPixels: Int,
       acc: List[Color] = Nil
   ): ParseResult[Array[Color]] = {
@@ -73,7 +70,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
   @tailrec
   private def loadPixels(
       loadColor: ParseState[String, Color],
-      data: ByteSeq,
+      data: CustomInputStream,
       remainingLines: Int,
       width: Int,
       acc: Vector[Array[Color]] = Vector()
@@ -88,7 +85,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
     }
   }
 
-  private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
+  private def loadHeader(bytes: CustomInputStream): ParseResult[Header] = {
     (
       for {
         magic  <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
@@ -102,7 +99,7 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
     ).run(bytes)
   }
 
-  def loadImage(is: InputStream): Either[String, RamSurface] = {
+  final def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
       val pixels = header.magic match {
@@ -129,8 +126,8 @@ trait PpmImageReader[ByteSeq] extends ImageReader {
 }
 
 object PpmImageReader {
-  private final class ByteStringOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
-    import byteReader._
+  private object ByteStringOps {
+    import ByteReader._
     private val space   = ' '.toInt
     private val newLine = '\n'.toInt
     private val comment = '#'.toInt

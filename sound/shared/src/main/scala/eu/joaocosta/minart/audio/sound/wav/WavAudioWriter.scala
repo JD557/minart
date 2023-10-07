@@ -12,15 +12,11 @@ import eu.joaocosta.minart.internal._
   *
   * http://tiny.systems/software/soundProgrammer/WavFormatDocs.pdf
   */
-trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
-  val byteWriter: ByteWriter[ByteSeq]
-
-  val sampleRate = 44100
-  val chunkSize  = 128
-  def bitRate: Int
+trait WavAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
+  final val chunkSize = 128
   require(Set(8, 16, 32).contains(bitRate))
 
-  import byteWriter._
+  import ByteWriter._
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>
@@ -70,7 +66,7 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
     _ <- writeString("WAVE")
   } yield ()
 
-  def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
+  final def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeRiffHeader(clip)
       _ <- storeFmtChunk
