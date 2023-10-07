@@ -1,17 +1,12 @@
 package eu.joaocosta.minart.audio.sound.wav
 
-import eu.joaocosta.minart.internal._
-
 /** Audio format WAV files.
   */
-final class WavAudioFormat[W](val byteWriter: ByteWriter[W], val bitRate: Int)
-    extends WavAudioReader
-    with WavAudioWriter[W]
+final class WavAudioFormat(val bitRate: Int) extends WavAudioReader with WavAudioWriter
 
 object WavAudioFormat {
   val defaultFormat =
-    new WavAudioFormat[Iterator[Array[Byte]]](
-      ByteWriter.IteratorByteWriter,
+    new WavAudioFormat(
       16
     )
 }

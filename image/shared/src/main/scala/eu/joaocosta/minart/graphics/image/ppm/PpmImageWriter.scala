@@ -12,10 +12,8 @@ import eu.joaocosta.minart.internal._
   *
   * Stores data as P6 PPM files with a 8 bit color range.
   */
-trait PpmImageWriter[ByteSeq] extends ImageWriter {
-  val byteWriter: ByteWriter[ByteSeq]
-
-  import byteWriter._
+trait PpmImageWriter extends ImageWriter {
+  import ByteWriter._
 
   private def storeBinaryRgbPixel(color: Color): ByteStreamState[String] =
     writeBytes(List(color.r, color.g, color.b))
@@ -43,7 +41,7 @@ trait PpmImageWriter[ByteSeq] extends ImageWriter {
       _ <- writeStringLn("255")
     } yield ()
 
-  def storeImage(surface: Surface, os: OutputStream): Either[String, Unit] = {
+  final def storeImage(surface: Surface, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeHeader(surface)
       _ <- storePixels(storeBinaryRgbPixel, surface)

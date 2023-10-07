@@ -12,18 +12,15 @@ import eu.joaocosta.minart.internal._
   *
   * https://mmsp.ece.mcgill.ca/Documents/AudioFormats/AIFF/Docs/AIFF-1.3.pdf
   */
-trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
-  val byteWriter: ByteWriter[ByteSeq]
-
+trait AiffAudioWriter extends AudioClipWriter {
   val sampleRate = 44100
   val chunkSize  = 128
   def bitRate: Int
   require(Set(8, 16, 32).contains(bitRate))
 
   import AiffAudioWriter._
-  private val byteFloatOps = new ByteFloatOps(byteWriter)
-  import byteWriter._
-  import byteFloatOps._
+  import ByteWriter._
+  import ByteFloatOps._
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>
@@ -84,7 +81,7 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
     _ <- writeString("AIFF")
   } yield ()
 
-  def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
+  final def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeFormChunk(clip)
       _ <- storeCommChunk(clip)
@@ -95,8 +92,8 @@ trait AiffAudioWriter[ByteSeq] extends AudioClipWriter {
 }
 
 object AiffAudioWriter {
-  private final class ByteFloatOps[ByteSeq](val byteWriter: ByteWriter[ByteSeq]) {
-    import byteWriter._
+  private object ByteFloatOps {
+    import ByteWriter._
 
     def writeExtended(x: Double): ByteStreamState[String] = {
       val (sign, absX) = if (x < 0) (0x8000, -x) else (0, x)

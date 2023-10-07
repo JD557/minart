@@ -1,17 +1,13 @@
 package eu.joaocosta.minart.graphics.image.bmp
 
-import eu.joaocosta.minart.internal._
-
 /** Image reader and writer for BMP files.
   *
   * Supports reading uncompressed 24/32bit Windows BMPs and writing uncompressed 24 bit Windows BMPs.
   */
-final class BmpImageFormat[W](val byteWriter: ByteWriter[W]) extends BmpImageReader with BmpImageWriter[W]
+final class BmpImageFormat() extends BmpImageReader with BmpImageWriter
 
 object BmpImageFormat {
-  val defaultFormat = new BmpImageFormat[Iterator[Array[Byte]]](
-    ByteWriter.IteratorByteWriter
-  )
+  val defaultFormat = new BmpImageFormat()
 
   val supportedFormats = Set("BM")
 
