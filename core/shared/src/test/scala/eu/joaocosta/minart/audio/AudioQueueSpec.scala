@@ -59,7 +59,7 @@ class AudioQueueSpec extends munit.FunSuite {
   }
 
   test("A single channel audio queue can be cleared") {
-    val clip = AudioClip(x => 1.0, 2.0)
+    val clip = AudioClip(_ => 1.0, 2.0)
 
     val queue = new AudioQueue.SingleChannelAudioQueue(2)
 
@@ -72,7 +72,7 @@ class AudioQueueSpec extends munit.FunSuite {
 
   test("A multi channel audio queue correctly mixes audio from two clips with the same duration") {
     val clipA = AudioClip(x => x / 4.0, 2.0)
-    val clipB = AudioClip(x => 0.25, 2.0)
+    val clipB = AudioClip(_ => 0.25, 2.0)
 
     val queue = new AudioQueue.MultiChannelAudioQueue(1)
 
@@ -87,7 +87,7 @@ class AudioQueueSpec extends munit.FunSuite {
 
   test("A multi channel audio queue correctly mixes audio from two clips with different durations") {
     val clipA = AudioClip(x => x / 4.0, 2.0)
-    val clipB = AudioClip(x => 0.25, 1.0)
+    val clipB = AudioClip(_ => 0.25, 1.0)
 
     val queue = new AudioQueue.MultiChannelAudioQueue(1)
 
@@ -118,7 +118,7 @@ class AudioQueueSpec extends munit.FunSuite {
   }
 
   test("A single channel audio queue can be cleared") {
-    val clip = AudioClip(x => 1.0, 2.0)
+    val clip = AudioClip(_ => 1.0, 2.0)
 
     val queue = new AudioQueue.MultiChannelAudioQueue(2)
 

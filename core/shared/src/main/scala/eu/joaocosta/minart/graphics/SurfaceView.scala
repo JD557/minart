@@ -143,7 +143,7 @@ object SurfaceView {
     else rem + y
   }
   private def clamp(minValue: Int, value: Int, maxValue: Int): Int =
-    Math.max(0, Math.min(value, maxValue))
+    Math.max(minValue, Math.min(value, maxValue))
 
   /** Generates a surface view from a surface */
   def apply(surface: Surface): SurfaceView =

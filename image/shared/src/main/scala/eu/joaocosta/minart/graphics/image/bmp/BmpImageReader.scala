@@ -113,7 +113,6 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
   def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
-      val numPixels = header.width * header.height
       val pixels = header.bitsPerPixel match {
         case 24 =>
           loadPixels(

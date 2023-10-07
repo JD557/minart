@@ -52,7 +52,7 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
       _ <- storeData(Sampler.sampleClip(clip, sampleRate).grouped(chunkSize))
     } yield ()
 
-  private def storeFmtChunk(clip: AudioClip): ByteStreamState[String] =
+  private val storeFmtChunk: ByteStreamState[String] =
     for {
       _ <- writeString("fmt ")
       _ <- writeLENumber(16, 4)
@@ -73,7 +73,7 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
   def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeRiffHeader(clip)
-      _ <- storeFmtChunk(clip)
+      _ <- storeFmtChunk
       _ <- storeDataChunk(clip)
     } yield ()
     toOutputStream(state, os)

@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.audio.sound
 
-import scala.util.Try
-
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.backend.defaults._
 import eu.joaocosta.minart.runtime._

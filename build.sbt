@@ -18,10 +18,19 @@ ThisBuild / versionScheme := Some("semver-spec")
 
 ThisBuild / autoAPIMappings := true
 ThisBuild / scalacOptions ++= Seq(
+  "-encoding",
+  "utf8",
   "-deprecation",
   "-feature",
+  "-unchecked",
   "-language:higherKinds",
-  "-unchecked"
+  "-Wunused:implicits",
+  "-Wunused:explicits",
+  "-Wunused:imports",
+  "-Wunused:locals",
+  "-Wunused:params",
+  "-Wunused:privates",
+  //"-Xfatal-warnings"
 )
 ThisBuild / scalafmtOnCompile := true
 ThisBuild / semanticdbEnabled := true
@@ -49,8 +58,7 @@ val testSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalameta" %%% "munit" % "1.0.0-M8" % Test
   ),
-  testFrameworks += new TestFramework("munit.Framework"),
-  Test / scalacOptions ++= Seq("-Yrangepos")
+  testFrameworks += new TestFramework("munit.Framework")
 )
 
 val publishSettings = Seq(
