@@ -12,10 +12,8 @@ import eu.joaocosta.minart.internal._
   *
   * https://mmsp.ece.mcgill.ca/Documents/AudioFormats/AIFF/Docs/AIFF-1.3.pdf
   */
-trait AiffAudioWriter extends AudioClipWriter {
-  val sampleRate = 44100
-  val chunkSize  = 128
-  def bitRate: Int
+trait AiffAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
+  private val chunkSize = 128
   require(Set(8, 16, 32).contains(bitRate))
 
   import AiffAudioWriter._

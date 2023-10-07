@@ -12,10 +12,8 @@ import eu.joaocosta.minart.internal._
   *
   * http://tiny.systems/software/soundProgrammer/WavFormatDocs.pdf
   */
-trait WavAudioWriter extends AudioClipWriter {
-  val sampleRate = 44100
-  val chunkSize  = 128
-  def bitRate: Int
+trait WavAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
+  final val chunkSize = 128
   require(Set(8, 16, 32).contains(bitRate))
 
   import ByteWriter._
