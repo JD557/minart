@@ -5,7 +5,7 @@ import eu.joaocosta.minart.input.KeyboardInput._
 /** Key mappings for the JavaScript backend.
   */
 object JsKeyMapping extends KeyMapping[Int] {
-  protected final val mappings: Map[Int, Key] = Map(
+  protected val mappings: Map[Int, Key] = Map(
     65  -> Key.A,
     66  -> Key.B,
     67  -> Key.C,

@@ -6,7 +6,11 @@ import eu.joaocosta.minart.backend.defaults.DefaultBackend
   * In general, it is preferable to handle platform-specific code at compile
   * time, but this can be helpful for small changes.
   */
-sealed trait Platform
+enum Platform {
+  case JVM
+  case JS
+  case Native
+}
 
 object Platform {
 
@@ -16,8 +20,4 @@ object Platform {
     */
   def apply()(implicit d: DefaultBackend[Any, Platform]): Platform =
     d.defaultValue(())
-
-  case object JVM    extends Platform
-  case object JS     extends Platform
-  case object Native extends Platform
 }

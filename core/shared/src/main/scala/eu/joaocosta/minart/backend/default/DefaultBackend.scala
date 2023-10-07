@@ -11,7 +11,7 @@ import scala.annotation.implicitNotFound
 )
 trait DefaultBackend[-A, +B] {
   def defaultValue(params: A): B
-  def defaultValue()(implicit ev: Any <:< A): B = defaultValue(ev(()))
+  final def defaultValue()(implicit ev: Any <:< A): B = defaultValue(ev(()))
 }
 
 object DefaultBackend {

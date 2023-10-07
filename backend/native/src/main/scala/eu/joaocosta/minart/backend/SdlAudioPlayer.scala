@@ -12,7 +12,7 @@ import sdl2.enumerations.SDL_InitFlag._
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.runtime._
 
-class SdlAudioPlayer() extends LowLevelAudioPlayer {
+final class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback        = LoopFrequency.hz15.millis
   private var device: SDL_AudioDeviceID = _
 

@@ -8,14 +8,13 @@ import scala.jdk.CollectionConverters._
   */
 sealed trait AudioQueue {
   def isEmpty(): Boolean
-  def nonEmpty(): Boolean = !isEmpty()
+  final def nonEmpty(): Boolean = !isEmpty()
   def size: Int
 
   def enqueue(clip: AudioClip): this.type
   def dequeue(): Double
-  def dequeueByte(): Byte = {
+  final def dequeueByte(): Byte =
     (Math.min(Math.max(-1.0, dequeue()), 1.0) * 127).toByte
-  }
   def clear(): this.type
 }
 
@@ -23,7 +22,7 @@ object AudioQueue {
 
   private val maxBufferSize: Double = 10.0
 
-  class SingleChannelAudioQueue(sampleRate: Int) extends AudioQueue {
+  final class SingleChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val valueQueue = scala.collection.mutable.Queue[Double]()
     private val clipQueue  = new java.util.ArrayDeque[AudioClip]() // Use scala's ArrayDeque on 2.13+
 
@@ -65,7 +64,7 @@ object AudioQueue {
     }
   }
 
-  class MultiChannelAudioQueue(sampleRate: Int) extends AudioQueue {
+  final class MultiChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val channels = scala.collection.mutable.Map[Int, AudioQueue]()
 
     def isEmpty()              = channels.values.forall(_.isEmpty())

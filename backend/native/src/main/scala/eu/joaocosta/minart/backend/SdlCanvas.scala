@@ -15,7 +15,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in a SDL Window.
   */
-class SdlCanvas() extends SurfaceBackedCanvas {
+final class SdlCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 

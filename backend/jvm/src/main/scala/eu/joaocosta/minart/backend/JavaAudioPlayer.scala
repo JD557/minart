@@ -7,7 +7,7 @@ import scala.concurrent._
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.runtime._
 
-class JavaAudioPlayer() extends LowLevelAudioPlayer {
+final class JavaAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback             = LoopFrequency.hz15.millis
   private var sourceDataLine: SourceDataLine = _
 

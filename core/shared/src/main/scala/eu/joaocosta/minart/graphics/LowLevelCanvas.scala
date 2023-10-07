@@ -12,7 +12,7 @@ trait LowLevelCanvas extends Canvas with LowLevelSubsystem.Extended[Canvas.Setti
 
   /** The settings applied to this canvas.
     */
-  def canvasSettings: Canvas.Settings = settings
+  final def canvasSettings: Canvas.Settings = settings
 }
 
 object LowLevelCanvas {
@@ -26,7 +26,7 @@ object LowLevelCanvas {
 
   /** Internal data structure containing canvas settings and precomputed values.
     */
-  case class ExtendedSettings(
+  final case class ExtendedSettings(
       settings: Canvas.Settings,
       windowWidth: Int,
       windowHeight: Int

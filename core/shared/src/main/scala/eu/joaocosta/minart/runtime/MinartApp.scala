@@ -6,7 +6,7 @@ trait MinartApp[State, Subsystem] {
   def loopRunner: LoopRunner
   def appLoop: AppLoop[State, Subsystem]
 
-  def main(args: Array[String]): Unit = {
+  final def main(args: Array[String]): Unit = {
     appLoop
       .run(
         loopRunner,

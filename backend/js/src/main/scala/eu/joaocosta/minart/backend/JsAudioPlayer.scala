@@ -5,7 +5,7 @@ import org.scalajs.dom._
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.runtime._
 
-class JsAudioPlayer() extends LowLevelAudioPlayer {
+final class JsAudioPlayer() extends LowLevelAudioPlayer {
   private lazy val audioCtx      = new AudioContext();
   private val preemptiveCallback = LoopFrequency.hz15.millis
 

@@ -20,7 +20,7 @@ import eu.joaocosta.minart.input._
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
-class AwtCanvas() extends SurfaceBackedCanvas {
+final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 
@@ -154,7 +154,7 @@ object AwtCanvas {
     });
   }
 
-  private class KeyListener extends JavaKeyListener {
+  private final class KeyListener extends JavaKeyListener {
     private[this] var state = KeyboardInput.empty
 
     def keyPressed(ev: KeyEvent): Unit = synchronized {
@@ -172,7 +172,7 @@ object AwtCanvas {
     }
   }
 
-  private class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
+  private final class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
     @volatile private[this] var state = PointerInput.empty
 
     def getMousePos(): Option[PointerInput.Position] = {
