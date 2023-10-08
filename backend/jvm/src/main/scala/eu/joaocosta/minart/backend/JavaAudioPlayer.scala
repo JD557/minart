@@ -1,11 +1,11 @@
 package eu.joaocosta.minart.backend
 
-import javax.sound.sampled._
+import javax.sound.sampled.*
 
-import scala.concurrent._
+import scala.concurrent.*
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.runtime.*
 
 final class JavaAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback             = LoopFrequency.hz15.millis

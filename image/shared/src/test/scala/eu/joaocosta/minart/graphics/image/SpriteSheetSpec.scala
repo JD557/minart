@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image
 
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.*
 
 class SpriteSheetSpec extends munit.FunSuite {
   val surface = new RamSurface(

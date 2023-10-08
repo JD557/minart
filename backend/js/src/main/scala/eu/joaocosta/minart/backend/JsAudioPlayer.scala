@@ -1,9 +1,9 @@
 package eu.joaocosta.minart.backend
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.runtime.*
 
 final class JsAudioPlayer() extends LowLevelAudioPlayer {
   private lazy val audioCtx      = new AudioContext();

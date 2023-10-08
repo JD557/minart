@@ -1,10 +1,10 @@
 package eu.joaocosta.minart.graphics
 
-import scala.scalanative.unsigned._
+import scala.scalanative.unsigned.*
 
-import sdl2.all._
+import sdl2.all.*
 
-import eu.joaocosta.minart.backend._
+import eu.joaocosta.minart.backend.*
 
 class SdlImageSurfaceSpec extends MutableSurfaceTests {
   lazy val surface = new SdlSurface(

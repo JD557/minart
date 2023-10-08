@@ -2,7 +2,7 @@ package eu.joaocosta.minart.runtime
 
 import scala.concurrent.Future
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 
 /** Abstraction that allows to run loops at a certain frequency in a platforrm agnostic way.
   *

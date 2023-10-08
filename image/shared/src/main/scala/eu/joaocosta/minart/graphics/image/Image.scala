@@ -2,7 +2,7 @@ package eu.joaocosta.minart.graphics.image
 
 import scala.util.{Failure, Success, Try}
 
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.runtime.Resource
 
 /** Object containing user-friendly functions to images. */

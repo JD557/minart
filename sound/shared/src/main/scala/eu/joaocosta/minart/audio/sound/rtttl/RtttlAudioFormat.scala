@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio.sound.rtttl
 
-import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.audio.*
 
 /** Audio format RTTTL files.
   */

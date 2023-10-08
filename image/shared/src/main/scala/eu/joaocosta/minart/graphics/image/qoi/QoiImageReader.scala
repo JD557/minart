@@ -2,16 +2,16 @@ package eu.joaocosta.minart.graphics.image.qoi
 
 import java.io.InputStream
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image reader for QOI files.
   */
 trait QoiImageReader extends ImageReader {
-  import QoiImageFormat._
-  import QoiImageReader._
-  import ByteReader._
+  import QoiImageFormat.*
+  import QoiImageReader.*
+  import ByteReader.*
 
   // Binary helpers
   private def wrapAround(b: Int): Int                = b & 0x0ff
@@ -21,7 +21,7 @@ trait QoiImageReader extends ImageReader {
 
   // Op loading
   private val opFromBytes: ParseState[String, Op] = {
-    import Op._
+    import Op.*
     readByte
       .collect(
         { case Some(tag) =>
@@ -54,7 +54,7 @@ trait QoiImageReader extends ImageReader {
 
   // State iteration
   private def nextState(state: QoiState, chunk: Op): QoiState = {
-    import Op._
+    import Op.*
     chunk match {
       case OpRgb(red, green, blue) =>
         val color = QoiColor(red, green, blue, state.previousColor.a)

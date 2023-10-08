@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.backend
 
-import eu.joaocosta.minart.input.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput.*
 
 /** Key mappings for the JavaScript backend.
   */

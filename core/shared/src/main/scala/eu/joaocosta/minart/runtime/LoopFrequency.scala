@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.runtime
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** Definition of a loop iteration frequency.
   *

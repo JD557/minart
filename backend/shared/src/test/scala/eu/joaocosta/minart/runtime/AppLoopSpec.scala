@@ -2,10 +2,10 @@ package eu.joaocosta.minart.runtime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import eu.joaocosta.minart.backend._
+import eu.joaocosta.minart.backend.*
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
 
 class AppLoopSpec extends munit.FunSuite {
 

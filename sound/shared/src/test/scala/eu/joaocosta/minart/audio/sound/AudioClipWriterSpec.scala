@@ -2,7 +2,7 @@ package eu.joaocosta.minart.audio.sound
 
 import eu.joaocosta.minart.audio.Sampler
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 class AudioClipWriterSpec extends munit.FunSuite {
 

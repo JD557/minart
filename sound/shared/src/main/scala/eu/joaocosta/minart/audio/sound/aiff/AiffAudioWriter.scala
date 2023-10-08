@@ -4,9 +4,9 @@ import java.io.OutputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio writer for AIFF files.
   *
@@ -16,9 +16,9 @@ trait AiffAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
   private val chunkSize = 128
   require(Set(8, 16, 32).contains(bitRate))
 
-  import AiffAudioWriter._
-  import ByteWriter._
-  import ByteFloatOps._
+  import AiffAudioWriter.*
+  import ByteWriter.*
+  import ByteFloatOps.*
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>
@@ -91,7 +91,7 @@ trait AiffAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
 
 object AiffAudioWriter {
   private object ByteFloatOps {
-    import ByteWriter._
+    import ByteWriter.*
 
     def writeExtended(x: Double): ByteStreamState[String] = {
       val (sign, absX) = if (x < 0) (0x8000, -x) else (0, x)

@@ -1,16 +1,16 @@
 package eu.joaocosta.minart.backend
 
-import scala.concurrent._
+import scala.concurrent.*
 import scala.scalanative.runtime.ByteArray
-import scala.scalanative.unsafe._
-import scala.scalanative.unsigned._
+import scala.scalanative.unsafe.*
+import scala.scalanative.unsigned.*
 
-import sdl2.all._
-import sdl2.enumerations.SDL_AudioFormat._
-import sdl2.enumerations.SDL_InitFlag._
+import sdl2.all.*
+import sdl2.enumerations.SDL_AudioFormat.*
+import sdl2.enumerations.SDL_InitFlag.*
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.runtime.*
 
 final class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback        = LoopFrequency.hz15.millis

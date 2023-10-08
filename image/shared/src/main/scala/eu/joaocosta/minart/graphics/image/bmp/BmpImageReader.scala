@@ -4,16 +4,16 @@ import java.io.InputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image reader for BMP files.
   *
   * Supports uncompressed 24/32bit Windows BMPs.
   */
 trait BmpImageReader extends ImageReader {
-  import ByteReader._
+  import ByteReader.*
 
   private val loadRgbPixel: ParseState[String, Color] =
     readRawBytes(3)

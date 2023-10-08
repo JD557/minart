@@ -1,9 +1,9 @@
 package eu.joaocosta.minart.backend
 
 import scala.annotation.tailrec
-import scala.concurrent._
+import scala.concurrent.*
 
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the Java platform.
   */

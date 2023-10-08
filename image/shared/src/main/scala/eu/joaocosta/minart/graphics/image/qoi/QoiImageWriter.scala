@@ -4,14 +4,14 @@ import java.io.OutputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image writer for QOI files.
   */
 trait QoiImageWriter extends ImageWriter {
-  import ByteWriter._
+  import ByteWriter.*
 
   private def storeHeader(surface: Surface): ByteStreamState[String] = {
     (for {

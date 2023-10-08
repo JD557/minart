@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.backend
 
-import scala.scalajs.js.typedarray._
+import scala.scalajs.js.typedarray.*
 
 import org.scalajs.dom.ImageData
 

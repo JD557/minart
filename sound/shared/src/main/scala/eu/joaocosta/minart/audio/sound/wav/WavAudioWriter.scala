@@ -4,9 +4,9 @@ import java.io.OutputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio writer for WAV files.
   *
@@ -16,7 +16,7 @@ trait WavAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
   final val chunkSize = 128
   require(Set(8, 16, 32).contains(bitRate))
 
-  import ByteWriter._
+  import ByteWriter.*
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>

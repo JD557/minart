@@ -1,9 +1,9 @@
 package eu.joaocosta.minart.backend
 
-import sdl2.all._
-import sdl2.enumerations.SDL_KeyCode._
+import sdl2.all.*
+import sdl2.enumerations.SDL_KeyCode.*
 
-import eu.joaocosta.minart.input.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput.*
 
 /** Key mappings for the Native platform, backed by SDL.
   */

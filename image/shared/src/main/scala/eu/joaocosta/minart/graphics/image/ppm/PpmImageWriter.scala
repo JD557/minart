@@ -4,16 +4,16 @@ import java.io.OutputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image writer for PPM files.
   *
   * Stores data as P6 PPM files with a 8 bit color range.
   */
 trait PpmImageWriter extends ImageWriter {
-  import ByteWriter._
+  import ByteWriter.*
 
   private def storeBinaryRgbPixel(color: Color): ByteStreamState[String] =
     writeBytes(List(color.r, color.g, color.b))

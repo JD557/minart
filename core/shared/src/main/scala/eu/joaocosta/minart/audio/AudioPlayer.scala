@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 
 /** Multi-channel mono audio player.
   *
