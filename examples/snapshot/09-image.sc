@@ -6,9 +6,9 @@
  * The minart-image library and graphics.image package allows one to do just that.
  */
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.runtime.*
 
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 

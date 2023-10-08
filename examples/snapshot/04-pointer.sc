@@ -12,9 +12,9 @@
  * We'll need this to handle our inputs, such as keyboard and mouse.
  */
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
+import eu.joaocosta.minart.runtime.*
 
 /** Note the adition of clearColor here.
   * This is the color of the canvas when nothing is drawn.

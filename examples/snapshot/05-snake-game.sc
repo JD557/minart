@@ -13,9 +13,9 @@
 import scala.util.Random
 
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
+import eu.joaocosta.minart.runtime.*
 
 /*
  * Again, let's define our canvas settings.
