@@ -106,4 +106,10 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
   def stop(channel: Int): Unit = {
     playQueue.clear(channel)
   }
+
+  def getChannelMix(channel: Int): AudioMix =
+    playQueue.getChannelMix(channel)
+
+  def setChannelMix(mix: AudioMix, channel: Int): Unit =
+    playQueue.setChannelMix(mix, channel)
 }
