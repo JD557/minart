@@ -2,9 +2,9 @@ package eu.joaocosta.minart.audio.sound.wav
 
 import java.io.InputStream
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for WAV files.
   *
@@ -12,7 +12,7 @@ import eu.joaocosta.minart.internal._
   */
 trait WavAudioReader extends AudioClipReader {
 
-  import ByteReader._
+  import ByteReader.*
 
   private val readId = readString(4)
 

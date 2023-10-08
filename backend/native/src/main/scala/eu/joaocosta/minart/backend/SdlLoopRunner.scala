@@ -1,14 +1,14 @@
 package eu.joaocosta.minart.backend
 
-import scala.concurrent._
-import scala.scalanative.libc.stdlib._
-import scala.scalanative.unsafe._
-import scala.scalanative.unsigned._
+import scala.concurrent.*
+import scala.scalanative.libc.stdlib.*
+import scala.scalanative.unsafe.*
+import scala.scalanative.unsigned.*
 
-import sdl2.all._
-import sdl2.enumerations.SDL_EventType._
+import sdl2.all.*
+import sdl2.enumerations.SDL_EventType.*
 
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the native backend, backed by SDL.
   */

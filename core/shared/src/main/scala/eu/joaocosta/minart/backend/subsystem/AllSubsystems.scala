@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.backend.subsystem
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.graphics.*
 
 /** Internal object with an intersection of all subsystems.
   */

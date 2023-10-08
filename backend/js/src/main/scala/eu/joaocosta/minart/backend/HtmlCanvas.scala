@@ -3,11 +3,11 @@ package eu.joaocosta.minart.backend
 import scala.scalajs.js
 
 import org.scalajs.dom
-import org.scalajs.dom.html.{Canvas => JsCanvas}
+import org.scalajs.dom.html.{Canvas as JsCanvas}
 import org.scalajs.dom.{Event, KeyboardEvent, PointerEvent}
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */

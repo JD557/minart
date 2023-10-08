@@ -5,9 +5,9 @@
   * Here's how to do it.
   */
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.input.KeyboardInput.Key
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 /** Let's define some settings.
   * Note that one of those will actually go fullScreen.

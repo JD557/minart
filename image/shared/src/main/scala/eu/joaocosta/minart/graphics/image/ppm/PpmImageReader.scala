@@ -4,18 +4,18 @@ import java.io.InputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image reader for PGM/PPM files.
   *
   * Supports P2, P3, P5 and P6 PGM/PPM files with a 8 bit color range.
   */
 trait PpmImageReader extends ImageReader {
-  import PpmImageReader._
-  import ByteReader._
-  import ByteStringOps._
+  import PpmImageReader.*
+  import ByteReader.*
+  import ByteStringOps.*
 
   // P2
   private val loadStringGrayscalePixel: ParseState[String, Color] =
@@ -127,7 +127,7 @@ trait PpmImageReader extends ImageReader {
 
 object PpmImageReader {
   private object ByteStringOps {
-    import ByteReader._
+    import ByteReader.*
     private val space   = ' '.toInt
     private val newLine = '\n'.toInt
     private val comment = '#'.toInt

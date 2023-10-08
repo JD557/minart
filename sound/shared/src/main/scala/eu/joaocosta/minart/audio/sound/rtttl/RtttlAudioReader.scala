@@ -2,18 +2,18 @@ package eu.joaocosta.minart.audio.sound.rtttl
 
 import java.io.InputStream
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for RTTTL files.
   */
 trait RtttlAudioReader extends AudioClipReader {
 
   val oscilator: Oscillator
-  import RtttlAudioReader._
-  import ByteReader._
-  import ByteStringOps._
+  import RtttlAudioReader.*
+  import ByteReader.*
+  import ByteStringOps.*
 
   private def parseHeader(jintu: String, defaultValue: String): Either[String, Header] = {
     val defaultSection = defaultValue.split(",").map(_.split("="))
@@ -91,7 +91,7 @@ trait RtttlAudioReader extends AudioClipReader {
       defaults <- readNextSection
       header   <- State.fromEither(parseHeader(jintu, defaults))
       data     <- readNextSection
-      notes = data.split(",").map(parseData(header) _)
+      notes = data.split(",").map(parseData(header))
       clip <- State.fromEither(sequenceNotes(notes))
     } yield clip).run(bytes).map(_._2)
   }
@@ -108,7 +108,7 @@ object RtttlAudioReader {
   }
 
   private object ByteStringOps {
-    import ByteReader._
+    import ByteReader.*
     private val separator = ':'.toInt
 
     val readNextSection: ParseState[String, String] =

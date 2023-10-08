@@ -1,10 +1,10 @@
 package eu.joaocosta.minart.backend
 
-import scala.scalanative.unsafe._
-import scala.scalanative.unsigned._
+import scala.scalanative.unsafe.*
+import scala.scalanative.unsigned.*
 
-import sdl2.all._
-import sdl2.enumerations.SDL_BlendMode._
+import sdl2.all.*
+import sdl2.enumerations.SDL_BlendMode.*
 
 import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
 

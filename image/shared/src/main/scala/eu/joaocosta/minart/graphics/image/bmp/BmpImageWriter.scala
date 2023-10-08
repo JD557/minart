@@ -4,16 +4,16 @@ import java.io.OutputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image writer for BMP files.
   *
   * Stores data as uncompressed 24bit Windows BMPs.
   */
 trait BmpImageWriter extends ImageWriter {
-  import ByteWriter._
+  import ByteWriter.*
 
   private def storeBgrPixel(color: Color): ByteStreamState[String] =
     writeBytes(List(color.b, color.g, color.r))

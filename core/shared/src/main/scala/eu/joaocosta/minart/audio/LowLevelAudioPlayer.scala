@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 import eu.joaocosta.minart.backend.subsystem.LowLevelSubsystem
 
 /** A low-level version of a audio player with init and close methods.

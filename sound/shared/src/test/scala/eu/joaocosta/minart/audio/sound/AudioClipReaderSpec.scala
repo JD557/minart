@@ -1,8 +1,8 @@
 package eu.joaocosta.minart.audio.sound
 
-import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.backend.defaults.given
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 class AudioClipReaderSpec extends munit.FunSuite {
 

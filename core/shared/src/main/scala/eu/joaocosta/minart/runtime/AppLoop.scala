@@ -2,11 +2,11 @@ package eu.joaocosta.minart.runtime
 
 import scala.concurrent.Future
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.backend.subsystem._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.backend.defaults.*
+import eu.joaocosta.minart.backend.subsystem.*
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.runtime.*
 
 /** App loop that keeps an internal state that is passed to every iteration.
   */

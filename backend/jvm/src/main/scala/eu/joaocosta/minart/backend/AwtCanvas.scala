@@ -2,21 +2,21 @@ package eu.joaocosta.minart.backend
 
 import java.awt.event.{
   KeyEvent,
-  KeyListener => JavaKeyListener,
+  KeyListener as JavaKeyListener,
   MouseEvent,
-  MouseListener => JavaMouseListener,
+  MouseListener as JavaMouseListener,
   WindowAdapter,
   WindowEvent
 }
 import java.awt.image.BufferedImage
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
+import java.awt.{Canvas as JavaCanvas, Color as JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
 import javax.swing.{JFrame, WindowConstants}
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */

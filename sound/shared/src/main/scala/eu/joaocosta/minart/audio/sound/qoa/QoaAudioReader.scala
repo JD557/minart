@@ -4,9 +4,9 @@ import java.io.InputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for QOA files.
   *
@@ -14,7 +14,7 @@ import eu.joaocosta.minart.internal._
   */
 trait QoaAudioReader extends AudioClipReader {
 
-  import ByteReader._
+  import ByteReader.*
 
   @tailrec
   private def extractResiduals(res: Long, acc: List[Int] = Nil): List[Int] =

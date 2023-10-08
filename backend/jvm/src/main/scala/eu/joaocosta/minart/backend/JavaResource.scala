@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import java.io.{BufferedInputStream, File, FileInputStream, FileOutputStream, InputStream, OutputStream}
 
-import scala.concurrent._
+import scala.concurrent.*
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 

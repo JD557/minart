@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import java.awt.event.KeyEvent
 
-import eu.joaocosta.minart.input.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput.*
 
 /** Key mappings for the Java platform, backed by AWT.
   */

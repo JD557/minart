@@ -1,17 +1,17 @@
 package eu.joaocosta.minart.backend
 
-import scala.scalanative.unsafe._
-import scala.scalanative.unsigned._
+import scala.scalanative.unsafe.*
+import scala.scalanative.unsigned.*
 
-import sdl2.all._
-import sdl2.enumerations.SDL_BlendMode._
-import sdl2.enumerations.SDL_EventType._
-import sdl2.enumerations.SDL_InitFlag._
-import sdl2.enumerations.SDL_KeyCode._
-import sdl2.enumerations.SDL_WindowFlags._
+import sdl2.all.*
+import sdl2.enumerations.SDL_BlendMode.*
+import sdl2.enumerations.SDL_EventType.*
+import sdl2.enumerations.SDL_InitFlag.*
+import sdl2.enumerations.SDL_KeyCode.*
+import sdl2.enumerations.SDL_WindowFlags.*
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in a SDL Window.
   */

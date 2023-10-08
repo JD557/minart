@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 /** Internal AudioQueue abstraction.
   *

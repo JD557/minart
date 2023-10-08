@@ -2,9 +2,9 @@ package eu.joaocosta.minart.audio.sound.aiff
 
 import java.io.InputStream
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for AIFF files.
   *
@@ -12,9 +12,9 @@ import eu.joaocosta.minart.internal._
   */
 trait AiffAudioReader extends AudioClipReader {
 
-  import AiffAudioReader._
-  import ByteReader._
-  import ByteFloatOps._
+  import AiffAudioReader.*
+  import ByteReader.*
+  import ByteFloatOps.*
 
   private val readId = readString(4)
 
@@ -125,7 +125,7 @@ object AiffAudioReader {
   }
 
   private object ByteFloatOps {
-    import ByteReader._
+    import ByteReader.*
     // Ported from https://github.com/python/cpython/blob/dcb342b5f9d931b030ca310bf3e175bbc54df5aa/Lib/aifc.py#L184-L199
     val readExtended: ParseState[String, Double] = for {
       head <- readBENumber(2)
