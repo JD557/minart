@@ -67,7 +67,7 @@ object AudioPlayer {
     * @param settings settings for this audio player, such as the sample rate and buffer size
     * @return [[AudioPlayer]] using the default backend for the target platform
     */
-  def create(settings: AudioPlayer.Settings)(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
+  def create(settings: AudioPlayer.Settings)(using backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
     LowLevelAudioPlayer.create().init(settings)
 
   final case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)

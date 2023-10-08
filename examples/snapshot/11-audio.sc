@@ -6,7 +6,7 @@
   * Note: This is an experimental API, it might break in a future version
   */
 import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.backend.subsystem._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._

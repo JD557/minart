@@ -12,7 +12,7 @@ import eu.joaocosta.minart.runtime.Resource
   * If that fails, it tries to fetch the data from a file.
   */
 final case class JavaResource(resourcePath: String) extends Resource {
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  given ExecutionContext = ExecutionContext.global
 
   def path = "./" + resourcePath
 

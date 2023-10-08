@@ -8,7 +8,7 @@
   */
 import eu.joaocosta.minart.audio._
 import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.backend.subsystem._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._

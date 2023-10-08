@@ -12,7 +12,7 @@
  */
 import scala.util.Random
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 import eu.joaocosta.minart.runtime._

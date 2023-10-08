@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics.image
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.runtime._
 
 class ImageWriterSpec extends munit.FunSuite {

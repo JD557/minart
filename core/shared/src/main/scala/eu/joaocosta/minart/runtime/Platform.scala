@@ -18,6 +18,6 @@ object Platform {
     * In general, it is preferable to handle platform-specific code at compile
     * time, but this can be helpful for small changes.
     */
-  def apply()(implicit d: DefaultBackend[Any, Platform]): Platform =
+  def apply()(using d: DefaultBackend[Any, Platform]): Platform =
     d.defaultValue(())
 }

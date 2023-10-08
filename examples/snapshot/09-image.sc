@@ -5,7 +5,7 @@
  * It is sometimes convenient to load images from external resources.
  * The minart-image library and graphics.image package allows one to do just that.
  */
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.runtime._
