@@ -24,7 +24,7 @@ trait AppLoop[State, Subsystem] {
 
   /** Runs this app loop usinf the default loop runner and subsystems.
     */
-  final def run()(implicit
+  final def run()(using
       lr: DefaultBackend[Any, LoopRunner],
       ss: DefaultBackend[Any, Subsystem]
   ): Future[State] =
@@ -58,7 +58,7 @@ object AppLoop {
     final def configure(
         initialSettings: Settings,
         frameRate: LoopFrequency
-    )(implicit ev: Unit =:= State): AppLoop[State, Subsystem] = configure(initialSettings, frameRate, ev(()))
+    )(using ev: Unit =:= State): AppLoop[State, Subsystem] = configure(initialSettings, frameRate, ev(()))
   }
 
   /** Creates an app loop that keeps and updates a state on every iteration,

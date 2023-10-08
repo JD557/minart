@@ -15,6 +15,6 @@ object LowLevelAudioPlayer {
     *
     * @return [[LowLevelAudioPlayer]] using the default backend for the target platform
     */
-  def create()(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): LowLevelAudioPlayer =
+  def create()(using backend: DefaultBackend[Any, LowLevelAudioPlayer]): LowLevelAudioPlayer =
     backend.defaultValue()
 }

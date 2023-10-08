@@ -29,7 +29,7 @@ final case class LowLevelAllSubsystems(
 }
 
 object LowLevelAllSubsystems {
-  implicit def defaultLowLevelAllSubsystems(implicit
+  given defaultLowLevelAllSubsystems(using
       c: DefaultBackend[Any, LowLevelCanvas],
       a: DefaultBackend[Any, LowLevelAudioPlayer]
   ): DefaultBackend[Any, LowLevelAllSubsystems] =

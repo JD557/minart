@@ -31,7 +31,7 @@ object SdlLoopRunner extends LoopRunner {
   }
 
   final class NeverLoop[S](operation: S => S, cleanup: () => Unit) {
-    private implicit val ec: ExecutionContext = ExecutionContext.global
+    given ExecutionContext = ExecutionContext.global
     def finiteLoopAux(): Future[Unit] = {
       val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
       Future { SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT }.flatMap { quit =>
@@ -55,7 +55,7 @@ object SdlLoopRunner extends LoopRunner {
       terminateWhen: S => Boolean,
       cleanup: () => Unit
   ) {
-    private implicit val ec: ExecutionContext = ExecutionContext.global
+    given ExecutionContext = ExecutionContext.global
     def run(initialState: S): Future[S] =
       Future(operation(initialState)).flatMap { newState =>
         if (!terminateWhen(newState)) run(newState)
@@ -73,7 +73,7 @@ object SdlLoopRunner extends LoopRunner {
       iterationMillis: Long,
       cleanup: () => Unit
   ) {
-    private implicit val ec: ExecutionContext = ExecutionContext.global
+    given ExecutionContext = ExecutionContext.global
     def finiteLoopAux(state: S, startTime: Long): Future[S] =
       Future {
         val endTime  = SDL_GetTicks().toLong

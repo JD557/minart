@@ -30,7 +30,7 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
     sourceDataLine.close()
   }
 
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  given ExecutionContext = ExecutionContext.global
   private def callback(): Future[Unit] = Future {
     while (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()

@@ -21,7 +21,7 @@ object LowLevelCanvas {
     *
     * @return [[LowLevelCanvas]] using the default backend for the target platform
     */
-  def create()(implicit backend: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
+  def create()(using backend: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
     backend.defaultValue()
 
   /** Internal data structure containing canvas settings and precomputed values.

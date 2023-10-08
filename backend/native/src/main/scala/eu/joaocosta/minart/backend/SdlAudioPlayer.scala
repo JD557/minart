@@ -52,7 +52,7 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
       i = i + 1
     }
   }*/
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  given ExecutionContext = ExecutionContext.global
   private def callback(nextSchedule: Long): Future[Unit] = Future {
     if (playQueue.nonEmpty()) {
       if (
