@@ -67,4 +67,10 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
   def stop(): Unit = playQueue.clear()
 
   def stop(channel: Int): Unit = playQueue.clear(channel)
+
+  def getChannelMix(channel: Int): AudioMix =
+    playQueue.getChannelMix(channel)
+
+  def setChannelMix(mix: AudioMix, channel: Int): Unit =
+    playQueue.setChannelMix(mix, channel)
 }

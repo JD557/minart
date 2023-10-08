@@ -100,6 +100,22 @@ class AudioQueueSpec extends munit.FunSuite {
     assert(queue.isEmpty() == true)
   }
 
+  test("A multi channel audio queue correctly mixes audio with different mixing definitions") {
+    val clipA = AudioClip(x => x / 4.0, 2.0)
+    val clipB = AudioClip(_ => 0.25, 2.0)
+
+    val queue = new AudioQueue.MultiChannelAudioQueue(1)
+
+    queue.enqueue(clipA, 0)
+    queue.enqueue(clipB, 1)
+    queue.setChannelMix(AudioMix(0.5), 1)
+    assert(queue.size == 2)
+    assert(queue.isEmpty() == false)
+    assert(queue.dequeue() == 0.00 + 0.25 * 0.5)
+    assert(queue.dequeue() == 0.25 + 0.25 * 0.5)
+    assert(queue.isEmpty() == true)
+  }
+
   test("A multi channel audio queue correctly clips audio") {
     val clipA = AudioClip(x => (x * 10) - 5, 2.0)
     val clipB = AudioClip(x => (x * 10) - 5, 1.0)

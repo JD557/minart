@@ -58,6 +58,33 @@ trait AudioPlayer {
     *  @param channel channel to stop
     */
   def stop(channel: Int): Unit
+
+  /** Gets the mixing definitions for a channel.
+    *
+    * @param channel channel to check
+    */
+  def getChannelMix(channel: Int): AudioMix
+
+  /** Sets the mixing definitions for a channel.
+    *
+    * @param mix the new mixing definitions
+    * @param channel channel to update
+    */
+  def setChannelMix(mix: AudioMix, channel: Int): Unit
+
+  /** Updates the mixing definitions for a channel based on the current definitions.
+    *
+    * @param f update function
+    * @param channel channel to update
+    * @return the new audio mix
+    */
+  final def updateChannelMix(f: AudioMix => AudioMix, channel: Int): AudioMix = {
+    val currentMix = getChannelMix(channel)
+    val newMix     = f(currentMix)
+    setChannelMix(newMix, channel)
+    newMix
+  }
+
 }
 
 object AudioPlayer {
