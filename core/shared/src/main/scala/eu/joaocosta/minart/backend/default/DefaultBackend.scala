@@ -7,7 +7,7 @@ import scala.annotation.implicitNotFound
   * Ideally, an end user of the library should not need to implement this.
   */
 @implicitNotFound(
-  "Default backend not found.\nIf you want to use the default backends import eu.joaocosta.minart.backend.defaults._ and add the minart-backend dependency."
+  "Default backend not found.\nIf you want to use the default backends import eu.joaocosta.minart.backend.defaults.given and add the minart-backend dependency."
 )
 trait DefaultBackend[-A, +B] {
   def defaultValue(params: A): B

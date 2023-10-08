@@ -3,7 +3,7 @@ package eu.joaocosta.minart.runtime
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import eu.joaocosta.minart.backend._
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.input._
 

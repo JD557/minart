@@ -9,7 +9,7 @@
  * intermediate results.
  * This tutorial will show how to use those
  */
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image._
 import eu.joaocosta.minart.runtime._

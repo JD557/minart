@@ -7,7 +7,7 @@
  * This is where surfaces come in.
  */
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 

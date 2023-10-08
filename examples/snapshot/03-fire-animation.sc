@@ -13,7 +13,7 @@
  * This time we also need to import the runtime. This package contains some helpful methods and objects to handle
  * render loops, such as the LoopFrequency.
  */
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 

@@ -2,7 +2,7 @@ package eu.joaocosta.minart.graphics.image
 
 import scala.util.Try
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.runtime._
 
