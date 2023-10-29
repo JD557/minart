@@ -32,17 +32,21 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
   }
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
-    val _x = Math.max(x, 0)
-    val _y = Math.max(y, 0)
-    val _w = Math.min(w, width - _x)
-    val _h = Math.min(h, height - _y)
-    SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, color.a.toUByte)
-    val rect = stackalloc[SDL_Rect]()
-    (!rect).x = _x
-    (!rect).y = _y
-    (!rect).w = _w
-    (!rect).h = _h
-    SDL_RenderFillRect(renderer, rect)
+    val x1 = Math.max(x, 0)
+    val y1 = Math.max(y, 0)
+    val x2 = Math.min(x + w, width)
+    val y2 = Math.min(y + h, height)
+    if (x1 != x2 && y1 != y2) {
+      val _w = x2 - x1
+      val _h = y2 - y1
+      SDL_SetRenderDrawColor(renderer, color.r.toUByte, color.g.toUByte, color.b.toUByte, color.a.toUByte)
+      val rect = stackalloc[SDL_Rect]()
+      (!rect).x = x1
+      (!rect).y = y1
+      (!rect).w = _w
+      (!rect).h = _h
+      SDL_RenderFillRect(renderer, rect)
+    }
   }
 
   override def blit(
