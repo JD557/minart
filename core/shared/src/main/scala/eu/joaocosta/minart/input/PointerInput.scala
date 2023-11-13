@@ -21,9 +21,12 @@ final case class PointerInput(
     pos
   }.toList
 
-  /** Points where the pointer was released */
-  lazy val pointsReleased: List[PointerInput.Position] = events.collect { case PointerInput.Event.Released(pos) =>
-    pos
+  /** Points where the pointer was released.
+    *  A value is None if the release happened off-screen.
+    */
+  lazy val pointsReleased: List[Option[PointerInput.Position]] = events.collect {
+    case PointerInput.Event.Released(pos) =>
+      pos
   }.toList
 
   /** Check if the mouse button is currently pressed */
@@ -49,11 +52,7 @@ final case class PointerInput(
 
   /** Returns a new state where the pointer has been released. */
   def release: PointerInput =
-    position
-      .map { pos =>
-        pushEvent(PointerInput.Event.Released(pos)).copy(pressedOn = None)
-      }
-      .getOrElse(this)
+    pushEvent(PointerInput.Event.Released(position)).copy(pressedOn = None)
 
   /** Clears the `pointsPressed` and `pointsReleased`. */
   def clearEvents(): PointerInput = copy(events = Queue.empty)
@@ -69,16 +68,15 @@ object PointerInput {
   val maxEvents = 1024
 
   /** Pointer Event */
-  sealed trait Event {
-    def pos: Position
-  }
-  object Event {
+  enum Event {
 
     /** Event representing a pointer press */
-    final case class Pressed(pos: Position) extends Event
+    case Pressed(pos: Position)
 
-    /** Event representing a pointer release */
-    final case class Released(pos: Position) extends Event
+    /** Event representing a pointer release
+      *  If the position is None, then the event happened off-screen
+      */
+    case Released(pos: Option[Position])
   }
 
   /** Position on the screen
