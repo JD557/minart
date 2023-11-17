@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.6.0-M1"
 
 /** Just like images, it can also be convenient to load sound files.
   * The minart-sound project includes some sound formats to get started.

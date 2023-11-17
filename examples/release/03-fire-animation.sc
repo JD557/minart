@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.3"
+//> using lib "eu.joaocosta::minart::0.6.0-M1"
 
 /*
  * In the previous examples we just drew a static image on the screen.
@@ -13,9 +13,9 @@
  * This time we also need to import the runtime. This package contains some helpful methods and objects to handle
  * render loops, such as the LoopFrequency.
  */
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.runtime.*
 
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 

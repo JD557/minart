@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
 
 /** On some occasions, we might need to change our canvas settings.
   * Here's how to do it.
