@@ -2,12 +2,12 @@ package eu.joaocosta.minart.backend
 
 import java.awt.event.KeyEvent
 
-import eu.joaocosta.minart.input.KeyboardInput._
+import eu.joaocosta.minart.input.KeyboardInput.*
 
 /** Key mappings for the Java platform, backed by AWT.
   */
 object AwtKeyMapping extends KeyMapping[Int] {
-  protected final val mappings: Map[Int, Key] = Map(
+  protected val mappings: Map[Int, Key] = Map(
     KeyEvent.VK_A          -> Key.A,
     KeyEvent.VK_B          -> Key.B,
     KeyEvent.VK_C          -> Key.C,

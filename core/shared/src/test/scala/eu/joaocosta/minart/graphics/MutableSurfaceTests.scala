@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import verify._
-
-trait MutableSurfaceTests extends BasicTestSuite {
+trait MutableSurfaceTests extends munit.FunSuite {
 
   def surface: MutableSurface
 
@@ -51,7 +49,11 @@ trait MutableSurfaceTests extends BasicTestSuite {
     assert(surface.getPixel(1, 0) == Some(Color(3, 2, 1)))
     assert(surface.getPixel(1, 1) == Some(Color(2, 2, 2)))
 
+    // offscreen, do nothing
     surface.fillRegion(-100, -100, 100, 100, Color(0, 0, 0))
+    assert(surface.getPixel(0, 0) == Some(Color(1, 1, 1)))
+
+    surface.fillRegion(-100, -100, 200, 200, Color(0, 0, 0))
     assert(surface.getPixel(0, 0) == Some(Color(0, 0, 0)))
   }
 

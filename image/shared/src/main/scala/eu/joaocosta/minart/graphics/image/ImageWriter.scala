@@ -4,7 +4,7 @@ import java.io.{ByteArrayOutputStream, OutputStream}
 
 import scala.util.Try
 
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.runtime.Resource
 
 /** Image writer with a low-level implementation on how to store an image.

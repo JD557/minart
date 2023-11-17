@@ -1,18 +1,11 @@
 package eu.joaocosta.minart.graphics.image.qoi
 
-import eu.joaocosta.minart.internal._
-
 /** Image format for QOI files.
   */
-final class QoiImageFormat[R, W](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W])
-    extends QoiImageReader[R]
-    with QoiImageWriter[W]
+final class QoiImageFormat() extends QoiImageReader with QoiImageWriter
 
 object QoiImageFormat {
-  val defaultFormat = new QoiImageFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
-    ByteReader.InputStreamByteReader,
-    ByteWriter.IteratorByteWriter
-  )
+  val defaultFormat = new QoiImageFormat()
 
   val supportedFormats = Set("qoif")
 }

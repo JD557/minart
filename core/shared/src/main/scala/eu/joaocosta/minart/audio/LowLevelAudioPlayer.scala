@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 import eu.joaocosta.minart.backend.subsystem.LowLevelSubsystem
 
 /** A low-level version of a audio player with init and close methods.
@@ -15,6 +15,6 @@ object LowLevelAudioPlayer {
     *
     * @return [[LowLevelAudioPlayer]] using the default backend for the target platform
     */
-  def create()(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): LowLevelAudioPlayer =
+  def create()(using backend: DefaultBackend[Any, LowLevelAudioPlayer]): LowLevelAudioPlayer =
     backend.defaultValue()
 }

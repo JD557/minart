@@ -1,11 +1,11 @@
 package eu.joaocosta.minart.backend
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.runtime.*
 
-class JsAudioPlayer() extends LowLevelAudioPlayer {
+final class JsAudioPlayer() extends LowLevelAudioPlayer {
   private lazy val audioCtx      = new AudioContext();
   private val preemptiveCallback = LoopFrequency.hz15.millis
 
@@ -62,4 +62,10 @@ class JsAudioPlayer() extends LowLevelAudioPlayer {
   def stop(): Unit = playQueue.clear()
 
   def stop(channel: Int): Unit = playQueue.clear(channel)
+
+  def getChannelMix(channel: Int): AudioMix =
+    playQueue.getChannelMix(channel)
+
+  def setChannelMix(mix: AudioMix, channel: Int): Unit =
+    playQueue.setChannelMix(mix, channel)
 }

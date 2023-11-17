@@ -4,7 +4,7 @@ import java.io.{ByteArrayInputStream, InputStream}
 
 import scala.util.Try
 
-import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.runtime.Resource
 
 /** Audio Clip reader with a low-level implementation on how to load an audio clip.

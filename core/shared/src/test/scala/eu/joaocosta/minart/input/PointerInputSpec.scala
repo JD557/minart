@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.input
 
-import verify._
-
-object PointerInputSpec extends BasicTestSuite {
+class PointerInputSpec extends munit.FunSuite {
 
   test("Correctly captures pointer presses and releases") {
     val input = PointerInput.empty

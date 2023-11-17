@@ -7,7 +7,7 @@ package eu.joaocosta.minart.audio
 trait AudioWave extends (Double => Double) { outer =>
 
   /** Returns the amplitude at time t. */
-  def apply(t: Double): Double = getAmplitude(t)
+  final def apply(t: Double): Double = getAmplitude(t)
 
   /** Returns the amplitude at time t. */
   def getAmplitude(t: Double): Double

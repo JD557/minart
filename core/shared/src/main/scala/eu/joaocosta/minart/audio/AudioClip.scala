@@ -151,5 +151,5 @@ object AudioClip {
   }
 
   private def clamp(minValue: Double, value: Double, maxValue: Double): Double =
-    Math.max(0, Math.min(value, maxValue))
+    Math.max(minValue, Math.min(value, maxValue))
 }

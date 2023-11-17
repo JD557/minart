@@ -6,7 +6,7 @@ title: Project structure
 
 ## `eu.joaocosta.minart.runtime`
 
-This package contains the default minart runtime that allow the code to run on all platforms without changes.
+This package contains the default Minart runtime that allow the code to run on all platforms without changes.
 If you plan to use another runtime (e.g. Tyrian or Cats Effect) you'll probably won't need anything from here.
 
 The `AppLoop`/`LoopRunner` abstractions allows to write loops that run with a certain `LoopFrequency`.

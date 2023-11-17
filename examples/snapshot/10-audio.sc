@@ -5,11 +5,12 @@
   *
   * Note: This is an experimental API, it might break in a future version
   */
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.runtime._
-import eu.joaocosta.minart.input._
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.backend.subsystem.*
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
+import eu.joaocosta.minart.runtime.*
 
 /** First, let's define a simple song
   */
@@ -44,18 +45,19 @@ object Audio {
 
 // Here we use `statelessAppLoop` so that we get an object with a `canvas` and an `audioPlayer`
 AppLoop
-  .statelessAppLoop((system: Canvas with AudioPlayer) => {
+  .statelessAppLoop((system: CanvasSubsystem with AudioPlayerSubsystem) => {
+    import system._
     // When someone presses "Space", we send our sound wave to the queue
-    if (system.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
-      system.play(Audio.testSample)
+    if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
+      audioPlayer.play(Audio.testSample)
     // When someone presses "Backspace", we stop the audio player
-    if (system.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
-      system.stop()
-    system.clear()
+    if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
+      audioPlayer.stop()
+    canvas.clear()
     // Paint green when nothing is playing and red otherwise
-    if (!system.isPlaying()) system.fill(Color(0, 128, 0))
-    else system.fill(Color(128, 0, 0))
-    system.redraw()
+    if (!audioPlayer.isPlaying()) canvas.fill(Color(0, 128, 0))
+    else canvas.fill(Color(128, 0, 0))
+    canvas.redraw()
   })
   .configure((Canvas.Settings(width = 128, height = 128), AudioPlayer.Settings()), LoopFrequency.hz60)
   .run()

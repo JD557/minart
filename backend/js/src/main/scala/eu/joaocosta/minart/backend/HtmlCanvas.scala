@@ -3,22 +3,22 @@ package eu.joaocosta.minart.backend
 import scala.scalajs.js
 
 import org.scalajs.dom
-import org.scalajs.dom.html.{Canvas => JsCanvas}
+import org.scalajs.dom.html.{Canvas as JsCanvas}
 import org.scalajs.dom.{Event, KeyboardEvent, PointerEvent}
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in an HTML Canvas element.
   */
-class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBackedCanvas {
+final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBackedCanvas {
   // Rendering resources
 
   private[this] var containerDiv: dom.HTMLDivElement  = _
   private[this] var jsCanvas: JsCanvas                = _
   private[this] var ctx: dom.CanvasRenderingContext2D = _
   private[this] var childNode: dom.Node               = _
-  protected var surface: ImageDataSurface             = _
+  protected var surface: ImageDataOpaqueSurface       = _
 
   // Input resources
 
@@ -109,7 +109,7 @@ class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBac
       if (newSettings.fullScreen)
         s"display:flex;justify-content:center;align-items:center;background:$clearColorStr;"
       else ""
-    surface = new ImageDataSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
+    surface = new ImageDataOpaqueSurface(ctx.getImageData(0, 0, newSettings.width, newSettings.height))
 
     if (oldSettings.fullScreen != newSettings.fullScreen) {
       if (newSettings.fullScreen) {
