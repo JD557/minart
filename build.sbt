@@ -3,12 +3,11 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 name := "minart"
 
-ThisBuild / organization       := "eu.joaocosta"
-ThisBuild / publishTo          := sonatypePublishToBundle.value
-ThisBuild / scalaVersion       := "3.3.1"
-ThisBuild / crossScalaVersions := Seq("2.12.18", "2.13.12", "3.3.1")
-ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
-ThisBuild / homepage           := Some(url("https://github.com/JD557/minart"))
+ThisBuild / organization := "eu.joaocosta"
+ThisBuild / publishTo    := sonatypePublishToBundle.value
+ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / homepage     := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
     url("https://github.com/JD557/minart"),
@@ -19,10 +18,19 @@ ThisBuild / versionScheme := Some("semver-spec")
 
 ThisBuild / autoAPIMappings := true
 ThisBuild / scalacOptions ++= Seq(
+  "-encoding",
+  "utf8",
   "-deprecation",
   "-feature",
+  "-unchecked",
   "-language:higherKinds",
-  "-unchecked"
+  "-Wunused:implicits",
+  "-Wunused:explicits",
+  "-Wunused:imports",
+  "-Wunused:locals",
+  "-Wunused:params",
+  "-Wunused:privates",
+  //"-Xfatal-warnings"
 )
 ThisBuild / scalafmtOnCompile := true
 ThisBuild / semanticdbEnabled := true
@@ -30,39 +38,27 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 
 val siteSettings = Seq(
-  Compile / doc / scalacOptions ++= (
-    if (scalaBinaryVersion.value.startsWith("3"))
-      Seq("-siteroot", "docs")
-    else Seq()
-  )
+  Compile / doc / scalacOptions ++= Seq("-siteroot", "docs")
 )
 
 def docSettings(projectName: String) = Seq(
-  Compile / doc / scalacOptions ++= (
-    if (scalaBinaryVersion.value.startsWith("3"))
-      Seq(
-        "-project",
-        projectName,
-        "-project-version",
-        version.value,
-        "-social-links:" +
-          "github::https://github.com/JD557/Minart"
-      )
-    else Seq()
+  Compile / doc / scalacOptions ++= Seq(
+    "-project",
+    projectName,
+    "-project-version",
+    version.value,
+    "-social-links:" +
+      "github::https://github.com/JD557/Minart"
   )
 )
 
-val sharedSettings = Seq(
-  libraryDependencies ++=
-    Seq("org.scala-lang.modules" %%% "scala-collection-compat" % "2.11.0")
-)
+val sharedSettings = Seq()
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "com.eed3si9n.verify" %%% "verify" % "1.0.0" % Test
+    "org.scalameta" %%% "munit" % "1.0.0-M8" % Test
   ),
-  testFrameworks += new TestFramework("verify.runner.Framework"),
-  Test / scalacOptions ++= Seq("-Yrangepos")
+  testFrameworks += new TestFramework("munit.Framework")
 )
 
 val publishSettings = Seq(
@@ -73,8 +69,7 @@ val publishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-lang.modules" %%% "scala-collection-compat" % "2.11.0",
-    "org.scala-js"           %%% "scalajs-dom"             % "2.8.0"
+    "org.scala-js" %%% "scalajs-dom" % "2.8.0"
   )
 )
 
@@ -97,8 +92,8 @@ lazy val root =
     .settings(publishSettings)
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
-    .dependsOn(core, backend, pure, image, sound)
-    .aggregate(core, backend, pure, image, sound)
+    .dependsOn(core, backend, image, sound)
+    .aggregate(core, backend, image, sound)
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -119,17 +114,6 @@ lazy val backend =
     .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart Backend"))
-    .jsSettings(jsSettings)
-    .nativeSettings(nativeSettings)
-
-lazy val pure =
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
-    .dependsOn(core)
-    .settings(name := "minart-pure")
-    .settings(sharedSettings)
-    .settings(testSettings)
-    .settings(publishSettings)
-    .settings(docSettings("Minart Pure"))
     .jsSettings(jsSettings)
     .nativeSettings(nativeSettings)
 
@@ -167,7 +151,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommandAndRemaining("publishSigned"),
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,

@@ -1,10 +1,8 @@
 package eu.joaocosta.minart.graphics.image
 
-import verify._
+import eu.joaocosta.minart.graphics.*
 
-import eu.joaocosta.minart.graphics._
-
-object SpriteSheetSpec extends BasicTestSuite {
+class SpriteSheetSpec extends munit.FunSuite {
   val surface = new RamSurface(
     List(
       List(Color(255, 0, 0), Color(0, 255, 0), Color(0, 0, 255)),

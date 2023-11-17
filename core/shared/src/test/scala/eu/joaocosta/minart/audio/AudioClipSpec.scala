@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import verify._
-
-object AudioClipSpec extends BasicTestSuite {
+class AudioClipSpec extends munit.FunSuite {
 
   test("An audio clip is correctly sampled") {
     val clip = AudioClip(x => x / 2.0, 2.0)

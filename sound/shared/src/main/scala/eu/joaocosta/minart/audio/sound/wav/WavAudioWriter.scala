@@ -4,23 +4,19 @@ import java.io.OutputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio writer for WAV files.
   *
   * http://tiny.systems/software/soundProgrammer/WavFormatDocs.pdf
   */
-trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
-  val byteWriter: ByteWriter[ByteSeq]
-
-  val sampleRate = 44100
-  val chunkSize  = 128
-  def bitRate: Int
+trait WavAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
+  final val chunkSize = 128
   require(Set(8, 16, 32).contains(bitRate))
 
-  import byteWriter._
+  import ByteWriter.*
 
   private def convertSample(x: Double): List[Int] = bitRate match {
     case 8 =>
@@ -52,7 +48,7 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
       _ <- storeData(Sampler.sampleClip(clip, sampleRate).grouped(chunkSize))
     } yield ()
 
-  private def storeFmtChunk(clip: AudioClip): ByteStreamState[String] =
+  private val storeFmtChunk: ByteStreamState[String] =
     for {
       _ <- writeString("fmt ")
       _ <- writeLENumber(16, 4)
@@ -70,10 +66,10 @@ trait WavAudioWriter[ByteSeq] extends AudioClipWriter {
     _ <- writeString("WAVE")
   } yield ()
 
-  def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
+  final def storeClip(clip: AudioClip, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeRiffHeader(clip)
-      _ <- storeFmtChunk(clip)
+      _ <- storeFmtChunk
       _ <- storeDataChunk(clip)
     } yield ()
     toOutputStream(state, os)

@@ -6,22 +6,22 @@ import org.scalajs.dom.ImageData
 
 import eu.joaocosta.minart.graphics.{Color, MutableSurface}
 
-/** A mutable surface backed by an ImageData.
+/** A mutable surface backed by an ImageData that drops the alpha channel when puting pixels.
   *
   *  @param imageData imageData that backs this surface
   */
-final class ImageDataSurface(val data: ImageData) extends MutableSurface {
+final class ImageDataOpaqueSurface(val data: ImageData) extends MutableSurface {
 
   val width: Int         = data.width
   val height: Int        = data.height
   private val dataBuffer = new Int32Array(data.data.buffer)
 
-  def unsafeGetPixel(x: Int, y: Int): Color = Color.fromABGR(dataBuffer(y * width + x))
+  def unsafeGetPixel(x: Int, y: Int): Color = Color.fromBGR(dataBuffer(y * width + x))
 
-  def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y * width + x) = color.abgr
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y * width + x) = color.abgr | 0xff000000
 
   override def fill(color: Color): Unit = {
-    dataBuffer.fill(color.abgr)
+    dataBuffer.fill(color.abgr | 0xff000000)
   }
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
@@ -34,7 +34,7 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
       var _y = y1
       while (_y < y2) {
         val start = _y * width + x1
-        dataBuffer.fill(color.abgr, start, start + _w)
+        dataBuffer.fill(color.abgr | 0xff000000, start, start + _w)
         _y += 1
       }
     }

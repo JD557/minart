@@ -1,17 +1,18 @@
 package eu.joaocosta.minart.backend
 
-import scala.concurrent._
+import scala.concurrent.*
 import scala.scalanative.runtime.ByteArray
-import scala.scalanative.unsafe._
-import scala.scalanative.unsigned._
+import scala.scalanative.unsafe.*
+import scala.scalanative.unsigned.*
 
-import sdl2.Extras._
-import sdl2.SDL._
+import sdl2.all.*
+import sdl2.enumerations.SDL_AudioFormat.*
+import sdl2.enumerations.SDL_InitFlag.*
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.runtime.*
 
-class SdlAudioPlayer() extends LowLevelAudioPlayer {
+final class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback        = LoopFrequency.hz15.millis
   private var device: SDL_AudioDeviceID = _
 
@@ -27,11 +28,11 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
     playQueue = new AudioQueue.MultiChannelAudioQueue(settings.sampleRate)
     val want = stackalloc[SDL_AudioSpec]()
     val have = stackalloc[SDL_AudioSpec]()
-    want.freq = settings.sampleRate
-    want.format = AUDIO_S16LSB
-    want.channels = 1.toUByte
-    want.samples = settings.bufferSize.toUShort
-    want.callback = null // Ideally this should use a SDL callback
+    (!want).freq = settings.sampleRate
+    (!want).format = AUDIO_S16LSB
+    (!want).channels = 1.toUByte
+    (!want).samples = settings.bufferSize.toUShort
+    (!want).callback = SDL_AudioCallback(null) // Ideally this should use a SDL callback
     device = SDL_OpenAudioDevice(null, 0, want, have, 0)
     settings
   }
@@ -51,7 +52,7 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
       i = i + 1
     }
   }*/
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  given ExecutionContext = ExecutionContext.global
   private def callback(nextSchedule: Long): Future[Unit] = Future {
     if (playQueue.nonEmpty()) {
       if (
@@ -105,4 +106,10 @@ class SdlAudioPlayer() extends LowLevelAudioPlayer {
   def stop(channel: Int): Unit = {
     playQueue.clear(channel)
   }
+
+  def getChannelMix(channel: Int): AudioMix =
+    playQueue.getChannelMix(channel)
+
+  def setChannelMix(mix: AudioMix, channel: Int): Unit =
+    playQueue.setChannelMix(mix, channel)
 }

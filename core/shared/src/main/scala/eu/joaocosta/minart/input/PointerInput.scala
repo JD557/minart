@@ -10,7 +10,7 @@ import scala.collection.immutable.Queue
   *               Note that only the most recent `PointerInput.maxEvents` are guaranteed to be present.
   * @param pressedOn if defined, it means the mouse is currently down and was pressed at that position. Otherwise, the mouse is currently up.
   */
-case class PointerInput(
+final case class PointerInput(
     position: Option[PointerInput.Position],
     events: Queue[PointerInput.Event],
     pressedOn: Option[PointerInput.Position]
@@ -21,9 +21,12 @@ case class PointerInput(
     pos
   }.toList
 
-  /** Points where the pointer was released */
-  lazy val pointsReleased: List[PointerInput.Position] = events.collect { case PointerInput.Event.Released(pos) =>
-    pos
+  /** Points where the pointer was released.
+    *  A value is None if the release happened off-screen.
+    */
+  lazy val pointsReleased: List[Option[PointerInput.Position]] = events.collect {
+    case PointerInput.Event.Released(pos) =>
+      pos
   }.toList
 
   /** Check if the mouse button is currently pressed */
@@ -49,11 +52,7 @@ case class PointerInput(
 
   /** Returns a new state where the pointer has been released. */
   def release: PointerInput =
-    position
-      .map { pos =>
-        pushEvent(PointerInput.Event.Released(pos)).copy(pressedOn = None)
-      }
-      .getOrElse(this)
+    pushEvent(PointerInput.Event.Released(position)).copy(pressedOn = None)
 
   /** Clears the `pointsPressed` and `pointsReleased`. */
   def clearEvents(): PointerInput = copy(events = Queue.empty)
@@ -69,16 +68,15 @@ object PointerInput {
   val maxEvents = 1024
 
   /** Pointer Event */
-  sealed trait Event {
-    def pos: Position
-  }
-  object Event {
+  enum Event {
 
     /** Event representing a pointer press */
-    final case class Pressed(pos: Position) extends Event
+    case Pressed(pos: Position)
 
-    /** Event representing a pointer release */
-    final case class Released(pos: Position) extends Event
+    /** Event representing a pointer release
+      *  If the position is None, then the event happened off-screen
+      */
+    case Released(pos: Option[Position])
   }
 
   /** Position on the screen

@@ -2,25 +2,25 @@ package eu.joaocosta.minart.backend
 
 import java.awt.event.{
   KeyEvent,
-  KeyListener => JavaKeyListener,
+  KeyListener as JavaKeyListener,
   MouseEvent,
-  MouseListener => JavaMouseListener,
+  MouseListener as JavaMouseListener,
   WindowAdapter,
   WindowEvent
 }
 import java.awt.image.BufferedImage
-import java.awt.{Canvas => JavaCanvas, Color => JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
+import java.awt.{Canvas as JavaCanvas, Color as JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
 import javax.swing.{JFrame, WindowConstants}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.*
 
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
-class AwtCanvas() extends SurfaceBackedCanvas {
+final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 
@@ -62,7 +62,7 @@ class AwtCanvas() extends SurfaceBackedCanvas {
 
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
-    val image            = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_ARGB)
+    val image            = new BufferedImage(newSettings.width, newSettings.height, BufferedImage.TYPE_INT_RGB)
     surface = new BufferedImageSurface(image)
     if (javaCanvas != null) javaCanvas.frame.dispose()
     javaCanvas = new AwtCanvas.InnerCanvas(
@@ -154,7 +154,7 @@ object AwtCanvas {
     });
   }
 
-  private class KeyListener extends JavaKeyListener {
+  private final class KeyListener extends JavaKeyListener {
     private[this] var state = KeyboardInput.empty
 
     def keyPressed(ev: KeyEvent): Unit = synchronized {
@@ -172,7 +172,7 @@ object AwtCanvas {
     }
   }
 
-  private class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
+  private final class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
     @volatile private[this] var state = PointerInput.empty
 
     def getMousePos(): Option[PointerInput.Position] = {

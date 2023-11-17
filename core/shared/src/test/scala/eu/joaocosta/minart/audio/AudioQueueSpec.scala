@@ -1,8 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import verify._
-
-object AudioQueueSpec extends BasicTestSuite {
+class AudioQueueSpec extends munit.FunSuite {
 
   test("An empty single channel audio queue returns 0") {
     val queue = new AudioQueue.SingleChannelAudioQueue(1)
@@ -61,7 +59,7 @@ object AudioQueueSpec extends BasicTestSuite {
   }
 
   test("A single channel audio queue can be cleared") {
-    val clip = AudioClip(x => 1.0, 2.0)
+    val clip = AudioClip(_ => 1.0, 2.0)
 
     val queue = new AudioQueue.SingleChannelAudioQueue(2)
 
@@ -74,7 +72,7 @@ object AudioQueueSpec extends BasicTestSuite {
 
   test("A multi channel audio queue correctly mixes audio from two clips with the same duration") {
     val clipA = AudioClip(x => x / 4.0, 2.0)
-    val clipB = AudioClip(x => 0.25, 2.0)
+    val clipB = AudioClip(_ => 0.25, 2.0)
 
     val queue = new AudioQueue.MultiChannelAudioQueue(1)
 
@@ -89,7 +87,7 @@ object AudioQueueSpec extends BasicTestSuite {
 
   test("A multi channel audio queue correctly mixes audio from two clips with different durations") {
     val clipA = AudioClip(x => x / 4.0, 2.0)
-    val clipB = AudioClip(x => 0.25, 1.0)
+    val clipB = AudioClip(_ => 0.25, 1.0)
 
     val queue = new AudioQueue.MultiChannelAudioQueue(1)
 
@@ -99,6 +97,22 @@ object AudioQueueSpec extends BasicTestSuite {
     assert(queue.isEmpty() == false)
     assert(queue.dequeue() == 0.00 + 0.25)
     assert(queue.dequeue() == 0.25)
+    assert(queue.isEmpty() == true)
+  }
+
+  test("A multi channel audio queue correctly mixes audio with different mixing definitions") {
+    val clipA = AudioClip(x => x / 4.0, 2.0)
+    val clipB = AudioClip(_ => 0.25, 2.0)
+
+    val queue = new AudioQueue.MultiChannelAudioQueue(1)
+
+    queue.enqueue(clipA, 0)
+    queue.enqueue(clipB, 1)
+    queue.setChannelMix(AudioMix(0.5), 1)
+    assert(queue.size == 2)
+    assert(queue.isEmpty() == false)
+    assert(queue.dequeue() == 0.00 + 0.25 * 0.5)
+    assert(queue.dequeue() == 0.25 + 0.25 * 0.5)
     assert(queue.isEmpty() == true)
   }
 
@@ -120,7 +134,7 @@ object AudioQueueSpec extends BasicTestSuite {
   }
 
   test("A single channel audio queue can be cleared") {
-    val clip = AudioClip(x => 1.0, 2.0)
+    val clip = AudioClip(_ => 1.0, 2.0)
 
     val queue = new AudioQueue.MultiChannelAudioQueue(2)
 

@@ -1,14 +1,10 @@
 package eu.joaocosta.minart.audio.sound
 
-import scala.util.Try
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.runtime.*
 
-import verify._
-
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.runtime._
-
-object AudioClipReaderSpec extends BasicTestSuite {
+class AudioClipReaderSpec extends munit.FunSuite {
 
   def approx(x: Double, y: Double, epsilon: Double = 0.01): Boolean =
     x >= y - epsilon && x <= y + epsilon

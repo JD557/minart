@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.audio
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 
 /** Multi-channel mono audio player.
   *
@@ -12,7 +12,7 @@ trait AudioPlayer {
     *
     *  @param clip audio clip to play
     */
-  def play(clip: AudioClip): Unit = play(clip, 0)
+  final def play(clip: AudioClip): Unit = play(clip, 0)
 
   /** Enqueues an audio clip to be played later in a certain channel.
     *
@@ -26,15 +26,14 @@ trait AudioPlayer {
     *
     *  @param wave audio wave to play
     */
-  def play(wave: AudioWave): Unit =
-    play(wave, 0)
+  final def play(wave: AudioWave): Unit = play(wave, 0)
 
   /** Enqueues an audio wave to be played later in a certain channel.
     *  The Audio Wave will play infinitely until stop() is called.
     *  @param wave audio wave to play
     *  @param channel channel where to play the audio wave
     */
-  def play(wave: AudioWave, channel: Int): Unit =
+  final def play(wave: AudioWave, channel: Int): Unit =
     play(AudioClip(wave, Double.PositiveInfinity), channel)
 
   /** Checks if this player still has data to be played.
@@ -59,6 +58,33 @@ trait AudioPlayer {
     *  @param channel channel to stop
     */
   def stop(channel: Int): Unit
+
+  /** Gets the mixing definitions for a channel.
+    *
+    * @param channel channel to check
+    */
+  def getChannelMix(channel: Int): AudioMix
+
+  /** Sets the mixing definitions for a channel.
+    *
+    * @param mix the new mixing definitions
+    * @param channel channel to update
+    */
+  def setChannelMix(mix: AudioMix, channel: Int): Unit
+
+  /** Updates the mixing definitions for a channel based on the current definitions.
+    *
+    * @param f update function
+    * @param channel channel to update
+    * @return the new audio mix
+    */
+  final def updateChannelMix(f: AudioMix => AudioMix, channel: Int): AudioMix = {
+    val currentMix = getChannelMix(channel)
+    val newMix     = f(currentMix)
+    setChannelMix(newMix, channel)
+    newMix
+  }
+
 }
 
 object AudioPlayer {
@@ -68,8 +94,8 @@ object AudioPlayer {
     * @param settings settings for this audio player, such as the sample rate and buffer size
     * @return [[AudioPlayer]] using the default backend for the target platform
     */
-  def create(settings: AudioPlayer.Settings)(implicit backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
+  def create(settings: AudioPlayer.Settings)(using backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
     LowLevelAudioPlayer.create().init(settings)
 
-  case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
+  final case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
 }

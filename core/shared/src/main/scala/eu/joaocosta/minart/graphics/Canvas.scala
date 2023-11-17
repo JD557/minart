@@ -1,7 +1,7 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.input._
+import eu.joaocosta.minart.backend.defaults.*
+import eu.joaocosta.minart.input.*
 
 /** Window with a canvas that can be painted.
   *
@@ -24,8 +24,8 @@ trait Canvas extends MutableSurface {
     */
   def changeSettings(newSettings: Canvas.Settings): Unit
 
-  def width: Int  = canvasSettings.width
-  def height: Int = canvasSettings.height
+  final def width: Int  = canvasSettings.width
+  final def height: Int = canvasSettings.height
 
   /** Clears buffers, such as the backbuffer and keyboard inputs.
     *
@@ -56,17 +56,18 @@ object Canvas {
     *
     * @return [[Canvas]] using the default backend for the target platform
     */
-  def create(settings: Canvas.Settings)(implicit backend: DefaultBackend[Any, LowLevelCanvas]): Canvas =
+  def create(settings: Canvas.Settings)(using backend: DefaultBackend[Any, LowLevelCanvas]): Canvas =
     LowLevelCanvas.create().init(settings)
 
   /** A system resource used by the Canvas.
     */
-  sealed trait Buffer
-  object Buffer {
-    case object Backbuffer     extends Buffer
-    case object KeyboardBuffer extends Buffer
-    case object PointerBuffer  extends Buffer
+  enum Buffer {
+    case Backbuffer
+    case KeyboardBuffer
+    case PointerBuffer
+  }
 
+  object Buffer {
     val all: Set[Buffer] = Set(Backbuffer, KeyboardBuffer, PointerBuffer)
   }
 
@@ -79,7 +80,7 @@ object Canvas {
     * @param clearColor The color to be used when the canvas is cleared
     * @param title The title to use if this Canvas needs to create a window
     */
-  case class Settings(
+  final case class Settings(
       width: Int,
       height: Int,
       scale: Option[Int] = None,

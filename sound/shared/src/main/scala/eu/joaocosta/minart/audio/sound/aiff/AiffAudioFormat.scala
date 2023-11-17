@@ -1,18 +1,12 @@
 package eu.joaocosta.minart.audio.sound.aiff
 
-import eu.joaocosta.minart.internal._
-
 /** Audio format AIFF files.
   */
-final class AiffAudioFormat[R, W](val byteReader: ByteReader[R], val byteWriter: ByteWriter[W], val bitRate: Int)
-    extends AiffAudioReader[R]
-    with AiffAudioWriter[W]
+final class AiffAudioFormat(sampleRate: Int, bitRate: Int)
+    extends AiffAudioReader
+    with AiffAudioWriter(sampleRate, bitRate)
 
 object AiffAudioFormat {
   val defaultFormat =
-    new AiffAudioFormat[ByteReader.CustomInputStream, Iterator[Array[Byte]]](
-      ByteReader.InputStreamByteReader,
-      ByteWriter.IteratorByteWriter,
-      16
-    )
+    new AiffAudioFormat(sampleRate = 44100, bitRate = 16)
 }

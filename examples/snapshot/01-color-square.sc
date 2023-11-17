@@ -18,8 +18,8 @@
  *
  * Since we want to work with graphics, we also need to import eu.joaocosta.minart.graphics._
  */
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
 
 /*
  * The Canvas.Settings are the settings of our window.

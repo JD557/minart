@@ -1,10 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import scala.util.Random
-
-import verify._
-
-object ColorSpec extends BasicTestSuite {
+class ColorSpec extends munit.FunSuite {
 
   test("Can be created from RGB values") {
     val colorInt  = Color(110, 120, 130)

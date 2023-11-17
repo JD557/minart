@@ -32,7 +32,7 @@ It also includes **Surface views** and **Planes** which makes it possible to man
 
 Minart has support for multi-channel mono audio playback.
 
-It also includes multiple abstractions, such as oscilators and audio waves, to
+It also includes multiple abstractions, such as oscillators and audio waves, to
 simplify procedural audio generation.
 
 ## Input handling

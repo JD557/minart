@@ -2,22 +2,18 @@ package eu.joaocosta.minart.audio.sound.rtttl
 
 import java.io.InputStream
 
-import scala.collection.compat._
-
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for RTTTL files.
   */
-trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
+trait RtttlAudioReader extends AudioClipReader {
 
-  val byteReader: ByteReader[ByteSeq]
   val oscilator: Oscillator
-  import RtttlAudioReader._
-  private val byteStringOps = new ByteStringOps(byteReader)
-  import byteReader._
-  import byteStringOps._
+  import RtttlAudioReader.*
+  import ByteReader.*
+  import ByteStringOps.*
 
   private def parseHeader(jintu: String, defaultValue: String): Either[String, Header] = {
     val defaultSection = defaultValue.split(",").map(_.split("="))
@@ -88,14 +84,14 @@ trait RtttlAudioReader[ByteSeq] extends AudioClipReader {
       }
   }
 
-  def loadClip(is: InputStream): Either[String, AudioClip] = {
+  final def loadClip(is: InputStream): Either[String, AudioClip] = {
     val bytes = fromInputStream(is)
     (for {
       jintu    <- readNextSection
       defaults <- readNextSection
       header   <- State.fromEither(parseHeader(jintu, defaults))
       data     <- readNextSection
-      notes = data.split(",").map(parseData(header) _)
+      notes = data.split(",").map(parseData(header))
       clip <- State.fromEither(sequenceNotes(notes))
     } yield clip).run(bytes).map(_._2)
   }
@@ -107,12 +103,12 @@ object RtttlAudioReader {
       case None => 0.0
       case Some(n) =>
         val a1 = 55
-        Math.pow(2, (octave - 1) + n / 12.0) * 55
+        Math.pow(2, (octave - 1) + n / 12.0) * a1
     }
   }
 
-  private final class ByteStringOps[ByteSeq](val byteReader: ByteReader[ByteSeq]) {
-    import byteReader._
+  private object ByteStringOps {
+    import ByteReader.*
     private val separator = ':'.toInt
 
     val readNextSection: ParseState[String, String] =
