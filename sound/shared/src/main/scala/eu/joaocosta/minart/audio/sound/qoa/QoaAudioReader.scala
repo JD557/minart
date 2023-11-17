@@ -4,18 +4,17 @@ import java.io.InputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for QOA files.
   *
   * https://qoaformat.org/qoa-specification.pdf
   */
-trait QoaAudioReader[ByteSeq] extends AudioClipReader {
+trait QoaAudioReader extends AudioClipReader {
 
-  val byteReader: ByteReader[ByteSeq]
-  import byteReader._
+  import ByteReader.*
 
   @tailrec
   private def extractResiduals(res: Long, acc: List[Int] = Nil): List[Int] =
@@ -109,7 +108,7 @@ trait QoaAudioReader[ByteSeq] extends AudioClipReader {
     samples <- readBENumber(4).validate(_ > 0, _ => "Streaming QOA files are not supported.")
   } yield samples
 
-  def loadClip(is: InputStream): Either[String, AudioClip] = {
+  final def loadClip(is: InputStream): Either[String, AudioClip] = {
     val bytes = fromInputStream(is)
     (for {
       samples <- loadQoaHeader

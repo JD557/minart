@@ -1,14 +1,14 @@
 package eu.joaocosta.minart.backend
 
-import scala.concurrent._
-import scala.scalanative.libc.stdlib._
-import scala.scalanative.unsafe._
-import scala.scalanative.unsigned._
+import scala.concurrent.*
+import scala.scalanative.libc.stdlib.*
+import scala.scalanative.unsafe.*
+import scala.scalanative.unsigned.*
 
-import sdl2.Extras._
-import sdl2.SDL._
+import sdl2.all.*
+import sdl2.enumerations.SDL_EventType.*
 
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the native backend, backed by SDL.
   */
@@ -31,10 +31,10 @@ object SdlLoopRunner extends LoopRunner {
   }
 
   final class NeverLoop[S](operation: S => S, cleanup: () => Unit) {
-    private implicit val ec: ExecutionContext = ExecutionContext.global
+    given ExecutionContext = ExecutionContext.global
     def finiteLoopAux(): Future[Unit] = {
       val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
-      Future { SDL_WaitEvent(event) == 1 && event.type_ == SDL_QUIT }.flatMap { quit =>
+      Future { SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT }.flatMap { quit =>
         if (quit) {
           free(event.asInstanceOf[Ptr[Byte]])
           Future.successful(())
@@ -55,7 +55,7 @@ object SdlLoopRunner extends LoopRunner {
       terminateWhen: S => Boolean,
       cleanup: () => Unit
   ) {
-    private implicit val ec: ExecutionContext = ExecutionContext.global
+    given ExecutionContext = ExecutionContext.global
     def run(initialState: S): Future[S] =
       Future(operation(initialState)).flatMap { newState =>
         if (!terminateWhen(newState)) run(newState)
@@ -73,7 +73,7 @@ object SdlLoopRunner extends LoopRunner {
       iterationMillis: Long,
       cleanup: () => Unit
   ) {
-    private implicit val ec: ExecutionContext = ExecutionContext.global
+    given ExecutionContext = ExecutionContext.global
     def finiteLoopAux(state: S, startTime: Long): Future[S] =
       Future {
         val endTime  = SDL_GetTicks().toLong

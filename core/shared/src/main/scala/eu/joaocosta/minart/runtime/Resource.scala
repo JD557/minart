@@ -6,7 +6,7 @@ import scala.concurrent.Future
 import scala.io.Source
 import scala.util.{Try, Using}
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 
 /** Resource that can be loaded.
   */
@@ -67,6 +67,6 @@ trait Resource {
 }
 
 object Resource {
-  def apply(resourcePath: String)(implicit backend: DefaultBackend[String, Resource]): Resource =
+  def apply(resourcePath: String)(using backend: DefaultBackend[String, Resource]): Resource =
     backend.defaultValue(resourcePath)
 }

@@ -2,18 +2,17 @@ package eu.joaocosta.minart.audio.sound.wav
 
 import java.io.InputStream
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.audio.sound._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.audio.sound.*
+import eu.joaocosta.minart.internal.*
 
 /** Audio reader for WAV files.
   *
   * http://tiny.systems/software/soundProgrammer/WavFormatDocs.pdf
   */
-trait WavAudioReader[ByteSeq] extends AudioClipReader {
+trait WavAudioReader extends AudioClipReader {
 
-  val byteReader: ByteReader[ByteSeq]
-  import byteReader._
+  import ByteReader.*
 
   private val readId = readString(4)
 
@@ -103,7 +102,7 @@ trait WavAudioReader[ByteSeq] extends AudioClipReader {
     _ <- readString(4).validate(_ == "WAVE", m => s"Unsupported format: $m. Expected WAVE")
   } yield ()
 
-  def loadClip(is: InputStream): Either[String, AudioClip] = {
+  final def loadClip(is: InputStream): Either[String, AudioClip] = {
     val bytes = fromInputStream(is)
     (for {
       _    <- loadRiffHeader

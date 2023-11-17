@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
 
 /*
  * In this next example, we are going to do draw the same colored square, but now in a portable way.
@@ -8,9 +8,9 @@
 /*
  * We start with the same imports and canvas settings
  */
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.runtime.*
 
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 

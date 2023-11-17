@@ -4,17 +4,16 @@ import java.io.InputStream
 
 import scala.annotation.tailrec
 
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.internal._
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.internal.*
 
 /** Image reader for BMP files.
   *
   * Supports uncompressed 24/32bit Windows BMPs.
   */
-trait BmpImageReader[ByteSeq] extends ImageReader {
-  val byteReader: ByteReader[ByteSeq]
-  import byteReader._
+trait BmpImageReader extends ImageReader {
+  import ByteReader.*
 
   private val loadRgbPixel: ParseState[String, Color] =
     readRawBytes(3)
@@ -33,7 +32,7 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
   @tailrec
   private def loadPixelLine(
       loadColor: ParseState[String, Color],
-      data: ByteSeq,
+      data: CustomInputStream,
       remainingPixels: Int,
       padding: Int,
       acc: List[Color] = Nil
@@ -52,7 +51,7 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
   @tailrec
   private def loadPixels(
       loadColor: ParseState[String, Color],
-      data: ByteSeq,
+      data: CustomInputStream,
       remainingLines: Int,
       width: Int,
       padding: Int,
@@ -68,7 +67,7 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
     }
   }
 
-  private def loadHeader(bytes: ByteSeq): ParseResult[Header] = {
+  private def loadHeader(bytes: CustomInputStream): ParseResult[Header] = {
     (for {
       magic <- readString(2).validate(
         BmpImageFormat.supportedFormats,
@@ -97,9 +96,9 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
       )
       loadColorMask = compressionMethod == 3 || compressionMethod == 6
       _         <- if (loadColorMask) skipBytes(20) else noop
-      redMask   <- if (loadColorMask) readLENumber(4) else State.pure[ByteSeq, Int](0x00ff0000)
-      greenMask <- if (loadColorMask) readLENumber(4) else State.pure[ByteSeq, Int](0x0000ff00)
-      blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[ByteSeq, Int](0x000000ff)
+      redMask   <- if (loadColorMask) readLENumber(4) else State.pure[CustomInputStream, Int](0x00ff0000)
+      greenMask <- if (loadColorMask) readLENumber(4) else State.pure[CustomInputStream, Int](0x0000ff00)
+      blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[CustomInputStream, Int](0x000000ff)
       _         <- if (loadColorMask) skipBytes(4) else noop // Skip alpha mask (or color space)
       _ <- State.check(
         redMask == 0x00ff0000 && greenMask == 0x0000ff00 && blueMask == 0x000000ff,
@@ -110,10 +109,9 @@ trait BmpImageReader[ByteSeq] extends ImageReader {
     } yield header).run(bytes)
   }
 
-  def loadImage(is: InputStream): Either[String, RamSurface] = {
+  final def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
-      val numPixels = header.width * header.height
       val pixels = header.bitsPerPixel match {
         case 24 =>
           loadPixels(

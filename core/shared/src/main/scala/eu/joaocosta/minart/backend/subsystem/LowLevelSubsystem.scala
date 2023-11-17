@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.backend.subsystem
 
-import eu.joaocosta.minart.backend.defaults.DefaultBackend
-
 /** A low-level subsystem with init and close operations.
   */
 trait LowLevelSubsystem[Settings] extends AutoCloseable {
@@ -35,13 +33,6 @@ trait LowLevelSubsystem[Settings] extends AutoCloseable {
     * init() has an undefined behavior.
     */
   def close(): Unit
-
-  /** Composes this subsystem with another subsystem
-    */
-  def ++[SettingsB, SubsystemB <: LowLevelSubsystem[SettingsB]](
-      that: SubsystemB
-  ): LowLevelSubsystem.Composite[Settings, SettingsB, this.type, that.type] =
-    LowLevelSubsystem.Composite(this, that)
 }
 
 object LowLevelSubsystem {
@@ -152,41 +143,5 @@ object LowLevelSubsystem {
       _isCreated = false
       _extendedSettings = defaultSettings
     }
-  }
-
-  /** Subsystem that composes two subsystems.
-    *
-    * It is configured via a tuple containing the settings of both subsystems.
-    */
-  case class Composite[SettingsA, SettingsB, +SubsystemA <: LowLevelSubsystem[
-    SettingsA
-  ], +SubsystemB <: LowLevelSubsystem[SettingsB]](
-      subsystemA: SubsystemA,
-      subsystemB: SubsystemB
-  ) extends LowLevelSubsystem[(SettingsA, SettingsB)] {
-    def settings: (SettingsA, SettingsB) = (subsystemA.settings, subsystemB.settings)
-    def isCreated(): Boolean             = subsystemA.isCreated() && subsystemB.isCreated()
-    def init(settings: (SettingsA, SettingsB)): this.type = {
-      subsystemA.init(settings._1)
-      subsystemB.init(settings._2)
-      this
-    }
-    def changeSettings(newSettings: (SettingsA, SettingsB)): Unit = {
-      subsystemA.changeSettings(newSettings._1)
-      subsystemB.changeSettings(newSettings._2)
-    }
-    def close(): Unit = {
-      subsystemA.close()
-      subsystemB.close()
-    }
-  }
-  object Composite {
-    implicit def defaultComposite[SettingsA, SettingsB, SubsystemA <: LowLevelSubsystem[
-      SettingsA
-    ], SubsystemB <: LowLevelSubsystem[SettingsB]](implicit
-        sa: DefaultBackend[Any, SubsystemA],
-        sb: DefaultBackend[Any, SubsystemB]
-    ): DefaultBackend[Any, Composite[SettingsA, SettingsB, SubsystemA, SubsystemB]] =
-      DefaultBackend.fromFunction((_) => sa.defaultValue() ++ sb.defaultValue())
   }
 }

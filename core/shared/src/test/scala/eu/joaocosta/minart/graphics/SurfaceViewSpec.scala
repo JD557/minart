@@ -2,9 +2,7 @@ package eu.joaocosta.minart.graphics
 
 import scala.util.Random
 
-import verify._
-
-object SurfaceViewSpec extends BasicTestSuite {
+class SurfaceViewSpec extends munit.FunSuite {
 
   lazy val surface = new RamSurface(
     Vector.fill(16)(Array.fill(8)(Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255))))

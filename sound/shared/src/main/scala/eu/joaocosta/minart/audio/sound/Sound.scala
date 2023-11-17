@@ -2,7 +2,7 @@ package eu.joaocosta.minart.audio.sound
 
 import scala.util.{Failure, Success, Try}
 
-import eu.joaocosta.minart.audio._
+import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.runtime.Resource
 
 /** Object containing user-friendly functions to audio clips. */

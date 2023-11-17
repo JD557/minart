@@ -1,12 +1,12 @@
 package eu.joaocosta.minart.backend
 
-import scala.concurrent._
+import scala.concurrent.*
 import scala.scalajs.js.{isUndefined, timers}
 import scala.util.Try
 
 import org.scalajs.dom
 
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 /** Loop runner for the JavaScript backend.
   */

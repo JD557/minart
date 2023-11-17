@@ -1,13 +1,13 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
 
 /** On some occasions, we might need to change our canvas settings.
   * Here's how to do it.
   */
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.input.KeyboardInput.Key
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.runtime.*
 
 /** Let's define some settings.
   * Note that one of those will actually go fullScreen.

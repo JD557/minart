@@ -4,7 +4,7 @@ import java.io.{ByteArrayInputStream, InputStream}
 
 import scala.util.Try
 
-import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.runtime.Resource
 
 /** Image reader with a low-level implementation on how to load an image.

@@ -1,13 +1,13 @@
 package eu.joaocosta.minart.backend
 
-import javax.sound.sampled._
+import javax.sound.sampled.*
 
-import scala.concurrent._
+import scala.concurrent.*
 
-import eu.joaocosta.minart.audio._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.audio.*
+import eu.joaocosta.minart.runtime.*
 
-class JavaAudioPlayer() extends LowLevelAudioPlayer {
+final class JavaAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback             = LoopFrequency.hz15.millis
   private var sourceDataLine: SourceDataLine = _
 
@@ -30,7 +30,7 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
     sourceDataLine.close()
   }
 
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  given ExecutionContext = ExecutionContext.global
   private def callback(): Future[Unit] = Future {
     while (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
@@ -67,4 +67,10 @@ class JavaAudioPlayer() extends LowLevelAudioPlayer {
   def stop(): Unit = playQueue.clear()
 
   def stop(channel: Int): Unit = playQueue.clear(channel)
+
+  def getChannelMix(channel: Int): AudioMix =
+    playQueue.getChannelMix(channel)
+
+  def setChannelMix(mix: AudioMix, channel: Int): Unit =
+    playQueue.setChannelMix(mix, channel)
 }

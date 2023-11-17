@@ -2,7 +2,7 @@ package eu.joaocosta.minart.runtime
 
 import scala.concurrent.Future
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 
 /** Abstraction that allows to run loops at a certain frequency in a platforrm agnostic way.
   *
@@ -32,6 +32,6 @@ trait LoopRunner {
 object LoopRunner {
 
   /** Get the default loop runner */
-  def apply()(implicit backend: DefaultBackend[Any, LoopRunner]): LoopRunner =
+  def apply()(using backend: DefaultBackend[Any, LoopRunner]): LoopRunner =
     backend.defaultValue()
 }

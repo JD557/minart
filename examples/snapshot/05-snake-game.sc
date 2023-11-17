@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
 
 /*
  * Now that we learned the basics of animation and input handling, we are almost ready to make a game.
@@ -12,10 +12,10 @@
  */
 import scala.util.Random
 
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.input._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.input.*
+import eu.joaocosta.minart.runtime.*
 
 /*
  * Again, let's define our canvas settings.
@@ -23,9 +23,8 @@ import eu.joaocosta.minart.runtime._
  */
 val canvasSettings = Canvas.Settings(width = 32, height = 32, scale = Some(16), clearColor = Color(0, 0, 0))
 
-/**
- * Then we define our game logic, this is an implementation of the classic snake game.
- */
+/** Then we define our game logic, this is an implementation of the classic snake game.
+  */
 def mod(x: Int, y: Int): Int =
   if (x >= 0) x % y
   else mod(x + y, y)
@@ -33,9 +32,9 @@ def mod(x: Int, y: Int): Int =
 final case class Position(x: Int, y: Int)
 
 enum Direction(val x: Int, val y: Int) {
-  case Up extends Direction(0, -1)
-  case Down extends Direction(0, 1)
-  case Left extends Direction(-1, 0)
+  case Up    extends Direction(0, -1)
+  case Down  extends Direction(0, 1)
+  case Left  extends Direction(-1, 0)
   case Right extends Direction(1, 0)
 }
 
@@ -51,15 +50,15 @@ final case class GameState(
   lazy val boardHeight = board.size
 
   lazy val nextState: GameState = {
-    val newApplePos = 
+    val newApplePos =
       if (applePos == snakeHead) Position(Random.nextInt(boardWidth - 1), Random.nextInt(boardHeight - 1))
       else applePos
     val newSnakeSize =
       if (applePos == snakeHead) snakeSize + 1
       else snakeSize
     val newBoard = board
-        .updated(snakeHead.y, board(snakeHead.y).updated(snakeHead.x, snakeSize))
-        .map(_.map(life => Math.max(0, life - 1)))
+      .updated(snakeHead.y, board(snakeHead.y).updated(snakeHead.x, snakeSize))
+      .map(_.map(life => Math.max(0, life - 1)))
     copy(
       board = newBoard,
       snakeHead = Position(mod(snakeHead.x + snakeDir.x, boardWidth), mod(snakeHead.y + snakeDir.y, boardHeight)),
@@ -92,8 +91,8 @@ val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canv
  * and it returns the next state.
  */
 AppLoop
-  .statefulRenderLoop(
-    (state: GameState) => (canvas: Canvas) => {
+  .statefulRenderLoop((state: GameState) =>
+    (canvas: Canvas) => {
       canvas.clear()
 
       // We draw the snake body
@@ -108,7 +107,7 @@ AppLoop
 
       // Then a nice red apple
       canvas.putPixel(state.applePos.x, state.applePos.y, Color(255, 0, 0))
-      
+
       // Then redraw the canvas
       canvas.redraw()
 
@@ -117,11 +116,11 @@ AppLoop
        */
       if (state.gameOver) initialState
       else state.updateSnakeDir(canvas.getKeyboardInput()).nextState
-    },
+    }
   )
   .configure(
     canvasSettings,
     LoopFrequency.fromHz(15), // 15 FPS
-    initialState // Notice that the configure function now needs an initialState
+    initialState              // Notice that the configure function now needs an initialState
   )
   .run()

@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.4-SNAPSHOT"
+//> using lib "eu.joaocosta::minart::0.6.0-M1"
 
 /*
  * It can be quite cumbersome an ineficient to apply multiple transformations to a surface if we just use the getPixel
@@ -9,10 +9,10 @@
  * intermediate results.
  * This tutorial will show how to use those
  */
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.graphics.image._
-import eu.joaocosta.minart.runtime._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.runtime.*
 
 // First, let's load our example scala logo image
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(0, 0, 0))

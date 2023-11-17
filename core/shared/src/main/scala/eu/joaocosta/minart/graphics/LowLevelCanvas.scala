@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.backend.defaults._
+import eu.joaocosta.minart.backend.defaults.*
 import eu.joaocosta.minart.backend.subsystem.LowLevelSubsystem
 
 /** A low-level version of a canvas with init and close methods.
@@ -12,7 +12,7 @@ trait LowLevelCanvas extends Canvas with LowLevelSubsystem.Extended[Canvas.Setti
 
   /** The settings applied to this canvas.
     */
-  def canvasSettings: Canvas.Settings = settings
+  final def canvasSettings: Canvas.Settings = settings
 }
 
 object LowLevelCanvas {
@@ -21,12 +21,12 @@ object LowLevelCanvas {
     *
     * @return [[LowLevelCanvas]] using the default backend for the target platform
     */
-  def create()(implicit backend: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
+  def create()(using backend: DefaultBackend[Any, LowLevelCanvas]): LowLevelCanvas =
     backend.defaultValue()
 
   /** Internal data structure containing canvas settings and precomputed values.
     */
-  case class ExtendedSettings(
+  final case class ExtendedSettings(
       settings: Canvas.Settings,
       windowWidth: Int,
       windowHeight: Int

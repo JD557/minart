@@ -2,13 +2,11 @@ package eu.joaocosta.minart.graphics.image
 
 import scala.util.Try
 
-import verify._
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.runtime.*
 
-import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.graphics._
-import eu.joaocosta.minart.runtime._
-
-object ImageReaderSpec extends BasicTestSuite {
+class ImageReaderSpec extends munit.FunSuite {
 
   def sameImage(results: List[RamSurface]): Unit = {
     results.sliding(2).foreach {
@@ -39,8 +37,7 @@ object ImageReaderSpec extends BasicTestSuite {
       bmpTest("scala", 128, 128)
       bmpTest("scala-rect", 77, 119)
       testSize(List(Image.loadBmpImage(Resource(s"alpha/bmp-32bit.bmp"))), 507, 200)
-      // Native tests in debug require a large heap here
-      if (Platform() != Platform.Native) bmpTest("lausanne", 640, 480)
+      bmpTest("lausanne", 640, 480)
     }
 
     test("Load a PPM image") {
@@ -52,8 +49,7 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       ppmTest("scala", 128, 128)
       ppmTest("scala-rect", 77, 119)
-      // Native tests in debug require a large heap here
-      if (Platform() != Platform.Native) ppmTest("lausanne", 640, 480)
+      ppmTest("lausanne", 640, 480)
     }
 
     test("Load a PGM image") {
@@ -66,8 +62,6 @@ object ImageReaderSpec extends BasicTestSuite {
       pgmTest("scala", 128, 128)
       pgmTest("scala-rect", 77, 119)
       pgmTest("lausanne", 640, 480)
-      // Native tests in debug require a large heap here
-      if (Platform() != Platform.Native) pgmTest("lausanne", 640, 480)
     }
 
     test("Load a QOI image") {
@@ -83,8 +77,7 @@ object ImageReaderSpec extends BasicTestSuite {
       qoiTest("scala", 128, 128)
       qoiTest("scala-rect", 77, 119)
       testSize(List(Image.loadQoiImage(Resource(s"alpha/qoi-32bit.qoi"))), 507, 200)
-      // Native tests in debug require a large heap here
-      if (Platform() != Platform.Native) qoiTest("lausanne", 640, 480)
+      qoiTest("lausanne", 640, 480)
     }
 
     test("Load the same data from different formats (square image)") {
@@ -115,17 +108,14 @@ object ImageReaderSpec extends BasicTestSuite {
         )
       )
     }
-    // Native tests in debug require a large heap here
-    if (Platform() != Platform.Native) {
-      test("Load the same data from different formats (large image)") {
-        sameImage(
-          List(
-            Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")).get,
-            Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")).get,
-            Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")).get
-          )
+    test("Load the same data from different formats (large image)") {
+      sameImage(
+        List(
+          Image.loadBmpImage(Resource("lausanne/bmp-24bit.bmp")).get,
+          Image.loadPpmImage(Resource("lausanne/ppm-p3.ppm")).get,
+          Image.loadQoiImage(Resource("lausanne/qoi-24bit.qoi")).get
         )
-      }
+      )
     }
   }
 }
