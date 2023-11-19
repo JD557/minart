@@ -29,8 +29,8 @@ ThisBuild / scalacOptions ++= Seq(
   "-Wunused:imports",
   "-Wunused:locals",
   "-Wunused:params",
-  "-Wunused:privates",
-  //"-Xfatal-warnings"
+  "-Wunused:privates"
+  // "-Xfatal-warnings"
 )
 ThisBuild / scalafmtOnCompile := true
 ThisBuild / semanticdbEnabled := true
@@ -56,7 +56,7 @@ val sharedSettings = Seq()
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scalameta" %%% "munit" % "1.0.0-M8" % Test
+    "org.scalameta" %%% "munit" % "1.0.0-M10" % Test
   ),
   testFrameworks += new TestFramework("munit.Framework")
 )
