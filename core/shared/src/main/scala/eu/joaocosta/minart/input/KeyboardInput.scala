@@ -79,71 +79,111 @@ object KeyboardInput {
   }
 
   /** Platform-agnostic identifier for a keyboard key.
+    *
+    *  Has a `baseChar` value with an optional char,
+    *  which represents the key with no modifiers.
     */
-  enum Key {
-    case A
-    case B
-    case C
-    case D
-    case E
-    case F
-    case G
-    case H
-    case I
-    case J
-    case K
-    case L
-    case M
-    case N
-    case O
-    case P
-    case Q
-    case R
-    case S
-    case T
-    case U
-    case V
-    case W
-    case X
-    case Y
-    case Z
+  enum Key(val baseChar: Option[Char]) {
+    // Letters
+    case A extends Key(Some('a'))
+    case B extends Key(Some('b'))
+    case C extends Key(Some('c'))
+    case D extends Key(Some('d'))
+    case E extends Key(Some('e'))
+    case F extends Key(Some('f'))
+    case G extends Key(Some('g'))
+    case H extends Key(Some('h'))
+    case I extends Key(Some('i'))
+    case J extends Key(Some('j'))
+    case K extends Key(Some('k'))
+    case L extends Key(Some('l'))
+    case M extends Key(Some('m'))
+    case N extends Key(Some('n'))
+    case O extends Key(Some('o'))
+    case P extends Key(Some('p'))
+    case Q extends Key(Some('q'))
+    case R extends Key(Some('r'))
+    case S extends Key(Some('s'))
+    case T extends Key(Some('t'))
+    case U extends Key(Some('u'))
+    case V extends Key(Some('v'))
+    case W extends Key(Some('w'))
+    case X extends Key(Some('x'))
+    case Y extends Key(Some('y'))
+    case Z extends Key(Some('z'))
 
-    case Digit0
-    case Digit1
-    case Digit2
-    case Digit3
-    case Digit4
-    case Digit5
-    case Digit6
-    case Digit7
-    case Digit8
-    case Digit9
+    // Numbers
+    case Digit0 extends Key(Some('0'))
+    case Digit1 extends Key(Some('1'))
+    case Digit2 extends Key(Some('2'))
+    case Digit3 extends Key(Some('3'))
+    case Digit4 extends Key(Some('4'))
+    case Digit5 extends Key(Some('5'))
+    case Digit6 extends Key(Some('6'))
+    case Digit7 extends Key(Some('7'))
+    case Digit8 extends Key(Some('8'))
+    case Digit9 extends Key(Some('9'))
 
-    case NumPad0
-    case NumPad1
-    case NumPad2
-    case NumPad3
-    case NumPad4
-    case NumPad5
-    case NumPad6
-    case NumPad7
-    case NumPad8
-    case NumPad9
+    // Numpad Numbers
+    case NumPad0 extends Key(Some('0'))
+    case NumPad1 extends Key(Some('1'))
+    case NumPad2 extends Key(Some('2'))
+    case NumPad3 extends Key(Some('3'))
+    case NumPad4 extends Key(Some('4'))
+    case NumPad5 extends Key(Some('5'))
+    case NumPad6 extends Key(Some('6'))
+    case NumPad7 extends Key(Some('7'))
+    case NumPad8 extends Key(Some('8'))
+    case NumPad9 extends Key(Some('9'))
 
-    case Space
-    case Tab
-    case Enter
-    case Backspace
+    // Whitespace
+    case Space     extends Key(Some(' '))
+    case Tab       extends Key(Some('\t'))
+    case Enter     extends Key(Some('\r'))
+    case Backspace extends Key(Some('\u0008'))
 
-    case Escape
-    case Shift
-    case Ctrl
-    case Alt
-    case Meta
+    // Control
+    case Escape extends Key(None)
+    case Shift  extends Key(None)
+    case Ctrl   extends Key(None)
+    case Alt    extends Key(None)
+    case Meta   extends Key(None)
 
-    case Up
-    case Down
-    case Left
-    case Right
+    // Arrows
+    case Up    extends Key(None)
+    case Down  extends Key(None)
+    case Left  extends Key(None)
+    case Right extends Key(None)
+
+    // Punctuation
+    case Period          extends Key(Some('.'))
+    case Colon           extends Key(Some(':'))
+    case Comma           extends Key(Some(','))
+    case Semicolon       extends Key(Some(';'))
+    case ExclamationMark extends Key(Some('!'))
+
+    // Quotes
+    case SingleQuote extends Key(Some('\''))
+    case DoubleQuote extends Key(Some('"'))
+
+    // Slashes
+    case Slash      extends Key(Some('/'))
+    case Backslash  extends Key(Some('\\'))
+    case Underscore extends Key(Some('_'))
+
+    // Math
+    case Plus     extends Key(Some('+'))
+    case Minus    extends Key(Some('-'))
+    case Asterisk extends Key(Some('*'))
+    case Equals   extends Key(Some('='))
+
+    // Brackets
+    case OpenParenthesis  extends Key(Some('('))
+    case CloseParenthesis extends Key(Some(')'))
+
+    // Other
+    case Ampersand  extends Key(Some('&'))
+    case DollarSign extends Key(Some('$'))
+    case At         extends Key(Some('@'))
   }
 }
