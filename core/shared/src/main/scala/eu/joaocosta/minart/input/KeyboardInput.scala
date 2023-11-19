@@ -81,6 +81,7 @@ object KeyboardInput {
   /** Platform-agnostic identifier for a keyboard key.
     */
   enum Key {
+    // Letters
     case A
     case B
     case C
@@ -108,6 +109,7 @@ object KeyboardInput {
     case Y
     case Z
 
+    // Numbers
     case Digit0
     case Digit1
     case Digit2
@@ -119,6 +121,7 @@ object KeyboardInput {
     case Digit8
     case Digit9
 
+    // Numpad Numbers
     case NumPad0
     case NumPad1
     case NumPad2
@@ -130,20 +133,56 @@ object KeyboardInput {
     case NumPad8
     case NumPad9
 
+    // Whitespace
     case Space
     case Tab
     case Enter
     case Backspace
 
+    // Control
     case Escape
     case Shift
     case Ctrl
     case Alt
     case Meta
 
+    // Arrows
     case Up
     case Down
     case Left
     case Right
+
+    // Punctuation
+    case Period
+    case Colon
+    case Comma
+    case Semicolon
+    case ExclamationMark
+    case QuestionMark
+
+    // Quotes
+    case SingleQuote
+    case DoubleQuote
+
+    // Slashes
+    case Slash
+    case Backslash
+    case VerticalBar
+    case Underscore
+
+    // Math
+    case Plus
+    case Minus
+    case Asterisk
+    case Equals
+
+    // Brackets
+    case OpenParenthesis
+    case CloseParenthesis
+
+    // Other
+    case Ampersand
+    case DollarSign
+    case At
   }
 }
