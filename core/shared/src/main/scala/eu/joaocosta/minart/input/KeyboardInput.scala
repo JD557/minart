@@ -158,7 +158,6 @@ object KeyboardInput {
     case Comma
     case Semicolon
     case ExclamationMark
-    case QuestionMark
 
     // Quotes
     case SingleQuote
@@ -167,7 +166,6 @@ object KeyboardInput {
     // Slashes
     case Slash
     case Backslash
-    case VerticalBar
     case Underscore
 
     // Math
