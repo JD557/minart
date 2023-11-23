@@ -57,7 +57,7 @@ AppLoop
           convolutionWindow.iterator
             .map { case (x, y) => img(x, y) }
             .foldLeft(Color(0, 0, 0)) { case (Color(r, g, b), Color(rr, gg, bb)) =>
-              Color(r + rr / 9, g + gg / 9, g + gg / 9)
+              Color(r + rr / 9, g + gg / 9, b + bb / 9)
             }
         }
         .rotate(t)                                                        // Rotate
