@@ -40,7 +40,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   }
 
   /** Combines this plane with a surface by combining their colors with the given function. */
-  final def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = SurfaceView(
+  final def zipWith(that: Surface, f: (Color, Color) => Color): SurfaceView = SurfaceView.PlaneSurfaceView(
     new Plane {
       def getPixel(x: Int, y: Int): Color = {
         val c1 = outer.getPixel(x, y)
@@ -166,7 +166,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * @param height surface view height
     */
   final def toSurfaceView(width: Int, height: Int): SurfaceView =
-    SurfaceView(this, width, height)
+    SurfaceView.PlaneSurfaceView(this, width, height)
 
   /** Converts this plane to a RAM surface, assuming (0, 0) as the top-left corner.
     *
