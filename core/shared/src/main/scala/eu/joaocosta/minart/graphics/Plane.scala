@@ -68,8 +68,14 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * @param cw clip width
     * @param ch clip height
     */
-  final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
-    translate(-cx, -cy).toSurfaceView(cw, ch)
+  def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
+    if (cx == 0 && cy == 0) toSurfaceView(cw, ch)
+    else
+      new Plane {
+        def getPixel(x: Int, y: Int): Color = {
+          outer.getPixel(x + cx, y + cy)
+        }
+      }.toSurfaceView(cw, ch)
 
   /** Overlays a surface on top of this plane.
     *
@@ -180,6 +186,9 @@ object Plane {
 
     override def contramapMatrix(matrix: Matrix) =
       MatrixPlane(this.matrix.multiply(matrix), plane)
+
+    override def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
+      translate(-cx, -cy).toSurfaceView(cw, ch)
   }
 
   /** Creates a plane from a constant color.
