@@ -97,7 +97,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     }
 
   /** Inverts a plane color. */
-  def invertColor: Plane = map(_.invert)
+  final def invertColor: Plane = map(_.invert)
 
   /** Contramaps this plane using a matrix instead of a function.
     *
