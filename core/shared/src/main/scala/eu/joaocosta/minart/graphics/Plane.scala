@@ -68,7 +68,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * @param cw clip width
     * @param ch clip height
     */
-  final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
+  def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
     if (cx == 0 && cy == 0) toSurfaceView(cw, ch)
     else
       new Plane {
@@ -97,7 +97,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     }
 
   /** Inverts a plane color. */
-  def invertColor: Plane = map(_.invert)
+  final def invertColor: Plane = map(_.invert)
 
   /** Contramaps this plane using a matrix instead of a function.
     *
@@ -124,32 +124,41 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     Plane.MatrixPlane(matrix, this)
 
   /** Translates a plane. */
-  def translate(dx: Double, dy: Double): Plane = contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+  final def translate(dx: Double, dy: Double): Plane =
+    if (dx == 0 && dy == 0) this
+    else contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
 
   /** Flips a plane horizontally. */
-  def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+  final def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
 
   /** Flips a plane vertically. */
-  def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+  final def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
 
   /** Scales a plane. */
-  def scale(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+  final def scale(sx: Double, sy: Double): Plane =
+    if (sx == 1.0 && sy == 1.0) this
+    else contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
 
   /** Scales a plane. */
-  def scale(s: Double): Plane = scale(s, s)
+  final def scale(s: Double): Plane = scale(s, s)
 
   /** Rotates a plane by a certain angle (clockwise). */
-  def rotate(theta: Double): Plane = {
+  final def rotate(theta: Double): Plane = {
     val ct = Math.cos(-theta)
-    val st = Math.sin(-theta)
-    contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+    if (ct == 1.0) this
+    else {
+      val st = Math.sin(-theta)
+      contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+    }
   }
 
   /** Shears a plane. */
-  def shear(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+  final def shear(sx: Double, sy: Double): Plane =
+    if (sx == 0.0 && sy == 0.0) this
+    else contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
 
   /** Transposes a plane (switches the x and y coordinates). */
-  def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+  final def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner.
     *
@@ -171,12 +180,14 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 object Plane {
   private[Plane] final case class MatrixPlane(matrix: Matrix, plane: Plane) extends Plane {
     def getPixel(x: Int, y: Int): Color = {
-      val (xx, yy) = matrix(x, y)
-      plane.getPixel(xx, yy)
+      plane.getPixel(matrix.applyX(x, y), matrix.applyY(x, y))
     }
 
     override def contramapMatrix(matrix: Matrix) =
       MatrixPlane(this.matrix.multiply(matrix), plane)
+
+    override def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
+      translate(-cx, -cy).toSurfaceView(cw, ch)
   }
 
   /** Creates a plane from a constant color.

@@ -67,7 +67,7 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
     * @param x leftmost pixel on the destination plane
     * @param y topmost pixel on the destination plane
     */
-  final def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
+  def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
     copy(plane = plane.overlay(that, blendMode)(x, y))
 
   /** Inverts a surface color. */
@@ -90,7 +90,8 @@ final case class SurfaceView(plane: Plane, width: Int, height: Int) extends Surf
 
   /** Scales a surface. */
   def scale(sx: Double, sy: Double): SurfaceView =
-    copy(plane = plane.scale(sx, sy), width = (width * sx).toInt, height = (height * sy).toInt)
+    if (sx == 1.0 && sy == 1.0) this
+    else copy(plane = plane.scale(sx, sy), width = (width * sx).toInt, height = (height * sy).toInt)
 
   /** Scales a surface. */
   def scale(s: Double): SurfaceView = scale(s, s)
