@@ -8,7 +8,7 @@ import eu.joaocosta.minart.graphics.*
   *  @param spriteWidth width of each sprite
   *  @param spriteHeight height of each sprite
   */
-class SpriteSheet(surface: Surface, val spriteWidth: Int, val spriteHeight: Int) {
+final class SpriteSheet(surface: Surface, val spriteWidth: Int, val spriteHeight: Int) {
 
   /** How many sprites are stored on each line */
   val spritesPerLine = surface.width / spriteWidth
