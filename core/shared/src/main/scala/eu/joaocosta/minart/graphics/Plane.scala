@@ -69,13 +69,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * @param ch clip height
     */
   final def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
-    if (cx == 0 && cy == 0) toSurfaceView(cw, ch)
-    else
-      new Plane {
-        def getPixel(x: Int, y: Int): Color = {
-          outer.getPixel(x + cx, y + cy)
-        }
-      }.toSurfaceView(cw, ch)
+    translate(-cx, -cy).toSurfaceView(cw, ch)
 
   /** Overlays a surface on top of this plane.
     *
@@ -124,32 +118,41 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     Plane.MatrixPlane(matrix, this)
 
   /** Translates a plane. */
-  def translate(dx: Double, dy: Double): Plane = contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+  final def translate(dx: Double, dy: Double): Plane =
+    if (dx == 0 && dy == 0) this
+    else contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
 
   /** Flips a plane horizontally. */
-  def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+  final def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
 
   /** Flips a plane vertically. */
-  def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+  final def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
 
   /** Scales a plane. */
-  def scale(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+  final def scale(sx: Double, sy: Double): Plane =
+    if (sx == 1.0 && sy == 1.0) this
+    else contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
 
   /** Scales a plane. */
-  def scale(s: Double): Plane = scale(s, s)
+  final def scale(s: Double): Plane = scale(s, s)
 
   /** Rotates a plane by a certain angle (clockwise). */
-  def rotate(theta: Double): Plane = {
+  final def rotate(theta: Double): Plane = {
     val ct = Math.cos(-theta)
-    val st = Math.sin(-theta)
-    contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+    if (ct == 1.0) this
+    else {
+      val st = Math.sin(-theta)
+      contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+    }
   }
 
   /** Shears a plane. */
-  def shear(sx: Double, sy: Double): Plane = contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+  final def shear(sx: Double, sy: Double): Plane =
+    if (sx == 0.0 && sy == 0.0) this
+    else contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
 
   /** Transposes a plane (switches the x and y coordinates). */
-  def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+  final def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner.
     *
