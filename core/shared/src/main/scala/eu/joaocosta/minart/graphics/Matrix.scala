@@ -20,13 +20,17 @@ final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f
       this.d * that.c + this.e * that.f + this.f
     )
 
+  inline def applyX(x: Double, y: Double): Double = a * x + b * y + c * 1
+  inline def applyX(x: Int, y: Int): Int          = (a * x + b * y + c * 1).toInt
+  inline def applyY(x: Double, y: Double): Double = d * x + e * y + f * 1
+  inline def applyY(x: Int, y: Int): Int          = (d * x + e * y + f * 1).toInt
+
   /** Applies the transformation to (x, y). */
   def apply(x: Double, y: Double): (Double, Double) =
-    (a * x + b * y + c * 1, d * x + e * y + f * 1)
+    (applyX(x, y), applyY(x, y))
 
   /** Applies the transformation to (x, y). */
   def apply(x: Int, y: Int): (Int, Int) = {
-    val res = apply(x.toDouble, y.toDouble)
-    (res._1.toInt, res._2.toInt)
+    (applyX(x, y), applyY(x, y))
   }
 }
