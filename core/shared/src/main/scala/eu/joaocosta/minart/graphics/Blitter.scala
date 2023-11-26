@@ -209,7 +209,9 @@ private[graphics] object Blitter {
       if (maxX > 0 && maxY > 0) {
         source match {
           case ramSurf: RamSurface => unsafeBlitMatrix(dest, ramSurf.dataBuffer, blendMode, x, y, cx, cy, maxX, maxY)
-          case _                   => unsafeBlitSurface(dest, source, blendMode, x, y, cx, cy, maxX, maxY)
+          case SurfaceView.RamSurfaceView(surface, _cx, _cy, _, _) =>
+            fullBlit(dest, surface, blendMode, x, y, cx + _cx, cy + _cy, cw, ch)
+          case _ => unsafeBlitSurface(dest, source, blendMode, x, y, cx, cy, maxX, maxY)
         }
 
       }
