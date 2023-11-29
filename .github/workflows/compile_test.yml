@@ -6,6 +6,7 @@ env:
   CI: true # disables SBT super shell which has problems with CI environments
 
 jobs:
+
   compile-lib:
     name: Compile library and test
     runs-on: ubuntu-latest
@@ -51,6 +52,7 @@ jobs:
       run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test
+
   compile-examples:
     name: Compile examples
     runs-on: ubuntu-latest
@@ -95,6 +97,51 @@ jobs:
       run: |
         cd examples/snapshot
         ls | grep .sc | xargs scala-cli compile
+
+  compile-templates:
+    name: Compile templates
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Java 17 and SBT
+      uses: actions/setup-java@v2
+      with:
+        distribution: temurin
+        java-version: 17
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
+    - name: Cache SBT ivy cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache SBT
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Install Tools
+      run: |
+        curl -fL "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz" | gzip -d > cs
+        chmod +x cs
+        ./cs setup --yes
+    - name: Compile templates (Scala CLI)
+      run: |
+        ./cs launch giter8 -- file://./src/main/g8 --name=scala-cli-g8-test
+        ./cs launch scala-cli -- compile scala-cli-g8-test
+    - name: Compile templates (SBT)
+      run: |
+        ./cs launch giter8 -- file://./src/main/g8 --name=sbt-g8-test --sbt_project=yes
+        cd sbt-g8-test
+        sbt compile
+
   coverage:
     name: Code coverage
     runs-on: ubuntu-latest
