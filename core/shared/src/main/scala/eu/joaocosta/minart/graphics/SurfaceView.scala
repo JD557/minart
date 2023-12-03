@@ -200,7 +200,7 @@ object SurfaceView {
       PlaneSurfaceView(Plane.fromSurfaceWithFallback(ramSurface, defaultColor), ramSurface.width, ramSurface.height)
         .clip(cx, cy, width, height)
 
-    def unsafeGetPixel(x: Int, y: Int): Color = ramSurface.getPixelOrElse(cx, cy, SurfaceView.defaultColor)
+    def unsafeGetPixel(x: Int, y: Int): Color = ramSurface.getPixelOrElse(cx + x, cy + y, SurfaceView.defaultColor)
 
     override def getPixels(): Vector[Array[Color]] = {
       Vector.tabulate(height) { y =>
