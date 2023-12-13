@@ -81,4 +81,12 @@ trait MutableSurface extends Surface {
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit = {
     Blitter.fullBlit(this, that, blendMode, x, y, cx, cy, cw, ch)
   }
+
+  /** Modifies this surface using surface view transformations
+    *
+    * @param f operations to apply
+    */
+  def modify(f: SurfaceView => Surface): Unit = {
+    blit(f(this.view).toRamSurface())(0, 0)
+  }
 }
