@@ -111,4 +111,9 @@ trait MutableSurfaceTests extends munit.FunSuite {
     assert(source.getPixel(0, 0) == Some(Color(255, 0, 0)))
     assert(surface.getPixel(1, 1) == Some(Color(255, 0, 0)))
   }
+
+  test("Modify a surface in place") {
+    surface.modify(_.map(_ => Color(1, 2, 3)))
+    assert(surface.getPixels().flatten.forall(_ == Color(1, 2, 3)))
+  }
 }
