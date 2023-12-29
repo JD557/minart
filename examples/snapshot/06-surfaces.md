@@ -1,6 +1,5 @@
 # 6. Surfaces
 
-
 Writing directly to a canvas pixel by pixel worked fine in the previous examples, but sometimes it's helpful to store some full images to draw.
 
 This is where surfaces come in.
