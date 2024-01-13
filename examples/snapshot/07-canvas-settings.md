@@ -6,7 +6,7 @@ However, it can be sometimes desirable to change the settings at runtime, for ex
 
 Here's a quick example on how to do that. In this example application, we will change the settings when the user presses "A", "B", "C" or "D".
 
-## Variable Settings
+## Variable settings
 
 ### Dependencies and imports
 
