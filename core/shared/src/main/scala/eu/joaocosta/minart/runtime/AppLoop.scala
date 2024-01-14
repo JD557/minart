@@ -22,7 +22,7 @@ trait AppLoop[State, Subsystem] {
       createSubsystems: () => Subsystem
   ): Future[State]
 
-  /** Runs this app loop usinf the default loop runner and subsystems.
+  /** Runs this app loop using the default loop runner and subsystems.
     */
   final def run()(using
       lr: DefaultBackend[Any, LoopRunner],
