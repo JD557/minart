@@ -159,4 +159,14 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
 
   def getKeyboardInput(): KeyboardInput = keyboardInput
   def getPointerInput(): PointerInput   = pointerInput.move(cleanPointerPos)
+
+  // Html Canvas specific operations
+
+  /** Returns the <canvas> element currently being used by this canvas.
+    *
+    *  Can be None if the canvas is not initialized.
+    */
+  def getCanvasElement(): Option[JsCanvas] =
+    if (isCreated()) Option(jsCanvas)
+    else None
 }
