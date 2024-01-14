@@ -1,6 +1,5 @@
 # 9. Surface views
 
-
 It can be quite cumbersome an inefficient to apply multiple transformations to a surface if we just use the `getPixel`
 and `putPixel` operations.
 
