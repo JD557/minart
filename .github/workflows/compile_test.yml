@@ -90,13 +90,13 @@ jobs:
     - name: Compile examples (Release)
       run: |
         cd examples/release
-        ls | grep .sc | xargs scala-cli compile --server=false
+        ls | grep ".sc\|.md" | xargs scala-cli compile --server=false
     - name: Publish Local
       run: sbt -J-Xmx3G -Dsbt.color=always publishLocal
     - name: Compile examples (Snapshot)
       run: |
         cd examples/snapshot
-        ls | grep .sc | xargs scala-cli compile --server=false
+        ls | grep ".sc\|.md" | xargs scala-cli compile --server=false
 
   compile-templates:
     name: Compile templates
