@@ -23,7 +23,7 @@ trait LoopRunner {
   def finiteLoop[S](
       initialState: S,
       operation: S => S,
-      terminateWhen: S => Boolean,
+      terminateWhen: S => Boolean = (_: S) => false,
       cleanup: () => Unit = () => (),
       frequency: LoopFrequency = LoopFrequency.Uncapped
   ): Future[S]
