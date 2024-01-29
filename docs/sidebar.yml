@@ -10,7 +10,7 @@ subsection:
     page: advanced-usage.md
   - title: Tutorial
     directory: tutorial
-    index: ../../examples/README.md
+    index: tutorial.md
     subsection:
       - title: "1. Introduction"
         page: ../../examples/release/01-introduction.md
