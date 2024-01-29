@@ -1,5 +1,5 @@
 ---
-title: Project structure
+title: Project Structure
 ---
 
 # Project structure
