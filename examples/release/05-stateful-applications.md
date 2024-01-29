@@ -1,4 +1,4 @@
-# 5. Stateful Applications
+# 5. Stateful applications
 
 Now that we learned the basics of animation and input handling, we are almost ready to make interactive applications, such as a game.
 

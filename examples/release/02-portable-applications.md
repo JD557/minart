@@ -1,4 +1,4 @@
-# 2. Writing portable applications
+# 2. Portable applications
 
 The first example only ran on the JVM, but Minart provides some abstractions to easily cross compile to JS and Native backends.
 
