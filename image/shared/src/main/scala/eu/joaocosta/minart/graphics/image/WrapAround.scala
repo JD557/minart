@@ -20,10 +20,31 @@ final class WrapAround(surface: Surface) {
     *  @param y vertical position on the reference surface
     *  @return surface view with the scrolled surface
     */
-  def getSurface(x: Int, y: Int): SurfaceView =
+  def getSurface(x: Int, y: Int): SurfaceView = {
     val startX = WrapAround.floorMod(x, surface.width)
     val startY = WrapAround.floorMod(y, surface.height)
     precomputed.clip(startX, startY, surface.width, surface.height)
+  }
+
+  /** Gets a surface with every line offset by dx.
+    *
+    *  @param dx horizontal offset of each line, based on the y position
+    *  @return surface view with the scrolled surface
+    */
+  def lineScroll(dx: Int => Int): SurfaceView = {
+    val precomputedOffsets = Array.tabulate(surface.height)(y => dx(y)).map(x => WrapAround.floorMod(x, surface.width))
+    precomputed.contramap((x, y) => (x + precomputedOffsets(y), y)).toSurfaceView(surface.width, surface.height)
+  }
+
+  /** Gets a surface with every column offset by dy.
+    *
+    *  @param dy horizontal offset of each line, based on the x position
+    *  @return surface view with the scrolled surface
+    */
+  def columnScroll(dy: Int => Int): SurfaceView = {
+    val precomputedOffsets = Array.tabulate(surface.width)(x => dy(x)).map(y => WrapAround.floorMod(y, surface.height))
+    precomputed.contramap((x, y) => (x, y + precomputedOffsets(x))).toSurfaceView(surface.width, surface.height)
+  }
 }
 
 object WrapAround {
