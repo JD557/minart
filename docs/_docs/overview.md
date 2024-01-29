@@ -2,7 +2,7 @@
 title: Feature Overview
 ---
 
-# Feature Overview
+# Feature overview
 
 ## Cross-compilation
 

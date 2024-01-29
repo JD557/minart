@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-# Getting Started
+# Getting started
 
 To include Minart, simply add the `minart` library to your project:
 

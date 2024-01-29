@@ -1,4 +1,4 @@
-# 10. Audio Playback
+# 10. Audio playback
 
 Besides graphics and input, Minart also supports loading and playing back audio.
 

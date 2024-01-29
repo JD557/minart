@@ -1,4 +1,4 @@
-# 4. Pointer Input
+# 4. Pointer input
 
 Now that we learned the basics of animation, we can start to look at more dynamic applications.
 

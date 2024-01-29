@@ -2,7 +2,7 @@
 title: Advanced Usage
 ---
 
-# Advanced Usage
+# Advanced usage
 
 If for some reason you want to make your binary as small as possible, you can include individual packages instead of
 the full `minart` bundle.

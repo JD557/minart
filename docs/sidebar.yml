@@ -8,3 +8,29 @@ subsection:
     page: structure.md
   - title: Advanced Usage
     page: advanced-usage.md
+  - title: Tutorial
+    directory: tutorial
+    index: tutorial.md
+    subsection:
+      - title: "1. Introduction"
+        page: ../../examples/release/01-introduction.md
+      - title: "2. Portable Applications"
+        page: ../../examples/release/02-portable-applications.md
+      - title: "3. Animation"
+        page: ../../examples/release/03-animation.md
+      - title: "4. Pointer Input"
+        page: ../../examples/release/04-pointer-input.md
+      - title: "5. Stateful Applications"
+        page: ../../examples/release/05-stateful-applications.md
+      - title: "6. Surfaces"
+        page: ../../examples/release/06-surfaces.md
+      - title: "7. Canvas Settings"
+        page: ../../examples/release/07-canvas-settings.md
+      - title: "8. Loading Images"
+        page: ../../examples/release/08-loading-images.md
+      - title: "9. Surface Views"
+        page: ../../examples/release/09-surface-views.md
+      - title: "10. Audio Playback"
+        page: ../../examples/release/10-audio-playback.md
+      - title: "11. Loading Sounds"
+        page: ../../examples/release/11-loading-sounds.md
