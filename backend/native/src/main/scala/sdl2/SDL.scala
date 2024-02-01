@@ -3176,7 +3176,7 @@ object aliases:
     */
   opaque type SDL_threadID = CUnsignedLongInt
   object SDL_threadID:
-    given _tag: Tag[SDL_threadID]                                  = Tag.ULong
+    given _tag: Tag[SDL_threadID]                                  = Tag.USize
     inline def apply(inline o: CUnsignedLongInt): SDL_threadID     = o
     extension (v: SDL_threadID) inline def value: CUnsignedLongInt = v
 

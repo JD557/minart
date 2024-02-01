@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import scala.concurrent.*
 import scala.scalanative.libc.stdlib.*
-import scala.scalanative.unsafe.*
+import scala.scalanative.unsafe.{blocking as _, *}
 import scala.scalanative.unsigned.*
 
 import sdl2.all.*
