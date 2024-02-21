@@ -55,16 +55,8 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
   )(x: Int, y: Int, cx: Int = 0, cy: Int = 0, cw: Int = that.width, ch: Int = that.height): Unit =
     (that, blendMode) match {
       case (img: SdlSurface, BlendMode.Copy) =>
-        val srcRect = stackalloc[SDL_Rect]()
-        (!srcRect).x = cx
-        (!srcRect).y = cy
-        (!srcRect).w = cw
-        (!srcRect).h = ch
-        val dstRect = stackalloc[SDL_Rect]()
-        (!dstRect).x = x
-        (!dstRect).y = y
-        (!dstRect).w = cw
-        (!dstRect).h = ch
+        val srcRect = stackalloc[SDL_Rect]()(!srcRect).x = cx(!srcRect).y = cy(!srcRect).w = cw(!srcRect).h = ch
+        val dstRect = stackalloc[SDL_Rect]()(!dstRect).x = x(!dstRect).y = y(!dstRect).w = cw(!dstRect).h = ch
         SDL_UpperBlit(img.data, srcRect, this.data, dstRect)
       case _ =>
         super.blit(that, blendMode)(x, y, cx, cy, cw, ch)
