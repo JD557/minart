@@ -85,7 +85,7 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
     ubyteClearR = newSettings.clearColor.r.toUByte
     ubyteClearG = newSettings.clearColor.g.toUByte
     ubyteClearB = newSettings.clearColor.b.toUByte
-    Zone { implicit z =>
+    Zone {
       window = SDL_CreateWindow(
         toCString(newSettings.title),
         0x2fff0000, // SDL_WINDOWPOS_CENTERED
