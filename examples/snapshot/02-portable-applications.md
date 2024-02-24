@@ -38,7 +38,7 @@ Note, however, that we now also import `eu.joaocosta.minart.runtime.*`, which pr
 
 ```scala
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
+//> using dep "eu.joaocosta::minart::0.6.0-SNAPSHOT"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
