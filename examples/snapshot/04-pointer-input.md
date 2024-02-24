@@ -14,7 +14,7 @@ We also need to import the input package. We need this to read data from input d
 
 ```scala
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.6.0-SNAPSHOT"
+//> using dep "eu.joaocosta::minart::0.6.0-SNAPSHOT"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
