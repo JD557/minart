@@ -12,7 +12,7 @@ As before, let's import the backend, graphics and runtime.
 
 ```scala
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.6.0-M2"
+//> using dep "eu.joaocosta::minart::0.6.0-M2"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
