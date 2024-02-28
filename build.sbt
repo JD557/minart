@@ -57,10 +57,10 @@ def docSettings(projectName: String) = Seq(
 val sharedSettings = Seq()
 
 val testSettings = Seq(
-  Test / libraryDependencies ++= Seq(
-    "org.scalameta" %%% "munit" % "1.0.0-M11" % Test
+  libraryDependencies ++= Seq(
+    "org.scalameta" %%% "munit" % "1.0.0-M11+2-9094c595+20240228-2204-SNAPSHOT" % Test
   ),
-  Test / testFrameworks += new TestFramework("munit.Framework")
+  testFrameworks += new TestFramework("munit.Framework")
 )
 
 val publishSettings = Seq(
