@@ -11,7 +11,8 @@ import org.scalajs.dom.{ProgressEvent, XMLHttpRequest}
 
 import eu.joaocosta.minart.runtime.Resource
 
-/** Resource loader that fetches resources using a XML HTTP Request.
+/** Resource loader that fetches resources from the local storage.
+  * If it fails, it uses a XML HTTP Request.
   */
 final case class JsResource(resourcePath: String) extends Resource {
   def path = "./" + resourcePath
