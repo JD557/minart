@@ -30,14 +30,22 @@ private[minart] object ByteReader {
   /** Read N Bytes */
   def readBytes(n: Int): ParseState[Nothing, Array[Int]] = State { bytes =>
     val byteArr = Array.ofDim[Byte](n)
-    bytes.read(byteArr)
+    var read    = bytes.read(byteArr)
+    while (read >= 0 && read < n) {
+      byteArr(read) = bytes.read().toByte
+      read += 1
+    }
     bytes -> byteArr.map(b => java.lang.Byte.toUnsignedInt(b))
   }
 
   /** Read N Bytes */
   def readRawBytes(n: Int): ParseState[Nothing, Array[Byte]] = State { bytes =>
     val byteArr = Array.ofDim[Byte](n)
-    bytes.read(byteArr)
+    var read    = bytes.read(byteArr)
+    while (read >= 0 && read < n) {
+      byteArr(read) = bytes.read().toByte
+      read += 1
+    }
     bytes -> byteArr
   }
 
