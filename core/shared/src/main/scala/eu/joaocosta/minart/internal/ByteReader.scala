@@ -32,8 +32,12 @@ private[minart] object ByteReader {
     val byteArr = Array.ofDim[Byte](n)
     var read    = bytes.read(byteArr)
     while (read >= 0 && read < n) {
-      byteArr(read) = bytes.read().toByte
-      read += 1
+      val byte = bytes.read()
+      if (byte == -1) read = -1
+      else {
+        byteArr(read) = byte.toByte
+        read += 1
+      }
     }
     bytes -> byteArr.map(b => java.lang.Byte.toUnsignedInt(b))
   }
@@ -43,8 +47,12 @@ private[minart] object ByteReader {
     val byteArr = Array.ofDim[Byte](n)
     var read    = bytes.read(byteArr)
     while (read >= 0 && read < n) {
-      byteArr(read) = bytes.read().toByte
-      read += 1
+      val byte = bytes.read()
+      if (byte == -1) read = -1
+      else {
+        byteArr(read) = byte.toByte
+        read += 1
+      }
     }
     bytes -> byteArr
   }
@@ -107,7 +115,7 @@ private[minart] object ByteReader {
       else {
         hasBuffer = false
         b(0) = buffer.toByte
-        inner.read(b, 1, b.size - 1)
+        inner.read(b, 1, b.size - 1) + 1
       }
     }
     override def reset(): Unit = ()
