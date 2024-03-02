@@ -55,7 +55,7 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
   }*/
   given ExecutionContext = ExecutionContext.global
   private def callbackEventLoop(nextSchedule: Long): Future[Unit] = Future {
-    if (playQueue.nonEmpty()) {
+    if (playQueue.nonEmpty() && SDL_WasInit(SDL_INIT_AUDIO) != 0) {
       if (
         System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)
       ) {
