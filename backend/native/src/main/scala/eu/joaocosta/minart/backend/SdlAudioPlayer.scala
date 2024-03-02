@@ -84,7 +84,7 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
 
   private def callback(): Future[Unit] = Future {
     var abort = false
-    while (!abort && playQueue.nonEmpty()) {
+    while (!abort && playQueue.nonEmpty() && SDL_WasInit(SDL_INIT_AUDIO) != 0) {
       if (SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)) {
         val samples = Math.min(settings.bufferSize, playQueue.size)
         val buf = Iterator

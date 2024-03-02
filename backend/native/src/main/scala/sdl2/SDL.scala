@@ -11348,9 +11348,9 @@ private[sdl2] object extern_functions:
 
   /** Get a mask of the specified subsystems which are currently initialized.
     *
-    * [bindgen] header: .\SDL.h
+    * [bindgen] header: .\SDL.h [MANUAL]
     */
-  def SDL_WasInit(flags: Uint32): Uint32 = extern
+  def SDL_WasInit(flags: SDL_InitFlag): Uint32 = extern
 
   /** Use this function to write 16 bits in native format to a SDL_RWops as big-endian data.
     *

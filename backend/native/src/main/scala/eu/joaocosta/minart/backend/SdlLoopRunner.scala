@@ -23,13 +23,17 @@ object SdlLoopRunner extends LoopRunner {
       cleanup: () => Unit,
       frequency: LoopFrequency
   ): Future[S] = {
+    val fullCleanup = () => {
+      cleanup()
+      SDL_Quit()
+    }
     frequency match {
       case LoopFrequency.Never =>
-        new NeverLoop(operation, cleanup).run(initialState)
+        new NeverLoop(operation, fullCleanup).run(initialState)
       case LoopFrequency.Uncapped =>
-        new UncappedLoop(operation, terminateWhen, cleanup).run(initialState)
+        new UncappedLoop(operation, terminateWhen, fullCleanup).run(initialState)
       case freq @ LoopFrequency.LoopDuration(_) =>
-        new CappedLoop(operation, terminateWhen, freq.millis, cleanup).run(initialState)
+        new CappedLoop(operation, terminateWhen, freq.millis, fullCleanup).run(initialState)
     }
   }
 

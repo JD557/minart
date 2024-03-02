@@ -129,7 +129,7 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
   // Cleanup
 
   protected def unsafeDestroy() = {
-    SDL_Quit()
+    SDL_QuitSubSystem(SDL_INIT_VIDEO)
   }
 
   // Canvas operations
