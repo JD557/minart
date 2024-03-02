@@ -87,7 +87,7 @@ trait QoaAudioReader extends AudioClipReader {
       State.pure(AudioClip.fromIndexedSeq(acc, sampleRate))
     else {
       val frameData = for {
-        numChannels <- readBENumber(1).validate(_ == 1, c => s"Expected a Mono QOA file, got $c channels")
+        numChannels <- readByte.map(_.getOrElse(0)).validate(_ == 1, c => s"Expected a Mono QOA file, got $c channels")
         newSampleRate <- readBENumber(3).validate(
           s => sampleRate == 0 || s == sampleRate,
           s => s"Sample rate changed mid file. Expected $sampleRate, got $s"

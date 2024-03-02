@@ -17,8 +17,7 @@ final case class JavaResource(resourcePath: String) extends Resource {
   def path = "./" + resourcePath
 
   override def exists(): Boolean =
-    this.getClass().getResource("/" + resourcePath) != null ||
-      new File(path).exists()
+    new File(path).exists() || this.getClass().getResource("/" + resourcePath) != null
 
   def unsafeInputStream(): InputStream =
     Try(new BufferedInputStream(new FileInputStream(path)))

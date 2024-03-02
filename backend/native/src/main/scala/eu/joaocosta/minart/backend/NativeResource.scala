@@ -8,15 +8,14 @@ import scala.util.{Failure, Success, Try}
 
 import eu.joaocosta.minart.runtime.Resource
 
-/** Resource loader that fetches the data from the executable resources.
-  * If that fails, it tries to fetch the data from a file.
+/** Resource loader that fetches the data from a file.
+  *  If that fails, it tries to fetch the data from the executable resources.
   *
-  *  Due to scala-native limitations, the async methods are actually synchronous.
+  * Currently in scala-native limitations, the async methods are actually synchronous.
   */
 final case class NativeResource(resourcePath: String) extends Resource {
   override def exists(): Boolean =
-    this.getClass().getResource("/" + resourcePath) != null ||
-      new File(path).exists()
+    new File(path).exists() || this.getClass().getResource("/" + resourcePath) != null
 
   def path = "./" + resourcePath
 
