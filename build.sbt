@@ -5,7 +5,7 @@ name := "minart"
 
 ThisBuild / organization := "eu.joaocosta"
 ThisBuild / publishTo    := sonatypePublishToBundle.value
-ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / scalaVersion := "3.3.3"
 ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage     := Some(url("https://github.com/JD557/minart"))
 ThisBuild / scmInfo := Some(
