@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 import scala.concurrent.*
 import scala.scalanative.libc.stdlib.*
 import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
-import scala.scalanative.runtime.ExecutionContext.{global as queueEc}
+import scala.scalanative.runtime.ExecutionContext.global as queueEc
 import scala.scalanative.unsafe.{blocking as _, *}
 import scala.scalanative.unsigned.*
 

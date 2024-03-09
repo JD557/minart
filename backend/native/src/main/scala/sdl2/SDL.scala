@@ -6954,6 +6954,7 @@ object unions:
       def colorKey_=(value: SDL_Color): Unit       = !struct.at(0).asInstanceOf[Ptr[SDL_Color]] = value
 
 @extern
+@link("SDL2") // [MANUAL]
 private[sdl2] object extern_functions:
   import _root_.sdl2.enumerations.*
   import _root_.sdl2.predef.*
