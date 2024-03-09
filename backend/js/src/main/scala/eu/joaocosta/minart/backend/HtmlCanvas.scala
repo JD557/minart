@@ -128,7 +128,7 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
     }
     ctx.fillStyle = clearColorStr
     ctx.fillRect(0, 0, newSettings.width, newSettings.height)
-    clear(Set(Canvas.Buffer.Backbuffer))
+    surface.fill(newSettings.clearColor)
     extendedSettings
   }
 

@@ -19,9 +19,6 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 
-  private[this] var ubyteClearR: UByte              = _
-  private[this] var ubyteClearG: UByte              = _
-  private[this] var ubyteClearB: UByte              = _
   private[this] var window: Ptr[SDL_Window]         = _
   private[this] var windowSurface: Ptr[SDL_Surface] = _
   protected var surface: SdlSurface                 = _
@@ -82,9 +79,6 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
     SDL_DestroyWindow(window)
-    ubyteClearR = newSettings.clearColor.r.toUByte
-    ubyteClearG = newSettings.clearColor.g.toUByte
-    ubyteClearB = newSettings.clearColor.b.toUByte
     Zone { implicit z =>
       window = SDL_CreateWindow(
         toCString(newSettings.title),
@@ -115,6 +109,9 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
       windowWidth = (!windowSurface).w,
       windowHeight = (!windowSurface).h
     )
+    val ubyteClearR = newSettings.clearColor.r.toUByte
+    val ubyteClearG = newSettings.clearColor.g.toUByte
+    val ubyteClearB = newSettings.clearColor.b.toUByte
     (0 until fullExtendedSettings.windowHeight * fullExtendedSettings.windowWidth).foreach { i =>
       val baseAddr = i * 4
       (!windowSurface).pixels(baseAddr + 0) = ubyteClearB.toByte
@@ -122,7 +119,7 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
       (!windowSurface).pixels(baseAddr + 2) = ubyteClearR.toByte
       (!windowSurface).pixels(baseAddr + 3) = 255.toByte
     }
-    clear(Set(Canvas.Buffer.Backbuffer))
+    surface.fill(newSettings.clearColor)
     fullExtendedSettings
   }
 
