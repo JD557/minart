@@ -1,6 +1,4 @@
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-addSbtPlugin("ch.epfl.scala"      % "sbt-scalafix"                  % "0.11.1")
+addSbtPlugin("ch.epfl.scala"      % "sbt-scalafix"                  % "0.12.0")
 addSbtPlugin("com.github.sbt"     % "sbt-pgp"                       % "2.2.1")
 addSbtPlugin("com.github.sbt"     % "sbt-release"                   % "1.4.0")
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2")
