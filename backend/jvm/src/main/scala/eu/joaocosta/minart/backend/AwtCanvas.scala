@@ -82,7 +82,7 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
     javaCanvas.frame.addKeyListener(keyListener)
     javaCanvas.addMouseListener(mouseListener)
     javaCanvas.frame.addMouseListener(mouseListener)
-    clear(Set(Canvas.Buffer.Backbuffer))
+    surface.fill(newSettings.clearColor)
     fullExtendedSettings
   }
 
