@@ -1,3 +1,11 @@
 //> using scala $scala_version$
 
 //> using dep eu.joaocosta::minart::0.6.0-M2
+
+//> using jsVersion 1.15.0
+//> using jsMode fullLinkJS
+
+//> using nativeVersion 0.4.17
+//> using nativeMode release
+//> using nativeLto thin
+//> using nativeGc commix
