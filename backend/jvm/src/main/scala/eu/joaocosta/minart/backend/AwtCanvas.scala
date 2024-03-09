@@ -14,8 +14,8 @@ import javax.swing.{JFrame, WindowConstants}
 
 import scala.jdk.CollectionConverters.*
 
-import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.graphics.*
+import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.

@@ -3,7 +3,7 @@ package eu.joaocosta.minart.backend
 import scala.scalajs.js
 
 import org.scalajs.dom
-import org.scalajs.dom.html.{Canvas as JsCanvas}
+import org.scalajs.dom.html.Canvas as JsCanvas
 import org.scalajs.dom.{Event, KeyboardEvent, PointerEvent}
 
 import eu.joaocosta.minart.graphics.*
