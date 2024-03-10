@@ -133,6 +133,9 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
   // Cleanup
 
   protected def unsafeDestroy() = {
+    SDL_DestroyWindow(window)
+    surface.cleanup()
+    SDL_FreeSurface(surface.data)
     SDL_Quit()
   }
 
