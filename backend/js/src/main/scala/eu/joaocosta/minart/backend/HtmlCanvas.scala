@@ -14,11 +14,21 @@ import eu.joaocosta.minart.input.*
 final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBackedCanvas {
   // Rendering resources
 
-  private[this] var containerDiv: dom.HTMLDivElement  = _
-  private[this] var jsCanvas: JsCanvas                = _
-  private[this] var ctx: dom.CanvasRenderingContext2D = _
-  private[this] var childNode: dom.Node               = _
-  protected var surface: ImageDataOpaqueSurface       = _
+  private[this] var jsCanvas: JsCanvas                                  = _
+  private[this] var ctx: dom.CanvasRenderingContext2D                   = _
+  private[this] var childNode: dom.Node                                 = _
+  private[this] var globalListeners: List[(String, js.Function1[_, _])] = Nil
+  private[this] def registerGlobalListener[T <: Event](eventType: String, listener: js.Function1[T, _]): Unit = {
+    dom.document.addEventListener[T](eventType, listener)
+    globalListeners = (eventType, listener) :: globalListeners
+  }
+  private[this] def unregisterGlobalListeners(): Unit = {
+    globalListeners.foreach { (eventType, listener) =>
+      dom.document.removeEventListener(eventType, listener)
+    }
+    globalListeners = Nil
+  }
+  protected var surface: ImageDataOpaqueSurface = _
 
   // Input resources
 
@@ -45,23 +55,23 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
   }
 
   protected def unsafeInit(): Unit = {
-    containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
+    val containerDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     jsCanvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     containerDiv.appendChild(jsCanvas)
     childNode = parentNode.appendChild(containerDiv)
     ctx =
       jsCanvas.getContext("2d", new js.Object { val alpha: Boolean = false }).asInstanceOf[dom.CanvasRenderingContext2D]
-    dom.document.addEventListener[Event](
+    registerGlobalListener[Event](
       "fullscreenchange",
       (_: Event) => if (dom.document.fullscreenElement == null) changeSettings(settings.copy(fullScreen = false))
     )
-    dom.document.addEventListener[KeyboardEvent](
+    registerGlobalListener[KeyboardEvent](
       "keydown",
       (ev: KeyboardEvent) => {
         JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.press(k))
       }
     )
-    dom.document.addEventListener[KeyboardEvent](
+    registerGlobalListener[KeyboardEvent](
       "keyup",
       (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
     )
@@ -71,21 +81,21 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
     def handleMove(x: Int, y: Int) = {
       rawPointerPos = (x, y)
     }
-    dom.document.addEventListener[PointerEvent](
+    registerGlobalListener[PointerEvent](
       "pointerdown",
       (ev: PointerEvent) => {
         handleMove(ev.clientX.toInt, ev.clientY.toInt)
         handlePress()
       }
     )
-    dom.document.addEventListener[PointerEvent](
+    registerGlobalListener[PointerEvent](
       "pointerup",
       (ev: PointerEvent) => {
         handleMove(ev.clientX.toInt, ev.clientY.toInt)
         handleRelease()
       }
     )
-    dom.document.addEventListener[PointerEvent]("pointercancel", (_: PointerEvent) => handleRelease())
+    registerGlobalListener[PointerEvent]("pointercancel", (_: PointerEvent) => handleRelease())
     jsCanvas.addEventListener[PointerEvent](
       "pointermove",
       (ev: PointerEvent) => {
@@ -105,7 +115,7 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
       s"width:${extendedSettings.scaledWidth}px;height:${extendedSettings.scaledHeight}px;image-rendering:pixelated;"
     ctx.imageSmoothingEnabled = false
 
-    containerDiv.style =
+    jsCanvas.parentElement.style =
       if (newSettings.fullScreen)
         s"display:flex;justify-content:center;align-items:center;background:$clearColorStr;"
       else ""
@@ -113,16 +123,16 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
 
     if (oldSettings.fullScreen != newSettings.fullScreen) {
       if (newSettings.fullScreen) {
-        containerDiv.requestFullscreen()
+        jsCanvas.parentElement.requestFullscreen()
         // Set a safe fallback on unexpected fullscreen exits
         if (oldSettings.fullScreen == false) {
-          containerDiv.onfullscreenchange = (_: Event) =>
+          jsCanvas.parentElement.onfullscreenchange = (_: Event) =>
             if (dom.document.fullscreenElement == null && settings.fullScreen == true) {
               changeSettings(oldSettings)
             }
         }
       } else if (dom.document.fullscreenElement != null && !js.isUndefined(dom.document.fullscreenElement)) {
-        containerDiv.onfullscreenchange = (_: Event) => ()
+        jsCanvas.parentElement.onfullscreenchange = (_: Event) => ()
         dom.document.exitFullscreen()
       }
     }
@@ -137,6 +147,7 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
   protected def unsafeDestroy(): Unit = if (childNode != null) {
     parentNode.removeChild(childNode)
     childNode = null
+    unregisterGlobalListeners()
   }
 
   // Canvas operations
