@@ -48,7 +48,7 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Input resources
 
-  private[this] var keyListener: AwtCanvas.KeyListener     = _
+  private[this] val keyListener: AwtCanvas.KeyListener     = new AwtCanvas.KeyListener()
   private[this] var mouseListener: AwtCanvas.MouseListener = _
 
   // Initialization
@@ -76,11 +76,12 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
       windowWidth = javaCanvas.getWidth,
       windowHeight = javaCanvas.getHeight
     )
-    keyListener = new AwtCanvas.KeyListener()
     mouseListener = new AwtCanvas.MouseListener(javaCanvas, fullExtendedSettings)
+    // Handles input when the canvas is in focus
     javaCanvas.addKeyListener(keyListener)
-    javaCanvas.frame.addKeyListener(keyListener)
     javaCanvas.addMouseListener(mouseListener)
+    // Handles input when the canvas is out of focus
+    javaCanvas.frame.addKeyListener(keyListener)
     javaCanvas.frame.addMouseListener(mouseListener)
     surface.fill(newSettings.clearColor)
     fullExtendedSettings
@@ -129,6 +130,8 @@ object AwtCanvas {
     override def getPreferredSize(): Dimension =
       new Dimension(scaledWidth, scaledHeight)
 
+    override def paint(g: Graphics) = outerCanvas.javaRedraw(g)
+
     val frame = new JFrame(title)
     frame.setUndecorated(fullScreen)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
@@ -142,9 +145,8 @@ object AwtCanvas {
       .foreach(_.setFullScreenWindow(if (fullScreen) frame else null))
 
     this.createBufferStrategy(2)
-    val buffStrategy = getBufferStrategy
+    val buffStrategy = getBufferStrategy()
 
-    override def paint(g: Graphics) = outerCanvas.javaRedraw(g)
     frame.setVisible(true)
     frame.setResizable(false)
     frame.addWindowListener(new WindowAdapter() {
@@ -157,17 +159,16 @@ object AwtCanvas {
   private final class KeyListener extends JavaKeyListener {
     private[this] var state = KeyboardInput.empty
 
-    def keyPressed(ev: KeyEvent): Unit = synchronized {
-      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.press(key))
-    }
+    def keyPressed(ev: KeyEvent): Unit =
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state.synchronized { state = state.press(key) })
     def keyReleased(ev: KeyEvent): Unit = synchronized {
-      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state = state.release(key))
+      AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state.synchronized { state = state.release(key) })
     }
     def keyTyped(ev: KeyEvent): Unit = ()
-    def clearPressRelease(): Unit = synchronized {
+    def clearPressRelease(): Unit = state.synchronized {
       state = state.clearPressRelease()
     }
-    def getKeyboardInput(): KeyboardInput = synchronized {
+    def getKeyboardInput(): KeyboardInput = state.synchronized {
       state
     }
   }
