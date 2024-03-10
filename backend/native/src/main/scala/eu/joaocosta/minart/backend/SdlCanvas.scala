@@ -78,7 +78,11 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
 
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
-    SDL_DestroyWindow(window)
+
+    // Update window
+    if (window != null) {
+      SDL_DestroyWindow(window)
+    }
     Zone { implicit z =>
       window = SDL_CreateWindow(
         toCString(newSettings.title),
@@ -92,7 +96,14 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
     }
     windowSurface = SDL_GetWindowSurface(window)
     SDL_SetSurfaceBlendMode(windowSurface, SDL_BLENDMODE_NONE)
-    surface = new SdlSurface(
+    SdlSurface.withRawData(windowSurface)(_.fill(newSettings.clearColor))
+    val fullExtendedSettings = extendedSettings.copy(
+      windowWidth = (!windowSurface).w,
+      windowHeight = (!windowSurface).h
+    )
+
+    // Update internal surface
+    val newSurface = new SdlSurface(
       SDL_CreateRGBSurface(
         0.toUInt,
         newSettings.width,
@@ -104,22 +115,18 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
         0xff000000.toUInt
       )
     )
-    SDL_SetSurfaceBlendMode(surface.data, SDL_BLENDMODE_NONE)
-    val fullExtendedSettings = extendedSettings.copy(
-      windowWidth = (!windowSurface).w,
-      windowHeight = (!windowSurface).h
-    )
-    val ubyteClearR = newSettings.clearColor.r.toUByte
-    val ubyteClearG = newSettings.clearColor.g.toUByte
-    val ubyteClearB = newSettings.clearColor.b.toUByte
-    (0 until fullExtendedSettings.windowHeight * fullExtendedSettings.windowWidth).foreach { i =>
-      val baseAddr = i * 4
-      (!windowSurface).pixels(baseAddr + 0) = ubyteClearB.toByte
-      (!windowSurface).pixels(baseAddr + 1) = ubyteClearG.toByte
-      (!windowSurface).pixels(baseAddr + 2) = ubyteClearR.toByte
-      (!windowSurface).pixels(baseAddr + 3) = 255.toByte
+    SDL_SetSurfaceBlendMode(newSurface.data, SDL_BLENDMODE_NONE)
+    newSurface.fill(newSettings.clearColor)
+    if (surface != null) {
+      val oldSurface = surface
+      surface = newSurface
+      oldSurface.cleanup()
+      SDL_FreeSurface(oldSurface.data)
+    } else {
+      surface = newSurface
     }
-    surface.fill(newSettings.clearColor)
+
+    // Update settings
     fullExtendedSettings
   }
 
