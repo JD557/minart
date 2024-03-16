@@ -12,7 +12,7 @@ import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
   *
   * This class assumes to be the only owner of the surface, and will free the surface when garbage collected.
   */
-final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with AutoCloseable {
+final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 
   val width: Int       = (!data).w
   val height: Int      = (!data).h
@@ -70,7 +70,20 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface with A
         super.blit(that, blendMode)(x, y, cx, cy, cw, ch)
     }
 
-  def close(): Unit = {
-    SDL_FreeSurface(data)
+  /** Cleans up the internal datastructures used by this surface.
+    *
+    *  Note that the underlying data is not freed by this method.
+    */
+  def cleanup(): Unit = {
+    SDL_DestroyRenderer(renderer)
+  }
+}
+
+object SdlSurface {
+  inline def withRawData[T](data: Ptr[SDL_Surface])(inline f: SdlSurface => T): T = {
+    val tempSurface = new SdlSurface(data)
+    val ret         = f(tempSurface)
+    tempSurface.cleanup()
+    ret
   }
 }
