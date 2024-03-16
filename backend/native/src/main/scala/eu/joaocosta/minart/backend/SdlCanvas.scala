@@ -78,12 +78,11 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
 
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
-
     // Update window
     if (window != null) {
       SDL_DestroyWindow(window)
     }
-    Zone { implicit z =>
+    Zone {
       window = SDL_CreateWindow(
         toCString(newSettings.title),
         0x2fff0000, // SDL_WINDOWPOS_CENTERED
@@ -136,7 +135,7 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
     SDL_DestroyWindow(window)
     surface.cleanup()
     SDL_FreeSurface(surface.data)
-    SDL_Quit()
+    SDL_QuitSubSystem(SDL_INIT_VIDEO)
   }
 
   // Canvas operations

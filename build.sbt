@@ -1,5 +1,6 @@
 import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+import scala.scalanative.build._
 
 name := "minart"
 
@@ -36,6 +37,7 @@ ThisBuild / scalafmtOnCompile := true
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
+ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 val siteSettings = Seq(
   Compile / doc / scalacOptions ++= Seq("-siteroot", "docs")
@@ -56,7 +58,7 @@ val sharedSettings = Seq()
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scalameta" %%% "munit" % "1.0.0-M11" % Test
+    "org.scalameta" %%% "munit" % "1.0.0-M11+2-9094c595+20240228-2204-SNAPSHOT" % Test
   ),
   testFrameworks += new TestFramework("munit.Framework")
 )
@@ -74,13 +76,16 @@ val jsSettings = Seq(
 )
 
 val nativeSettings = Seq(
-  nativeLinkStubs      := true,
-  Compile / nativeMode := "release",
-  Test / nativeMode    := "debug",
-  Compile / nativeLTO  := "thin",
-  Test / nativeLTO     := "none",
+  Compile / nativeConfig ~= {
+    _.withMode(Mode.releaseFull)
+      .withLinkStubs(true)
+      .withLTO(LTO.thin)
+  },
   Test / nativeConfig ~= {
-    _.withEmbedResources(true)
+    _.withMode(Mode.debug)
+      .withLinkStubs(true)
+      .withLTO(LTO.none)
+      .withEmbedResources(true)
   }
 )
 
