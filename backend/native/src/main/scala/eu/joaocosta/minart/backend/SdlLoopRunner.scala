@@ -143,9 +143,10 @@ object SdlLoopRunner extends LoopRunner {
         cleanup()
         res
       }
-      finiteEventLoopAux(initialState, SDL_GetTicks().toLong).map { res =>
-        cleanup()
-        res
-      }
+      else
+        finiteEventLoopAux(initialState, SDL_GetTicks().toLong).map { res =>
+          cleanup()
+          res
+        }
   }
 }
