@@ -14,6 +14,9 @@ import sdl2.enumerations.SDL_EventType.*
 import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the native backend, backed by SDL.
+  *
+  *  All Futures run on Scala Native's QueueExecutionContext, as SDL requires events to be pumped in the main thread.
+  *  See: https://wiki.libsdl.org/SDL2/SDL_PumpEvents
   */
 object SdlLoopRunner extends LoopRunner {
   def finiteLoop[S](
