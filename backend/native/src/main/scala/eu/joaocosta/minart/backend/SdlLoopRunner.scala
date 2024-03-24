@@ -41,15 +41,13 @@ object SdlLoopRunner extends LoopRunner {
     given ExecutionContext = queueEc
 
     def finiteLoopAux(event: Ptr[SDL_Event]): Unit = {
-      val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
-      def checkQuit()           = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
+      def checkQuit() = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
       while (!checkQuit()) {}
       ()
     }
 
     def finiteEventLoopAux(event: Ptr[SDL_Event]): Future[Unit] = {
-      val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
-      def checkQuit()           = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
+      def checkQuit() = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
       Future(checkQuit()).flatMap { quit =>
         if (quit) Future.successful(())
         else finiteEventLoopAux(event)
