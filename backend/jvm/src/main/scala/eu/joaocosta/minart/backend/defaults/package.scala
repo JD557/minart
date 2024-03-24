@@ -6,8 +6,8 @@ package object defaults {
   given defaultCanvas: DefaultBackend[Any, AwtCanvas] =
     DefaultBackend.fromFunction((_) => new AwtCanvas())
 
-  given defaultLoopRunner: DefaultBackend[Any, JavaLoopRunner.type] =
-    DefaultBackend.fromConstant(JavaLoopRunner)
+  given defaultLoopRunner: DefaultBackend[Any, JavaAsyncLoopRunner.type] =
+    DefaultBackend.fromConstant(JavaAsyncLoopRunner)
 
   given defaultAudioPlayer: DefaultBackend[Any, JavaAudioPlayer] =
     DefaultBackend.fromFunction((_) => new JavaAudioPlayer())

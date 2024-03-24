@@ -10,7 +10,7 @@ import eu.joaocosta.minart.runtime.*
 
 /** Loop runner for the JavaScript backend.
   */
-object JsLoopRunner extends LoopRunner {
+object JsLoopRunner extends LoopRunner[Future] {
   lazy val hasWindow = Try(!isUndefined(dom.window)).getOrElse(false)
 
   def finiteLoop[S](

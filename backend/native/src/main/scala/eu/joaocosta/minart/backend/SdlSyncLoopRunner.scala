@@ -3,10 +3,9 @@ package eu.joaocosta.minart.backend
 import scala.annotation.tailrec
 import scala.concurrent.*
 import scala.scalanative.libc.stdlib.*
-import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
-import scala.scalanative.runtime.ExecutionContext.global as queueEc
 import scala.scalanative.unsafe.{blocking as _, *}
 import scala.scalanative.unsigned.*
+import scala.util.Try
 
 import sdl2.all.*
 import sdl2.enumerations.SDL_EventType.*
@@ -14,18 +13,15 @@ import sdl2.enumerations.SDL_EventType.*
 import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the native backend, backed by SDL.
-  *
-  *  All Futures run on Scala Native's QueueExecutionContext, as SDL requires events to be pumped in the main thread.
-  *  See: https://wiki.libsdl.org/SDL2/SDL_PumpEvents
   */
-object SdlLoopRunner extends LoopRunner {
+object SdlSyncLoopRunner extends LoopRunner[Try] {
   def finiteLoop[S](
       initialState: S,
       operation: S => S,
       terminateWhen: S => Boolean,
       cleanup: () => Unit,
       frequency: LoopFrequency
-  ): Future[S] = {
+  ): Try[S] = {
     val fullCleanup = () => {
       cleanup()
       SDL_Quit()
@@ -41,38 +37,20 @@ object SdlLoopRunner extends LoopRunner {
   }
 
   final class NeverLoop[S](operation: S => S, cleanup: () => Unit) {
-    given ExecutionContext = queueEc
-
     def finiteLoopAux(event: Ptr[SDL_Event]): Unit = {
       def checkQuit() = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
       while (!checkQuit()) {}
       ()
     }
 
-    def finiteEventLoopAux(event: Ptr[SDL_Event]): Future[Unit] = {
-      def checkQuit() = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
-      Future(checkQuit()).flatMap { quit =>
-        if (quit) Future.successful(())
-        else finiteEventLoopAux(event)
-      }
-    }
-
-    def run(initialState: S): Future[S] = {
+    def run(initialState: S): Try[S] = {
       val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
       val res                   = operation(initialState)
-      if (isMultithreadingEnabled) {
-        Future {
-          finiteLoopAux(event)
-          free(event.asInstanceOf[Ptr[Byte]])
-          cleanup()
-          res
-        }
-      } else {
-        finiteEventLoopAux(event).map { _ =>
-          free(event.asInstanceOf[Ptr[Byte]])
-          cleanup()
-          res
-        }
+      Try {
+        finiteLoopAux(event)
+        free(event.asInstanceOf[Ptr[Byte]])
+        cleanup()
+        res
       }
     }
   }
@@ -82,8 +60,6 @@ object SdlLoopRunner extends LoopRunner {
       terminateWhen: S => Boolean,
       cleanup: () => Unit
   ) {
-    given ExecutionContext = queueEc
-
     @tailrec
     def finiteLoopAux(state: S): S = {
       val newState = operation(state)
@@ -91,21 +67,12 @@ object SdlLoopRunner extends LoopRunner {
       else newState
     }
 
-    def run(initialState: S): Future[S] =
-      if (isMultithreadingEnabled) Future {
+    def run(initialState: S): Try[S] =
+      Try {
         val res = finiteLoopAux(initialState)
         cleanup()
         res
       }
-      else
-        Future(operation(initialState)).flatMap { newState =>
-          if (!terminateWhen(newState)) run(newState)
-          else
-            Future {
-              cleanup()
-              newState
-            }
-        }
   }
 
   final class CappedLoop[S](
@@ -114,8 +81,6 @@ object SdlLoopRunner extends LoopRunner {
       iterationMillis: Long,
       cleanup: () => Unit
   ) {
-    given ExecutionContext = queueEc
-
     @tailrec
     def finiteLoopAux(state: S, startTime: Long): S = {
       val endTime  = SDL_GetTicks().toLong
@@ -127,27 +92,11 @@ object SdlLoopRunner extends LoopRunner {
       else newState
     }
 
-    def finiteEventLoopAux(state: S, startTime: Long): Future[S] =
-      Future {
-        val endTime  = SDL_GetTicks().toLong
-        val waitTime = iterationMillis - (endTime - startTime)
-        if (waitTime > 0) blocking { SDL_Delay(waitTime.toUInt) }
-        (SDL_GetTicks().toLong, operation(state))
-      }.flatMap { case (startTime, newState) =>
-        if (!terminateWhen(newState)) finiteEventLoopAux(newState, startTime)
-        else Future.successful(state)
-      }
-
-    def run(initialState: S): Future[S] =
-      if (isMultithreadingEnabled) Future {
+    def run(initialState: S): Try[S] =
+      Try {
         val res = finiteLoopAux(initialState, SDL_GetTicks().toLong)
         cleanup()
         res
       }
-      else
-        finiteEventLoopAux(initialState, SDL_GetTicks().toLong).map { res =>
-          cleanup()
-          res
-        }
   }
 }

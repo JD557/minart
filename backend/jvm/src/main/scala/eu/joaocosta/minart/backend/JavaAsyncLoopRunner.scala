@@ -7,7 +7,7 @@ import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the Java platform.
   */
-object JavaLoopRunner extends LoopRunner {
+object JavaAsyncLoopRunner extends LoopRunner[Future] {
   def finiteLoop[S](
       initialState: S,
       operation: S => S,

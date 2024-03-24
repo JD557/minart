@@ -6,8 +6,8 @@ package object defaults {
   given defaultCanvas: DefaultBackend[Any, SdlCanvas] =
     DefaultBackend.fromFunction((_) => new SdlCanvas())
 
-  given defaultLoopRunner: DefaultBackend[Any, SdlLoopRunner.type] =
-    DefaultBackend.fromConstant(SdlLoopRunner)
+  given defaultLoopRunner: DefaultBackend[Any, SdlAsyncLoopRunner.type] =
+    DefaultBackend.fromConstant(SdlAsyncLoopRunner)
 
   given defaultAudioPlayer: DefaultBackend[Any, SdlAudioPlayer] =
     DefaultBackend.fromFunction((_) => new SdlAudioPlayer())
