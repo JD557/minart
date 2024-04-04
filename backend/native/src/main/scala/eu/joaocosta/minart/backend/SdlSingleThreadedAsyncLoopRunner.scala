@@ -1,8 +1,8 @@
 package eu.joaocosta.minart.backend
 
 import scala.concurrent.*
+import scala.scalanative.concurrent.NativeExecutionContext.Implicits.queue
 import scala.scalanative.libc.stdlib.*
-import scala.scalanative.runtime.ExecutionContext.global as queueEc
 import scala.scalanative.unsafe.{blocking as _, *}
 import scala.scalanative.unsigned.*
 
@@ -39,8 +39,6 @@ private[backend] object SdlSingleThreadedAsyncLoopRunner extends LoopRunner[Futu
   }
 
   final class NeverLoop[S](operation: S => S, cleanup: () => Unit) {
-    given ExecutionContext = queueEc
-
     def finiteEventLoopAux(event: Ptr[SDL_Event]): Future[Unit] = {
       def checkQuit() = SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
       Future(checkQuit()).flatMap { quit =>
@@ -65,8 +63,6 @@ private[backend] object SdlSingleThreadedAsyncLoopRunner extends LoopRunner[Futu
       terminateWhen: S => Boolean,
       cleanup: () => Unit
   ) {
-    given ExecutionContext = queueEc
-
     def run(initialState: S): Future[S] =
       Future(operation(initialState)).flatMap { newState =>
         if (!terminateWhen(newState)) run(newState)
@@ -84,7 +80,6 @@ private[backend] object SdlSingleThreadedAsyncLoopRunner extends LoopRunner[Futu
       iterationMillis: Long,
       cleanup: () => Unit
   ) {
-    given ExecutionContext = queueEc
 
     def finiteEventLoopAux(state: S, startTime: Long): Future[S] =
       Future {

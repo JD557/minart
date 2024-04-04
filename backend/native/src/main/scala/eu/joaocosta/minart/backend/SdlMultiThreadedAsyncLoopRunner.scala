@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import scala.annotation.tailrec
 import scala.concurrent.*
-import scala.scalanative.runtime.ExecutionContext.global as queueEc
+import scala.scalanative.concurrent.NativeExecutionContext.Implicits.queue
 import scala.scalanative.unsigned.*
 
 import sdl2.all.*
@@ -22,7 +22,6 @@ private[backend] object SdlMultiThreadedAsyncLoopRunner extends LoopRunner[Futur
       cleanup: () => Unit,
       frequency: LoopFrequency
   ): Future[S] = {
-    given ExecutionContext = queueEc
     frequency match {
       case LoopFrequency.Never | LoopFrequency.Uncapped =>
         Future { SdlSyncLoopRunner.finiteLoop(initialState, operation, terminateWhen, cleanup, frequency).get }
@@ -41,8 +40,6 @@ private[backend] object SdlMultiThreadedAsyncLoopRunner extends LoopRunner[Futur
       iterationMillis: Long,
       cleanup: () => Unit
   ) {
-    given ExecutionContext = queueEc
-
     @tailrec
     def finiteLoopAux(state: S, startTime: Long): S = {
       val endTime  = SDL_GetTicks().toLong
