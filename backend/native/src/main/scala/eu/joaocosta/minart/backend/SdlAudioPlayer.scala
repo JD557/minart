@@ -38,12 +38,6 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     settings
   }
 
-  protected def unsafeDestroy(): Unit = {
-    stop()
-    SDL_CloseAudioDevice(device)
-    SDL_QuitSubSystem(SDL_INIT_AUDIO)
-  }
-
   // TODO: Ideally this should use a callback like this or it's own callback
   // Try this once scala native supports multi threading (or manually schedule futures to enqueue data)
   /*val callback: SDL_AudioCallback = (userdata: Ptr[Byte], stream: Ptr[UByte], len: CInt) => {
@@ -105,6 +99,16 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     }
     callbackRegistered = false
     ()
+  }
+
+  protected def unsafeDestroy(): Unit = {
+    stop()
+    if (isMultithreadingEnabled) { // Let the callback stop
+      val maxWaitMillis = (settings.bufferSize * 2 * 1000) / settings.sampleRate
+      Thread.sleep(maxWaitMillis)
+    }
+    SDL_CloseAudioDevice(device)
+    SDL_QuitSubSystem(SDL_INIT_AUDIO)
   }
 
   def play(clip: AudioClip, channel: Int): Unit = {
