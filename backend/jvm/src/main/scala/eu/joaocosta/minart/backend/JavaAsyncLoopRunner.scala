@@ -38,6 +38,7 @@ object JavaAsyncLoopRunner extends LoopRunner[Future] {
     @tailrec
     def finiteLoopAux(state: S): S = {
       val newState = operation(state)
+      Thread.`yield`()
       if (!terminateWhen(newState)) finiteLoopAux(newState)
       else newState
     }
@@ -61,6 +62,7 @@ object JavaAsyncLoopRunner extends LoopRunner[Future] {
     def finiteLoopAux(state: S): S = {
       val startTime = System.nanoTime()
       val newState  = operation(state)
+      Thread.`yield`()
       if (!terminateWhen(newState)) {
         val goalNanos  = startTime + iterationNanos
         val sleepNanos = goalNanos - startTime - busyLoopNanos
