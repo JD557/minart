@@ -93,9 +93,8 @@ def application(t: Double, canvas: Canvas): Unit = {
         if (x % 32 < 16 != y % 32 < 16) color.invert
         else color
     )
-    .clip(0, 0, 128, 128) // Clip into a SurfaceView
 
-  canvas.blit(image)(0, 0)
+  canvas.blitPlane(image)(0, 0)
 }
 ```
 
