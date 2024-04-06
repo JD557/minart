@@ -82,6 +82,23 @@ trait MutableSurface extends Surface {
     Blitter.fullBlit(this, that, blendMode, x, y, cx, cy, cw, ch)
   }
 
+  /** Draws a plane on top of this surface.
+    *
+    * The plane will always fill the full surface, and the x, y parameters only define where the plane origin should be.
+    *
+    * @param that plane to draw
+    * @param blendMode blend strategy to use
+    * @param x position of the plane origin on the destination surface
+    * @param y position of the plane origin on the destination surface
+    */
+  def blitPlane(
+      that: Plane,
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int): Unit = {
+    val surface = that.clip(-x, -y, this.width, this.height)
+    blit(surface, blendMode)(0, 0)
+  }
+
   /** Modifies this surface using surface view transformations
     *
     * @param f operations to apply
