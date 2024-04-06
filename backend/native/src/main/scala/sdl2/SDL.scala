@@ -12,6 +12,7 @@ object predef:
     given Tag[T] = Tag.Int.asInstanceOf[Tag[T]]
     extension (inline t: T)
       inline def int: CInt   = eq.apply(t)
+      inline def uint: UInt  = eq.apply(t).toUInt
       inline def value: CInt = eq.apply(t)
 
 object enumerations:

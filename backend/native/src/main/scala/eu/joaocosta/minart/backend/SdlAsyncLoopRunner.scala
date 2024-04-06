@@ -25,41 +25,46 @@ object SdlAsyncLoopRunner extends LoopRunner[Future] {
       cleanup: () => Unit,
       frequency: LoopFrequency
   ): Future[S] = {
+    val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
     val fullCleanup = () => {
       cleanup()
+      free(event.asInstanceOf[Ptr[Byte]])
       SDL_Quit()
+    }
+    val fullTerminateWhen = (state: S) => {
+      SDL_PumpEvents()
+      val quit = SDL_PeepEvents(event, 1, SDL_eventaction.SDL_GETEVENT, SDL_QUIT.uint, SDL_QUIT.uint) >= 1
+      quit || terminateWhen(state)
     }
     frequency match {
       case LoopFrequency.Never =>
-        new NeverLoop(operation, fullCleanup).run(initialState)
+        new NeverLoop(operation, event, fullCleanup).run(initialState)
       case LoopFrequency.Uncapped =>
-        new UncappedLoop(operation, terminateWhen, fullCleanup).run(initialState)
+        new UncappedLoop(operation, fullTerminateWhen, fullCleanup).run(initialState)
       case freq @ LoopFrequency.LoopDuration(_) =>
-        new CappedLoop(operation, terminateWhen, freq.millis, fullCleanup).run(initialState)
+        new CappedLoop(operation, fullTerminateWhen, freq.millis, fullCleanup).run(initialState)
     }
   }
 
-  final class NeverLoop[S](operation: S => S, cleanup: () => Unit) {
-    def checkQuit(event: Ptr[SDL_Event]) =
+  final class NeverLoop[S](operation: S => S, event: Ptr[SDL_Event], cleanup: () => Unit) {
+    def checkQuit() =
       SDL_WaitEvent(event) == 1 && SDL_EventType.define((!event).`type`) == SDL_QUIT
 
     @tailrec
-    private def finiteLoopAux(event: Ptr[SDL_Event]): Unit = {
-      val quit = checkQuit(event)
+    private def finiteLoopAux(): Unit = {
+      val quit = checkQuit()
       Thread.`yield`()
       if (quit) ()
-      else finiteLoopAux(event)
+      else finiteLoopAux()
     }
 
     def run(initialState: S): Future[S] = {
-      val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
       Future(operation(initialState))
         .map { res =>
-          finiteLoopAux(event)
+          finiteLoopAux()
           res
         }
         .map { res =>
-          free(event.asInstanceOf[Ptr[Byte]])
           cleanup()
           res
         }
