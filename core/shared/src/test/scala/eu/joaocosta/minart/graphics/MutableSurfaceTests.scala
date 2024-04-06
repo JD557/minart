@@ -85,6 +85,14 @@ trait MutableSurfaceTests extends munit.FunSuite {
     surface.blit(source)(0, 0, 0, 0, 2 * source.width, 2 * source.height)
   }
 
+  test("Combine a surface with a plane without blowing up") {
+    val source = surface.view.repeating
+
+    surface.blitPlane(source)(0, 0)
+    surface.blitPlane(source)(-1, -1)
+    surface.blitPlane(source)(1, 1)
+  }
+
   test("Correctly combine two surfaces") {
     surface.fill(Color(255, 0, 0))
     val source = surface.toRamSurface()
