@@ -12,6 +12,7 @@ object predef:
     given Tag[T] = Tag.Int.asInstanceOf[Tag[T]]
     extension (inline t: T)
       inline def int: CInt   = eq.apply(t)
+      inline def uint: UInt  = eq.apply(t).toUInt
       inline def value: CInt = eq.apply(t)
 
 object enumerations:
@@ -70,6 +71,14 @@ object enumerations:
       inline def &(b: SDL_AssertState): SDL_AssertState = a & b
       inline def |(b: SDL_AssertState): SDL_AssertState = a | b
       inline def is(b: SDL_AssertState): Boolean        = (a & b) == b
+
+  /* Original bindgen code
+  type SDL_AudioFormat = Uint16
+  object SDL_AudioFormat:
+    given _tag: Tag[SDL_AudioFormat]                        = Uint16._tag
+    inline def apply(inline o: Uint16): SDL_AudioFormat     = o
+    extension (v: SDL_AudioFormat) inline def value: Uint16 = v
+   */
 
   /** Audio format flags.
     *
@@ -313,130 +322,134 @@ object enumerations:
     */
   opaque type SDL_EventType = CInt
   object SDL_EventType extends CEnum[SDL_EventType]:
-    given _tag: Tag[SDL_EventType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_EventType = a
-    inline def define(inline a: UInt): SDL_EventType = a.toInt
-    val SDL_FIRSTEVENT                               = define(0)
-    val SDL_QUIT                                     = define(256)
-    val SDL_APP_TERMINATING                          = define(257)
-    val SDL_APP_LOWMEMORY                            = define(258)
-    val SDL_APP_WILLENTERBACKGROUND                  = define(259)
-    val SDL_APP_DIDENTERBACKGROUND                   = define(260)
-    val SDL_APP_WILLENTERFOREGROUND                  = define(261)
-    val SDL_APP_DIDENTERFOREGROUND                   = define(262)
-    val SDL_LOCALECHANGED                            = define(263)
-    val SDL_DISPLAYEVENT                             = define(336)
-    val SDL_WINDOWEVENT                              = define(512)
-    val SDL_SYSWMEVENT                               = define(513)
-    val SDL_KEYDOWN                                  = define(768)
-    val SDL_KEYUP                                    = define(769)
-    val SDL_TEXTEDITING                              = define(770)
-    val SDL_TEXTINPUT                                = define(771)
-    val SDL_KEYMAPCHANGED                            = define(772)
-    val SDL_TEXTEDITING_EXT                          = define(773)
-    val SDL_MOUSEMOTION                              = define(1024)
-    val SDL_MOUSEBUTTONDOWN                          = define(1025)
-    val SDL_MOUSEBUTTONUP                            = define(1026)
-    val SDL_MOUSEWHEEL                               = define(1027)
-    val SDL_JOYAXISMOTION                            = define(1536)
-    val SDL_JOYBALLMOTION                            = define(1537)
-    val SDL_JOYHATMOTION                             = define(1538)
-    val SDL_JOYBUTTONDOWN                            = define(1539)
-    val SDL_JOYBUTTONUP                              = define(1540)
-    val SDL_JOYDEVICEADDED                           = define(1541)
-    val SDL_JOYDEVICEREMOVED                         = define(1542)
-    val SDL_JOYBATTERYUPDATED                        = define(1543)
-    val SDL_CONTROLLERAXISMOTION                     = define(1616)
-    val SDL_CONTROLLERBUTTONDOWN                     = define(1617)
-    val SDL_CONTROLLERBUTTONUP                       = define(1618)
-    val SDL_CONTROLLERDEVICEADDED                    = define(1619)
-    val SDL_CONTROLLERDEVICEREMOVED                  = define(1620)
-    val SDL_CONTROLLERDEVICEREMAPPED                 = define(1621)
-    val SDL_CONTROLLERTOUCHPADDOWN                   = define(1622)
-    val SDL_CONTROLLERTOUCHPADMOTION                 = define(1623)
-    val SDL_CONTROLLERTOUCHPADUP                     = define(1624)
-    val SDL_CONTROLLERSENSORUPDATE                   = define(1625)
-    val SDL_FINGERDOWN                               = define(1792)
-    val SDL_FINGERUP                                 = define(1793)
-    val SDL_FINGERMOTION                             = define(1794)
-    val SDL_DOLLARGESTURE                            = define(2048)
-    val SDL_DOLLARRECORD                             = define(2049)
-    val SDL_MULTIGESTURE                             = define(2050)
-    val SDL_CLIPBOARDUPDATE                          = define(2304)
-    val SDL_DROPFILE                                 = define(4096)
-    val SDL_DROPTEXT                                 = define(4097)
-    val SDL_DROPBEGIN                                = define(4098)
-    val SDL_DROPCOMPLETE                             = define(4099)
-    val SDL_AUDIODEVICEADDED                         = define(4352)
-    val SDL_AUDIODEVICEREMOVED                       = define(4353)
-    val SDL_SENSORUPDATE                             = define(4608)
-    val SDL_RENDER_TARGETS_RESET                     = define(8192)
-    val SDL_RENDER_DEVICE_RESET                      = define(8193)
-    val SDL_POLLSENTINEL                             = define(32512)
-    val SDL_USEREVENT                                = define(32768)
-    val SDL_LASTEVENT                                = define(65535)
+    given _tag: Tag[SDL_EventType]                     = Tag.Int
+    inline def define(inline a: CInt): SDL_EventType   = a
+    inline def define(inline a: UInt): SDL_EventType   = a.toInt
+    val SDL_FIRSTEVENT                                 = define(0)
+    val SDL_QUIT                                       = define(256)
+    val SDL_APP_TERMINATING                            = define(257)
+    val SDL_APP_LOWMEMORY                              = define(258)
+    val SDL_APP_WILLENTERBACKGROUND                    = define(259)
+    val SDL_APP_DIDENTERBACKGROUND                     = define(260)
+    val SDL_APP_WILLENTERFOREGROUND                    = define(261)
+    val SDL_APP_DIDENTERFOREGROUND                     = define(262)
+    val SDL_LOCALECHANGED                              = define(263)
+    val SDL_DISPLAYEVENT                               = define(336)
+    val SDL_WINDOWEVENT                                = define(512)
+    val SDL_SYSWMEVENT                                 = define(513)
+    val SDL_KEYDOWN                                    = define(768)
+    val SDL_KEYUP                                      = define(769)
+    val SDL_TEXTEDITING                                = define(770)
+    val SDL_TEXTINPUT                                  = define(771)
+    val SDL_KEYMAPCHANGED                              = define(772)
+    val SDL_TEXTEDITING_EXT                            = define(773)
+    val SDL_MOUSEMOTION                                = define(1024)
+    val SDL_MOUSEBUTTONDOWN                            = define(1025)
+    val SDL_MOUSEBUTTONUP                              = define(1026)
+    val SDL_MOUSEWHEEL                                 = define(1027)
+    val SDL_JOYAXISMOTION                              = define(1536)
+    val SDL_JOYBALLMOTION                              = define(1537)
+    val SDL_JOYHATMOTION                               = define(1538)
+    val SDL_JOYBUTTONDOWN                              = define(1539)
+    val SDL_JOYBUTTONUP                                = define(1540)
+    val SDL_JOYDEVICEADDED                             = define(1541)
+    val SDL_JOYDEVICEREMOVED                           = define(1542)
+    val SDL_JOYBATTERYUPDATED                          = define(1543)
+    val SDL_CONTROLLERAXISMOTION                       = define(1616)
+    val SDL_CONTROLLERBUTTONDOWN                       = define(1617)
+    val SDL_CONTROLLERBUTTONUP                         = define(1618)
+    val SDL_CONTROLLERDEVICEADDED                      = define(1619)
+    val SDL_CONTROLLERDEVICEREMOVED                    = define(1620)
+    val SDL_CONTROLLERDEVICEREMAPPED                   = define(1621)
+    val SDL_CONTROLLERTOUCHPADDOWN                     = define(1622)
+    val SDL_CONTROLLERTOUCHPADMOTION                   = define(1623)
+    val SDL_CONTROLLERTOUCHPADUP                       = define(1624)
+    val SDL_CONTROLLERSENSORUPDATE                     = define(1625)
+    val SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3 = define(1626)
+    val SDL_CONTROLLERSTEAMHANDLEUPDATED               = define(1627)
+    val SDL_FINGERDOWN                                 = define(1792)
+    val SDL_FINGERUP                                   = define(1793)
+    val SDL_FINGERMOTION                               = define(1794)
+    val SDL_DOLLARGESTURE                              = define(2048)
+    val SDL_DOLLARRECORD                               = define(2049)
+    val SDL_MULTIGESTURE                               = define(2050)
+    val SDL_CLIPBOARDUPDATE                            = define(2304)
+    val SDL_DROPFILE                                   = define(4096)
+    val SDL_DROPTEXT                                   = define(4097)
+    val SDL_DROPBEGIN                                  = define(4098)
+    val SDL_DROPCOMPLETE                               = define(4099)
+    val SDL_AUDIODEVICEADDED                           = define(4352)
+    val SDL_AUDIODEVICEREMOVED                         = define(4353)
+    val SDL_SENSORUPDATE                               = define(4608)
+    val SDL_RENDER_TARGETS_RESET                       = define(8192)
+    val SDL_RENDER_DEVICE_RESET                        = define(8193)
+    val SDL_POLLSENTINEL                               = define(32512)
+    val SDL_USEREVENT                                  = define(32768)
+    val SDL_LASTEVENT                                  = define(65535)
     inline def getName(inline value: SDL_EventType): Option[String] =
       inline value match
-        case SDL_FIRSTEVENT               => Some("SDL_FIRSTEVENT")
-        case SDL_QUIT                     => Some("SDL_QUIT")
-        case SDL_APP_TERMINATING          => Some("SDL_APP_TERMINATING")
-        case SDL_APP_LOWMEMORY            => Some("SDL_APP_LOWMEMORY")
-        case SDL_APP_WILLENTERBACKGROUND  => Some("SDL_APP_WILLENTERBACKGROUND")
-        case SDL_APP_DIDENTERBACKGROUND   => Some("SDL_APP_DIDENTERBACKGROUND")
-        case SDL_APP_WILLENTERFOREGROUND  => Some("SDL_APP_WILLENTERFOREGROUND")
-        case SDL_APP_DIDENTERFOREGROUND   => Some("SDL_APP_DIDENTERFOREGROUND")
-        case SDL_LOCALECHANGED            => Some("SDL_LOCALECHANGED")
-        case SDL_DISPLAYEVENT             => Some("SDL_DISPLAYEVENT")
-        case SDL_WINDOWEVENT              => Some("SDL_WINDOWEVENT")
-        case SDL_SYSWMEVENT               => Some("SDL_SYSWMEVENT")
-        case SDL_KEYDOWN                  => Some("SDL_KEYDOWN")
-        case SDL_KEYUP                    => Some("SDL_KEYUP")
-        case SDL_TEXTEDITING              => Some("SDL_TEXTEDITING")
-        case SDL_TEXTINPUT                => Some("SDL_TEXTINPUT")
-        case SDL_KEYMAPCHANGED            => Some("SDL_KEYMAPCHANGED")
-        case SDL_TEXTEDITING_EXT          => Some("SDL_TEXTEDITING_EXT")
-        case SDL_MOUSEMOTION              => Some("SDL_MOUSEMOTION")
-        case SDL_MOUSEBUTTONDOWN          => Some("SDL_MOUSEBUTTONDOWN")
-        case SDL_MOUSEBUTTONUP            => Some("SDL_MOUSEBUTTONUP")
-        case SDL_MOUSEWHEEL               => Some("SDL_MOUSEWHEEL")
-        case SDL_JOYAXISMOTION            => Some("SDL_JOYAXISMOTION")
-        case SDL_JOYBALLMOTION            => Some("SDL_JOYBALLMOTION")
-        case SDL_JOYHATMOTION             => Some("SDL_JOYHATMOTION")
-        case SDL_JOYBUTTONDOWN            => Some("SDL_JOYBUTTONDOWN")
-        case SDL_JOYBUTTONUP              => Some("SDL_JOYBUTTONUP")
-        case SDL_JOYDEVICEADDED           => Some("SDL_JOYDEVICEADDED")
-        case SDL_JOYDEVICEREMOVED         => Some("SDL_JOYDEVICEREMOVED")
-        case SDL_JOYBATTERYUPDATED        => Some("SDL_JOYBATTERYUPDATED")
-        case SDL_CONTROLLERAXISMOTION     => Some("SDL_CONTROLLERAXISMOTION")
-        case SDL_CONTROLLERBUTTONDOWN     => Some("SDL_CONTROLLERBUTTONDOWN")
-        case SDL_CONTROLLERBUTTONUP       => Some("SDL_CONTROLLERBUTTONUP")
-        case SDL_CONTROLLERDEVICEADDED    => Some("SDL_CONTROLLERDEVICEADDED")
-        case SDL_CONTROLLERDEVICEREMOVED  => Some("SDL_CONTROLLERDEVICEREMOVED")
-        case SDL_CONTROLLERDEVICEREMAPPED => Some("SDL_CONTROLLERDEVICEREMAPPED")
-        case SDL_CONTROLLERTOUCHPADDOWN   => Some("SDL_CONTROLLERTOUCHPADDOWN")
-        case SDL_CONTROLLERTOUCHPADMOTION => Some("SDL_CONTROLLERTOUCHPADMOTION")
-        case SDL_CONTROLLERTOUCHPADUP     => Some("SDL_CONTROLLERTOUCHPADUP")
-        case SDL_CONTROLLERSENSORUPDATE   => Some("SDL_CONTROLLERSENSORUPDATE")
-        case SDL_FINGERDOWN               => Some("SDL_FINGERDOWN")
-        case SDL_FINGERUP                 => Some("SDL_FINGERUP")
-        case SDL_FINGERMOTION             => Some("SDL_FINGERMOTION")
-        case SDL_DOLLARGESTURE            => Some("SDL_DOLLARGESTURE")
-        case SDL_DOLLARRECORD             => Some("SDL_DOLLARRECORD")
-        case SDL_MULTIGESTURE             => Some("SDL_MULTIGESTURE")
-        case SDL_CLIPBOARDUPDATE          => Some("SDL_CLIPBOARDUPDATE")
-        case SDL_DROPFILE                 => Some("SDL_DROPFILE")
-        case SDL_DROPTEXT                 => Some("SDL_DROPTEXT")
-        case SDL_DROPBEGIN                => Some("SDL_DROPBEGIN")
-        case SDL_DROPCOMPLETE             => Some("SDL_DROPCOMPLETE")
-        case SDL_AUDIODEVICEADDED         => Some("SDL_AUDIODEVICEADDED")
-        case SDL_AUDIODEVICEREMOVED       => Some("SDL_AUDIODEVICEREMOVED")
-        case SDL_SENSORUPDATE             => Some("SDL_SENSORUPDATE")
-        case SDL_RENDER_TARGETS_RESET     => Some("SDL_RENDER_TARGETS_RESET")
-        case SDL_RENDER_DEVICE_RESET      => Some("SDL_RENDER_DEVICE_RESET")
-        case SDL_POLLSENTINEL             => Some("SDL_POLLSENTINEL")
-        case SDL_USEREVENT                => Some("SDL_USEREVENT")
-        case SDL_LASTEVENT                => Some("SDL_LASTEVENT")
-        case _                            => None
+        case SDL_FIRSTEVENT                                 => Some("SDL_FIRSTEVENT")
+        case SDL_QUIT                                       => Some("SDL_QUIT")
+        case SDL_APP_TERMINATING                            => Some("SDL_APP_TERMINATING")
+        case SDL_APP_LOWMEMORY                              => Some("SDL_APP_LOWMEMORY")
+        case SDL_APP_WILLENTERBACKGROUND                    => Some("SDL_APP_WILLENTERBACKGROUND")
+        case SDL_APP_DIDENTERBACKGROUND                     => Some("SDL_APP_DIDENTERBACKGROUND")
+        case SDL_APP_WILLENTERFOREGROUND                    => Some("SDL_APP_WILLENTERFOREGROUND")
+        case SDL_APP_DIDENTERFOREGROUND                     => Some("SDL_APP_DIDENTERFOREGROUND")
+        case SDL_LOCALECHANGED                              => Some("SDL_LOCALECHANGED")
+        case SDL_DISPLAYEVENT                               => Some("SDL_DISPLAYEVENT")
+        case SDL_WINDOWEVENT                                => Some("SDL_WINDOWEVENT")
+        case SDL_SYSWMEVENT                                 => Some("SDL_SYSWMEVENT")
+        case SDL_KEYDOWN                                    => Some("SDL_KEYDOWN")
+        case SDL_KEYUP                                      => Some("SDL_KEYUP")
+        case SDL_TEXTEDITING                                => Some("SDL_TEXTEDITING")
+        case SDL_TEXTINPUT                                  => Some("SDL_TEXTINPUT")
+        case SDL_KEYMAPCHANGED                              => Some("SDL_KEYMAPCHANGED")
+        case SDL_TEXTEDITING_EXT                            => Some("SDL_TEXTEDITING_EXT")
+        case SDL_MOUSEMOTION                                => Some("SDL_MOUSEMOTION")
+        case SDL_MOUSEBUTTONDOWN                            => Some("SDL_MOUSEBUTTONDOWN")
+        case SDL_MOUSEBUTTONUP                              => Some("SDL_MOUSEBUTTONUP")
+        case SDL_MOUSEWHEEL                                 => Some("SDL_MOUSEWHEEL")
+        case SDL_JOYAXISMOTION                              => Some("SDL_JOYAXISMOTION")
+        case SDL_JOYBALLMOTION                              => Some("SDL_JOYBALLMOTION")
+        case SDL_JOYHATMOTION                               => Some("SDL_JOYHATMOTION")
+        case SDL_JOYBUTTONDOWN                              => Some("SDL_JOYBUTTONDOWN")
+        case SDL_JOYBUTTONUP                                => Some("SDL_JOYBUTTONUP")
+        case SDL_JOYDEVICEADDED                             => Some("SDL_JOYDEVICEADDED")
+        case SDL_JOYDEVICEREMOVED                           => Some("SDL_JOYDEVICEREMOVED")
+        case SDL_JOYBATTERYUPDATED                          => Some("SDL_JOYBATTERYUPDATED")
+        case SDL_CONTROLLERAXISMOTION                       => Some("SDL_CONTROLLERAXISMOTION")
+        case SDL_CONTROLLERBUTTONDOWN                       => Some("SDL_CONTROLLERBUTTONDOWN")
+        case SDL_CONTROLLERBUTTONUP                         => Some("SDL_CONTROLLERBUTTONUP")
+        case SDL_CONTROLLERDEVICEADDED                      => Some("SDL_CONTROLLERDEVICEADDED")
+        case SDL_CONTROLLERDEVICEREMOVED                    => Some("SDL_CONTROLLERDEVICEREMOVED")
+        case SDL_CONTROLLERDEVICEREMAPPED                   => Some("SDL_CONTROLLERDEVICEREMAPPED")
+        case SDL_CONTROLLERTOUCHPADDOWN                     => Some("SDL_CONTROLLERTOUCHPADDOWN")
+        case SDL_CONTROLLERTOUCHPADMOTION                   => Some("SDL_CONTROLLERTOUCHPADMOTION")
+        case SDL_CONTROLLERTOUCHPADUP                       => Some("SDL_CONTROLLERTOUCHPADUP")
+        case SDL_CONTROLLERSENSORUPDATE                     => Some("SDL_CONTROLLERSENSORUPDATE")
+        case SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3 => Some("SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3")
+        case SDL_CONTROLLERSTEAMHANDLEUPDATED               => Some("SDL_CONTROLLERSTEAMHANDLEUPDATED")
+        case SDL_FINGERDOWN                                 => Some("SDL_FINGERDOWN")
+        case SDL_FINGERUP                                   => Some("SDL_FINGERUP")
+        case SDL_FINGERMOTION                               => Some("SDL_FINGERMOTION")
+        case SDL_DOLLARGESTURE                              => Some("SDL_DOLLARGESTURE")
+        case SDL_DOLLARRECORD                               => Some("SDL_DOLLARRECORD")
+        case SDL_MULTIGESTURE                               => Some("SDL_MULTIGESTURE")
+        case SDL_CLIPBOARDUPDATE                            => Some("SDL_CLIPBOARDUPDATE")
+        case SDL_DROPFILE                                   => Some("SDL_DROPFILE")
+        case SDL_DROPTEXT                                   => Some("SDL_DROPTEXT")
+        case SDL_DROPBEGIN                                  => Some("SDL_DROPBEGIN")
+        case SDL_DROPCOMPLETE                               => Some("SDL_DROPCOMPLETE")
+        case SDL_AUDIODEVICEADDED                           => Some("SDL_AUDIODEVICEADDED")
+        case SDL_AUDIODEVICEREMOVED                         => Some("SDL_AUDIODEVICEREMOVED")
+        case SDL_SENSORUPDATE                               => Some("SDL_SENSORUPDATE")
+        case SDL_RENDER_TARGETS_RESET                       => Some("SDL_RENDER_TARGETS_RESET")
+        case SDL_RENDER_DEVICE_RESET                        => Some("SDL_RENDER_DEVICE_RESET")
+        case SDL_POLLSENTINEL                               => Some("SDL_POLLSENTINEL")
+        case SDL_USEREVENT                                  => Some("SDL_USEREVENT")
+        case SDL_LASTEVENT                                  => Some("SDL_LASTEVENT")
+        case _                                              => None
     extension (a: SDL_EventType)
       inline def &(b: SDL_EventType): SDL_EventType = a & b
       inline def |(b: SDL_EventType): SDL_EventType = a | b
@@ -750,6 +763,7 @@ object enumerations:
     val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT       = define(11)
     val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT      = define(12)
     val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR       = define(13)
+    val SDL_CONTROLLER_TYPE_MAX                               = define(14)
     inline def getName(inline value: SDL_GameControllerType): Option[String] =
       inline value match
         case SDL_CONTROLLER_TYPE_UNKNOWN                     => Some("SDL_CONTROLLER_TYPE_UNKNOWN")
@@ -767,6 +781,7 @@ object enumerations:
         case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT =>
           Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT")
         case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR => Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR")
+        case SDL_CONTROLLER_TYPE_MAX                         => Some("SDL_CONTROLLER_TYPE_MAX")
         case _                                               => None
     extension (a: SDL_GameControllerType)
       inline def &(b: SDL_GameControllerType): SDL_GameControllerType = a & b
@@ -1737,6 +1752,8 @@ object enumerations:
     val SDL_PIXELFORMAT_UNKNOWN                            = define(0)
     val SDL_PIXELFORMAT_INDEX1LSB                          = define(286261504)
     val SDL_PIXELFORMAT_INDEX1MSB                          = define(287310080)
+    val SDL_PIXELFORMAT_INDEX2LSB                          = define(470811136)
+    val SDL_PIXELFORMAT_INDEX2MSB                          = define(471859712)
     val SDL_PIXELFORMAT_INDEX4LSB                          = define(303039488)
     val SDL_PIXELFORMAT_INDEX4MSB                          = define(304088064)
     val SDL_PIXELFORMAT_INDEX8                             = define(318769153)
@@ -1776,6 +1793,10 @@ object enumerations:
     val SDL_PIXELFORMAT_ARGB32                             = define(377888772)
     val SDL_PIXELFORMAT_BGRA32                             = define(372645892)
     val SDL_PIXELFORMAT_ABGR32                             = define(373694468)
+    val SDL_PIXELFORMAT_RGBX32                             = define(374740996)
+    val SDL_PIXELFORMAT_XRGB32                             = define(375789572)
+    val SDL_PIXELFORMAT_BGRX32                             = define(370546692)
+    val SDL_PIXELFORMAT_XBGR32                             = define(371595268)
     val SDL_PIXELFORMAT_YV12                               = define(842094169)
     val SDL_PIXELFORMAT_IYUV                               = define(1448433993)
     val SDL_PIXELFORMAT_YUY2                               = define(844715353)
@@ -1789,6 +1810,8 @@ object enumerations:
         case SDL_PIXELFORMAT_UNKNOWN      => Some("SDL_PIXELFORMAT_UNKNOWN")
         case SDL_PIXELFORMAT_INDEX1LSB    => Some("SDL_PIXELFORMAT_INDEX1LSB")
         case SDL_PIXELFORMAT_INDEX1MSB    => Some("SDL_PIXELFORMAT_INDEX1MSB")
+        case SDL_PIXELFORMAT_INDEX2LSB    => Some("SDL_PIXELFORMAT_INDEX2LSB")
+        case SDL_PIXELFORMAT_INDEX2MSB    => Some("SDL_PIXELFORMAT_INDEX2MSB")
         case SDL_PIXELFORMAT_INDEX4LSB    => Some("SDL_PIXELFORMAT_INDEX4LSB")
         case SDL_PIXELFORMAT_INDEX4MSB    => Some("SDL_PIXELFORMAT_INDEX4MSB")
         case SDL_PIXELFORMAT_INDEX8       => Some("SDL_PIXELFORMAT_INDEX8")
@@ -1828,6 +1851,10 @@ object enumerations:
         case SDL_PIXELFORMAT_ARGB32       => Some("SDL_PIXELFORMAT_ARGB32")
         case SDL_PIXELFORMAT_BGRA32       => Some("SDL_PIXELFORMAT_BGRA32")
         case SDL_PIXELFORMAT_ABGR32       => Some("SDL_PIXELFORMAT_ABGR32")
+        case SDL_PIXELFORMAT_RGBX32       => Some("SDL_PIXELFORMAT_RGBX32")
+        case SDL_PIXELFORMAT_XRGB32       => Some("SDL_PIXELFORMAT_XRGB32")
+        case SDL_PIXELFORMAT_BGRX32       => Some("SDL_PIXELFORMAT_BGRX32")
+        case SDL_PIXELFORMAT_XBGR32       => Some("SDL_PIXELFORMAT_XBGR32")
         case SDL_PIXELFORMAT_YV12         => Some("SDL_PIXELFORMAT_YV12")
         case SDL_PIXELFORMAT_IYUV         => Some("SDL_PIXELFORMAT_IYUV")
         case SDL_PIXELFORMAT_YUY2         => Some("SDL_PIXELFORMAT_YUY2")
@@ -1862,6 +1889,7 @@ object enumerations:
     val SDL_PIXELTYPE_ARRAYU32                       = define(9)
     val SDL_PIXELTYPE_ARRAYF16                       = define(10)
     val SDL_PIXELTYPE_ARRAYF32                       = define(11)
+    val SDL_PIXELTYPE_INDEX2                         = define(12)
     inline def getName(inline value: SDL_PixelType): Option[String] =
       inline value match
         case SDL_PIXELTYPE_UNKNOWN  => Some("SDL_PIXELTYPE_UNKNOWN")
@@ -1876,6 +1904,7 @@ object enumerations:
         case SDL_PIXELTYPE_ARRAYU32 => Some("SDL_PIXELTYPE_ARRAYU32")
         case SDL_PIXELTYPE_ARRAYF16 => Some("SDL_PIXELTYPE_ARRAYF16")
         case SDL_PIXELTYPE_ARRAYF32 => Some("SDL_PIXELTYPE_ARRAYF32")
+        case SDL_PIXELTYPE_INDEX2   => Some("SDL_PIXELTYPE_INDEX2")
         case _                      => None
     extension (a: SDL_PixelType)
       inline def &(b: SDL_PixelType): SDL_PixelType = a & b
@@ -2882,6 +2911,7 @@ object enumerations:
 
 object aliases:
   import _root_.sdl2.enumerations.*
+  import _root_.sdl2.predef.*
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
@@ -2893,8 +2923,11 @@ object aliases:
   opaque type SDL_AssertionHandler = CFuncPtr2[Ptr[SDL_AssertData], Ptr[Byte], SDL_AssertState]
   object SDL_AssertionHandler:
     given _tag: Tag[SDL_AssertionHandler] = Tag.materializeCFuncPtr2[Ptr[SDL_AssertData], Ptr[Byte], SDL_AssertState]
-    inline def apply(inline o: CFuncPtr2[Ptr[SDL_AssertData], Ptr[Byte], SDL_AssertState]): SDL_AssertionHandler     = o
-    extension (v: SDL_AssertionHandler) inline def value: CFuncPtr2[Ptr[SDL_AssertData], Ptr[Byte], SDL_AssertState] = v
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_AssertionHandler = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[Ptr[SDL_AssertData], Ptr[Byte], SDL_AssertState]): SDL_AssertionHandler = o
+    extension (v: SDL_AssertionHandler)
+      inline def value: CFuncPtr2[Ptr[SDL_AssertData], Ptr[Byte], SDL_AssertState] = v
+      inline def toPtr: Ptr[?]                                                     = CFuncPtr.toPtr(v)
 
   /** This function is called when the audio device needs more data.
     *
@@ -2903,8 +2936,11 @@ object aliases:
   opaque type SDL_AudioCallback = CFuncPtr3[Ptr[Byte], Ptr[Uint8], CInt, Unit]
   object SDL_AudioCallback:
     given _tag: Tag[SDL_AudioCallback] = Tag.materializeCFuncPtr3[Ptr[Byte], Ptr[Uint8], CInt, Unit]
-    inline def apply(inline o: CFuncPtr3[Ptr[Byte], Ptr[Uint8], CInt, Unit]): SDL_AudioCallback     = o
-    extension (v: SDL_AudioCallback) inline def value: CFuncPtr3[Ptr[Byte], Ptr[Uint8], CInt, Unit] = v
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_AudioCallback = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr3[Ptr[Byte], Ptr[Uint8], CInt, Unit]): SDL_AudioCallback = o
+    extension (v: SDL_AudioCallback)
+      inline def value: CFuncPtr3[Ptr[Byte], Ptr[Uint8], CInt, Unit] = v
+      inline def toPtr: Ptr[?]                                       = CFuncPtr.toPtr(v)
 
   /** SDL Audio Device IDs.
     *
@@ -2921,8 +2957,11 @@ object aliases:
   opaque type SDL_AudioFilter = CFuncPtr2[Ptr[SDL_AudioCVT], SDL_AudioFormat, Unit]
   object SDL_AudioFilter:
     given _tag: Tag[SDL_AudioFilter] = Tag.materializeCFuncPtr2[Ptr[SDL_AudioCVT], SDL_AudioFormat, Unit]
-    inline def apply(inline o: CFuncPtr2[Ptr[SDL_AudioCVT], SDL_AudioFormat, Unit]): SDL_AudioFilter     = o
-    extension (v: SDL_AudioFilter) inline def value: CFuncPtr2[Ptr[SDL_AudioCVT], SDL_AudioFormat, Unit] = v
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_AudioFilter = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[Ptr[SDL_AudioCVT], SDL_AudioFormat, Unit]): SDL_AudioFilter = o
+    extension (v: SDL_AudioFilter)
+      inline def value: CFuncPtr2[Ptr[SDL_AudioCVT], SDL_AudioFormat, Unit] = v
+      inline def toPtr: Ptr[?]                                              = CFuncPtr.toPtr(v)
 
   /** A function pointer used for callbacks that watch the event queue.
     *
@@ -2931,8 +2970,11 @@ object aliases:
   opaque type SDL_EventFilter = CFuncPtr2[Ptr[Byte], Ptr[SDL_Event], CInt]
   object SDL_EventFilter:
     given _tag: Tag[SDL_EventFilter] = Tag.materializeCFuncPtr2[Ptr[Byte], Ptr[SDL_Event], CInt]
-    inline def apply(inline o: CFuncPtr2[Ptr[Byte], Ptr[SDL_Event], CInt]): SDL_EventFilter     = o
-    extension (v: SDL_EventFilter) inline def value: CFuncPtr2[Ptr[Byte], Ptr[SDL_Event], CInt] = v
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_EventFilter = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[Ptr[Byte], Ptr[SDL_Event], CInt]): SDL_EventFilter = o
+    extension (v: SDL_EventFilter)
+      inline def value: CFuncPtr2[Ptr[Byte], Ptr[SDL_Event], CInt] = v
+      inline def toPtr: Ptr[?]                                     = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_touch.h
     */
@@ -2967,8 +3009,11 @@ object aliases:
   opaque type SDL_HintCallback = CFuncPtr4[Ptr[Byte], CString, CString, CString, Unit]
   object SDL_HintCallback:
     given _tag: Tag[SDL_HintCallback] = Tag.materializeCFuncPtr4[Ptr[Byte], CString, CString, CString, Unit]
-    inline def apply(inline o: CFuncPtr4[Ptr[Byte], CString, CString, CString, Unit]): SDL_HintCallback     = o
-    extension (v: SDL_HintCallback) inline def value: CFuncPtr4[Ptr[Byte], CString, CString, CString, Unit] = v
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_HintCallback = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr4[Ptr[Byte], CString, CString, CString, Unit]): SDL_HintCallback = o
+    extension (v: SDL_HintCallback)
+      inline def value: CFuncPtr4[Ptr[Byte], CString, CString, CString, Unit] = v
+      inline def toPtr: Ptr[?]                                                = CFuncPtr.toPtr(v)
 
   /** Callback used for hit-testing.
     *
@@ -2978,10 +3023,12 @@ object aliases:
   object SDL_HitTest:
     given _tag: Tag[SDL_HitTest] =
       Tag.materializeCFuncPtr3[Ptr[SDL_Window], Ptr[SDL_Point], Ptr[Byte], SDL_HitTestResult]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_HitTest = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
     inline def apply(inline o: CFuncPtr3[Ptr[SDL_Window], Ptr[SDL_Point], Ptr[Byte], SDL_HitTestResult]): SDL_HitTest =
       o
     extension (v: SDL_HitTest)
       inline def value: CFuncPtr3[Ptr[SDL_Window], Ptr[SDL_Point], Ptr[Byte], SDL_HitTestResult] = v
+      inline def toPtr: Ptr[?]                                                                   = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_joystick.h
     */
@@ -3018,9 +3065,11 @@ object aliases:
   opaque type SDL_LogOutputFunction = CFuncPtr4[Ptr[Byte], CInt, SDL_LogPriority, CString, Unit]
   object SDL_LogOutputFunction:
     given _tag: Tag[SDL_LogOutputFunction] = Tag.materializeCFuncPtr4[Ptr[Byte], CInt, SDL_LogPriority, CString, Unit]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_LogOutputFunction = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
     inline def apply(inline o: CFuncPtr4[Ptr[Byte], CInt, SDL_LogPriority, CString, Unit]): SDL_LogOutputFunction = o
     extension (v: SDL_LogOutputFunction)
       inline def value: CFuncPtr4[Ptr[Byte], CInt, SDL_LogPriority, CString, Unit] = v
+      inline def toPtr: Ptr[?]                                                     = CFuncPtr.toPtr(v)
 
   /** A handle to a CAMetalLayer-backed NSView (macOS) or UIView (iOS/tvOS).
     *
@@ -3064,9 +3113,12 @@ object aliases:
     */
   opaque type SDL_ThreadFunction = CFuncPtr1[Ptr[Byte], CInt]
   object SDL_ThreadFunction:
-    given _tag: Tag[SDL_ThreadFunction] = Tag.materializeCFuncPtr1[Ptr[Byte], CInt]
-    inline def apply(inline o: CFuncPtr1[Ptr[Byte], CInt]): SDL_ThreadFunction     = o
-    extension (v: SDL_ThreadFunction) inline def value: CFuncPtr1[Ptr[Byte], CInt] = v
+    given _tag: Tag[SDL_ThreadFunction]                             = Tag.materializeCFuncPtr1[Ptr[Byte], CInt]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_ThreadFunction = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr1[Ptr[Byte], CInt]): SDL_ThreadFunction = o
+    extension (v: SDL_ThreadFunction)
+      inline def value: CFuncPtr1[Ptr[Byte], CInt] = v
+      inline def toPtr: Ptr[?]                     = CFuncPtr.toPtr(v)
 
   /** Function prototype for the timer callback function.
     *
@@ -3074,9 +3126,12 @@ object aliases:
     */
   opaque type SDL_TimerCallback = CFuncPtr2[Uint32, Ptr[Byte], Uint32]
   object SDL_TimerCallback:
-    given _tag: Tag[SDL_TimerCallback] = Tag.materializeCFuncPtr2[Uint32, Ptr[Byte], Uint32]
-    inline def apply(inline o: CFuncPtr2[Uint32, Ptr[Byte], Uint32]): SDL_TimerCallback     = o
-    extension (v: SDL_TimerCallback) inline def value: CFuncPtr2[Uint32, Ptr[Byte], Uint32] = v
+    given _tag: Tag[SDL_TimerCallback]                             = Tag.materializeCFuncPtr2[Uint32, Ptr[Byte], Uint32]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_TimerCallback = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[Uint32, Ptr[Byte], Uint32]): SDL_TimerCallback = o
+    extension (v: SDL_TimerCallback)
+      inline def value: CFuncPtr2[Uint32, Ptr[Byte], Uint32] = v
+      inline def toPtr: Ptr[?]                               = CFuncPtr.toPtr(v)
 
   /** Definition of the timer ID type.
     *
@@ -3102,11 +3157,13 @@ object aliases:
   object SDL_WindowsMessageHook:
     given _tag: Tag[SDL_WindowsMessageHook] =
       Tag.materializeCFuncPtr5[Ptr[Byte], Ptr[Byte], CUnsignedInt, Uint64, Sint64, Unit]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_WindowsMessageHook = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
     inline def apply(
         inline o: CFuncPtr5[Ptr[Byte], Ptr[Byte], CUnsignedInt, Uint64, Sint64, Unit]
     ): SDL_WindowsMessageHook = o
     extension (v: SDL_WindowsMessageHook)
       inline def value: CFuncPtr5[Ptr[Byte], Ptr[Byte], CUnsignedInt, Uint64, Sint64, Unit] = v
+      inline def toPtr: Ptr[?]                                                              = CFuncPtr.toPtr(v)
 
   /** The type of function used for surface blitting functions.
     *
@@ -3116,27 +3173,35 @@ object aliases:
   object SDL_blit:
     given _tag: Tag[SDL_blit] =
       Tag.materializeCFuncPtr4[Ptr[SDL_Surface], Ptr[SDL_Rect], Ptr[SDL_Surface], Ptr[SDL_Rect], CInt]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_blit = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
     inline def apply(
         inline o: CFuncPtr4[Ptr[SDL_Surface], Ptr[SDL_Rect], Ptr[SDL_Surface], Ptr[SDL_Rect], CInt]
     ): SDL_blit = o
     extension (v: SDL_blit)
       inline def value: CFuncPtr4[Ptr[SDL_Surface], Ptr[SDL_Rect], Ptr[SDL_Surface], Ptr[SDL_Rect], CInt] = v
+      inline def toPtr: Ptr[?] = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_stdinc.h
     */
   opaque type SDL_calloc_func = CFuncPtr2[size_t, size_t, Ptr[Byte]]
   object SDL_calloc_func:
-    given _tag: Tag[SDL_calloc_func] = Tag.materializeCFuncPtr2[size_t, size_t, Ptr[Byte]]
-    inline def apply(inline o: CFuncPtr2[size_t, size_t, Ptr[Byte]]): SDL_calloc_func     = o
-    extension (v: SDL_calloc_func) inline def value: CFuncPtr2[size_t, size_t, Ptr[Byte]] = v
+    given _tag: Tag[SDL_calloc_func]                             = Tag.materializeCFuncPtr2[size_t, size_t, Ptr[Byte]]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_calloc_func = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[size_t, size_t, Ptr[Byte]]): SDL_calloc_func = o
+    extension (v: SDL_calloc_func)
+      inline def value: CFuncPtr2[size_t, size_t, Ptr[Byte]] = v
+      inline def toPtr: Ptr[?]                               = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_stdinc.h
     */
   opaque type SDL_free_func = CFuncPtr1[Ptr[Byte], Unit]
   object SDL_free_func:
-    given _tag: Tag[SDL_free_func]                                        = Tag.materializeCFuncPtr1[Ptr[Byte], Unit]
+    given _tag: Tag[SDL_free_func]                             = Tag.materializeCFuncPtr1[Ptr[Byte], Unit]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_free_func = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
     inline def apply(inline o: CFuncPtr1[Ptr[Byte], Unit]): SDL_free_func = o
-    extension (v: SDL_free_func) inline def value: CFuncPtr1[Ptr[Byte], Unit] = v
+    extension (v: SDL_free_func)
+      inline def value: CFuncPtr1[Ptr[Byte], Unit] = v
+      inline def toPtr: Ptr[?]                     = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_stdinc.h
     */
@@ -3152,31 +3217,40 @@ object aliases:
     */
   opaque type SDL_main_func = CFuncPtr2[CInt, Ptr[CString], CInt]
   object SDL_main_func:
-    given _tag: Tag[SDL_main_func] = Tag.materializeCFuncPtr2[CInt, Ptr[CString], CInt]
-    inline def apply(inline o: CFuncPtr2[CInt, Ptr[CString], CInt]): SDL_main_func     = o
-    extension (v: SDL_main_func) inline def value: CFuncPtr2[CInt, Ptr[CString], CInt] = v
+    given _tag: Tag[SDL_main_func]                             = Tag.materializeCFuncPtr2[CInt, Ptr[CString], CInt]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_main_func = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[CInt, Ptr[CString], CInt]): SDL_main_func = o
+    extension (v: SDL_main_func)
+      inline def value: CFuncPtr2[CInt, Ptr[CString], CInt] = v
+      inline def toPtr: Ptr[?]                              = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_stdinc.h
     */
   opaque type SDL_malloc_func = CFuncPtr1[size_t, Ptr[Byte]]
   object SDL_malloc_func:
-    given _tag: Tag[SDL_malloc_func] = Tag.materializeCFuncPtr1[size_t, Ptr[Byte]]
-    inline def apply(inline o: CFuncPtr1[size_t, Ptr[Byte]]): SDL_malloc_func     = o
-    extension (v: SDL_malloc_func) inline def value: CFuncPtr1[size_t, Ptr[Byte]] = v
+    given _tag: Tag[SDL_malloc_func]                             = Tag.materializeCFuncPtr1[size_t, Ptr[Byte]]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_malloc_func = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr1[size_t, Ptr[Byte]]): SDL_malloc_func = o
+    extension (v: SDL_malloc_func)
+      inline def value: CFuncPtr1[size_t, Ptr[Byte]] = v
+      inline def toPtr: Ptr[?]                       = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_stdinc.h
     */
   opaque type SDL_realloc_func = CFuncPtr2[Ptr[Byte], size_t, Ptr[Byte]]
   object SDL_realloc_func:
     given _tag: Tag[SDL_realloc_func] = Tag.materializeCFuncPtr2[Ptr[Byte], size_t, Ptr[Byte]]
-    inline def apply(inline o: CFuncPtr2[Ptr[Byte], size_t, Ptr[Byte]]): SDL_realloc_func     = o
-    extension (v: SDL_realloc_func) inline def value: CFuncPtr2[Ptr[Byte], size_t, Ptr[Byte]] = v
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): SDL_realloc_func = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr2[Ptr[Byte], size_t, Ptr[Byte]]): SDL_realloc_func = o
+    extension (v: SDL_realloc_func)
+      inline def value: CFuncPtr2[Ptr[Byte], size_t, Ptr[Byte]] = v
+      inline def toPtr: Ptr[?]                                  = CFuncPtr.toPtr(v)
 
-  /** [bindgen] header: ./SDL_thread.h
+  /** [bindgen] header: ./SDL_thread.h [MANUAL]
     */
   opaque type SDL_threadID = CUnsignedLongInt
   object SDL_threadID:
-    given _tag: Tag[SDL_threadID]                                  = Tag.ULong
+    given _tag: Tag[SDL_threadID]                                  = Tag.USize
     inline def apply(inline o: CUnsignedLongInt): SDL_threadID     = o
     extension (v: SDL_threadID) inline def value: CUnsignedLongInt = v
 
@@ -3278,6 +3352,8 @@ object aliases:
       Tag.materializeCFuncPtr6[Ptr[Byte], CUnsignedInt, CFuncPtr1[Ptr[Byte], CUnsignedInt], Ptr[
         Byte
       ], CUnsignedInt, Ptr[CUnsignedInt], uintptr_t]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): pfnSDL_CurrentBeginThread =
+      CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
     inline def apply(
         inline o: CFuncPtr6[Ptr[Byte], CUnsignedInt, CFuncPtr1[Ptr[Byte], CUnsignedInt], Ptr[Byte], CUnsignedInt, Ptr[
           CUnsignedInt
@@ -3287,14 +3363,18 @@ object aliases:
       inline def value: CFuncPtr6[Ptr[Byte], CUnsignedInt, CFuncPtr1[Ptr[Byte], CUnsignedInt], Ptr[
         Byte
       ], CUnsignedInt, Ptr[CUnsignedInt], uintptr_t] = v
+      inline def toPtr: Ptr[?] = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_thread.h
     */
   opaque type pfnSDL_CurrentEndThread = CFuncPtr1[CUnsignedInt, Unit]
   object pfnSDL_CurrentEndThread:
-    given _tag: Tag[pfnSDL_CurrentEndThread] = Tag.materializeCFuncPtr1[CUnsignedInt, Unit]
-    inline def apply(inline o: CFuncPtr1[CUnsignedInt, Unit]): pfnSDL_CurrentEndThread     = o
-    extension (v: pfnSDL_CurrentEndThread) inline def value: CFuncPtr1[CUnsignedInt, Unit] = v
+    given _tag: Tag[pfnSDL_CurrentEndThread]                             = Tag.materializeCFuncPtr1[CUnsignedInt, Unit]
+    inline def fromPtr(ptr: Ptr[Byte] | Ptr[?]): pfnSDL_CurrentEndThread = CFuncPtr.fromPtr(ptr.asInstanceOf[Ptr[Byte]])
+    inline def apply(inline o: CFuncPtr1[CUnsignedInt, Unit]): pfnSDL_CurrentEndThread = o
+    extension (v: pfnSDL_CurrentEndThread)
+      inline def value: CFuncPtr1[CUnsignedInt, Unit] = v
+      inline def toPtr: Ptr[?]                        = CFuncPtr.toPtr(v)
 
   type size_t = libc.stddef.size_t
   object size_t:
@@ -3348,7 +3428,9 @@ object aliases:
 
 object structs:
   import _root_.sdl2.enumerations.*
+  import _root_.sdl2.predef.*
   import _root_.sdl2.aliases.*
+  import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
 
   /** [bindgen] header: ./SDL_system.h
@@ -5287,25 +5369,6 @@ object structs:
       def padding: Uint16                     = struct._9
       def padding_=(value: Uint16): Unit      = !struct.at9 = value
 
-  /** OS Specific event
-    *
-    * [bindgen] header: ./SDL_events.h
-    */
-  opaque type SDL_OSEvent = CStruct2[Uint32, Uint32]
-  object SDL_OSEvent:
-    given _tag: Tag[SDL_OSEvent]              = Tag.materializeCStruct2Tag[Uint32, Uint32]
-    def apply()(using Zone): Ptr[SDL_OSEvent] = scala.scalanative.unsafe.alloc[SDL_OSEvent](1)
-    def apply(`type`: Uint32, timestamp: Uint32)(using Zone): Ptr[SDL_OSEvent] =
-      val ____ptr = apply()
-      (!____ptr).`type` = `type`
-      (!____ptr).timestamp = timestamp
-      ____ptr
-    extension (struct: SDL_OSEvent)
-      def `type`: Uint32                   = struct._1
-      def type_=(value: Uint32): Unit      = !struct.at1 = value
-      def timestamp: Uint32                = struct._2
-      def timestamp_=(value: Uint32): Unit = !struct.at2 = value
-
   /** [bindgen] header: ./SDL_pixels.h
     */
   opaque type SDL_Palette = CStruct4[CInt, Ptr[SDL_Color], Uint32, CInt]
@@ -5480,7 +5543,7 @@ object structs:
 
   /** This is the read/write operation structure -- very basic.
     *
-    * [bindgen] header: ./SDL_rwops.h
+    * [bindgen] header: ./SDL_rwops.h [MANUAL]
     */
   opaque type SDL_RWops = CStruct7[
     CFuncPtr1[Ptr[Byte], Sint64],
@@ -6509,8 +6572,11 @@ object structs:
     given _tag: Tag[_SDL_iconv_t] = Tag.materializeCStruct0Tag
 
 object unions:
+  import _root_.sdl2.enumerations.*
+  import _root_.sdl2.predef.*
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
+  import _root_.sdl2.unions.*
 
   /** General event structure
     *
@@ -6889,9 +6955,10 @@ object unions:
       def colorKey_=(value: SDL_Color): Unit       = !struct.at(0).asInstanceOf[Ptr[SDL_Color]] = value
 
 @extern
-@link("SDL2")
+@link("SDL2") // [MANUAL]
 private[sdl2] object extern_functions:
   import _root_.sdl2.enumerations.*
+  import _root_.sdl2.predef.*
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
@@ -7328,8 +7395,7 @@ private[sdl2] object extern_functions:
     *
     * [bindgen] header: ./SDL_video.h
     */
-  def SDL_CreateWindow(title: CString, x: CInt, y: CInt, w: CInt, h: CInt, flags: Uint32): Ptr[SDL_Window] =
-    extern
+  def SDL_CreateWindow(title: CString, x: CInt, y: CInt, w: CInt, h: CInt, flags: Uint32): Ptr[SDL_Window] = extern
 
   /** Create a window and default renderer.
     *
@@ -7839,6 +7905,12 @@ private[sdl2] object extern_functions:
     * [bindgen] header: ./SDL_gamecontroller.h
     */
   def SDL_GameControllerGetSerial(gamecontroller: Ptr[SDL_GameController]): CString = extern
+
+  /** Get the Steam Input handle of an opened controller, if available.
+    *
+    * [bindgen] header: ./SDL_gamecontroller.h
+    */
+  def SDL_GameControllerGetSteamHandle(gamecontroller: Ptr[SDL_GameController]): Uint64 = extern
 
   /** Convert from an SDL_GameControllerAxis enum to a string.
     *
@@ -9157,13 +9229,13 @@ private[sdl2] object extern_functions:
 
   /** Initialize the SDL library.
     *
-    * [bindgen] header: .\SDL.h
+    * [bindgen] header: .\SDL.h [MANUAL]
     */
   def SDL_Init(flags: SDL_InitFlag): CInt = extern
 
   /** Compatibility function to initialize the SDL library.
     *
-    * [bindgen] header: .\SDL.h
+    * [bindgen] header: .\SDL.h [MANUAL]
     */
   def SDL_InitSubSystem(flags: SDL_InitFlag): CInt = extern
 
@@ -10041,7 +10113,7 @@ private[sdl2] object extern_functions:
 
   /** Shut down specific SDL subsystems.
     *
-    * [bindgen] header: .\SDL.h
+    * [bindgen] header: .\SDL.h [MANUAL]
     */
   def SDL_QuitSubSystem(flags: SDL_InitFlag): Unit = extern
 
@@ -10880,7 +10952,7 @@ private[sdl2] object extern_functions:
     */
   def SDL_SetSurfaceRLE(surface: Ptr[SDL_Surface], flag: CInt): CInt = extern
 
-  /** Set the rectangle used to type Unicode text inputs.
+  /** Set the rectangle used to type Unicode text inputs. Native input methods will place a window with word suggestions near it, without covering the text being inputted.
     *
     * [bindgen] header: ./SDL_keyboard.h
     */
@@ -11348,9 +11420,9 @@ private[sdl2] object extern_functions:
 
   /** Get a mask of the specified subsystems which are currently initialized.
     *
-    * [bindgen] header: .\SDL.h
+    * [bindgen] header: .\SDL.h [MANUAL]
     */
-  def SDL_WasInit(flags: Uint32): Uint32 = extern
+  def SDL_WasInit(flags: SDL_InitFlag): Uint32 = extern
 
   /** Use this function to write 16 bits in native format to a SDL_RWops as big-endian data.
     *
@@ -12116,19 +12188,12 @@ private[sdl2] object extern_functions:
 
 object functions:
   import _root_.sdl2.enumerations.*
+  import _root_.sdl2.predef.*
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
-
   import extern_functions.*
   export extern_functions.*
-
-  /** Convert a GUID string into a ::SDL_GUID structure.
-    *
-    * [bindgen] header: ./SDL_guid.h
-    */
-  def SDL_GUIDFromString(pchGUID: CString)(__return: Ptr[SDL_GUID]): Unit =
-    __sn_wrap_sdl2_SDL_GUIDFromString(pchGUID, __return)
 
   /** Convert a GUID string into a ::SDL_GUID structure.
     *
@@ -12138,6 +12203,13 @@ object functions:
     val __ptr_0: Ptr[SDL_GUID] = alloc[SDL_GUID](1)
     __sn_wrap_sdl2_SDL_GUIDFromString(pchGUID, (__ptr_0 + 0))
     !(__ptr_0 + 0)
+
+  /** Convert a GUID string into a ::SDL_GUID structure.
+    *
+    * [bindgen] header: ./SDL_guid.h
+    */
+  def SDL_GUIDFromString(pchGUID: CString)(__return: Ptr[SDL_GUID]): Unit =
+    __sn_wrap_sdl2_SDL_GUIDFromString(pchGUID, __return)
 
   /** Get an ASCII string representation for a given ::SDL_GUID.
     *
@@ -12180,20 +12252,20 @@ object functions:
     * [bindgen] header: ./SDL_gamecontroller.h
     */
   def SDL_GameControllerGetBindForButton(gamecontroller: Ptr[SDL_GameController], button: SDL_GameControllerButton)(
-      __return: Ptr[SDL_GameControllerButtonBind]
-  ): Unit =
-    __sn_wrap_sdl2_SDL_GameControllerGetBindForButton(gamecontroller, button, __return)
+      using Zone
+  ): SDL_GameControllerButtonBind =
+    val __ptr_0: Ptr[SDL_GameControllerButtonBind] = alloc[SDL_GameControllerButtonBind](1)
+    __sn_wrap_sdl2_SDL_GameControllerGetBindForButton(gamecontroller, button, (__ptr_0 + 0))
+    !(__ptr_0 + 0)
 
   /** Get the SDL joystick layer binding for a controller button mapping.
     *
     * [bindgen] header: ./SDL_gamecontroller.h
     */
   def SDL_GameControllerGetBindForButton(gamecontroller: Ptr[SDL_GameController], button: SDL_GameControllerButton)(
-      using Zone
-  ): SDL_GameControllerButtonBind =
-    val __ptr_0: Ptr[SDL_GameControllerButtonBind] = alloc[SDL_GameControllerButtonBind](1)
-    __sn_wrap_sdl2_SDL_GameControllerGetBindForButton(gamecontroller, button, (__ptr_0 + 0))
-    !(__ptr_0 + 0)
+      __return: Ptr[SDL_GameControllerButtonBind]
+  ): Unit =
+    __sn_wrap_sdl2_SDL_GameControllerGetBindForButton(gamecontroller, button, __return)
 
   /** Get the game controller mapping string for a given GUID.
     *
@@ -12216,6 +12288,19 @@ object functions:
     * [bindgen] header: ./SDL_joystick.h
     */
   def SDL_GetJoystickGUIDInfo(
+      guid: Ptr[SDL_JoystickGUID],
+      vendor: Ptr[Uint16],
+      product: Ptr[Uint16],
+      version: Ptr[Uint16],
+      crc16: Ptr[Uint16]
+  ): Unit =
+    __sn_wrap_sdl2_SDL_GetJoystickGUIDInfo(guid, vendor, product, version, crc16)
+
+  /** Get the device information encoded in a SDL_JoystickGUID structure
+    *
+    * [bindgen] header: ./SDL_joystick.h
+    */
+  def SDL_GetJoystickGUIDInfo(
       guid: SDL_JoystickGUID,
       vendor: Ptr[Uint16],
       product: Ptr[Uint16],
@@ -12226,26 +12311,6 @@ object functions:
     !(__ptr_0 + 0) = guid
     __sn_wrap_sdl2_SDL_GetJoystickGUIDInfo((__ptr_0 + 0), vendor, product, version, crc16)
 
-  /** Get the device information encoded in a SDL_JoystickGUID structure
-    *
-    * [bindgen] header: ./SDL_joystick.h
-    */
-  def SDL_GetJoystickGUIDInfo(
-      guid: Ptr[SDL_JoystickGUID],
-      vendor: Ptr[Uint16],
-      product: Ptr[Uint16],
-      version: Ptr[Uint16],
-      crc16: Ptr[Uint16]
-  ): Unit =
-    __sn_wrap_sdl2_SDL_GetJoystickGUIDInfo(guid, vendor, product, version, crc16)
-
-  /** Get the implementation-dependent GUID for the joystick at a given device index.
-    *
-    * [bindgen] header: ./SDL_joystick.h
-    */
-  def SDL_JoystickGetDeviceGUID(device_index: CInt)(__return: Ptr[SDL_JoystickGUID]): Unit =
-    __sn_wrap_sdl2_SDL_JoystickGetDeviceGUID(device_index, __return)
-
   /** Get the implementation-dependent GUID for the joystick at a given device index.
     *
     * [bindgen] header: ./SDL_joystick.h
@@ -12254,6 +12319,13 @@ object functions:
     val __ptr_0: Ptr[SDL_JoystickGUID] = alloc[SDL_JoystickGUID](1)
     __sn_wrap_sdl2_SDL_JoystickGetDeviceGUID(device_index, (__ptr_0 + 0))
     !(__ptr_0 + 0)
+
+  /** Get the implementation-dependent GUID for the joystick at a given device index.
+    *
+    * [bindgen] header: ./SDL_joystick.h
+    */
+  def SDL_JoystickGetDeviceGUID(device_index: CInt)(__return: Ptr[SDL_JoystickGUID]): Unit =
+    __sn_wrap_sdl2_SDL_JoystickGetDeviceGUID(device_index, __return)
 
   /** Get the implementation-dependent GUID for the joystick.
     *
@@ -12291,17 +12363,17 @@ object functions:
     *
     * [bindgen] header: ./SDL_joystick.h
     */
-  def SDL_JoystickGetGUIDString(guid: SDL_JoystickGUID, pszGUID: CString, cbGUID: CInt)(using Zone): Unit =
-    val __ptr_0: Ptr[SDL_JoystickGUID] = alloc[SDL_JoystickGUID](1)
-    !(__ptr_0 + 0) = guid
-    __sn_wrap_sdl2_SDL_JoystickGetGUIDString((__ptr_0 + 0), pszGUID, cbGUID)
+  def SDL_JoystickGetGUIDString(guid: Ptr[SDL_JoystickGUID], pszGUID: CString, cbGUID: CInt): Unit =
+    __sn_wrap_sdl2_SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID)
 
   /** Get an ASCII string representation for a given SDL_JoystickGUID.
     *
     * [bindgen] header: ./SDL_joystick.h
     */
-  def SDL_JoystickGetGUIDString(guid: Ptr[SDL_JoystickGUID], pszGUID: CString, cbGUID: CInt): Unit =
-    __sn_wrap_sdl2_SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID)
+  def SDL_JoystickGetGUIDString(guid: SDL_JoystickGUID, pszGUID: CString, cbGUID: CInt)(using Zone): Unit =
+    val __ptr_0: Ptr[SDL_JoystickGUID] = alloc[SDL_JoystickGUID](1)
+    !(__ptr_0 + 0) = guid
+    __sn_wrap_sdl2_SDL_JoystickGetGUIDString((__ptr_0 + 0), pszGUID, cbGUID)
 
 object types:
   export _root_.sdl2.structs.*
@@ -12473,7 +12545,6 @@ object all:
   export _root_.sdl2.structs.SDL_MouseMotionEvent
   export _root_.sdl2.structs.SDL_MouseWheelEvent
   export _root_.sdl2.structs.SDL_MultiGestureEvent
-  export _root_.sdl2.structs.SDL_OSEvent
   export _root_.sdl2.structs.SDL_Palette
   export _root_.sdl2.structs.SDL_PixelFormat
   export _root_.sdl2.structs.SDL_Point
@@ -12657,6 +12728,7 @@ object all:
   export _root_.sdl2.functions.SDL_GameControllerGetSensorDataRate
   export _root_.sdl2.functions.SDL_GameControllerGetSensorDataWithTimestamp
   export _root_.sdl2.functions.SDL_GameControllerGetSerial
+  export _root_.sdl2.functions.SDL_GameControllerGetSteamHandle
   export _root_.sdl2.functions.SDL_GameControllerGetStringForAxis
   export _root_.sdl2.functions.SDL_GameControllerGetStringForButton
   export _root_.sdl2.functions.SDL_GameControllerGetTouchpadFinger

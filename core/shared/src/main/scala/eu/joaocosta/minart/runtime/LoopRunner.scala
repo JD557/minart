@@ -1,15 +1,13 @@
 package eu.joaocosta.minart.runtime
 
-import scala.concurrent.Future
-
 import eu.joaocosta.minart.backend.defaults.*
 
-/** Abstraction that allows to run loops at a certain frequency in a platforrm agnostic way.
+/** Abstraction that allows to run loops at a certain frequency in a platform agnostic way.
   *
   * This is useful for interop with backends that do nor provide `Thread.sleep` or that require
   * that an event loop keeps being consumed.
   */
-trait LoopRunner {
+trait LoopRunner[F[_]] {
 
   /** Creates a loop that terminates once a certain condition is met.
     *
@@ -26,12 +24,12 @@ trait LoopRunner {
       terminateWhen: S => Boolean = (_: S) => false,
       cleanup: () => Unit = () => (),
       frequency: LoopFrequency = LoopFrequency.Uncapped
-  ): Future[S]
+  ): F[S]
 }
 
 object LoopRunner {
 
   /** Get the default loop runner */
-  def apply()(using backend: DefaultBackend[Any, LoopRunner]): LoopRunner =
+  def apply[F[_]]()(using backend: DefaultBackend[Any, LoopRunner[F]]): LoopRunner[F] =
     backend.defaultValue()
 }

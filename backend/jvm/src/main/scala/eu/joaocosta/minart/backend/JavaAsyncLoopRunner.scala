@@ -7,7 +7,7 @@ import eu.joaocosta.minart.runtime.*
 
 /** Loop Runner for the Java platform.
   */
-object JavaLoopRunner extends LoopRunner {
+object JavaAsyncLoopRunner extends LoopRunner[Future] {
   def finiteLoop[S](
       initialState: S,
       operation: S => S,
@@ -38,6 +38,7 @@ object JavaLoopRunner extends LoopRunner {
     @tailrec
     def finiteLoopAux(state: S): S = {
       val newState = operation(state)
+      Thread.`yield`()
       if (!terminateWhen(newState)) finiteLoopAux(newState)
       else newState
     }
@@ -61,6 +62,7 @@ object JavaLoopRunner extends LoopRunner {
     def finiteLoopAux(state: S): S = {
       val startTime = System.nanoTime()
       val newState  = operation(state)
+      Thread.`yield`()
       if (!terminateWhen(newState)) {
         val goalNanos  = startTime + iterationNanos
         val sleepNanos = goalNanos - startTime - busyLoopNanos

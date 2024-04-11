@@ -1,8 +1,9 @@
 package eu.joaocosta.minart.backend
 
 import scala.concurrent.*
+import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
 import scala.scalanative.runtime.ByteArray
-import scala.scalanative.unsafe.*
+import scala.scalanative.unsafe.{blocking as _, *}
 import scala.scalanative.unsigned.*
 
 import sdl2.all.*
@@ -37,12 +38,6 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     settings
   }
 
-  protected def unsafeDestroy(): Unit = {
-    stop()
-    SDL_CloseAudioDevice(device)
-    SDL_QuitSubSystem(SDL_INIT_AUDIO)
-  }
-
   // TODO: Ideally this should use a callback like this or it's own callback
   // Try this once scala native supports multi threading (or manually schedule futures to enqueue data)
   /*val callback: SDL_AudioCallback = (userdata: Ptr[Byte], stream: Ptr[UByte], len: CInt) => {
@@ -53,8 +48,8 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     }
   }*/
   given ExecutionContext = ExecutionContext.global
-  private def callback(nextSchedule: Long): Future[Unit] = Future {
-    if (playQueue.nonEmpty()) {
+  private def callbackEventLoop(nextSchedule: Long): Future[Unit] = Future {
+    if (playQueue.nonEmpty() && SDL_WasInit(SDL_INIT_AUDIO) != 0) {
       if (
         System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)
       ) {
@@ -75,10 +70,45 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     } else None
   }.flatMap {
     case Some(next) =>
-      callback(next)
+      callbackEventLoop(next)
     case None =>
       callbackRegistered = false
       Future.successful(())
+  }
+
+  private def callback(): Future[Unit] = Future {
+    var abort = false
+    while (!abort && playQueue.nonEmpty() && SDL_WasInit(SDL_INIT_AUDIO) != 0) {
+      if (SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)) {
+        val samples = Math.min(settings.bufferSize, playQueue.size)
+        val buf = Iterator
+          .fill(samples) {
+            val next  = playQueue.dequeue()
+            val short = (Math.min(Math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
+            List((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
+          }
+          .flatten
+          .toArray
+        if (SDL_QueueAudio(device, buf.asInstanceOf[ByteArray].at(0), (samples * 2).toUInt) == 0) {
+          val bufferedMillis = (1000 * samples) / settings.sampleRate
+          blocking {
+            Thread.sleep(Math.max(0, bufferedMillis - preemptiveCallback))
+          }
+        } else { abort = true }
+      }
+    }
+    callbackRegistered = false
+    ()
+  }
+
+  protected def unsafeDestroy(): Unit = {
+    stop()
+    if (isMultithreadingEnabled) { // Let the callback stop
+      val maxWaitMillis = (settings.bufferSize * 2 * 1000) / settings.sampleRate
+      Thread.sleep(maxWaitMillis)
+    }
+    SDL_CloseAudioDevice(device)
+    SDL_QuitSubSystem(SDL_INIT_AUDIO)
   }
 
   def play(clip: AudioClip, channel: Int): Unit = {
@@ -86,7 +116,8 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     playQueue.enqueue(clip, channel)
     if (!callbackRegistered) {
       callbackRegistered = true
-      callback(0)
+      if (isMultithreadingEnabled) callback()
+      else callbackEventLoop(0)
     }
     // SDL_UnlockAudioDevice(device)
     SDL_PauseAudioDevice(device, 0)

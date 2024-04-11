@@ -1,5 +1,6 @@
 import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+import scala.scalanative.build._
 
 name := "minart"
 
@@ -36,6 +37,7 @@ ThisBuild / scalafmtOnCompile := true
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
+ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 val siteSettings = Seq(
   Compile / doc / scalacOptions ++= Seq("-siteroot", "docs")
@@ -74,14 +76,19 @@ val jsSettings = Seq(
 )
 
 val nativeSettings = Seq(
-  nativeLinkStubs      := true,
-  Compile / nativeMode := "release",
-  Test / nativeMode    := "debug",
-  Compile / nativeLTO  := "thin",
-  Test / nativeLTO     := "none",
+  Compile / nativeConfig ~= {
+    _.withMode(Mode.releaseFull)
+      .withLinkStubs(true)
+      .withLTO(LTO.thin)
+  },
   Test / nativeConfig ~= {
-    _.withEmbedResources(true)
-  }
+    _.withMode(Mode.debug)
+      .withLinkStubs(true)
+      .withLTO(LTO.none)
+      .withEmbedResources(true)
+  },
+  // Tests temporarily disabled until munit is released for native 0.5.0
+  Test / test := (())
 )
 
 lazy val root =
@@ -99,7 +106,8 @@ lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .settings(name := "minart-core")
     .settings(sharedSettings)
-    .settings(testSettings)
+    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
+    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
     .settings(publishSettings)
     .settings(docSettings("Minart"))
     .settings(siteSettings)
@@ -111,7 +119,8 @@ lazy val backend =
     .dependsOn(core)
     .settings(name := "minart-backend")
     .settings(sharedSettings)
-    .settings(testSettings)
+    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
+    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
     .settings(publishSettings)
     .settings(docSettings("Minart Backend"))
     .jsSettings(jsSettings)
@@ -122,7 +131,8 @@ lazy val image =
     .dependsOn(core, backend % "test")
     .settings(name := "minart-image")
     .settings(sharedSettings)
-    .settings(testSettings)
+    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
+    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
     .settings(publishSettings)
     .settings(docSettings("Minart Image"))
     .jsSettings(jsSettings)
@@ -133,7 +143,8 @@ lazy val sound =
     .dependsOn(core, backend % "test")
     .settings(name := "minart-sound")
     .settings(sharedSettings)
-    .settings(testSettings)
+    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
+    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
     .settings(publishSettings)
     .settings(docSettings("Minart Sound"))
     .jsSettings(jsSettings)

@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.runtime
 
-import scala.concurrent.Future
-
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.backend.defaults.*
 import eu.joaocosta.minart.backend.subsystem.*
@@ -17,18 +15,18 @@ trait AppLoop[State, Subsystem] {
     * @param runner custom loop runner to use
     * @param createSubsystems operation to create the subsystems
     */
-  def run(
-      runner: LoopRunner,
+  def run[F[_]](
+      runner: LoopRunner[F],
       createSubsystems: () => Subsystem
-  ): Future[State]
+  ): F[State]
 
   /** Runs this app loop using the default loop runner and subsystems.
     */
-  final def run()(using
-      lr: DefaultBackend[Any, LoopRunner],
+  final def run[F[_]]()(using
+      lr: DefaultBackend[Any, LoopRunner[F]],
       ss: DefaultBackend[Any, Subsystem]
-  ): Future[State] =
-    run(LoopRunner(), () => ss.defaultValue())
+  ): F[State] =
+    run(lr.defaultValue(), () => ss.defaultValue())
 }
 
 object AppLoop {
@@ -81,10 +79,10 @@ object AppLoop {
           frameRate: LoopFrequency,
           initialState: State
       ): AppLoop[State, Subsystem] = new AppLoop[State, Subsystem] {
-        def run(
-            runner: LoopRunner,
+        def run[F[_]](
+            runner: LoopRunner[F],
             createSubsystem: () => Subsystem
-        ): Future[State] = {
+        ): F[State] = {
           val subsystem = createSubsystem().init(initialSettings)
           runner
             .finiteLoop(

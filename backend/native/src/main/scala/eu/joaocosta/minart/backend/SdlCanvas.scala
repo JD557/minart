@@ -14,8 +14,10 @@ import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.input.*
 
 /** A low level Canvas implementation that shows the image in a SDL Window.
+  *
+  *  @param handleQuit if true, the canvas should handle quit events. Otherwise, it is expected that those are handled in the application code.
   */
-final class SdlCanvas() extends SurfaceBackedCanvas {
+final class SdlCanvas(handleQuit: Boolean = false) extends SurfaceBackedCanvas {
 
   // Rendering resources
 
@@ -40,7 +42,17 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
   private[this] def handleEvents(): Boolean = {
     val event              = stackalloc[SDL_Event]()
     var keepGoing: Boolean = isCreated()
-    while (keepGoing && SDL_PollEvent(event) != 0) {
+    def nextEvent(): Int = {
+      if (isCreated()) {
+        if (handleQuit) SDL_PollEvent(event)
+        else {
+          SDL_PumpEvents()
+          SDL_PeepEvents(event, 1, SDL_eventaction.SDL_GETEVENT, SDL_KEYDOWN.uint, SDL_LASTEVENT.uint)
+        }
+      } else 0
+    }
+    if (isCreated()) SDL_PumpEvents()
+    while (keepGoing && nextEvent() > 0) {
       SDL_EventType.define((!event).`type`) match {
         case SDL_KEYDOWN =>
           SdlKeyMapping
@@ -78,12 +90,11 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
 
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
     val extendedSettings = LowLevelCanvas.ExtendedSettings(newSettings)
-
     // Update window
     if (window != null) {
       SDL_DestroyWindow(window)
     }
-    Zone { implicit z =>
+    Zone {
       window = SDL_CreateWindow(
         toCString(newSettings.title),
         0x2fff0000, // SDL_WINDOWPOS_CENTERED
@@ -136,7 +147,7 @@ final class SdlCanvas() extends SurfaceBackedCanvas {
     SDL_DestroyWindow(window)
     surface.cleanup()
     SDL_FreeSurface(surface.data)
-    SDL_Quit()
+    SDL_QuitSubSystem(SDL_INIT_VIDEO)
   }
 
   // Canvas operations
