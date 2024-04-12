@@ -1,4 +1,5 @@
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+import scala.scalanative.build._
 
 name := "$name$"
 
