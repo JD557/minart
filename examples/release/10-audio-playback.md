@@ -10,7 +10,7 @@ Here we will see how to generate audio waves and play a simple audio clip.
 
 ```scala
 //> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-M2"
+//> using dep "eu.joaocosta::minart::0.6.0-M3"
 
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.backend.defaults.given

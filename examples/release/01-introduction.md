@@ -24,7 +24,7 @@ The simplest way to use Minart is to simply include the `minart` library, which 
 
 ```scala
 //> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-M2"
+//> using dep "eu.joaocosta::minart::0.6.0-M3"
 ```
 
 As for the imports, the `eu.joaocosta.minart.backend.defaults` package contains the givens with the backend-specific (JVM/JS/Native) logic.

@@ -13,7 +13,7 @@ This tutorial will show how to use those
 
 ```scala
 //> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-M2"
+//> using dep "eu.joaocosta::minart::0.6.0-M3"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
@@ -93,9 +93,8 @@ def application(t: Double, canvas: Canvas): Unit = {
         if (x % 32 < 16 != y % 32 < 16) color.invert
         else color
     )
-    .clip(0, 0, 128, 128) // Clip into a SurfaceView
 
-  canvas.blit(image)(0, 0)
+  canvas.blitPlane(image)(0, 0)
 }
 ```
 
