@@ -23,10 +23,13 @@ lazy val root =
     )
     .nativeSettings(
       Seq(
-        nativeLinkStubs := true,
-        nativeMode      := "release",
-        nativeLTO       := "thin",
-        nativeGC        := "commix"
+        nativeConfig ~= {
+          _.withMode(Mode.releaseFull)
+            .withLinkStubs(true)
+            .withLTO(LTO.thin)
+            .withGC(GC.commix)
+            .withEmbedResources(true)
+        }
       )
     )
     .settings(name := "$name$ Root")
