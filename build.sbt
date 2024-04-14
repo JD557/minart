@@ -57,8 +57,10 @@ def docSettings(projectName: String) = Seq(
 val sharedSettings = Seq()
 
 val testSettings = Seq(
+  resolvers += "jitpack" at "https://www.jitpack.io",
   libraryDependencies ++= Seq(
-    "org.scalameta" %%% "munit" % "1.0.0-M11" % Test
+    //"org.scalameta" %%% "munit" % "1.0.0-M11" % Test // Bootlegged
+    "com.github.JD557.munit" %%% "munit" % "297481cecd" % Test
   ),
   testFrameworks += new TestFramework("munit.Framework")
 )
@@ -87,8 +89,6 @@ val nativeSettings = Seq(
       .withLTO(LTO.none)
       .withEmbedResources(true)
   },
-  // Tests temporarily disabled until munit is released for native 0.5.0
-  Test / test := (())
 )
 
 lazy val root =
@@ -106,8 +106,7 @@ lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
     .settings(name := "minart-core")
     .settings(sharedSettings)
-    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
-    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
+    .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart"))
     .settings(siteSettings)
@@ -119,8 +118,7 @@ lazy val backend =
     .dependsOn(core)
     .settings(name := "minart-backend")
     .settings(sharedSettings)
-    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
-    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
+    .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart Backend"))
     .jsSettings(jsSettings)
@@ -131,8 +129,7 @@ lazy val image =
     .dependsOn(core, backend % "test")
     .settings(name := "minart-image")
     .settings(sharedSettings)
-    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
-    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
+    .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart Image"))
     .jsSettings(jsSettings)
@@ -143,8 +140,7 @@ lazy val sound =
     .dependsOn(core, backend % "test")
     .settings(name := "minart-sound")
     .settings(sharedSettings)
-    .jvmSettings(testSettings) // Tests temporarily disabled until munit is released for native 0.5.0
-    .jsSettings(testSettings)  // Tests temporarily disabled until munit is released for native 0.5.0
+    .settings(testSettings)
     .settings(publishSettings)
     .settings(docSettings("Minart Sound"))
     .jsSettings(jsSettings)
