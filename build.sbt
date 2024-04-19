@@ -57,10 +57,8 @@ def docSettings(projectName: String) = Seq(
 val sharedSettings = Seq()
 
 val testSettings = Seq(
-  resolvers += "jitpack" at "https://www.jitpack.io",
   libraryDependencies ++= Seq(
-    //"org.scalameta" %%% "munit" % "1.0.0-M11" % Test // Bootlegged
-    "com.github.JD557.munit" %%% "munit" % "297481cecd" % Test
+    "org.scalameta" %%% "munit" % "1.0.0-M12" % Test // Bootlegged
   ),
   testFrameworks += new TestFramework("munit.Framework")
 )
