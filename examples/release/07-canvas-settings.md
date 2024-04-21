@@ -11,8 +11,8 @@ Here's a quick example on how to do that. In this example application, we will c
 ### Dependencies and imports
 
 ```scala
-//> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-M3"
+//> using scala "3.3.3"
+//> using dep "eu.joaocosta::minart::0.6.0"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
