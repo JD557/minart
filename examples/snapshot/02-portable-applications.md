@@ -37,8 +37,8 @@ We start with the similar imports to the previous example.
 Note, however, that we now also import `eu.joaocosta.minart.runtime.*`, which provides a platform agnostic runtime that we can use.
 
 ```scala
-//> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-SNAPSHOT"
+//> using scala "3.3.3"
+//> using dep "eu.joaocosta::minart::0.6.1-SNAPSHOT"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
