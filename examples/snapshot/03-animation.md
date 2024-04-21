@@ -11,8 +11,8 @@ This time, we'll write an animated fire, updating at 60 frames per second!
 As before, let's import the backend, graphics and runtime.
 
 ```scala
-//> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-SNAPSHOT"
+//> using scala "3.3.3"
+//> using dep "eu.joaocosta::minart::0.6.1-SNAPSHOT"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*

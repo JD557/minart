@@ -16,8 +16,8 @@ This package also has an `Sound` object with helpers to call the loaders.
 
 
 ```scala
-//> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-SNAPSHOT"
+//> using scala "3.3.3"
+//> using dep "eu.joaocosta::minart::0.6.1-SNAPSHOT"
 
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.audio.sound.*
