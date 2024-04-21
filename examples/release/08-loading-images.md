@@ -14,8 +14,8 @@ This package also has an `Image` object with helpers to call the loaders.
 
 
 ```scala
-//> using scala "3.3.1"
-//> using dep "eu.joaocosta::minart::0.6.0-M3"
+//> using scala "3.3.3"
+//> using dep "eu.joaocosta::minart::0.6.0"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
