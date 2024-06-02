@@ -39,6 +39,8 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
+Global / concurrentRestrictions += Tags.limit(NativeTags.Link, 1) // See https://github.com/scala-native/scala-native/issues/2024
+
 val siteSettings = Seq(
   Compile / doc / scalacOptions ++= Seq("-siteroot", "docs")
 )
