@@ -2,8 +2,6 @@ package eu.joaocosta.minart.graphics.image.ppm
 
 import java.io.OutputStream
 
-import scala.annotation.tailrec
-
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.image.*
 import eu.joaocosta.minart.internal.*
@@ -15,24 +13,8 @@ import eu.joaocosta.minart.internal.*
 trait PpmImageWriter extends ImageWriter {
   import ByteWriter.*
 
-  private def storeBinaryRgbPixel(color: Color): ByteStreamState[String] =
-    writeBytes(List(color.r, color.g, color.b))
-
-  @tailrec
-  private def storePixels(
-      storeColor: Color => ByteStreamState[String],
-      surface: Surface,
-      currentPixel: Int = 0,
-      acc: ByteStreamState[String] = emptyStream
-  ): ByteStreamState[String] = {
-    if (currentPixel >= surface.width * surface.height) acc
-    else {
-      val x     = currentPixel % surface.width
-      val y     = currentPixel / surface.width
-      val color = surface.unsafeGetPixel(x, y)
-      storePixels(storeColor, surface, currentPixel + 1, acc.flatMap(_ => storeColor(color)))
-    }
-  }
+  private def colorToBytes(color: Color): Array[Byte] =
+    Array(color.r.toByte, color.g.toByte, color.b.toByte)
 
   private def storeHeader(surface: Surface): ByteStreamState[String] =
     for {
@@ -44,7 +26,7 @@ trait PpmImageWriter extends ImageWriter {
   final def storeImage(surface: Surface, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeHeader(surface)
-      _ <- storePixels(storeBinaryRgbPixel, surface)
+      _ <- append(surface.getPixels().iterator.flatten.map(colorToBytes))
     } yield ()
     toOutputStream(state, os)
   }

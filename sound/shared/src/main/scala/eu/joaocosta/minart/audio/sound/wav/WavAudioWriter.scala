@@ -2,8 +2,6 @@ package eu.joaocosta.minart.audio.sound.wav
 
 import java.io.OutputStream
 
-import scala.annotation.tailrec
-
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.audio.sound.*
 import eu.joaocosta.minart.internal.*
@@ -14,38 +12,29 @@ import eu.joaocosta.minart.internal.*
   */
 trait WavAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
   final val chunkSize = 128
-  require(Set(8, 16, 32).contains(bitRate))
+  require(Set(8, 16, 32).contains(bitRate), "Unsupported bit rate")
 
   import ByteWriter.*
 
-  private def convertSample(x: Double): List[Int] = bitRate match {
+  private def convertSample(x: Double): Array[Byte] = bitRate match {
     case 8 =>
-      List((Math.min(Math.max(-1.0, x), 1.0) * Byte.MaxValue).toInt + 127)
+      val byte = (Math.min(Math.max(-1.0, x), 1.0) * Byte.MaxValue).toInt + 127
+      Array(byte.toByte)
     case 16 =>
       val short = (Math.min(Math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
-      List(short & 0xff, (short >> 8) & 0xff)
+      Array((short & 0xff).toByte, ((short >> 8) & 0xff).toByte)
     case 32 =>
       val int = (Math.min(Math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
-      List(int & 0xff, (int >> 8) & 0xff, (int >> 16) & 0xff, (int >> 24) & 0xff)
-  }
-
-  @tailrec
-  private def storeData(
-      iterator: Iterator[Seq[Double]],
-      acc: ByteStreamState[String] = emptyStream
-  ): ByteStreamState[String] = {
-    if (!iterator.hasNext) acc
-    else {
-      val chunk = iterator.next().flatMap(convertSample)
-      storeData(iterator, acc.flatMap(_ => writeBytes(chunk)))
-    }
+      Array((int & 0xff).toByte, ((int >> 8) & 0xff).toByte, ((int >> 16) & 0xff).toByte, ((int >> 24) & 0xff).toByte)
   }
 
   private def storeDataChunk(clip: AudioClip): ByteStreamState[String] =
     for {
       _ <- writeString("data")
       _ <- writeLENumber(Sampler.numSamples(clip, sampleRate) * bitRate / 8, 4)
-      _ <- storeData(Sampler.sampleClip(clip, sampleRate).grouped(chunkSize))
+      _ <- append(
+        Sampler.sampleClip(clip, sampleRate).grouped(chunkSize).map(_.iterator.flatMap(convertSample).toArray)
+      )
     } yield ()
 
   private val storeFmtChunk: ByteStreamState[String] =

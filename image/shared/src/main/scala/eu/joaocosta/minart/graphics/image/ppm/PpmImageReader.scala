@@ -81,6 +81,16 @@ trait PpmImageReader extends ImageReader {
       _ => "Not enough data to read RGB pixel"
     )
 
+  private def loadColor(magic: String): Either[String, ParseState[String, Color]] = magic match {
+    case "P1" => Right(loadStringBWPixel)
+    case "P2" => Right(loadStringGrayscalePixel)
+    case "P3" => Right(loadStringRgbPixel)
+    // case "P4" => // P4 requires special logic
+    case "P5" => Right(loadBinaryGrayscalePixel)
+    case "P6" => Right(loadBinaryRgbPixel)
+    case fmt  => Left(s"Invalid pixel format: $fmt")
+  }
+
   @tailrec
   private def loadPixelLine(
       loadColor: ParseState[String, Color],
@@ -138,22 +148,12 @@ trait PpmImageReader extends ImageReader {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
       val pixels = header.magic match {
-        case "P1" =>
-          loadPixels(loadStringBWPixel, data, header.height, header.width)
-        case "P2" =>
-          loadPixels(loadStringGrayscalePixel, data, header.height, header.width)
-        case "P3" =>
-          loadPixels(loadStringRgbPixel, data, header.height, header.width)
         case "P4" =>
           loadBits(data, header.height, header.width, math.ceil(header.width / 8.0).toInt).map((state, bits) =>
             (state, bits.map(_.map(b => if (b) Color.grayscale(0) else Color.grayscale(255))))
           )
-        case "P5" =>
-          loadPixels(loadBinaryGrayscalePixel, data, header.height, header.width)
-        case "P6" =>
-          loadPixels(loadBinaryRgbPixel, data, header.height, header.width)
-        case fmt =>
-          Left(s"Invalid pixel format: $fmt")
+        case _ =>
+          loadColor(header.magic).flatMap(loadColor => loadPixels(loadColor, data, header.height, header.width))
       }
       pixels.flatMap { case (_, pixelMatrix) =>
         if (pixelMatrix.size != header.height)

@@ -2,8 +2,6 @@ package eu.joaocosta.minart.audio.sound.aiff
 
 import java.io.OutputStream
 
-import scala.annotation.tailrec
-
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.audio.sound.*
 import eu.joaocosta.minart.internal.*
@@ -14,33 +12,22 @@ import eu.joaocosta.minart.internal.*
   */
 trait AiffAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
   private val chunkSize = 128
-  require(Set(8, 16, 32).contains(bitRate))
+  require(Set(8, 16, 32).contains(bitRate), "Unsupported bit rate")
 
   import AiffAudioWriter.*
   import ByteWriter.*
   import ByteFloatOps.*
 
-  private def convertSample(x: Double): List[Int] = bitRate match {
+  private def convertSample(x: Double): Array[Byte] = bitRate match {
     case 8 =>
-      List(java.lang.Byte.toUnsignedInt((Math.min(Math.max(-1.0, x), 1.0) * Byte.MaxValue).toByte))
+      val byte = Math.min(Math.max(-1.0, x), 1.0) * Byte.MaxValue
+      Array(byte.toByte)
     case 16 =>
       val short = (Math.min(Math.max(-1.0, x), 1.0) * Short.MaxValue).toInt
-      List((short >> 8) & 0xff, short & 0xff)
+      Array(((short >> 8) & 0xff).toByte, (short & 0xff).toByte)
     case 32 =>
       val int = (Math.min(Math.max(-1.0, x), 1.0) * Int.MaxValue).toInt
-      List((int >> 24) & 0xff, (int >> 16) & 0xff, (int >> 8) & 0xff, int & 0xff)
-  }
-
-  @tailrec
-  private def storeData(
-      iterator: Iterator[Seq[Double]],
-      acc: ByteStreamState[String] = emptyStream
-  ): ByteStreamState[String] = {
-    if (!iterator.hasNext) acc
-    else {
-      val chunk = iterator.next().flatMap(convertSample)
-      storeData(iterator, acc.flatMap(_ => writeBytes(chunk)))
-    }
+      Array(((int >> 24) & 0xff).toByte, ((int >> 16) & 0xff).toByte, ((int >> 8) & 0xff).toByte, (int & 0xff).toByte)
   }
 
   private def storeSsndChunk(clip: AudioClip): ByteStreamState[String] =
@@ -51,7 +38,9 @@ trait AiffAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
       _ <- writeBENumber(8 + numBytes, 4) // The padding is not included in the chunk size
       _ <- writeBENumber(0, 4)
       _ <- writeBENumber(0, 4)
-      _ <- storeData(Sampler.sampleClip(clip, sampleRate).grouped(chunkSize))
+      _ <- append(
+        Sampler.sampleClip(clip, sampleRate).grouped(chunkSize).map(_.iterator.flatMap(convertSample).toArray)
+      )
       _ <- writeBytes(List.fill(numBytes % 2)(0))
     } yield ()
 
