@@ -45,7 +45,7 @@ Not only is mouse input supported, but touch screen input also comes for free.
 
 A `Resource` abstraction provides a backend-agnostic way to load and store resources.
 
-Codecs for some image formats (PPM, BMP and QOI) is also included.
+Codecs for some image formats (PPM, BMP, QOI and PDI) are also included. The same is true for some audio formats (RTTL, WAV, AIFF and QOA).
 
 ## Minart runtime and other runtimes
 

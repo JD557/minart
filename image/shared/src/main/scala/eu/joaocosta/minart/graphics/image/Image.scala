@@ -35,6 +35,11 @@ object Image {
   def loadQoiImage(resource: Resource): Try[RamSurface] =
     loadImage(qoi.QoiImageFormat.defaultFormat, resource)
 
+  /** Loads an image in the PDI format.
+    */
+  def loadPdiImage(resource: Resource): Try[RamSurface] =
+    loadImage(pdi.PdiImageFormat.defaultFormat, resource)
+
   /** Stores an image using a custom ImageWriter.
     *
     * @param writer ImageWriter to use
@@ -62,5 +67,10 @@ object Image {
     */
   def storeQoiImage(surface: Surface, resource: Resource): Try[Unit] =
     storeImage(qoi.QoiImageFormat.defaultFormat, surface, resource)
+
+  /** Stores an image in the PDI format.
+    */
+  def storePdiImage(surface: Surface, resource: Resource): Try[Unit] =
+    storeImage(pdi.PdiImageFormat.defaultFormat, surface, resource)
 
 }
