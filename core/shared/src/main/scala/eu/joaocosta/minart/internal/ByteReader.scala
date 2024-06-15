@@ -57,6 +57,20 @@ private[minart] object ByteReader {
     bytes -> byteArr
   }
 
+  /** Read N bits (true = 1, false = 0) padded to a number of bytes.
+    *
+    *  It is expected (but not enforced) that the number of bytes is at least bits / 8.
+    */
+  def readPaddedBits(bits: Int, bytes: Int): ParseState[Nothing, Array[Boolean]] =
+    readBytes(bytes).map(_.flatMap { byte =>
+      var currByte: Int = byte
+      Vector.fill(8) {
+        val value = (currByte & 0x80) == 0x80
+        currByte = currByte << 1
+        value
+      }
+    }.take(bits))
+
   /** Reads data while a predicate is true */
   def readWhile(p: Int => Boolean): ParseState[Nothing, List[Int]] = State { bytes =>
     val buffer = List.newBuilder[Int]
@@ -67,6 +81,16 @@ private[minart] object ByteReader {
     }
     if (value != -1) bytes.setBuffer(value)
     bytes -> buffer.result()
+  }
+
+  /** Skip data while a predicate is true */
+  def skipWhile(p: Int => Boolean): ParseState[Nothing, Unit] = State { bytes =>
+    var value = bytes.read()
+    while (value != -1 && p(value)) {
+      value = bytes.read()
+    }
+    if (value != -1) bytes.setBuffer(value)
+    bytes -> ()
   }
 
   /** Does nothing */

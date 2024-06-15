@@ -15,20 +15,6 @@ import eu.joaocosta.minart.internal.*
 trait PdiImageReader extends ImageReader {
   import ByteReader.*
 
-  private def bitsFromByte(byte: Byte, entries: Int): List[Boolean] =
-    if (entries > 0) {
-      val colorBit = (byte & 0x80) >> 7
-      (colorBit == 1) :: bitsFromByte(((byte << 1) & 0xff).toByte, entries - 1)
-    } else Nil
-
-  private def loadBitLine(
-      data: CustomInputStream,
-      width: Int,
-      lineBytes: Int
-  ): ParseResult[Array[Boolean]] = {
-    readBytes(lineBytes).map(_.flatMap(b => bitsFromByte(b.toByte, 8)).take(width)).run(data)
-  }
-
   @tailrec
   private def loadBits(
       data: CustomInputStream,
@@ -39,7 +25,7 @@ trait PdiImageReader extends ImageReader {
   ): ParseResult[Vector[Array[Boolean]]] = {
     if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
-      loadBitLine(data, width, lineBytes) match {
+      readPaddedBits(width, lineBytes).run(data) match {
         case Left(error) => Left(error)
         case Right((remaining, line)) =>
           loadBits(remaining, remainingLines - 1, width, lineBytes, acc :+ line)

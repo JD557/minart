@@ -17,6 +17,18 @@ trait PpmImageReader extends ImageReader {
   import ByteReader.*
   import ByteStringOps.*
 
+  // P1
+  private val loadStringBWPixel: ParseState[String, Color] =
+    (
+      for {
+        value <- readNextNonWhitespaceChar
+          .validate(
+            _.exists(x => x == '0' || x == '1'),
+            x => s"Bitmap value $x needs to be either 0 or 1"
+          )
+      } yield if (value.contains('1')) Color.grayscale(0) else Color.grayscale(255)
+    )
+
   // P2
   private val loadStringGrayscalePixel: ParseState[String, Color] =
     (
@@ -34,6 +46,26 @@ trait PpmImageReader extends ImageReader {
         blue  <- parseNextInt("Invalid blue channel")
       } yield Color(red, green, blue)
     )
+
+  // P4 - Custom logic due to bit packing
+
+  @tailrec
+  private def loadBits(
+      data: CustomInputStream,
+      remainingLines: Int,
+      width: Int,
+      lineBytes: Int,
+      acc: Vector[Array[Boolean]] = Vector()
+  ): ParseResult[Vector[Array[Boolean]]] = {
+    if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
+    else {
+      readPaddedBits(width, lineBytes).run(data) match {
+        case Left(error) => Left(error)
+        case Right((remaining, line)) =>
+          loadBits(remaining, remainingLines - 1, width, lineBytes, acc :+ line)
+      }
+    }
+  }
 
   // P5
   private val loadBinaryGrayscalePixel: ParseState[String, Color] =
@@ -91,10 +123,13 @@ trait PpmImageReader extends ImageReader {
         magic  <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
         width  <- parseNextInt(s"Invalid width")
         height <- parseNextInt(s"Invalid height")
-        colorRange <- parseNextInt(s"Invalid color range").validate(
-          _ == 255,
-          range => s"Unsupported color range: $range"
-        )
+        colorRange <-
+          if (magic == "P1" || magic == "P4") State.pure(1)
+          else
+            parseNextInt(s"Invalid color range").validate(
+              _ == 255,
+              range => s"Unsupported color range: $range"
+            )
       } yield Header(magic, width, height, colorRange)
     ).run(bytes)
   }
@@ -103,10 +138,16 @@ trait PpmImageReader extends ImageReader {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
       val pixels = header.magic match {
+        case "P1" =>
+          loadPixels(loadStringBWPixel, data, header.height, header.width)
         case "P2" =>
           loadPixels(loadStringGrayscalePixel, data, header.height, header.width)
         case "P3" =>
           loadPixels(loadStringRgbPixel, data, header.height, header.width)
+        case "P4" =>
+          loadBits(data, header.height, header.width, math.ceil(header.width / 8.0).toInt).map((state, bits) =>
+            (state, bits.map(_.map(b => if (b) Color.grayscale(0) else Color.grayscale(255))))
+          )
         case "P5" =>
           loadPixels(loadBinaryGrayscalePixel, data, header.height, header.width)
         case "P6" =>
@@ -133,7 +174,7 @@ object PpmImageReader {
     private val comment = '#'.toInt
 
     val skipLine: ParseState[Nothing, Unit] =
-      readWhile(_ != newLine).flatMap(_ => skipBytes(1))
+      skipWhile(_ != newLine).flatMap(_ => skipBytes(1))
 
     val readNextString: ParseState[String, String] =
       readByte.flatMap {
@@ -145,6 +186,15 @@ object PpmImageReader {
             readWhile(char => char != space && char != newLine)
               .map(chars => (c.toChar :: chars.map(_.toChar)).mkString(""))
               .flatMap(str => skipBytes(1).map(_ => str))
+      }
+
+    val readNextNonWhitespaceChar: ParseState[String, Option[Char]] =
+      readByte.flatMap {
+        case None => State.pure(None)
+        case Some(c) =>
+          if (c == comment) skipLine.flatMap(_ => readNextNonWhitespaceChar)
+          else if (c == newLine || c == space) readNextNonWhitespaceChar
+          else State.pure(Some(c.toChar))
       }
 
     def parseNextInt(errorMessage: String): ParseState[String, Int] =

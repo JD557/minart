@@ -64,6 +64,18 @@ class ImageReaderSpec extends munit.FunSuite {
       pgmTest("lausanne", 640, 480)
     }
 
+    test("Load a PBM image") {
+      def pbmTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(Image.loadPpmImage(Resource(s"$dir/pbm-p1.pbm")), Image.loadPpmImage(Resource(s"$dir/pbm-p4.pbm"))),
+          width,
+          height
+        )
+      pbmTest("scala", 128, 128)
+      pbmTest("scala-rect", 77, 119)
+      pbmTest("lausanne", 640, 480)
+    }
+
     test("Load a QOI image") {
       def qoiTest(dir: String, width: Int, height: Int): Unit =
         testSize(
