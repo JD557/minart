@@ -2,8 +2,6 @@ package eu.joaocosta.minart.graphics.image.pdi
 
 import java.io.OutputStream
 
-import scala.annotation.tailrec
-
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.image.*
 import eu.joaocosta.minart.internal.*
@@ -22,21 +20,8 @@ trait PdiImageWriter extends ImageWriter {
       else colorsToByte((acc << 1).toByte, rem, f)
   }
 
-  private def lineToBytes(colors: List[Color], f: Color => Boolean): List[Byte] =
-    colors.sliding(8, 8).map(cs => colorsToByte(0.toByte, cs.padTo(8, Color(0, 0, 0, 0)), f)).toList
-
-  private def storeLine(colors: Array[Color], f: Color => Boolean): ByteStreamState[String] =
-    writeBytes(lineToBytes(colors.toList, f).map(java.lang.Byte.toUnsignedInt))
-
-  @tailrec
-  private def storePixels(
-      lines: Vector[Array[Color]],
-      f: Color => Boolean,
-      acc: ByteStreamState[String] = emptyStream
-  ): ByteStreamState[String] = {
-    if (lines.isEmpty) acc
-    else storePixels(lines.tail, f, acc.flatMap(_ => storeLine(lines.head, f)))
-  }
+  private def lineToBytes(colors: Array[Color], f: Color => Boolean): Array[Byte] =
+    colors.sliding(8, 8).map(cs => colorsToByte(0.toByte, cs.toList.padTo(8, Color(0, 0, 0, 0)), f)).toArray
 
   private val storeHeader: ByteStreamState[String] = {
     (for {
@@ -62,8 +47,11 @@ trait PdiImageWriter extends ImageWriter {
     val state = for {
       _ <- storeHeader
       _ <- storeCellHeader(surface)
-      _ <- storePixels(surface.getPixels(), color => math.max(math.max(color.r, color.g), color.b) >= 127)
-      _ <- storePixels(surface.getPixels(), color => color.a > 0)
+      pixels = surface.getPixels()
+      _ <- append(
+        pixels.iterator.map(line => lineToBytes(line, color => math.max(math.max(color.r, color.g), color.b) >= 127))
+      )
+      _ <- append(pixels.iterator.map(line => lineToBytes(line, color => color.a > 0)))
     } yield ()
     toOutputStream(state, os)
   }

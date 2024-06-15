@@ -2,8 +2,6 @@ package eu.joaocosta.minart.graphics.image.bmp
 
 import java.io.OutputStream
 
-import scala.annotation.tailrec
-
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.image.*
 import eu.joaocosta.minart.internal.*
@@ -15,30 +13,8 @@ import eu.joaocosta.minart.internal.*
 trait BmpImageWriter extends ImageWriter {
   import ByteWriter.*
 
-  private def storeBgrPixel(color: Color): ByteStreamState[String] =
-    writeBytes(List(color.b, color.g, color.r))
-
-  @tailrec
-  private def storePixels(
-      storeColor: Color => ByteStreamState[String],
-      surface: Surface,
-      width: Int,
-      padding: Int,
-      currentPixel: Int = 0,
-      acc: ByteStreamState[String] = emptyStream
-  ): ByteStreamState[String] = {
-    if (currentPixel >= surface.width * surface.height) acc
-    else {
-      val x     = currentPixel % surface.width
-      val y     = (surface.height - 1) - (currentPixel / surface.width) // lines are stored upside down
-      val color = surface.unsafeGetPixel(x, y)
-      val nextAcc = acc.flatMap { _ =>
-        if (x == width - 1) storeColor(color).flatMap(_ => writeBytes(List.fill(padding)(0)))
-        else storeColor(color)
-      }
-      storePixels(storeColor, surface, width, padding, currentPixel + 1, nextAcc)
-    }
-  }
+  private def colorToBytes(color: Color): Array[Byte] =
+    Array(color.b.toByte, color.g.toByte, color.r.toByte)
 
   private def storeHeader(surface: Surface): ByteStreamState[String] = {
     (for {
@@ -63,7 +39,9 @@ trait BmpImageWriter extends ImageWriter {
   final def storeImage(surface: Surface, os: OutputStream): Either[String, Unit] = {
     val state = for {
       _ <- storeHeader(surface)
-      _ <- storePixels(storeBgrPixel, surface, surface.width, BmpImageFormat.linePadding(surface.width, 24))
+      padding      = Array.fill(BmpImageFormat.linePadding(surface.width, 24))(0.toByte)
+      byteIterator = surface.getPixels().reverseIterator.flatMap(_.iterator.map(colorToBytes) ++ Iterator(padding))
+      _ <- append(byteIterator)
     } yield ()
     toOutputStream(state, os)
   }
