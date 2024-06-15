@@ -80,6 +80,18 @@ class ImageReaderSpec extends munit.FunSuite {
       qoiTest("lausanne", 640, 480)
     }
 
+    test("Load a PDI image") {
+      def pdiTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(
+            Image.loadPdiImage(Resource(s"$dir/pdi-2bit.pdi"))
+          ),
+          width,
+          height
+        )
+      pdiTest("alpha", 507, 200)
+    }
+
     test("Load the same data from different formats (square image)") {
       sameImage(
         List(

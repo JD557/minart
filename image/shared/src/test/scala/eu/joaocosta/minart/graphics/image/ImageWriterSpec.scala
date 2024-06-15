@@ -36,5 +36,9 @@ class ImageWriterSpec extends munit.FunSuite {
       roundtripTest(Resource("scala-rect/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
       roundtripTest(Resource("lausanne/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
     }
+
+    test("Write a PDI image") {
+      roundtripTest(Resource("alpha/pdi-2bit.pdi"), pdi.PdiImageFormat.defaultFormat)
+    }
   }
 }
