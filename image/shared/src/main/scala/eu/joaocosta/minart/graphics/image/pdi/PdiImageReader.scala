@@ -2,6 +2,8 @@ package eu.joaocosta.minart.graphics.image.pdi
 
 import java.io.InputStream
 
+import scala.annotation.tailrec
+
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.image.*
 import eu.joaocosta.minart.internal.*
@@ -23,9 +25,26 @@ trait PdiImageReader extends ImageReader {
       data: CustomInputStream,
       width: Int,
       lineBytes: Int
-  ): Array[Boolean] = {
-    val bytes = data.readNBytes(lineBytes)
-    bytes.flatMap(b => bitsFromByte(b, 8)).take(width)
+  ): ParseResult[Array[Boolean]] = {
+    readBytes(lineBytes).map(_.flatMap(b => bitsFromByte(b.toByte, 8)).take(width)).run(data)
+  }
+
+  @tailrec
+  private def loadBits(
+      data: CustomInputStream,
+      remainingLines: Int,
+      width: Int,
+      lineBytes: Int,
+      acc: Vector[Array[Boolean]] = Vector()
+  ): ParseResult[Vector[Array[Boolean]]] = {
+    if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
+    else {
+      loadBitLine(data, width, lineBytes) match {
+        case Left(error) => Left(error)
+        case Right((remaining, line)) =>
+          loadBits(remaining, remainingLines - 1, width, lineBytes, acc :+ line)
+      }
+    }
   }
 
   private def loadHeader(bytes: CustomInputStream): ParseResult[Header] = {
@@ -57,31 +76,26 @@ trait PdiImageReader extends ImageReader {
 
   final def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
-    loadHeader(bytes).flatMap(_ => loadCellHeader(bytes)).map { case (data, cellHeader) =>
+    loadHeader(bytes).flatMap(_ => loadCellHeader(bytes)).flatMap { case (data, cellHeader) =>
       val emptyColor = Color(0, 0, 0, 0)
       val width      = cellHeader.clipLeft + cellHeader.clipWidth + cellHeader.clipRight
       val leftPad    = Array.fill(cellHeader.clipLeft)(emptyColor)
       val rightPad   = Array.fill(cellHeader.clipRight)(emptyColor)
-      val centerColors =
-        (0 until cellHeader.clipHeight).map { _ =>
-          loadBitLine(data, cellHeader.clipWidth, cellHeader.stride)
-        }.toVector
-      val centerMask =
-        (0 until cellHeader.clipHeight).map { _ =>
-          loadBitLine(data, cellHeader.clipWidth, cellHeader.stride)
-        }.toVector
-      val centerPixels = centerColors.zip(centerMask).map { (colorLine, maskLine) =>
-        colorLine.zip(maskLine).map {
-          case (_, false)    => Color(0, 0, 0, 0)
-          case (false, true) => Color(0, 0, 0)
-          case (true, true)  => Color(255, 255, 255)
+      for {
+        centerColors <- loadBits(data, cellHeader.clipHeight, cellHeader.clipWidth, cellHeader.stride)
+        centerMask   <- loadBits(data, cellHeader.clipHeight, cellHeader.clipWidth, cellHeader.stride)
+        centerPixels = centerColors._2.zip(centerMask._2).map { (colorLine, maskLine) =>
+          colorLine.zip(maskLine).map {
+            case (_, false)    => Color(0, 0, 0, 0)
+            case (false, true) => Color(0, 0, 0)
+            case (true, true)  => Color(255, 255, 255)
+          }
         }
-      }
-      val pixels =
-        Vector.fill(cellHeader.clipTop)(Array.fill(width)(emptyColor)) ++
-          centerPixels.map(center => leftPad ++ center ++ rightPad) ++
-          Vector.fill(cellHeader.clipBottom)(Array.fill(width)(emptyColor))
-      new RamSurface(pixels)
+        pixels =
+          Vector.fill(cellHeader.clipTop)(Array.fill(width)(emptyColor)) ++
+            centerPixels.map(center => leftPad ++ center ++ rightPad) ++
+            Vector.fill(cellHeader.clipBottom)(Array.fill(width)(emptyColor))
+      } yield (new RamSurface(pixels))
     }
   }
 }
