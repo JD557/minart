@@ -24,29 +24,32 @@ trait QoiImageReader extends ImageReader {
     import Op.*
     readByte
       .collect(
-        { case Some(tag) =>
-          (tag & 0xc0, tag & 0x3f)
-        },
+        { case Some(tag) => (tag & 0xc0, tag & 0x3f) },
         _ => "Corrupted file, expected a Op but got nothing"
       )
       .flatMap {
         case (0xc0, 0x3e) =>
           readBytes(3)
-            .validate(_.size == 3, _ => "Not enough data for OP_RGB")
-            .map(data => OpRgb(data(0), data(1), data(2)))
+            .collect(
+              { case bytes if bytes.size == 3 => OpRgb(bytes(0), bytes(1), bytes(2)) },
+              _ => "Not enough data for OP_RGB"
+            )
         case (0xc0, 0x3f) =>
           readBytes(4)
-            .validate(_.size == 4, _ => "Not enough data for OP_RGBA")
-            .map(data => OpRgba(data(0), data(1), data(2), data(3)))
+            .collect(
+              { case bytes if bytes.size == 4 => OpRgba(bytes(0), bytes(1), bytes(2), bytes(3)) },
+              _ => "Not enough data for OP_RGBA"
+            )
         case (0x00, index) =>
           State.pure(OpIndex(index))
         case (0x40, diffs) =>
           State.pure(OpDiff(load2Bits(diffs >> 4), load2Bits(diffs >> 2), load2Bits(diffs)))
         case (0x80, dg) =>
-          readByte.collect(
-            { case Some(byte) => OpLuma(load6Bits(dg), load4Bits(byte >> 4), load4Bits(byte)) },
-            _ => "Not enough data for OP_LUMA"
-          )
+          readByte
+            .collect(
+              { case Some(byte) => OpLuma(load6Bits(dg), load4Bits(byte >> 4), load4Bits(byte)) },
+              _ => "Not enough data for OP_LUMA"
+            )
         case (0xc0, run) =>
           State.pure(OpRun(run + 1))
       }

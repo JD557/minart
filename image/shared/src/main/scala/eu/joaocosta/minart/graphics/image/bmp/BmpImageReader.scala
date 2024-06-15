@@ -29,6 +29,16 @@ trait BmpImageReader extends ImageReader {
         _ => "Not enough data to read RGBA pixel"
       )
 
+  private def loadColor(bitsPerPixel: Int): Either[String, ParseState[String, Color]] =
+    bitsPerPixel match {
+      case 24 =>
+        Right(loadRgbPixel)
+      case 32 =>
+        Right(loadRgbaPixel)
+      case bpp =>
+        Left(s"Invalid bits per pixel: $bpp")
+    }
+
   @tailrec
   private def loadPixelLine(
       loadColor: ParseState[String, Color],
@@ -91,7 +101,7 @@ trait BmpImageReader extends ImageReader {
         bpp => s"Unsupported bits per pixel (must be 24 or 32): $bpp"
       )
       compressionMethod <- readLENumber(4).validate(
-        c => c == 0 || c == 3 || c == 6,
+        Set(0, 3, 6),
         _ => "Compression is not supported"
       )
       loadColorMask = compressionMethod == 3 || compressionMethod == 6
@@ -112,25 +122,14 @@ trait BmpImageReader extends ImageReader {
   final def loadImage(is: InputStream): Either[String, RamSurface] = {
     val bytes = fromInputStream(is)
     loadHeader(bytes).flatMap { case (data, header) =>
-      val pixels = header.bitsPerPixel match {
-        case 24 =>
-          loadPixels(
-            loadRgbPixel,
-            data,
-            header.height,
-            header.width,
-            BmpImageFormat.linePadding(header.width, header.bitsPerPixel)
-          )
-        case 32 =>
-          loadPixels(
-            loadRgbaPixel,
-            data,
-            header.height,
-            header.width,
-            BmpImageFormat.linePadding(header.width, header.bitsPerPixel)
-          )
-        case bpp =>
-          Left(s"Invalid bits per pixel: $bpp")
+      val pixels = loadColor(header.bitsPerPixel).flatMap { loadColor =>
+        loadPixels(
+          loadColor,
+          data,
+          header.height,
+          header.width,
+          BmpImageFormat.linePadding(header.width, header.bitsPerPixel)
+        )
       }
       pixels.flatMap { case (_, pixelMatrix) =>
         if (pixelMatrix.size != header.height)

@@ -33,21 +33,8 @@ trait QoiImageWriter extends ImageWriter {
       .reverse
 
   private def writeOp(op: Op): ByteStreamState[String] = op match {
-    case Op.OpRgb(r, g, b) =>
-      for {
-        _ <- writeByte(254)
-        _ <- writeByte(r)
-        _ <- writeByte(g)
-        _ <- writeByte(b)
-      } yield ()
-    case Op.OpRgba(r, g, b, a) =>
-      for {
-        _ <- writeByte(254)
-        _ <- writeByte(r)
-        _ <- writeByte(g)
-        _ <- writeByte(b)
-        _ <- writeByte(a)
-      } yield ()
+    case Op.OpRgb(r, g, b)     => writeBytes(Vector(254, r, g, b))
+    case Op.OpRgba(r, g, b, a) => writeBytes(Vector(255, r, g, b, a))
     case Op.OpIndex(index) =>
       if (index < 0 || index > 63) State.error(s"Invalid index: $index")
       else writeByte(index)
@@ -69,7 +56,7 @@ trait QoiImageWriter extends ImageWriter {
       storeOps(ops.tail, nextStream)
   }
 
-  private val storeTrail: ByteStreamState[String] = writeBytes(List(0, 0, 0, 0, 0, 0, 0, 1))
+  private val storeTrail: ByteStreamState[String] = writeBytes(Vector(0, 0, 0, 0, 0, 0, 0, 1))
 
   final def storeImage(surface: Surface, os: OutputStream): Either[String, Unit] = {
     val state = for {
