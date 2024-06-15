@@ -12,7 +12,7 @@ import eu.joaocosta.minart.internal.*
   */
 trait AiffAudioWriter(sampleRate: Int, bitRate: Int) extends AudioClipWriter {
   private val chunkSize = 128
-  require(Set(8, 16, 32).contains(bitRate))
+  require(Set(8, 16, 32).contains(bitRate), "Unsupported bit rate")
 
   import AiffAudioWriter.*
   import ByteWriter.*
