@@ -69,6 +69,16 @@ private[minart] object ByteReader {
     bytes -> buffer.result()
   }
 
+  /** Skip data while a predicate is true */
+  def skipWhile(p: Int => Boolean): ParseState[Nothing, Unit] = State { bytes =>
+    var value = bytes.read()
+    while (value != -1 && p(value)) {
+      value = bytes.read()
+    }
+    if (value != -1) bytes.setBuffer(value)
+    bytes -> ()
+  }
+
   /** Does nothing */
   val noop: ParseState[Nothing, Unit] = skipBytes(0)
 
