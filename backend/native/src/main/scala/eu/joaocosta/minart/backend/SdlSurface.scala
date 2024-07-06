@@ -8,9 +8,13 @@ import sdl2.enumerations.SDL_BlendMode.*
 
 import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
 
-/** Mutabe surface backed by an SDL surface.
+/** Mutable surface backed by an SDL surface.
   *
-  * This class assumes to be the only owner of the surface, and will free the surface when garbage collected.
+  * This class assumes that the surface is in `SDL_PIXELFORMAT_RGBA32`.
+  * It also does not free the surface, that's expected to be handled manually.
+  *
+  * However, when not in use anymore, one should call `cleanup()` to cleanup
+  * some temporary resources.
   */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 
@@ -72,7 +76,7 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 
   /** Cleans up the internal datastructures used by this surface.
     *
-    *  Note that the underlying data is not freed by this method.
+    * Note that the underlying data is not freed by this method.
     */
   def cleanup(): Unit = {
     SDL_DestroyRenderer(renderer)
@@ -80,6 +84,39 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 }
 
 object SdlSurface {
+  /* Converts a raw SDL surface to RGBA 32, so that it can be used by SdlSurface.
+   *
+   * This method will only copy the surface if necessary.
+   * When that happens, the original pointer will be invalidated.
+   *
+   * As such, the pointer used to call this method should never be reused, only the
+   * pointer returned.
+   *
+   * @param original original data to convert
+   */
+  def ensureRgba32Format(original: Ptr[SDL_Surface]): Ptr[SDL_Surface] = {
+    val originalFormat = (!(!original).format).format
+    if (originalFormat == SDL_PixelFormatEnum.SDL_PIXELFORMAT_RGBA32.uint) {
+      original
+    } else {
+      val formattedSurface =
+        SDL_ConvertSurfaceFormat(original, SDL_PixelFormatEnum.SDL_PIXELFORMAT_RGBA32.uint, 0.toUInt)
+      SDL_FreeSurface(original)
+      formattedSurface
+    }
+  }
+
+  /** Processes a raw SDL surface as if it was a Minart SdlSurface.
+    *
+    * The temporary surface is released after the code block is executed, so it should
+    * be returned.
+    *
+    * This method assumes that the data is in RGBA32.
+    *
+    * @param data raw SDL data
+    * @param f operation to apply
+    * @return result of the operation
+    */
   inline def withRawData[T](data: Ptr[SDL_Surface])(inline f: SdlSurface => T): T = {
     val tempSurface = new SdlSurface(data)
     val ret         = f(tempSurface)
