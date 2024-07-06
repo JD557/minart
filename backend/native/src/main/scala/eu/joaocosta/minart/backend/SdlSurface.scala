@@ -8,9 +8,13 @@ import sdl2.enumerations.SDL_BlendMode.*
 
 import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
 
-/** Mutabe surface backed by an SDL surface.
+/** Mutable surface backed by an SDL surface.
   *
-  * This class assumes to be the only owner of the surface, and will free the surface when garbage collected.
+  * This class assumes that the surface is in `SDL_PIXELFORMAT_RGBA32`.
+  * It also does not free the surface, that's expected to be handled manually.
+  *
+  * However, when not in use anymore, one should call `cleanup()` to cleanup
+  * some temporary resources.
   */
 final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 
@@ -72,7 +76,7 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 
   /** Cleans up the internal datastructures used by this surface.
     *
-    *  Note that the underlying data is not freed by this method.
+    * Note that the underlying data is not freed by this method.
     */
   def cleanup(): Unit = {
     SDL_DestroyRenderer(renderer)
