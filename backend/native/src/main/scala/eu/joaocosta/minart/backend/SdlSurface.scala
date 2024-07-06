@@ -80,6 +80,39 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 }
 
 object SdlSurface {
+  /* Converts a raw SDL surface to RGBA 32, so that it can be used by SdlSurface.
+   *
+   * This method will only copy the surface if necessary.
+   * When that happens, the original pointer will be invalidated.
+   *
+   * As such, the pointer used to call this method should never be reused, only the
+   * pointer returned.
+   *
+   * @param original original data to convert
+   */
+  def ensureRgba32Format(original: Ptr[SDL_Surface]): Ptr[SDL_Surface] = {
+    val originalFormat = (!(!original).format).format
+    if (originalFormat == SDL_PixelFormatEnum.SDL_PIXELFORMAT_RGBA32.uint) {
+      original
+    } else {
+      val formattedSurface =
+        SDL_ConvertSurfaceFormat(original, SDL_PixelFormatEnum.SDL_PIXELFORMAT_RGBA32.uint, 0.toUInt)
+      SDL_FreeSurface(original)
+      formattedSurface
+    }
+  }
+
+  /** Processes a raw SDL surface as if it was a Minart SdlSurface.
+    *
+    * The temporary surface is released after the code block is executed, so it should
+    * be returned.
+    *
+    * This method assumes that the data is in RGBA32.
+    *
+    * @param data raw SDL data
+    * @param f operation to apply
+    * @return result of the operation
+    */
   inline def withRawData[T](data: Ptr[SDL_Surface])(inline f: SdlSurface => T): T = {
     val tempSurface = new SdlSurface(data)
     val ret         = f(tempSurface)

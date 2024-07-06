@@ -15,6 +15,22 @@ object predef:
       inline def uint: UInt  = eq.apply(t).toUInt
       inline def value: CInt = eq.apply(t)
 
+  // [MANUAL]
+  private[sdl2] trait CEnumUI[T](using eq: T =:= UInt):
+    given Tag[T] = Tag.UInt.asInstanceOf[Tag[T]]
+    extension (inline t: T)
+      inline def int: CInt   = eq.apply(t).toInt
+      inline def uint: UInt  = eq.apply(t)
+      inline def value: UInt = eq.apply(t)
+
+  // [MANUAL]
+  private[sdl2] trait CEnumUS[T](using eq: T =:= UShort):
+    given Tag[T] = Tag.UShort.asInstanceOf[Tag[T]]
+    extension (inline t: T)
+      inline def int: CInt     = eq.apply(t).toInt
+      inline def uint: UInt    = eq.apply(t).toUInt
+      inline def value: UShort = eq.apply(t)
+
 object enumerations:
   import predef.*
 
@@ -85,7 +101,7 @@ object enumerations:
     * [bindgen] header: ./SDL_audio.h [MANUAL]
     */
   opaque type SDL_AudioFormat = UShort
-  object SDL_AudioFormat: // extends CEnum[SDL_AudioFormat]:
+  object SDL_AudioFormat extends CEnumUS[SDL_AudioFormat]:
     given _tag: Tag[SDL_AudioFormat]                  = Tag.UShort
     inline def define(inline a: Int): SDL_AudioFormat = a.toUShort
     val AUDIO_U8                                      = define(0x0008)
@@ -852,7 +868,7 @@ object enumerations:
     * [bindgen] header: ./SDL.h [MANUAL]
     */
   opaque type SDL_InitFlag = UInt
-  object SDL_InitFlag: // extends CEnum[SDL_InitFlag]:
+  object SDL_InitFlag extends CEnumUI[SDL_InitFlag]:
     given _tag: Tag[SDL_InitFlag]                  = Tag.UInt
     inline def define(inline a: Int): SDL_InitFlag = a.toUInt
     val SDL_INIT_TIMER                             = define(0x00000001)
@@ -1743,68 +1759,68 @@ object enumerations:
       inline def |(b: SDL_PackedOrder): SDL_PackedOrder = a | b
       inline def is(b: SDL_PackedOrder): Boolean        = (a & b) == b
 
-  /** [bindgen] header: ./SDL_pixels.h
+  /** [bindgen] header: ./SDL_pixels.h [MANUAL]
     */
-  opaque type SDL_PixelFormatEnum = CInt
-  object SDL_PixelFormatEnum extends CEnum[SDL_PixelFormatEnum]:
-    given _tag: Tag[SDL_PixelFormatEnum]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_PixelFormatEnum = a
-    val SDL_PIXELFORMAT_UNKNOWN                            = define(0)
-    val SDL_PIXELFORMAT_INDEX1LSB                          = define(286261504)
-    val SDL_PIXELFORMAT_INDEX1MSB                          = define(287310080)
-    val SDL_PIXELFORMAT_INDEX2LSB                          = define(470811136)
-    val SDL_PIXELFORMAT_INDEX2MSB                          = define(471859712)
-    val SDL_PIXELFORMAT_INDEX4LSB                          = define(303039488)
-    val SDL_PIXELFORMAT_INDEX4MSB                          = define(304088064)
-    val SDL_PIXELFORMAT_INDEX8                             = define(318769153)
-    val SDL_PIXELFORMAT_RGB332                             = define(336660481)
-    val SDL_PIXELFORMAT_XRGB4444                           = define(353504258)
-    val SDL_PIXELFORMAT_RGB444                             = define(353504258)
-    val SDL_PIXELFORMAT_XBGR4444                           = define(357698562)
-    val SDL_PIXELFORMAT_BGR444                             = define(357698562)
-    val SDL_PIXELFORMAT_XRGB1555                           = define(353570562)
-    val SDL_PIXELFORMAT_RGB555                             = define(353570562)
-    val SDL_PIXELFORMAT_XBGR1555                           = define(357764866)
-    val SDL_PIXELFORMAT_BGR555                             = define(357764866)
-    val SDL_PIXELFORMAT_ARGB4444                           = define(355602434)
-    val SDL_PIXELFORMAT_RGBA4444                           = define(356651010)
-    val SDL_PIXELFORMAT_ABGR4444                           = define(359796738)
-    val SDL_PIXELFORMAT_BGRA4444                           = define(360845314)
-    val SDL_PIXELFORMAT_ARGB1555                           = define(355667970)
-    val SDL_PIXELFORMAT_RGBA5551                           = define(356782082)
-    val SDL_PIXELFORMAT_ABGR1555                           = define(359862274)
-    val SDL_PIXELFORMAT_BGRA5551                           = define(360976386)
-    val SDL_PIXELFORMAT_RGB565                             = define(353701890)
-    val SDL_PIXELFORMAT_BGR565                             = define(357896194)
-    val SDL_PIXELFORMAT_RGB24                              = define(386930691)
-    val SDL_PIXELFORMAT_BGR24                              = define(390076419)
-    val SDL_PIXELFORMAT_XRGB8888                           = define(370546692)
-    val SDL_PIXELFORMAT_RGB888                             = define(370546692)
-    val SDL_PIXELFORMAT_RGBX8888                           = define(371595268)
-    val SDL_PIXELFORMAT_XBGR8888                           = define(374740996)
-    val SDL_PIXELFORMAT_BGR888                             = define(374740996)
-    val SDL_PIXELFORMAT_BGRX8888                           = define(375789572)
-    val SDL_PIXELFORMAT_ARGB8888                           = define(372645892)
-    val SDL_PIXELFORMAT_RGBA8888                           = define(373694468)
-    val SDL_PIXELFORMAT_ABGR8888                           = define(376840196)
-    val SDL_PIXELFORMAT_BGRA8888                           = define(377888772)
-    val SDL_PIXELFORMAT_ARGB2101010                        = define(372711428)
-    val SDL_PIXELFORMAT_RGBA32                             = define(376840196)
-    val SDL_PIXELFORMAT_ARGB32                             = define(377888772)
-    val SDL_PIXELFORMAT_BGRA32                             = define(372645892)
-    val SDL_PIXELFORMAT_ABGR32                             = define(373694468)
-    val SDL_PIXELFORMAT_RGBX32                             = define(374740996)
-    val SDL_PIXELFORMAT_XRGB32                             = define(375789572)
-    val SDL_PIXELFORMAT_BGRX32                             = define(370546692)
-    val SDL_PIXELFORMAT_XBGR32                             = define(371595268)
-    val SDL_PIXELFORMAT_YV12                               = define(842094169)
-    val SDL_PIXELFORMAT_IYUV                               = define(1448433993)
-    val SDL_PIXELFORMAT_YUY2                               = define(844715353)
-    val SDL_PIXELFORMAT_UYVY                               = define(1498831189)
-    val SDL_PIXELFORMAT_YVYU                               = define(1431918169)
-    val SDL_PIXELFORMAT_NV12                               = define(842094158)
-    val SDL_PIXELFORMAT_NV21                               = define(825382478)
-    val SDL_PIXELFORMAT_EXTERNAL_OES                       = define(542328143)
+  opaque type SDL_PixelFormatEnum = UInt
+  object SDL_PixelFormatEnum extends CEnumUI[SDL_PixelFormatEnum]:
+    given _tag: Tag[SDL_PixelFormatEnum]                  = Tag.UInt
+    inline def define(inline a: Int): SDL_PixelFormatEnum = a.toUInt
+    val SDL_PIXELFORMAT_UNKNOWN                           = define(0)
+    val SDL_PIXELFORMAT_INDEX1LSB                         = define(286261504)
+    val SDL_PIXELFORMAT_INDEX1MSB                         = define(287310080)
+    val SDL_PIXELFORMAT_INDEX2LSB                         = define(470811136)
+    val SDL_PIXELFORMAT_INDEX2MSB                         = define(471859712)
+    val SDL_PIXELFORMAT_INDEX4LSB                         = define(303039488)
+    val SDL_PIXELFORMAT_INDEX4MSB                         = define(304088064)
+    val SDL_PIXELFORMAT_INDEX8                            = define(318769153)
+    val SDL_PIXELFORMAT_RGB332                            = define(336660481)
+    val SDL_PIXELFORMAT_XRGB4444                          = define(353504258)
+    val SDL_PIXELFORMAT_RGB444                            = define(353504258)
+    val SDL_PIXELFORMAT_XBGR4444                          = define(357698562)
+    val SDL_PIXELFORMAT_BGR444                            = define(357698562)
+    val SDL_PIXELFORMAT_XRGB1555                          = define(353570562)
+    val SDL_PIXELFORMAT_RGB555                            = define(353570562)
+    val SDL_PIXELFORMAT_XBGR1555                          = define(357764866)
+    val SDL_PIXELFORMAT_BGR555                            = define(357764866)
+    val SDL_PIXELFORMAT_ARGB4444                          = define(355602434)
+    val SDL_PIXELFORMAT_RGBA4444                          = define(356651010)
+    val SDL_PIXELFORMAT_ABGR4444                          = define(359796738)
+    val SDL_PIXELFORMAT_BGRA4444                          = define(360845314)
+    val SDL_PIXELFORMAT_ARGB1555                          = define(355667970)
+    val SDL_PIXELFORMAT_RGBA5551                          = define(356782082)
+    val SDL_PIXELFORMAT_ABGR1555                          = define(359862274)
+    val SDL_PIXELFORMAT_BGRA5551                          = define(360976386)
+    val SDL_PIXELFORMAT_RGB565                            = define(353701890)
+    val SDL_PIXELFORMAT_BGR565                            = define(357896194)
+    val SDL_PIXELFORMAT_RGB24                             = define(386930691)
+    val SDL_PIXELFORMAT_BGR24                             = define(390076419)
+    val SDL_PIXELFORMAT_XRGB8888                          = define(370546692)
+    val SDL_PIXELFORMAT_RGB888                            = define(370546692)
+    val SDL_PIXELFORMAT_RGBX8888                          = define(371595268)
+    val SDL_PIXELFORMAT_XBGR8888                          = define(374740996)
+    val SDL_PIXELFORMAT_BGR888                            = define(374740996)
+    val SDL_PIXELFORMAT_BGRX8888                          = define(375789572)
+    val SDL_PIXELFORMAT_ARGB8888                          = define(372645892)
+    val SDL_PIXELFORMAT_RGBA8888                          = define(373694468)
+    val SDL_PIXELFORMAT_ABGR8888                          = define(376840196)
+    val SDL_PIXELFORMAT_BGRA8888                          = define(377888772)
+    val SDL_PIXELFORMAT_ARGB2101010                       = define(372711428)
+    val SDL_PIXELFORMAT_RGBA32                            = define(376840196)
+    val SDL_PIXELFORMAT_ARGB32                            = define(377888772)
+    val SDL_PIXELFORMAT_BGRA32                            = define(372645892)
+    val SDL_PIXELFORMAT_ABGR32                            = define(373694468)
+    val SDL_PIXELFORMAT_RGBX32                            = define(374740996)
+    val SDL_PIXELFORMAT_XRGB32                            = define(375789572)
+    val SDL_PIXELFORMAT_BGRX32                            = define(370546692)
+    val SDL_PIXELFORMAT_XBGR32                            = define(371595268)
+    val SDL_PIXELFORMAT_YV12                              = define(842094169)
+    val SDL_PIXELFORMAT_IYUV                              = define(1448433993)
+    val SDL_PIXELFORMAT_YUY2                              = define(844715353)
+    val SDL_PIXELFORMAT_UYVY                              = define(1498831189)
+    val SDL_PIXELFORMAT_YVYU                              = define(1431918169)
+    val SDL_PIXELFORMAT_NV12                              = define(842094158)
+    val SDL_PIXELFORMAT_NV21                              = define(825382478)
+    val SDL_PIXELFORMAT_EXTERNAL_OES                      = define(542328143)
     inline def getName(inline value: SDL_PixelFormatEnum): Option[String] =
       inline value match
         case SDL_PIXELFORMAT_UNKNOWN      => Some("SDL_PIXELFORMAT_UNKNOWN")
