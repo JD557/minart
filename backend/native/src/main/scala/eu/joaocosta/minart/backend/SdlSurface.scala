@@ -10,7 +10,7 @@ import eu.joaocosta.minart.graphics.{BlendMode, Color, MutableSurface, Surface}
 
 /** Mutable surface backed by an SDL surface.
   *
-  * This class assumes that the surface is in `SDL_PIXELFORMAT_RGBA32`.
+  * This class assumes that the surface is in `SDL_PIXELFORMAT_ARGB8888`.
   * It also does not free the surface, that's expected to be handled manually.
   *
   * However, when not in use anymore, one should call `cleanup()` to cleanup
@@ -84,7 +84,7 @@ final class SdlSurface(val data: Ptr[SDL_Surface]) extends MutableSurface {
 }
 
 object SdlSurface {
-  /* Converts a raw SDL surface to RGBA 32, so that it can be used by SdlSurface.
+  /* Converts a raw SDL surface to ARGB 8888, so that it can be used by SdlSurface.
    *
    * This method will only copy the surface if necessary.
    * When that happens, the original pointer will be invalidated.
@@ -94,9 +94,9 @@ object SdlSurface {
    *
    * @param original original data to convert
    */
-  def ensureRgba32Format(original: Ptr[SDL_Surface]): Ptr[SDL_Surface] = {
+  def ensureARGBFormat(original: Ptr[SDL_Surface]): Ptr[SDL_Surface] = {
     val originalFormat = (!(!original).format).format
-    if (originalFormat == SDL_PixelFormatEnum.SDL_PIXELFORMAT_RGBA32.uint) {
+    if (originalFormat == SDL_PixelFormatEnum.SDL_PIXELFORMAT_ARGB8888.uint) {
       original
     } else {
       val formattedSurface =
