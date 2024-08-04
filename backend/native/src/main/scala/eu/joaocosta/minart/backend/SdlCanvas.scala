@@ -115,15 +115,12 @@ final class SdlCanvas(handleQuit: Boolean = false) extends SurfaceBackedCanvas {
 
     // Update internal surface
     val newSurface = new SdlSurface(
-      SDL_CreateRGBSurface(
+      SDL_CreateRGBSurfaceWithFormat(
         0.toUInt,
         newSettings.width,
         newSettings.height,
         32,
-        0x00ff0000.toUInt,
-        0x0000ff00.toUInt,
-        0x000000ff.toUInt,
-        0xff000000.toUInt
+        SDL_PixelFormatEnum.SDL_PIXELFORMAT_ARGB8888.uint
       )
     )
     SDL_SetSurfaceBlendMode(newSurface.data, SDL_BLENDMODE_NONE)
