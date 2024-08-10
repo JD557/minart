@@ -1,8 +1,19 @@
 package eu.joaocosta.minart.backend
 
+import scala.concurrent.Future
 import scala.scalajs.js.typedarray.*
 
-import org.scalajs.dom.ImageData
+import org.scalajs.dom.{
+  CanvasRenderingContext2D,
+  Image,
+  ImageBitmap,
+  ImageData,
+  OffscreenCanvas,
+  TwoDContextAttributes,
+  document,
+  html,
+  window
+}
 
 import eu.joaocosta.minart.graphics.{Color, MutableSurface}
 
@@ -38,5 +49,58 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
         _y += 1
       }
     }
+  }
+
+  /** Converts this surface to an ImageBitmap
+    */
+  def toImageBitmap(): Future[ImageBitmap] =
+    window.createImageBitmap(data).toFuture
+
+  /** Converts this surface to an Image element.
+    *
+    * @param format image format (defaults to image/png)
+    * @return image element
+    */
+  def toImage(format: String = "image/png"): Image = {
+    val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
+    canvas.width = width
+    canvas.height = height
+    val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+    ctx.putImageData(data, 0, 0)
+    val dataUrl = canvas.toDataURL(format)
+    val image   = new Image()
+    image.width = width
+    image.height = height
+    image.src = dataUrl
+    image
+  }
+}
+
+object ImageDataSurface {
+
+  /** Loads an ImageDataOpaqueSurface from an offscreen canvas
+    *
+    * @param canvas offscreen canvas
+    * @return loaded surface
+    */
+  def fromOffscreenCanvas(canvas: OffscreenCanvas): ImageDataSurface = {
+    val ctx = canvas
+      .getContext("2d", new TwoDContextAttributes { alpha = true })
+      .asInstanceOf[CanvasRenderingContext2D]
+    new ImageDataSurface(ctx.getImageData(0, 0, canvas.width, canvas.height))
+  }
+
+  /** Loads an ImageDataSurface from an image element
+    *
+    * @param image image element
+    * @return loaded surface
+    */
+  def fromImage(image: Image): ImageDataSurface = {
+    val offscreenCanvas = new OffscreenCanvas(image.width, image.height)
+    val ctx = offscreenCanvas
+      .getContext("2d", new TwoDContextAttributes { alpha = true })
+      .asInstanceOf[CanvasRenderingContext2D]
+    ctx.drawImage(image, 0, 0)
+    fromOffscreenCanvas(offscreenCanvas)
   }
 }
