@@ -9,16 +9,9 @@ package eu.joaocosta.minart.geometry
   *
   * @param vertices ordered sequence of vertices.
   */
-final case class ConvexPolygon(vertices: Vector[ConvexPolygon.Point]) {
+final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
   require(vertices.size >= 3, "A polygon needs at least 3 vertices")
 
-  /** Bounding box that contains this polygon.
-    *
-    * This is useful for some optimizations, like short circuiting collisions and rasterization.
-    *
-    * Methods inside the convex polygon do not check if a point is inside this bounding box. It is expected that
-    * the caller will do this check if they want the performance benefits.
-    */
   val aabb: AxisAlignedBoundingBox = {
     val x1 = vertices.iterator.minBy(_.x).x
     val y1 = vertices.iterator.minBy(_.y).y
@@ -30,7 +23,7 @@ final case class ConvexPolygon(vertices: Vector[ConvexPolygon.Point]) {
   private def edgeFunction(x1: Int, y1: Int, x2: Int, y2: Int, x3: Int, y3: Int): Int =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
-  private def edgeFunction(p1: ConvexPolygon.Point, p2: ConvexPolygon.Point, p3: ConvexPolygon.Point): Int =
+  private def edgeFunction(p1: Shape.Point, p2: Shape.Point, p3: Shape.Point): Int =
     edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
   private def rawWeights(x: Int, y: Int): Iterator[Int] =
@@ -48,30 +41,12 @@ final case class ConvexPolygon(vertices: Vector[ConvexPolygon.Point]) {
       }
       .sum
 
-  /** Checks if this polygon contains a point.
-    *
-    * Returns the face that contains the point, so that the end user can decide to do backface culling or not.
-    *
-    * @param x x coordinates of the point
-    * @param y y coordinates of the point
-    * @return None if the point is not contained, Some(face) if the point is contained.
-    */
-  def contains(x: Int, y: Int): Option[ConvexPolygon.Face] = {
+  def contains(x: Int, y: Int): Option[Shape.Face] = {
     val sides = rawWeights(x, y).map(_ >= 0).distinct.toVector
     if (sides.size == 1) {
-      if (sides.head) ConvexPolygon.someFront else ConvexPolygon.someBack
+      if (sides.head) Shape.someFront else Shape.someBack
     } else None
   }
-
-  /** Checks if this polygon contains a point.
-    *
-    * Returns the face that contains the point, so that the end user can decide to do backface culling or not.
-    *
-    * @param x x coordinates of the point
-    * @param y y coordinates of the point
-    * @return None if the point is not contained, Some(face) if the point is contained.
-    */
-  def contains(point: ConvexPolygon.Point): Option[ConvexPolygon.Face] = contains(point.x, point.y)
 
   /** Checks if this polygon contains another polygon.
     *
@@ -124,25 +99,7 @@ final case class ConvexPolygon(vertices: Vector[ConvexPolygon.Point]) {
     * @param point point to test
     * @return weight
     */
-  def edgeWeights(point: ConvexPolygon.Point): Vector[Double] = {
+  def edgeWeights(point: Shape.Point): Vector[Double] = {
     rawWeights(point.x, point.y).map(_ / maxWeight.toDouble).toVector
   }
-}
-
-object ConvexPolygon {
-
-  /** Face if a convex polygon.
-    *
-    * If the points are defined in clockwise order, the front face faces the viewer.
-    */
-  enum Face {
-    case Front
-    case Back
-  }
-
-  // Preallocated values to avoid repeated allocations
-  private[ConvexPolygon] val someFront = Some(Face.Front)
-  private[ConvexPolygon] val someBack  = Some(Face.Back)
-
-  final case class Point(x: Int, y: Int)
 }

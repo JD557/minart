@@ -117,12 +117,12 @@ trait MutableSurface extends Surface {
     * @param blendMode blend strategy to use
     */
   def rasterize(
-      shape: ConvexPolygon,
+      shape: Shape,
       frontfaceColor: Option[Color],
       backfaceColor: Option[Color] = None,
       blendMode: BlendMode = BlendMode.Copy
   ): Unit = {
-    Rasterizer.rasterizePolygon(this, shape, frontfaceColor, backfaceColor, blendMode)
+    Rasterizer.rasterizeShape(this, shape, frontfaceColor, backfaceColor, blendMode)
   }
 
   /** Modifies this surface using surface view transformations

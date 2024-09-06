@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.geometry
 
-import eu.joaocosta.minart.geometry.ConvexPolygon.Point
+import eu.joaocosta.minart.geometry.Shape.Point
 
 class ConvexPolygonSpec extends munit.FunSuite {
   test("Computes the bounding box of a polygon") {
@@ -37,8 +37,8 @@ class ConvexPolygonSpec extends munit.FunSuite {
       )
     )
     val ccwPolygon = ConvexPolygon(cwPolygon.vertices.reverse)
-    assertEquals(cwPolygon.contains(0, 0), Some(ConvexPolygon.Face.Front))
-    assertEquals(ccwPolygon.contains(0, 0), Some(ConvexPolygon.Face.Back))
+    assertEquals(cwPolygon.contains(0, 0), Some(Shape.Face.Front))
+    assertEquals(ccwPolygon.contains(0, 0), Some(Shape.Face.Back))
   }
 
   test("check if a polygon is contained in another") {
