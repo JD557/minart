@@ -20,6 +20,9 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
     AxisAlignedBoundingBox(x1, y1, x2 - x1, y2 - y1)
   }
 
+  val knownFace: Option[Shape.Face] =
+    faceAt(aabb.centerX, aabb.centerY)
+
   private def edgeFunction(x1: Int, y1: Int, x2: Int, y2: Int, x3: Int, y3: Int): Int =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
@@ -41,11 +44,15 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
       }
       .sum
 
-  def contains(x: Int, y: Int): Option[Shape.Face] = {
+  def faceAt(x: Int, y: Int): Option[Shape.Face] = {
     val sides = rawWeights(x, y).map(_ >= 0).distinct.toVector
     if (sides.size == 1) {
       if (sides.head) Shape.someFront else Shape.someBack
     } else None
+  }
+
+  override def contains(x: Int, y: Int): Boolean = {
+    rawWeights(x, y).map(_ >= 0).distinct.size == 1
   }
 
   /** Checks if this polygon contains another polygon.
@@ -54,7 +61,7 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
     * @return true if that polygon is contained in this polygon
     */
   def contains(that: ConvexPolygon): Boolean =
-    that.vertices.forall(p => this.contains(p).isDefined)
+    that.vertices.forall(p => this.contains(p))
 
   /** Checks if this polygon collides with another polygon.
     *
@@ -62,7 +69,7 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
     * @return true if the polygons collide
     */
   def collides(that: ConvexPolygon): Boolean =
-    this.vertices.exists(v => that.contains(v).isDefined) || that.vertices.exists(v => this.contains(v).isDefined)
+    this.vertices.exists(v => that.contains(v)) || that.vertices.exists(v => this.contains(v))
 
   /** Normalized distance from an edge. Useful for some tricks like color interpolation.
     *

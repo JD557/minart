@@ -22,10 +22,10 @@ class ConvexPolygonSpec extends munit.FunSuite {
         Point(-5, 5)
       )
     )
-    assertEquals(polygon.contains(0, 0).isDefined, true)
-    assertEquals(polygon.contains(0, -10).isDefined, true)
-    assertEquals(polygon.contains(4, -9).isDefined, false)
-    assertEquals(polygon.contains(0, -11).isDefined, false)
+    assertEquals(polygon.contains(0, 0), true)
+    assertEquals(polygon.contains(0, -10), true)
+    assertEquals(polygon.contains(4, -9), false)
+    assertEquals(polygon.contains(0, -11), false)
   }
 
   test("Return the polygon face") {
@@ -37,8 +37,12 @@ class ConvexPolygonSpec extends munit.FunSuite {
       )
     )
     val ccwPolygon = ConvexPolygon(cwPolygon.vertices.reverse)
-    assertEquals(cwPolygon.contains(0, 0), Some(Shape.Face.Front))
-    assertEquals(ccwPolygon.contains(0, 0), Some(Shape.Face.Back))
+
+    assertEquals(cwPolygon.knownFace, Some(Shape.Face.Front))
+    assertEquals(ccwPolygon.knownFace, Some(Shape.Face.Back))
+
+    assertEquals(cwPolygon.faceAt(0, 0), Some(Shape.Face.Front))
+    assertEquals(ccwPolygon.faceAt(0, 0), Some(Shape.Face.Back))
   }
 
   test("check if a polygon is contained in another") {

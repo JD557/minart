@@ -22,10 +22,14 @@ final case class Circle(center: Shape.Point, radius: Int) extends Shape {
     AxisAlignedBoundingBox(x, y, d, d)
   }
 
-  def contains(x: Int, y: Int): Option[Shape.Face] = {
+  val knownFace: Option[Shape.Face] =
+    if (radius > 0) Shape.someFront
+    else if (radius < 0) Shape.someBack
+    else None
+
+  def faceAt(x: Int, y: Int): Option[Shape.Face] = {
     if ((x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) <= squareRadius)
-      if (radius >= 0) Shape.someFront
-      else Shape.someBack
+      knownFace
     else None
   }
 

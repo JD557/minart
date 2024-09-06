@@ -17,10 +17,10 @@ class CircleSpec extends munit.FunSuite {
       10
     )
 
-    assertEquals(circle.contains(0, -10).isDefined, true)
-    assertEquals(circle.contains(0, 0).isDefined, true)
-    assertEquals(circle.contains(10, 0).isDefined, false)
-    assertEquals(circle.contains(10, 10).isDefined, false)
+    assertEquals(circle.contains(0, -10), true)
+    assertEquals(circle.contains(0, 0), true)
+    assertEquals(circle.contains(10, 0), false)
+    assertEquals(circle.contains(10, 10), false)
   }
 
   test("Return the circle face") {
@@ -32,8 +32,12 @@ class CircleSpec extends munit.FunSuite {
       Point(0, -10),
       -10
     )
-    assertEquals(positiveCircle.contains(0, -10), Some(Shape.Face.Front))
-    assertEquals(negativeCircle.contains(0, -10), Some(Shape.Face.Back))
+
+    assertEquals(positiveCircle.knownFace, Some(Shape.Face.Front))
+    assertEquals(negativeCircle.knownFace, Some(Shape.Face.Back))
+
+    assertEquals(positiveCircle.faceAt(0, -10), Some(Shape.Face.Front))
+    assertEquals(negativeCircle.faceAt(0, -10), Some(Shape.Face.Back))
   }
 
   test("check if a circle is contained in a circle") {
