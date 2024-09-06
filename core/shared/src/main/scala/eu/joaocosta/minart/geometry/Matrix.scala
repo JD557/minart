@@ -9,19 +9,41 @@ package eu.joaocosta.minart.geometry
   */
 final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) {
 
-  /** The inverse of this matrix */
-  def inverse: Matrix = {
+  /** The inverse of this matrix.
+    *
+    *  If the determinant is 0, this returns an undefined matrix.
+    */
+  lazy val inverse: Matrix = {
     // https://nigeltao.github.io/blog/2021/inverting-3x2-affine-transformation-matrix.html
     val determinant = a * e - b * d
-    require(determinant != 0, "Tried to invert a matrix that is not invertible")
-    Matrix(
-      e / determinant,
-      -b / determinant,
-      ((b * f) - (e * c)) / determinant,
-      -d / determinant,
-      a / determinant,
-      ((d * c) - (a * f)) / determinant
-    )
+    if (determinant == 0) Matrix.undefined
+    else if (determinant == 1) // Just translation and rotation
+      Matrix(
+        e,
+        -b,
+        (b * f) - (e * c),
+        -d,
+        a,
+        (d * c) - (a * f)
+      )
+    else if (determinant == -1) // Improper rotation (reflection)
+      Matrix(
+        -e,
+        b,
+        (e * c) - (b * f),
+        d,
+        -a,
+        (a * f) - (d * c)
+      )
+    else
+      Matrix(
+        e / determinant,
+        -b / determinant,
+        ((b * f) - (e * c)) / determinant,
+        -d / determinant,
+        a / determinant,
+        ((d * c) - (a * f)) / determinant
+      )
   }
 
   /** Multiplies this matrix with another matrix. */
@@ -52,4 +74,6 @@ final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f
 
 object Matrix {
   val identity = Matrix(1, 0, 0, 0, 1, 0)
+
+  val undefined = Matrix(Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN)
 }

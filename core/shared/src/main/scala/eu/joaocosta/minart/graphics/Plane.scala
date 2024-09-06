@@ -109,9 +109,9 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 
   /** Contramaps this plane using a matrix instead of a function.
     *
-    *  This method can be chained multiple times efficiently.
+    * This method can be chained multiple times efficiently.
     *
-    * Note that this is *contramaping*. The operation is applied as
+    * Note that this is *contramapping*. The operation is applied as
     * [a b c] [dx] = [sx]
     * [d e f] [dy]   [sy]
     * [0 0 1] [ 1]   [ 1]
@@ -131,6 +131,14 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   def contramapMatrix(matrix: Matrix) =
     if (matrix == Matrix.identity) this
     else Plane.MatrixPlane(matrix, this)
+
+  /** Maps this plane using a matrix instead of a function.
+    *
+    * Internally, this method will invert the matrix, so for performance sensitive operations it is recommended to use
+    * contramapMatrix with a precomputed inverse instead.
+    */
+  def mapMatrix(matrix: Matrix) =
+    contramapMatrix(matrix.inverse)
 
   /** Translates a plane. */
   final def translate(dx: Double, dy: Double): Plane =

@@ -64,7 +64,7 @@ trait Shape {
     *
     *  This method can be chained multiple times efficiently.
     *
-    * Note that this is *contramaping*. The operation is applied as
+    * Note that this is *contramapping*. The operation is applied as
     * [a b c] [dx] = [sx]
     * [d e f] [dy]   [sy]
     * [0 0 1] [ 1]   [ 1]
@@ -84,6 +84,14 @@ trait Shape {
   def contramapMatrix(matrix: Matrix) =
     if (matrix == Matrix.identity) this
     else Shape.MatrixShape(matrix, this)
+
+  /** Maps this the points in this shae using a matrix instead.
+    *
+    * Internally, this method will invert the matrix, so for performance sensitive operations it is recommended to use
+    * contramapMatrix with a precomputed inverse instead.
+    */
+  def mapMatrix(matrix: Matrix) =
+    contramapMatrix(matrix.inverse)
 
   /** Translates this shape. */
   final def translate(dx: Double, dy: Double): Shape =
