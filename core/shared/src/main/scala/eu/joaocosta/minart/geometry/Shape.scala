@@ -38,7 +38,7 @@ trait Shape {
     * @param y y coordinates of the point
     * @return None if the point is not contained, Some(face) if the point is contained.
     */
-  def faceAt(point: Shape.Point): Option[Shape.Face] = faceAt(point.x, point.y)
+  final def faceAt(point: Shape.Point): Option[Shape.Face] = faceAt(point.x, point.y)
 
   /** Checks if this shape contains a point.
     *
@@ -58,10 +58,99 @@ trait Shape {
     * @param y y coordinates of the point
     * @return None if the point is not contained, Some(face) if the point is contained.
     */
-  def contains(point: Shape.Point): Boolean = contains(point.x, point.y)
+  final def contains(point: Shape.Point): Boolean = contains(point.x, point.y)
+
+  /** Contramaps the points in this shape using a matrix.
+    *
+    *  This method can be chained multiple times efficiently.
+    *
+    * Note that this is *contramaping*. The operation is applied as
+    * [a b c] [dx] = [sx]
+    * [d e f] [dy]   [sy]
+    * [0 0 1] [ 1]   [ 1]
+    *
+    * Where (sx,sy) are the positions in the original shape and (dx, dy) are the positions in the new shape.
+    *
+    * This means that you need to invert the transformations to use the common transformation matrices.
+    *
+    * For example, the matrix:
+    *
+    * [2 0 0] [dx] = [sx]
+    * [0 2 0] [dy]   [sy]
+    * [0 0 1] [ 1]   [ 1]
+    *
+    * Will *scale down* the shape, not scale up.
+    */
+  def contramapMatrix(matrix: Matrix) =
+    Shape.MatrixShape(matrix, this)
+
+  /** Translates this shape. */
+  def translate(dx: Double, dy: Double): Shape =
+    if (dx == 0 && dy == 0) this
+    else contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+
+  /** Flips a shape horizontally. */
+  def flipH: Shape = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+
+  /** Flips a shape vertically. */
+  def flipV: Shape = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+
+  /** Scales a shape. */
+  def scale(sx: Double, sy: Double): Shape =
+    if (sx == 1.0 && sy == 1.0) this
+    else contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+
+  /** Scales a shape. */
+  def scale(s: Double): Shape = scale(s, s)
+
+  /** Rotates a shape by a certain angle (clockwise). */
+  def rotate(theta: Double): Shape = {
+    val ct = Math.cos(-theta)
+    if (ct == 1.0) this
+    else {
+      val st = Math.sin(-theta)
+      contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
+    }
+  }
+
+  /** Shears a shape. */
+  def shear(sx: Double, sy: Double): Shape =
+    if (sx == 0.0 && sy == 0.0) this
+    else contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+
+  /** Transposes a shape (switches the x and y coordinates). */
+  def transpose: Shape = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+
 }
 
 object Shape {
+  private[Shape] final case class MatrixShape(matrix: Matrix, shape: Shape) extends Shape {
+    def knownFace: Option[Shape.Face] = shape.knownFace
+    lazy val aabb: AxisAlignedBoundingBox = {
+      val inverse = matrix.inverse
+      val xs = Vector(
+        inverse.applyX(shape.aabb.x1, shape.aabb.y1),
+        inverse.applyX(shape.aabb.x2, shape.aabb.y1),
+        inverse.applyX(shape.aabb.x1, shape.aabb.y2),
+        inverse.applyX(shape.aabb.x2, shape.aabb.y2)
+      )
+      val ys = Vector(
+        inverse.applyY(shape.aabb.x1, shape.aabb.y1),
+        inverse.applyY(shape.aabb.x2, shape.aabb.y1),
+        inverse.applyY(shape.aabb.x1, shape.aabb.y2),
+        inverse.applyY(shape.aabb.x2, shape.aabb.y2)
+      )
+      val minX = xs.min
+      val minY = ys.min
+      val maxX = xs.max
+      val maxY = ys.max
+      AxisAlignedBoundingBox(minX, minY, maxX - minX, maxY - minY)
+    }
+    def faceAt(x: Int, y: Int): Option[Shape.Face] =
+      shape.faceAt(matrix.applyX(x, y), matrix.applyY(x, y))
+    override def contains(x: Int, y: Int): Boolean =
+      shape.contains(matrix.applyX(x, y), matrix.applyY(x, y))
+  }
 
   /** Face if a convex polygon.
     *

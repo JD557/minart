@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.geometry.AxisAlignedBoundingBox
+import eu.joaocosta.minart.geometry.*
 
 /** A procedurally generated infinite surface.
   *
