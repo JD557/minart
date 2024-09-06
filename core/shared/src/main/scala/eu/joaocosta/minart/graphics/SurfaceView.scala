@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.geometry.AxisAlignedBoundingBox
+
 /** A view over a surface.
   *  Allows lazy operations to be applied over a surface.
   *
@@ -29,7 +31,7 @@ sealed trait SurfaceView extends Surface {
     */
   def coflatMap(f: SurfaceView => Color): SurfaceView
 
-  /** Clips this view to a chosen rectangle
+  /** Clips this view to a chosen region
     *
     * @param cx leftmost pixel on the surface
     * @param cy topmost pixel on the surface
@@ -37,6 +39,12 @@ sealed trait SurfaceView extends Surface {
     * @param ch clip height
     */
   def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView
+
+  /** Clips this view to a chosen rectangle
+    *
+    * @param region chosen region
+    */
+  def clip(region: AxisAlignedBoundingBox): SurfaceView = clip(region.x, region.y, region.width, region.height)
 
   /** Overlays a surface on top of this view.
     *

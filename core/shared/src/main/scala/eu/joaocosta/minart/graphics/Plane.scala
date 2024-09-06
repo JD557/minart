@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.geometry.AxisAlignedBoundingBox
+
 /** A procedurally generated infinite surface.
   *
   * Can be clipped to create a surface.
@@ -76,6 +78,12 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
           outer.getPixel(x + cx, y + cy)
         }
       }.toSurfaceView(cw, ch)
+
+  /** Clips this plane to a chosen rectangle
+    *
+    * @param region chosen region
+    */
+  def clip(region: AxisAlignedBoundingBox): SurfaceView = clip(region.x, region.y, region.width, region.height)
 
   /** Overlays a surface on top of this plane.
     *

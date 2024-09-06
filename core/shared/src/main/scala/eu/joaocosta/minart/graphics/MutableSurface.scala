@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.geometry.AxisAlignedBoundingBox
+
 /** A surface that can be drawn on using mutable operations.
   */
 trait MutableSurface extends Surface {
@@ -28,13 +30,21 @@ trait MutableSurface extends Surface {
 
   /** Fill part of the surface with a certain color.
     *
-    * @param color `Color` to fill the surface with
     * @param x leftmost pixel on the destination surface
     * @param y topmost pixel on the destination surface
     * @param w region width
     * @param h region height
+    * @param color `Color` to fill the surface with
     */
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit
+
+  /** Fill part of the surface with a certain color.
+    *
+    * @param region axis aligned region
+    * @param color `Color` to fill the surface with
+    */
+  def fillRegion(region: AxisAlignedBoundingBox, color: Color): Unit =
+    fillRegion(region.x, region.y, region.width, region.height, color)
 
   /** Fill the whole surface with a certain color.
     *
