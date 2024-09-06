@@ -21,16 +21,15 @@ class MatrixSpec extends munit.FunSuite {
   }
 
   test("Can be inverted") {
-    val testMatrix     = Matrix(1, 2, 3, 4, 5, 6)
-    val identityMatrix = Matrix(1, 0, 0, 0, 1, 0)
-    val result         = testMatrix.inverse.multiply(testMatrix)
+    val testMatrix = Matrix(1, 2, 3, 4, 5, 6)
+    val result     = testMatrix.inverse.multiply(testMatrix)
 
     // Approximate equality
-    assert(math.abs(identityMatrix.a - result.a) <= 0.01)
-    assert(math.abs(identityMatrix.b - result.b) <= 0.01)
-    assert(math.abs(identityMatrix.c - result.c) <= 0.01)
-    assert(math.abs(identityMatrix.d - result.d) <= 0.01)
-    assert(math.abs(identityMatrix.e - result.e) <= 0.01)
-    assert(math.abs(identityMatrix.f - result.f) <= 0.01)
+    assert(math.abs(Matrix.identity.a - result.a) <= 0.01)
+    assert(math.abs(Matrix.identity.b - result.b) <= 0.01)
+    assert(math.abs(Matrix.identity.c - result.c) <= 0.01)
+    assert(math.abs(Matrix.identity.d - result.d) <= 0.01)
+    assert(math.abs(Matrix.identity.e - result.e) <= 0.01)
+    assert(math.abs(Matrix.identity.f - result.f) <= 0.01)
   }
 }

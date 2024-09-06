@@ -68,7 +68,7 @@ final case class AxisAlignedBoundingBox(
     *
     * Gaps between the boxes will also be considered as part of the final area.
     */
-  def ++(that: AxisAlignedBoundingBox): AxisAlignedBoundingBox = {
+  def union(that: AxisAlignedBoundingBox): AxisAlignedBoundingBox = {
     val minX = math.min(this.x1, that.x1)
     val maxX = math.max(this.x2, that.x2)
     val minY = math.min(this.y1, that.y1)
@@ -78,7 +78,7 @@ final case class AxisAlignedBoundingBox(
 
   /** Intersects this bounding box with another one.
     */
-  def &(that: AxisAlignedBoundingBox): AxisAlignedBoundingBox = {
+  def intersect(that: AxisAlignedBoundingBox): AxisAlignedBoundingBox = {
     val maxX1 = math.max(this.x1, that.x1)
     val maxY1 = math.max(this.y1, that.y1)
     val minX2 = math.min(this.x2, that.x2)

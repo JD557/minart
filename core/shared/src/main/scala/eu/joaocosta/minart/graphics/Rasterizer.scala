@@ -69,7 +69,7 @@ private[graphics] object Rasterizer {
       backfaceColor: Option[Color],
       blendMode: BlendMode
   ): Unit = {
-    val area = shape.aabb & AxisAlignedBoundingBox(0, 0, dest.width, dest.height)
+    val area = AxisAlignedBoundingBox(0, 0, dest.width, dest.height).intersect(shape.aabb)
     if (!area.isEmpty) {
       val (finalFrontfaceColor, finalBackfaceColor) = blendMode match {
         case BlendMode.ColorMask(mask) =>

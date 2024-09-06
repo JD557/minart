@@ -49,3 +49,7 @@ final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f
     (applyX(x, y), applyY(x, y))
   }
 }
+
+object Matrix {
+  val identity = Matrix(1, 0, 0, 0, 1, 0)
+}

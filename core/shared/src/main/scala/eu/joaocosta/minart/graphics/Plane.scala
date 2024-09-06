@@ -129,7 +129,8 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * Will *scale down* the image, not scale up.
     */
   def contramapMatrix(matrix: Matrix) =
-    Plane.MatrixPlane(matrix, this)
+    if (matrix == Matrix.identity) this
+    else Plane.MatrixPlane(matrix, this)
 
   /** Translates a plane. */
   final def translate(dx: Double, dy: Double): Plane =

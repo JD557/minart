@@ -115,14 +115,16 @@ trait MutableSurface extends Surface {
     * @param frontfaceColor color of the front face
     * @param backfaceColor color of the back face
     * @param blendMode blend strategy to use
+    * @param x position of the shap origin on the destination surface
+    * @param y position of the shap origin on the destination surface
     */
   def rasterize(
       shape: Shape,
       frontfaceColor: Option[Color],
       backfaceColor: Option[Color] = None,
       blendMode: BlendMode = BlendMode.Copy
-  ): Unit = {
-    Rasterizer.rasterizeShape(this, shape, frontfaceColor, backfaceColor, blendMode)
+  )(x: Int, y: Int): Unit = {
+    Rasterizer.rasterizeShape(this, shape.translate(-x, -y), frontfaceColor, backfaceColor, blendMode)
   }
 
   /** Modifies this surface using surface view transformations

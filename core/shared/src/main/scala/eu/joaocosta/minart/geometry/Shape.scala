@@ -82,29 +82,30 @@ trait Shape {
     * Will *scale down* the shape, not scale up.
     */
   def contramapMatrix(matrix: Matrix) =
-    Shape.MatrixShape(matrix, this)
+    if (matrix == Matrix.identity) this
+    else Shape.MatrixShape(matrix, this)
 
   /** Translates this shape. */
-  def translate(dx: Double, dy: Double): Shape =
+  final def translate(dx: Double, dy: Double): Shape =
     if (dx == 0 && dy == 0) this
     else contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
 
   /** Flips a shape horizontally. */
-  def flipH: Shape = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+  final def flipH: Shape = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
 
   /** Flips a shape vertically. */
-  def flipV: Shape = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+  final def flipV: Shape = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
 
   /** Scales a shape. */
-  def scale(sx: Double, sy: Double): Shape =
+  final def scale(sx: Double, sy: Double): Shape =
     if (sx == 1.0 && sy == 1.0) this
     else contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
 
   /** Scales a shape. */
-  def scale(s: Double): Shape = scale(s, s)
+  final def scale(s: Double): Shape = scale(s, s)
 
   /** Rotates a shape by a certain angle (clockwise). */
-  def rotate(theta: Double): Shape = {
+  final def rotate(theta: Double): Shape = {
     val ct = Math.cos(-theta)
     if (ct == 1.0) this
     else {
@@ -114,12 +115,12 @@ trait Shape {
   }
 
   /** Shears a shape. */
-  def shear(sx: Double, sy: Double): Shape =
+  final def shear(sx: Double, sy: Double): Shape =
     if (sx == 0.0 && sy == 0.0) this
     else contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
 
   /** Transposes a shape (switches the x and y coordinates). */
-  def transpose: Shape = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+  final def transpose: Shape = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
 
 }
 
