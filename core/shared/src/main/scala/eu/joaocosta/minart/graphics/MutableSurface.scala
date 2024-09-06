@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.geometry.AxisAlignedBoundingBox
+import eu.joaocosta.minart.geometry.*
 
 /** A surface that can be drawn on using mutable operations.
   */
@@ -107,6 +107,22 @@ trait MutableSurface extends Surface {
   )(x: Int, y: Int): Unit = {
     val surface = that.clip(-x, -y, this.width, this.height)
     blit(surface, blendMode)(0, 0)
+  }
+
+  /** Draws a shape on top of this surface.
+    *
+    * @param shape shape to draw
+    * @param frontfaceColor color of the front face
+    * @param backfaceColor color of the back face
+    * @param blendMode blend strategy to use
+    */
+  def rasterize(
+      shape: ConvexPolygon,
+      frontfaceColor: Option[Color],
+      backfaceColor: Option[Color] = None,
+      blendMode: BlendMode = BlendMode.Copy
+  ): Unit = {
+    Rasterizer.rasterizePolygon(this, shape, frontfaceColor, backfaceColor, blendMode)
   }
 
   /** Modifies this surface using surface view transformations
