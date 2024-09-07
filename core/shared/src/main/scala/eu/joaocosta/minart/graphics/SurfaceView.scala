@@ -1,6 +1,6 @@
 package eu.joaocosta.minart.graphics
 
-import eu.joaocosta.minart.geometry.AxisAlignedBoundingBox
+import eu.joaocosta.minart.geometry.{AxisAlignedBoundingBox, Shape}
 
 /** A view over a surface.
   *  Allows lazy operations to be applied over a surface.
@@ -56,6 +56,24 @@ sealed trait SurfaceView extends Surface {
     * @param y topmost pixel on the destination plane
     */
   def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView
+
+  /** Overlays a shape on top of this view.
+    *
+    * Similar to MutableSurface#rasterize, but for surface views.
+    *
+    * This API is *experimental* and might change in the near future.
+    *
+    * @param that surface to overlay
+    * @param blendMode blend strategy to use
+    * @param x leftmost pixel on the destination plane
+    * @param y topmost pixel on the destination plane
+    */
+  def overlayShape(
+      that: Shape,
+      frontfaceColor: Option[Color],
+      backfaceColor: Option[Color] = None,
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int): SurfaceView
 
   /** Inverts a surface color. */
   final def invertColor: SurfaceView = map(_.invert)
@@ -160,6 +178,14 @@ object SurfaceView {
     def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
       copy(plane = plane.overlay(that, blendMode)(x, y))
 
+    def overlayShape(
+        that: Shape,
+        frontfaceColor: Option[Color],
+        backfaceColor: Option[Color] = None,
+        blendMode: BlendMode = BlendMode.Copy
+    )(x: Int, y: Int): SurfaceView =
+      copy(plane = plane.overlayShape(that, frontfaceColor, backfaceColor, blendMode)(x, y))
+
     def flipH: SurfaceView =
       copy(plane = plane.flipH.translate(width - 1, 0))
 
@@ -242,6 +268,14 @@ object SurfaceView {
 
     def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
       toPlaneSurfaceView().overlay(that, blendMode)(x, y)
+
+    def overlayShape(
+        that: Shape,
+        frontfaceColor: Option[Color],
+        backfaceColor: Option[Color] = None,
+        blendMode: BlendMode = BlendMode.Copy
+    )(x: Int, y: Int): SurfaceView =
+      toPlaneSurfaceView().overlayShape(that, frontfaceColor, backfaceColor, blendMode)(x, y)
 
     def flipH: SurfaceView =
       toPlaneSurfaceView().flipH
