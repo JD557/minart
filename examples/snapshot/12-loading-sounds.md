@@ -1,4 +1,4 @@
-# 11. Loading sounds
+# 12. Loading sounds
 
 Just like we did with images, we can also load audio clips from files.
 

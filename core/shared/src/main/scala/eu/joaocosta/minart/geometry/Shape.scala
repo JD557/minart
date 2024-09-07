@@ -131,8 +131,84 @@ trait Shape {
 }
 
 object Shape {
+
+  /** Coordinates of a point in the shape.
+    *
+    * For performance reasons, only integer coordinates are supported,
+    * although shapes are free to use floating point in intermediate states
+    * and transformations.
+    */
+  final case class Point(x: Int, y: Int)
+
+  /** The shape of a circle.
+    *
+    * If the radius is positive, the circle's front face is facing the viewer.
+    * If the radius is negative, the circle's back face is facing the viewer.
+    */
+  def circle(center: Point, radius: Int): Circle = Circle(center, radius)
+
+  /** The shape of an axis aligned rectangle.
+    *
+    * If p1 is the top left point or bottom right point, the rectangle's front face is facing the viewer.
+    * Otherwise, the rectangle's back face is facing the viewer.
+    */
+  def rectangle(p1: Point, p2: Point): ConvexPolygon = ConvexPolygon(
+    Vector(
+      p1,
+      Point(p2.x, p1.y),
+      p2,
+      Point(p1.x, p2.y)
+    )
+  )
+
+  /** The shape of a triangle.
+    *
+    * If the points are ordered clockwise, the triangle's front face is facing the viewer.
+    * Otherwise, the triangle's back face is facing the viewer.
+    */
+  def triangle(p1: Point, p2: Point, p3: Point): ConvexPolygon = ConvexPolygon(
+    Vector(
+      p1,
+      p2,
+      p3
+    )
+  )
+
+  /** The shape of an arbitrary convex polygon.
+    *
+    * If the points are ordered clockwise, the polygon's front face is facing the viewer.
+    * Otherwise, the polygon's back face is facing the viewer.
+    *
+    * If the points do not form a convex polygon, the behavior is undefined.
+    */
+  def convexPolygon(p1: Point, p2: Point, p3: Point, ps: Point*): ConvexPolygon = ConvexPolygon(
+    Vector(
+      p1,
+      p2,
+      p3
+    ) ++ ps
+  )
+
+  /** Face of a convex polygon.
+    *
+    * If the points are defined in clockwise order, the front face faces the viewer.
+    */
+  enum Face {
+    case Front
+    case Back
+  }
+
+  // Preallocated values to avoid repeated allocations
+  private[geometry] val someFront = Some(Face.Front)
+  private[geometry] val someBack  = Some(Face.Back)
+
   private[Shape] final case class MatrixShape(matrix: Matrix, shape: Shape) extends Shape {
-    def knownFace: Option[Shape.Face] = shape.knownFace
+    def knownFace: Option[Shape.Face] = if (matrix.a * matrix.e < 0)
+      shape.knownFace.map {
+        case Face.Front => Face.Back
+        case Face.Back  => Face.Front
+      }
+    else shape.knownFace
     lazy val aabb: AxisAlignedBoundingBox = {
       val xs = Vector(
         matrix.applyX(shape.aabb.x1, shape.aabb.y1),
@@ -159,19 +235,4 @@ object Shape {
     override def mapMatrix(matrix: Matrix) =
       MatrixShape(matrix.multiply(this.matrix), shape)
   }
-
-  /** Face if a convex polygon.
-    *
-    * If the points are defined in clockwise order, the front face faces the viewer.
-    */
-  enum Face {
-    case Front
-    case Back
-  }
-
-  // Preallocated values to avoid repeated allocations
-  private[geometry] val someFront = Some(Face.Front)
-  private[geometry] val someBack  = Some(Face.Back)
-
-  final case class Point(x: Int, y: Int)
 }
