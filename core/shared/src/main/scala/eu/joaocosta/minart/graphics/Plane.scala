@@ -142,40 +142,31 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 
   /** Translates a plane. */
   final def translate(dx: Double, dy: Double): Plane =
-    if (dx == 0 && dy == 0) this
-    else contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+    contramapMatrix(Matrix.translation(-dx, -dy))
 
   /** Flips a plane horizontally. */
-  final def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+  final def flipH: Plane = contramapMatrix(Matrix.flipH)
 
   /** Flips a plane vertically. */
-  final def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+  final def flipV: Plane = contramapMatrix(Matrix.flipV)
 
   /** Scales a plane. */
   final def scale(sx: Double, sy: Double): Plane =
-    if (sx == 1.0 && sy == 1.0) this
-    else contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+    contramapMatrix(Matrix.scaling(1.0 / sx, 1.0 / sy))
 
   /** Scales a plane. */
   final def scale(s: Double): Plane = scale(s, s)
 
   /** Rotates a plane by a certain angle (clockwise). */
-  final def rotate(theta: Double): Plane = {
-    val ct = Math.cos(-theta)
-    if (ct == 1.0) this
-    else {
-      val st = Math.sin(-theta)
-      contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
-    }
-  }
+  final def rotate(theta: Double): Plane =
+    contramapMatrix(Matrix.rotation(-theta))
 
   /** Shears a plane. */
   final def shear(sx: Double, sy: Double): Plane =
-    if (sx == 0.0 && sy == 0.0) this
-    else contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+    contramapMatrix(Matrix.shear(-sx, -sy))
 
   /** Transposes a plane (switches the x and y coordinates). */
-  final def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+  final def transpose: Plane = contramapMatrix(Matrix.transpose)
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner.
     *
@@ -201,7 +192,8 @@ object Plane {
     }
 
     override def contramapMatrix(matrix: Matrix) =
-      MatrixPlane(this.invMatrix.multiply(matrix), plane)
+      if (matrix == Matrix.identity) this
+      else MatrixPlane(this.invMatrix.multiply(matrix), plane)
 
     override def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
       translate(-cx, -cy).toSurfaceView(cw, ch)

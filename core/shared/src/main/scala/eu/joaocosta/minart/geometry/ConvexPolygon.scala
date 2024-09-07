@@ -133,6 +133,7 @@ object ConvexPolygon {
     override def contains(x: Int, y: Int): Boolean =
       toConvexPolygon.contains(x, y)
     override def mapMatrix(matrix: Matrix) =
-      MatrixPolygon(matrix.multiply(this.matrix), polygon)
+      if (matrix == Matrix.identity) this
+      else MatrixPolygon(matrix.multiply(this.matrix), polygon)
   }
 }

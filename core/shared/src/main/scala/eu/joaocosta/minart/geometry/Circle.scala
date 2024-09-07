@@ -69,14 +69,12 @@ final case class Circle(center: Shape.Point, radius: Int) extends Shape {
     Circle.PreciseCircle(center.x * s, center.y * s, radius * s)
 
   override def rotate(theta: Double): Shape = {
-    val ct = Math.cos(theta)
-    if (ct == 1.0) this
+    val matrix = Matrix.rotation(theta)
+    if (matrix == Matrix.identity) this
     else {
-      val st  = Math.sin(theta)
-      val mat = Matrix(ct, -st, 0, st, ct, 0)
       Circle.PreciseCircle(
-        mat.applyX(center.x.toDouble, center.y.toDouble),
-        mat.applyY(center.x.toDouble, center.y.toDouble),
+        matrix.applyX(center.x.toDouble, center.y.toDouble),
+        matrix.applyY(center.x.toDouble, center.y.toDouble),
         radius
       )
     }
@@ -109,14 +107,12 @@ object Circle {
     override def scale(s: Double): Shape =
       Circle.PreciseCircle(centerX * s, centerY * s, radius * s)
     override def rotate(theta: Double): Shape = {
-      val ct = Math.cos(theta)
-      if (ct == 1.0) this
+      val matrix = Matrix.rotation(theta)
+      if (matrix == Matrix.identity) this
       else {
-        val st  = Math.sin(theta)
-        val mat = Matrix(ct, -st, 0, st, ct, 0)
         Circle.PreciseCircle(
-          mat.applyX(centerX, centerY),
-          mat.applyY(centerX, centerY),
+          matrix.applyX(centerX, centerY),
+          matrix.applyY(centerX, centerY),
           radius
         )
       }

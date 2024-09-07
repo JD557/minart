@@ -63,9 +63,12 @@ trait Shape {
   /** Contramaps the points in this shape using a matrix.
     *
     * Note that this is *contramapping*. The operation is applied as
+    *
+    * ```
     * [a b c] [dx] = [sx]
     * [d e f] [dy]   [sy]
     * [0 0 1] [ 1]   [ 1]
+    * ```
     *
     * Where (sx,sy) are the positions in the original shape and (dx, dy) are the positions in the new shape.
     *
@@ -73,9 +76,11 @@ trait Shape {
     *
     * For example, the matrix:
     *
+    * ```
     * [2 0 0] [dx] = [sx]
     * [0 2 0] [dy]   [sy]
     * [0 0 1] [ 1]   [ 1]
+    * ```
     *
     * Will *scale down* the shape, not scale up.
     *
@@ -95,40 +100,31 @@ trait Shape {
 
   /** Translates this shape. */
   def translate(dx: Double, dy: Double): Shape =
-    if (dx == 0 && dy == 0) this
-    else mapMatrix(Matrix(1, 0, dx, 0, 1, dy))
+    mapMatrix(Matrix.translation(dx, dy))
 
   /** Flips a shape horizontally. */
-  def flipH: Shape = mapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+  def flipH: Shape = mapMatrix(Matrix.flipH)
 
   /** Flips a shape vertically. */
-  def flipV: Shape = mapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+  def flipV: Shape = mapMatrix(Matrix.flipV)
 
   /** Scales a shape. */
   def scale(sx: Double, sy: Double): Shape =
-    if (sx == 1.0 && sy == 1.0) this
-    else mapMatrix(Matrix(sx, 0, 0, 0, sy, 0))
+    mapMatrix(Matrix.scaling(sx, sy))
 
   /** Scales a shape. */
   def scale(s: Double): Shape = scale(s, s)
 
   /** Rotates a shape by a certain angle (clockwise). */
-  def rotate(theta: Double): Shape = {
-    val ct = Math.cos(theta)
-    if (ct == 1.0) this
-    else {
-      val st = Math.sin(theta)
-      mapMatrix(Matrix(ct, -st, 0, st, ct, 0))
-    }
-  }
+  def rotate(theta: Double): Shape =
+    mapMatrix(Matrix.rotation(theta))
 
   /** Shears a shape. */
   def shear(sx: Double, sy: Double): Shape =
-    if (sx == 0.0 && sy == 0.0) this
-    else mapMatrix(Matrix(1.0, sx, 0, sy, 1.0, 0))
+    mapMatrix(Matrix.shear(sx, sy))
 
   /** Transposes a shape (switches the x and y coordinates). */
-  def transpose: Shape = mapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+  def transpose: Shape = mapMatrix(Matrix.transpose)
 
 }
 
