@@ -104,6 +104,46 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
       }
     }
 
+  /** Overlays a shape on top of this plane.
+    *
+    * Similar to MutableSurface#rasterize, but for shapes and planes.
+    *
+    * @param that shape to overlay
+    * @param frontfaceColor color of the front face
+    * @param backfaceColor color of the back face
+    * @param blendMode blend strategy to use
+    * @param x leftmost pixel on the destination plane
+    * @param y topmost pixel on the destination plane
+    */
+  final def overlayShape(
+      that: Shape,
+      frontfaceColor: Option[Color],
+      backfaceColor: Option[Color] = None,
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int): Plane =
+    if (
+      that.knownFace.isDefined && ((frontfaceColor.isEmpty && that.knownFace == Some(Shape.Face.Front)) ||
+        (backfaceColor.isEmpty && that.knownFace == Some(Shape.Face.Back)))
+    ) this
+    else
+      val finalShape = that.translate(x, y)
+      new Plane {
+        def getPixel(dx: Int, dy: Int): Color = {
+          if (finalShape.aabb.contains(dx, dy))
+            finalShape
+              .faceAt(dx, dy)
+              .flatMap {
+                case Shape.Face.Front => frontfaceColor
+                case Shape.Face.Back  => backfaceColor
+              }
+              .fold(outer.getPixel(dx, dy)) { color =>
+                blendMode.blend(color, outer.getPixel(dx, dy))
+              }
+          else
+            outer.getPixel(dx, dy)
+        }
+      }
+
   /** Inverts a plane color. */
   final def invertColor: Plane = map(_.invert)
 
