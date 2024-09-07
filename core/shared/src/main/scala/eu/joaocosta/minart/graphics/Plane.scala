@@ -120,7 +120,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     *
     * This means that you need to invert the transformations to use the common transformation matrices.
     *
-    * For example, the matrix:
+    * For example, the matrix Matrix.scaling(2, 2):
     *
     * [2 0 0] [dx] = [sx]
     * [0 2 0] [dy]   [sy]
@@ -131,14 +131,6 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   def contramapMatrix(matrix: Matrix) =
     if (matrix == Matrix.identity) this
     else Plane.MatrixPlane(matrix, this)
-
-  /** Maps this plane using a matrix instead of a function.
-    *
-    * Internally, this method will invert the matrix, so for performance sensitive operations it is recommended to use
-    * contramapMatrix with a precomputed inverse instead.
-    */
-  def mapMatrix(matrix: Matrix) =
-    contramapMatrix(matrix.inverse)
 
   /** Translates a plane. */
   final def translate(dx: Double, dy: Double): Plane =
