@@ -45,14 +45,14 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
       .sum
 
   def faceAt(x: Int, y: Int): Option[Shape.Face] = {
-    val sides = rawWeights(x, y).map(_ >= 0).distinct.toVector
+    val sides = rawWeights(x, y).filter(_ != 0).map(_ >= 0).distinct.toVector
     if (sides.size == 1) {
       if (sides.head) Shape.someFront else Shape.someBack
     } else None
   }
 
   override def contains(x: Int, y: Int): Boolean = {
-    rawWeights(x, y).map(_ >= 0).distinct.size == 1
+    rawWeights(x, y).filter(_ != 0).map(_ >= 0).distinct.size == 1
   }
 
   /** Checks if this polygon contains another polygon.
