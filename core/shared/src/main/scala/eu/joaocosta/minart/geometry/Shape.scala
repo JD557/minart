@@ -203,7 +203,12 @@ object Shape {
   private[geometry] val someBack  = Some(Face.Back)
 
   private[Shape] final case class MatrixShape(matrix: Matrix, shape: Shape) extends Shape {
-    def knownFace: Option[Shape.Face] = shape.knownFace
+    def knownFace: Option[Shape.Face] = if (matrix.a * matrix.e < 0)
+      shape.knownFace.map {
+        case Face.Front => Face.Back
+        case Face.Back  => Face.Front
+      }
+    else shape.knownFace
     lazy val aabb: AxisAlignedBoundingBox = {
       val xs = Vector(
         matrix.applyX(shape.aabb.x1, shape.aabb.y1),
