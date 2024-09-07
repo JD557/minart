@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.geometry.*
+
 /** A surface that can be drawn on using mutable operations.
   */
 trait MutableSurface extends Surface {
@@ -28,13 +30,21 @@ trait MutableSurface extends Surface {
 
   /** Fill part of the surface with a certain color.
     *
-    * @param color `Color` to fill the surface with
     * @param x leftmost pixel on the destination surface
     * @param y topmost pixel on the destination surface
     * @param w region width
     * @param h region height
+    * @param color `Color` to fill the surface with
     */
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit
+
+  /** Fill part of the surface with a certain color.
+    *
+    * @param region axis aligned region
+    * @param color `Color` to fill the surface with
+    */
+  def fillRegion(region: AxisAlignedBoundingBox, color: Color): Unit =
+    fillRegion(region.x, region.y, region.width, region.height, color)
 
   /** Fill the whole surface with a certain color.
     *
@@ -97,6 +107,26 @@ trait MutableSurface extends Surface {
   )(x: Int, y: Int): Unit = {
     val surface = that.clip(-x, -y, this.width, this.height)
     blit(surface, blendMode)(0, 0)
+  }
+
+  /** Draws a shape on top of this surface.
+    *
+    * This API is *experimental* and might change in the near future.
+    *
+    * @param shape shape to draw
+    * @param frontfaceColor color of the front face
+    * @param backfaceColor color of the back face
+    * @param blendMode blend strategy to use
+    * @param x position of the shape origin on the destination surface
+    * @param y position of the shape origin on the destination surface
+    */
+  def rasterize(
+      shape: Shape,
+      frontfaceColor: Option[Color],
+      backfaceColor: Option[Color] = None,
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int): Unit = {
+    Rasterizer.rasterizeShape(this, shape.translate(x, y), frontfaceColor, backfaceColor, blendMode)
   }
 
   /** Modifies this surface using surface view transformations

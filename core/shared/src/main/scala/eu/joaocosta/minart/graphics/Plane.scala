@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import eu.joaocosta.minart.geometry.*
+
 /** A procedurally generated infinite surface.
   *
   * Can be clipped to create a surface.
@@ -77,6 +79,12 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
         }
       }.toSurfaceView(cw, ch)
 
+  /** Clips this plane to a chosen rectangle
+    *
+    * @param region chosen region
+    */
+  def clip(region: AxisAlignedBoundingBox): SurfaceView = clip(region.x, region.y, region.width, region.height)
+
   /** Overlays a surface on top of this plane.
     *
     * Similar to MutableSurface#blit, but for surface views and planes.
@@ -96,14 +104,56 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
       }
     }
 
+  /** Overlays a shape on top of this plane.
+    *
+    * Similar to MutableSurface#rasterize, but for shapes and planes.
+    *
+    * This API is *experimental* and might change in the near future.
+    *
+    * @param that shape to overlay
+    * @param frontfaceColor color of the front face
+    * @param backfaceColor color of the back face
+    * @param blendMode blend strategy to use
+    * @param x leftmost pixel on the destination plane
+    * @param y topmost pixel on the destination plane
+    */
+  final def overlayShape(
+      that: Shape,
+      frontfaceColor: Option[Color],
+      backfaceColor: Option[Color] = None,
+      blendMode: BlendMode = BlendMode.Copy
+  )(x: Int, y: Int): Plane =
+    if (
+      that.knownFace.isDefined && ((frontfaceColor.isEmpty && that.knownFace == Some(Shape.Face.Front)) ||
+        (backfaceColor.isEmpty && that.knownFace == Some(Shape.Face.Back)))
+    ) this
+    else
+      val finalShape = that.translate(x, y)
+      new Plane {
+        def getPixel(dx: Int, dy: Int): Color = {
+          if (finalShape.aabb.contains(dx, dy))
+            finalShape
+              .faceAt(dx, dy)
+              .flatMap {
+                case Shape.Face.Front => frontfaceColor
+                case Shape.Face.Back  => backfaceColor
+              }
+              .fold(outer.getPixel(dx, dy)) { color =>
+                blendMode.blend(color, outer.getPixel(dx, dy))
+              }
+          else
+            outer.getPixel(dx, dy)
+        }
+      }
+
   /** Inverts a plane color. */
   final def invertColor: Plane = map(_.invert)
 
   /** Contramaps this plane using a matrix instead of a function.
     *
-    *  This method can be chained multiple times efficiently.
+    * This method can be chained multiple times efficiently.
     *
-    * Note that this is *contramaping*. The operation is applied as
+    * Note that this is *contramapping*. The operation is applied as
     * [a b c] [dx] = [sx]
     * [d e f] [dy]   [sy]
     * [0 0 1] [ 1]   [ 1]
@@ -112,7 +162,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     *
     * This means that you need to invert the transformations to use the common transformation matrices.
     *
-    * For example, the matrix:
+    * For example, the matrix Matrix.scaling(2, 2):
     *
     * [2 0 0] [dx] = [sx]
     * [0 2 0] [dy]   [sy]
@@ -121,44 +171,36 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * Will *scale down* the image, not scale up.
     */
   def contramapMatrix(matrix: Matrix) =
-    Plane.MatrixPlane(matrix, this)
+    if (matrix == Matrix.identity) this
+    else Plane.MatrixPlane(matrix, this)
 
   /** Translates a plane. */
   final def translate(dx: Double, dy: Double): Plane =
-    if (dx == 0 && dy == 0) this
-    else contramapMatrix(Matrix(1, 0, -dx, 0, 1, -dy))
+    contramapMatrix(Matrix.translation(-dx, -dy))
 
   /** Flips a plane horizontally. */
-  final def flipH: Plane = contramapMatrix(Matrix(-1, 0, 0, 0, 1, 0))
+  final def flipH: Plane = contramapMatrix(Matrix.flipH)
 
   /** Flips a plane vertically. */
-  final def flipV: Plane = contramapMatrix(Matrix(1, 0, 0, 0, -1, 0))
+  final def flipV: Plane = contramapMatrix(Matrix.flipV)
 
   /** Scales a plane. */
   final def scale(sx: Double, sy: Double): Plane =
-    if (sx == 1.0 && sy == 1.0) this
-    else contramapMatrix(Matrix(1.0 / sx, 0, 0, 0, 1.0 / sy, 0))
+    contramapMatrix(Matrix.scaling(1.0 / sx, 1.0 / sy))
 
   /** Scales a plane. */
   final def scale(s: Double): Plane = scale(s, s)
 
   /** Rotates a plane by a certain angle (clockwise). */
-  final def rotate(theta: Double): Plane = {
-    val ct = Math.cos(-theta)
-    if (ct == 1.0) this
-    else {
-      val st = Math.sin(-theta)
-      contramapMatrix(Matrix(ct, -st, 0, st, ct, 0))
-    }
-  }
+  final def rotate(theta: Double): Plane =
+    contramapMatrix(Matrix.rotation(-theta))
 
   /** Shears a plane. */
   final def shear(sx: Double, sy: Double): Plane =
-    if (sx == 0.0 && sy == 0.0) this
-    else contramapMatrix(Matrix(1.0, -sx, 0, -sy, 1.0, 0))
+    contramapMatrix(Matrix.shear(-sx, -sy))
 
   /** Transposes a plane (switches the x and y coordinates). */
-  final def transpose: Plane = contramapMatrix(Matrix(0, 1, 0, 1, 0, 0))
+  final def transpose: Plane = contramapMatrix(Matrix.transpose)
 
   /** Converts this plane to a surface view, assuming (0, 0) as the top-left corner.
     *
@@ -178,13 +220,14 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 }
 
 object Plane {
-  private[Plane] final case class MatrixPlane(matrix: Matrix, plane: Plane) extends Plane {
+  private[Plane] final case class MatrixPlane(invMatrix: Matrix, plane: Plane) extends Plane {
     def getPixel(x: Int, y: Int): Color = {
-      plane.getPixel(matrix.applyX(x, y), matrix.applyY(x, y))
+      plane.getPixel(invMatrix.applyX(x, y), invMatrix.applyY(x, y))
     }
 
     override def contramapMatrix(matrix: Matrix) =
-      MatrixPlane(this.matrix.multiply(matrix), plane)
+      if (matrix == Matrix.identity) this
+      else MatrixPlane(this.invMatrix.multiply(matrix), plane)
 
     override def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
       translate(-cx, -cy).toSurfaceView(cw, ch)
