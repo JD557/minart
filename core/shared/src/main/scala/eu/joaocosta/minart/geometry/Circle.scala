@@ -4,6 +4,8 @@ package eu.joaocosta.minart.geometry
   *
   * It's considered to be facing the viewer if the radius is positive.
   *
+  * This API is *experimental* and might change in the near future.
+  *
   * @param center center of the circle.
   * @param radius circle radius
   */

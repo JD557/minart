@@ -4,6 +4,8 @@ package eu.joaocosta.minart.geometry
   *
   * Represents a rectangular region aligned to the (x, y) axis and provides some basic functionality.
   *
+  * This API is *experimental* and might change in the near future.
+  *
   * @param x x position of the top-left coordinate
   * @param y y position of the top-left coordinate
   * @param width box width in pixels

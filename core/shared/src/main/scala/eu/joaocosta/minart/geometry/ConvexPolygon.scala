@@ -7,6 +7,8 @@ package eu.joaocosta.minart.geometry
   * There is no check in place to guarantee that the generated polygon is actually convex.
   * If this is not the case, the methods may return wrong results.
   *
+  * This API is *experimental* and might change in the near future.
+  *
   * @param vertices ordered sequence of vertices.
   */
 final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {

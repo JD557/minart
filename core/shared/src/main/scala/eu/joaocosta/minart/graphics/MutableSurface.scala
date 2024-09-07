@@ -111,6 +111,8 @@ trait MutableSurface extends Surface {
 
   /** Draws a shape on top of this surface.
     *
+    * This API is *experimental* and might change in the near future.
+    *
     * @param shape shape to draw
     * @param frontfaceColor color of the front face
     * @param backfaceColor color of the back face

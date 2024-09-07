@@ -3,6 +3,8 @@ package eu.joaocosta.minart.geometry
 /** Abstract shape.
   *
   *  Can be combined with other shapes and can check if a point is inside of it.
+  *
+  * This API is *experimental* and might change in the near future.
   */
 trait Shape {
 

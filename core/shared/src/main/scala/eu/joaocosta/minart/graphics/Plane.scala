@@ -108,6 +108,8 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     *
     * Similar to MutableSurface#rasterize, but for shapes and planes.
     *
+    * This API is *experimental* and might change in the near future.
+    *
     * @param that shape to overlay
     * @param frontfaceColor color of the front face
     * @param backfaceColor color of the back face
