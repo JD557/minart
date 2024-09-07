@@ -109,4 +109,30 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
   def edgeWeights(point: Shape.Point): Vector[Double] = {
     rawWeights(point.x, point.y).map(_ / maxWeight.toDouble).toVector
   }
+
+  override def mapMatrix(matrix: Matrix) =
+    if (matrix == Matrix.identity) this
+    else ConvexPolygon.MatrixPolygon(matrix, this)
+}
+
+object ConvexPolygon {
+  private[ConvexPolygon] final case class MatrixPolygon(matrix: Matrix, polygon: ConvexPolygon) extends Shape {
+    lazy val toConvexPolygon = ConvexPolygon(
+      vertices = polygon.vertices.map { point =>
+        Shape.Point(
+          matrix.applyX(point.x, point.y),
+          matrix.applyY(point.x, point.y)
+        )
+      }
+    )
+
+    def knownFace: Option[Shape.Face] = toConvexPolygon.knownFace
+    def aabb: AxisAlignedBoundingBox  = toConvexPolygon.aabb
+    def faceAt(x: Int, y: Int): Option[Shape.Face] =
+      toConvexPolygon.faceAt(x, y)
+    override def contains(x: Int, y: Int): Boolean =
+      toConvexPolygon.contains(x, y)
+    override def mapMatrix(matrix: Matrix) =
+      MatrixPolygon(matrix.multiply(this.matrix), polygon)
+  }
 }

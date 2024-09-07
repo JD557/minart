@@ -45,7 +45,7 @@ class ConvexPolygonSpec extends munit.FunSuite {
     assertEquals(ccwPolygon.faceAt(0, 0), Some(Shape.Face.Back))
   }
 
-  test("check if a polygon is contained in another") {
+  test("Check if a polygon is contained in another") {
     val bigPolygon = ConvexPolygon(
       Vector(
         Point(0, -10),
@@ -80,7 +80,7 @@ class ConvexPolygonSpec extends munit.FunSuite {
     assertEquals(smallPolygon.contains(bigPolygon), false)
   }
 
-  test("check if a polygon collides with another") {
+  test("Check if a polygon collides with another") {
     val bigPolygon = ConvexPolygon(
       Vector(
         Point(0, -10),
@@ -113,5 +113,37 @@ class ConvexPolygonSpec extends munit.FunSuite {
     assertEquals(bigPolygon.collides(intersectPolygon), true)
     assertEquals(bigPolygon.collides(strayPolygon), false)
     assertEquals(smallPolygon.collides(bigPolygon), true)
+  }
+
+  test("Can be transformed with a chain of transformations") {
+    val originalPolygon = ConvexPolygon(
+      Vector(
+        Point(0, -10),
+        Point(5, 5),
+        Point(-5, 5)
+      )
+    )
+    val transformedPolygon =
+      originalPolygon.flipH.flipV
+        .translate(0, -10)
+        .rotate(Math.PI)
+        .translate(5, 0)
+        .scale(0.5)
+        .scale(2, 2)
+        .scale(0.5)
+    val expectedPolygon = ConvexPolygon(
+      /* Should be rounded to
+       * Vector(Point(3, 0), Point(5, 8), Point(0, 8))
+       * But the results are floored.
+      )*/
+      Vector(
+        Point(2, 0),
+        Point(5, 7),
+        Point(0, 7)
+      )
+    )
+
+    assertEquals(transformedPolygon.aabb, expectedPolygon.aabb)
+    expectedPolygon.aabb.foreach((x, y) => assertEquals(transformedPolygon.faceAt(x, y), expectedPolygon.faceAt(x, y)))
   }
 }

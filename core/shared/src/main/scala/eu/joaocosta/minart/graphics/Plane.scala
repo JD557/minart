@@ -195,13 +195,13 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 }
 
 object Plane {
-  private[Plane] final case class MatrixPlane(matrix: Matrix, plane: Plane) extends Plane {
+  private[Plane] final case class MatrixPlane(invMatrix: Matrix, plane: Plane) extends Plane {
     def getPixel(x: Int, y: Int): Color = {
-      plane.getPixel(matrix.applyX(x, y), matrix.applyY(x, y))
+      plane.getPixel(invMatrix.applyX(x, y), invMatrix.applyY(x, y))
     }
 
     override def contramapMatrix(matrix: Matrix) =
-      MatrixPlane(this.matrix.multiply(matrix), plane)
+      MatrixPlane(this.invMatrix.multiply(matrix), plane)
 
     override def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
       translate(-cx, -cy).toSurfaceView(cw, ch)

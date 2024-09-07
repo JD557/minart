@@ -40,7 +40,7 @@ class CircleSpec extends munit.FunSuite {
     assertEquals(negativeCircle.faceAt(0, -10), Some(Shape.Face.Back))
   }
 
-  test("check if a circle is contained in a circle") {
+  test("Check if a circle is contained in a circle") {
     val bigCircle = Circle(
       Point(0, 0),
       10
@@ -63,7 +63,7 @@ class CircleSpec extends munit.FunSuite {
     assertEquals(smallCircle.contains(bigCircle), false)
   }
 
-  test("check if a circle collides with another") {
+  test("Check if a circle collides with another") {
     val bigCircle = Circle(
       Point(0, 0),
       10
@@ -84,5 +84,27 @@ class CircleSpec extends munit.FunSuite {
     assertEquals(bigCircle.collides(intersectCircle), true)
     assertEquals(bigCircle.collides(strayCircle), false)
     assertEquals(smallCircle.collides(bigCircle), true)
+  }
+
+  test("Can be transformed with a chain of transformations") {
+    val originalCircle = Circle(
+      Point(-5, -10),
+      10
+    )
+    val transformedCircle =
+      originalCircle.flipH.flipV
+        .translate(0, -10)
+        .rotate(Math.PI)
+        .translate(5, 0)
+        .scale(0.5)
+        .scale(2, 2)
+        .scale(0.5)
+    val expectedCircle = Circle(
+      Point(0, 0),
+      5
+    )
+
+    assertEquals(transformedCircle.aabb, expectedCircle.aabb)
+    expectedCircle.aabb.foreach((x, y) => assertEquals(transformedCircle.faceAt(x, y), expectedCircle.faceAt(x, y)))
   }
 }
