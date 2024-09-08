@@ -9,7 +9,7 @@ package eu.joaocosta.minart.geometry
   * @param center center of the circle.
   * @param radius circle radius
   */
-final case class Circle(center: Shape.Point, radius: Int) extends Shape {
+final case class Circle(center: Shape.Point, radius: Double) extends Shape {
 
   /** The absolute radius */
   val absRadius = math.abs(radius)
@@ -21,7 +21,7 @@ final case class Circle(center: Shape.Point, radius: Int) extends Shape {
     val x = center.x - absRadius
     val y = center.y - absRadius
     val d = absRadius * 2
-    AxisAlignedBoundingBox(x, y, d, d)
+    AxisAlignedBoundingBox(math.floor(x).toInt, math.floor(y).toInt, math.ceil(d).toInt, math.ceil(d).toInt)
   }
 
   val knownFace: Option[Shape.Face] =
@@ -59,7 +59,7 @@ final case class Circle(center: Shape.Point, radius: Int) extends Shape {
 
   override def translate(dx: Double, dy: Double): Shape =
     if (dx == 0 && dy == 0) this
-    else Circle.PreciseCircle(center.x + dx, center.y + dy, radius)
+    else Circle(Shape.Point(center.x + dx, center.y + dy), radius)
 
   override def flipH: Circle =
     Circle(Shape.Point(-center.x, center.y), -radius)
@@ -68,15 +68,18 @@ final case class Circle(center: Shape.Point, radius: Int) extends Shape {
     Circle(Shape.Point(center.x, -center.y), -radius)
 
   override def scale(s: Double): Shape =
-    Circle.PreciseCircle(center.x * s, center.y * s, radius * s)
+    if (s == 1.0) this
+    else Circle(Shape.Point(center.x * s, center.y * s), radius * s)
 
   override def rotate(theta: Double): Shape = {
     val matrix = Matrix.rotation(theta)
     if (matrix == Matrix.identity) this
     else {
-      Circle.PreciseCircle(
-        matrix.applyX(center.x.toDouble, center.y.toDouble),
-        matrix.applyY(center.x.toDouble, center.y.toDouble),
+      Circle(
+        Shape.Point(
+          matrix.applyX(center.x.toDouble, center.y.toDouble),
+          matrix.applyY(center.x.toDouble, center.y.toDouble)
+        ),
         radius
       )
     }
@@ -84,42 +87,4 @@ final case class Circle(center: Shape.Point, radius: Int) extends Shape {
 
   override def transpose: Circle =
     Circle(center = Shape.Point(center.y, center.x), -radius)
-}
-
-object Circle {
-  private[Circle] final case class PreciseCircle(centerX: Double, centerY: Double, radius: Double) extends Shape {
-    lazy val toCircle = Circle(
-      center = Shape.Point(centerX.toInt, centerY.toInt),
-      radius = radius.toInt
-    )
-
-    def knownFace: Option[Shape.Face] = toCircle.knownFace
-    def aabb: AxisAlignedBoundingBox  = toCircle.aabb
-    def faceAt(x: Int, y: Int): Option[Shape.Face] =
-      toCircle.faceAt(x, y)
-    override def contains(x: Int, y: Int): Boolean =
-      toCircle.contains(x, y)
-    override def translate(dx: Double, dy: Double) =
-      if (dx == 0 && dy == 0) this
-      else copy(centerX = centerX + dx, centerY = centerY + dy)
-    override def flipH: Shape =
-      copy(centerX = -centerX, radius = -radius)
-    override def flipV: Shape =
-      copy(centerY = -centerY, radius = -radius)
-    override def scale(s: Double): Shape =
-      Circle.PreciseCircle(centerX * s, centerY * s, radius * s)
-    override def rotate(theta: Double): Shape = {
-      val matrix = Matrix.rotation(theta)
-      if (matrix == Matrix.identity) this
-      else {
-        Circle.PreciseCircle(
-          matrix.applyX(centerX, centerY),
-          matrix.applyY(centerX, centerY),
-          radius
-        )
-      }
-    }
-    override def transpose: Shape =
-      Circle.PreciseCircle(centerY, centerX, -radius)
-  }
 }

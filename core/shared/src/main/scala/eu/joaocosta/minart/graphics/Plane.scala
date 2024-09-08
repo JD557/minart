@@ -222,7 +222,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
 object Plane {
   private[Plane] final case class MatrixPlane(invMatrix: Matrix, plane: Plane) extends Plane {
     def getPixel(x: Int, y: Int): Color = {
-      plane.getPixel(invMatrix.applyX(x, y), invMatrix.applyY(x, y))
+      plane.getPixel(invMatrix.applyX(x, y).toInt, invMatrix.applyY(x, y).toInt)
     }
 
     override def contramapMatrix(matrix: Matrix) =

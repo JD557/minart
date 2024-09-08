@@ -7,7 +7,7 @@ class MatrixSpec extends munit.FunSuite {
     // [4 5 6] [2]   [28] (4*3 + 5*2 + 6*1)
     // [0 0 1] [1]   [ 1]
     val testMatrix = Matrix(1, 2, 3, 4, 5, 6)
-    assertEquals(testMatrix.apply(3, 2), (10, 28))
+    assertEquals(testMatrix.apply(3, 2), (10.0, 28.0))
   }
 
   test("Can be multiplied") {

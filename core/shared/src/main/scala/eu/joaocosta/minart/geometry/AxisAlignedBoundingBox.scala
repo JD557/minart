@@ -117,6 +117,18 @@ object AxisAlignedBoundingBox {
       this
     }
 
+    def add(x: Double, y: Double): this.type = {
+      val floorX = math.floor(x).toInt
+      val floorY = math.floor(y).toInt
+      val ceilX  = math.ceil(x).toInt
+      val ceilY  = math.ceil(y).toInt
+      if (floorX < x1) x1 = floorX
+      if (floorY < y1) y1 = floorY
+      if (ceilX > x2) x2 = ceilX
+      if (ceilY > y2) y2 = ceilY
+      this
+    }
+
     def add(point: Shape.Point): this.type = add(point.x, point.y)
 
     def result(): AxisAlignedBoundingBox =
