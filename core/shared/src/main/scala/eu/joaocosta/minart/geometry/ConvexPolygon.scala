@@ -24,13 +24,13 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
   lazy val knownFace: Option[Shape.Face] =
     faceAt(vertices.head)
 
-  private def edgeFunction(x1: Int, y1: Int, x2: Int, y2: Int, x3: Int, y3: Int): Int =
+  private def edgeFunction(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
-  private def edgeFunction(p1: Shape.Point, p2: Shape.Point, p3: Shape.Point): Int =
+  private def edgeFunction(p1: Shape.Point, p2: Shape.Point, p3: Shape.Point): Double =
     edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
-  private def rawWeights(x: Int, y: Int): Iterator[Int] = {
+  private def rawWeights(x: Double, y: Double): Iterator[Double] = {
     (0 until size).iterator.map(idx =>
       val current = vertices(idx)
       val next    = if (idx + 1 >= size) vertices(0) else vertices(idx + 1)
@@ -38,7 +38,7 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
     )
   }
 
-  private lazy val maxWeight: Int =
+  private lazy val maxWeight: Double =
     (vertices.tail)
       .sliding(2)
       .collect { case Vector(b, c) =>

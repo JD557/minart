@@ -59,16 +59,16 @@ final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f
     )
 
   inline def applyX(x: Double, y: Double): Double = a * x + b * y + c * 1
-  inline def applyX(x: Int, y: Int): Int          = (a * x + b * y + c * 1).toInt
+  inline def applyX(x: Int, y: Int): Double       = (a * x + b * y + c * 1)
   inline def applyY(x: Double, y: Double): Double = d * x + e * y + f * 1
-  inline def applyY(x: Int, y: Int): Int          = (d * x + e * y + f * 1).toInt
+  inline def applyY(x: Int, y: Int): Double       = (d * x + e * y + f * 1)
 
   /** Applies the transformation to (x, y). */
   def apply(x: Double, y: Double): (Double, Double) =
     (applyX(x, y), applyY(x, y))
 
   /** Applies the transformation to (x, y). */
-  def apply(x: Int, y: Int): (Int, Int) = {
+  def apply(x: Int, y: Int): (Double, Double) = {
     (applyX(x, y), applyY(x, y))
   }
 }
@@ -169,7 +169,10 @@ object Matrix {
     if (ct == 1.0) Matrix.identity
     else {
       val st = Math.sin(theta)
-      Matrix(ct, -st, 0, st, ct, 0)
+      // cos and sin have precision issues near 0, so we round the result here to help with multiplications
+      if (math.abs(ct) < 1e-10) Matrix(0, -st, 0, st, 0, 0)
+      if (math.abs(st) < 1e-10) Matrix(ct, 0, 0, 0, ct, 0)
+      else Matrix(ct, -st, 0, st, ct, 0)
     }
 
   /** Shear matrix.

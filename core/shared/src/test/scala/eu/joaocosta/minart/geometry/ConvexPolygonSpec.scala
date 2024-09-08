@@ -132,14 +132,10 @@ class ConvexPolygonSpec extends munit.FunSuite {
         .scale(2, 2)
         .scale(0.5)
     val expectedPolygon = ConvexPolygon(
-      /* Should be rounded to
-       * Vector(Point(3, 0), Point(5, 8), Point(0, 8))
-       * But the results are floored.
-      )*/
       Vector(
-        Point(2, 0),
-        Point(5, 7),
-        Point(0, 7)
+        Point(2.5, 0),
+        Point(5, 7.5),
+        Point(0, 7.5)
       )
     )
 

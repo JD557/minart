@@ -40,7 +40,7 @@ trait Shape {
     * @param y y coordinates of the point
     * @return None if the point is not contained, Some(face) if the point is contained.
     */
-  final def faceAt(point: Shape.Point): Option[Shape.Face] = faceAt(point.x, point.y)
+  final def faceAt(point: Shape.Point): Option[Shape.Face] = faceAt(point.x.toInt, point.y.toInt)
 
   /** Checks if this shape contains a point.
     *
@@ -60,7 +60,7 @@ trait Shape {
     * @param y y coordinates of the point
     * @return None if the point is not contained, Some(face) if the point is contained.
     */
-  final def contains(point: Shape.Point): Boolean = contains(point.x, point.y)
+  final def contains(point: Shape.Point): Boolean = contains(point.x.toInt, point.y.toInt)
 
   /** Contramaps the points in this shape using a matrix.
     *
@@ -133,12 +133,8 @@ trait Shape {
 object Shape {
 
   /** Coordinates of a point in the shape.
-    *
-    * For performance reasons, only integer coordinates are supported,
-    * although shapes are free to use floating point in intermediate states
-    * and transformations.
     */
-  final case class Point(x: Int, y: Int)
+  final case class Point(x: Double, y: Double)
 
   /** The shape of a circle.
     *
@@ -222,16 +218,16 @@ object Shape {
         matrix.applyY(shape.aabb.x1, shape.aabb.y2),
         matrix.applyY(shape.aabb.x2, shape.aabb.y2)
       )
-      val minX = xs.min
-      val minY = ys.min
-      val maxX = xs.max
-      val maxY = ys.max
+      val minX = math.floor(xs.min).toInt
+      val minY = math.floor(ys.min).toInt
+      val maxX = math.ceil(xs.max).toInt
+      val maxY = math.ceil(ys.max).toInt
       AxisAlignedBoundingBox(minX, minY, maxX - minX, maxY - minY)
     }
     def faceAt(x: Int, y: Int): Option[Shape.Face] =
-      shape.faceAt(matrix.inverse.applyX(x, y), matrix.inverse.applyY(x, y))
+      shape.faceAt(math.round(matrix.inverse.applyX(x, y)).toInt, math.round(matrix.inverse.applyY(x, y)).toInt)
     override def contains(x: Int, y: Int): Boolean =
-      shape.contains(matrix.inverse.applyX(x, y), matrix.inverse.applyY(x, y))
+      shape.contains(math.round(matrix.inverse.applyX(x, y)).toInt, math.round(matrix.inverse.applyY(x, y)).toInt)
     override def mapMatrix(matrix: Matrix) =
       MatrixShape(matrix.multiply(this.matrix), shape)
   }
