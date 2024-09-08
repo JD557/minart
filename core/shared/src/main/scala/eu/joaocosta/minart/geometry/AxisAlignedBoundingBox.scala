@@ -98,3 +98,29 @@ final case class AxisAlignedBoundingBox(
       x <- (x1 until x2).iterator
     } f(x, y)
 }
+
+object AxisAlignedBoundingBox {
+
+  /** Mutable Builder for AABBs.
+    */
+  final class Builder() {
+    private var x1: Int = Int.MaxValue
+    private var y1: Int = Int.MaxValue
+    private var x2: Int = Int.MinValue
+    private var y2: Int = Int.MinValue
+
+    def add(x: Int, y: Int): this.type = {
+      if (x < x1) x1 = x
+      if (y < y1) y1 = y
+      if (x > x2) x2 = x
+      if (y > y2) y2 = y
+      this
+    }
+
+    def add(point: Shape.Point): this.type = add(point.x, point.y)
+
+    def result(): AxisAlignedBoundingBox =
+      if (x1 > x2 || y1 > y2) AxisAlignedBoundingBox(0, 0, 0, 0)
+      else AxisAlignedBoundingBox(x1, y1, x2 - x1, y2 - y1)
+  }
+}
