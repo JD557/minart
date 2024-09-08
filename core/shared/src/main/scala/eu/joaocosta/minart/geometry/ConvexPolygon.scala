@@ -12,18 +12,17 @@ package eu.joaocosta.minart.geometry
   * @param vertices ordered sequence of vertices.
   */
 final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
-  require(vertices.size >= 3, "A polygon needs at least 3 vertices")
+  val size = vertices.size
+  require(size >= 3, "A polygon needs at least 3 vertices")
 
-  val aabb: AxisAlignedBoundingBox = {
-    val x1 = vertices.iterator.minBy(_.x).x
-    val y1 = vertices.iterator.minBy(_.y).y
-    val x2 = vertices.iterator.maxBy(_.x).x
-    val y2 = vertices.iterator.maxBy(_.y).y
-    AxisAlignedBoundingBox(x1, y1, x2 - x1, y2 - y1)
+  lazy val aabb: AxisAlignedBoundingBox = {
+    val builder = AxisAlignedBoundingBox.Builder()
+    vertices.foreach(builder.add)
+    builder.result()
   }
 
-  val knownFace: Option[Shape.Face] =
-    faceAt(aabb.centerX, aabb.centerY)
+  lazy val knownFace: Option[Shape.Face] =
+    faceAt(vertices.head)
 
   private def edgeFunction(x1: Int, y1: Int, x2: Int, y2: Int, x3: Int, y3: Int): Int =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
@@ -31,14 +30,15 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
   private def edgeFunction(p1: Shape.Point, p2: Shape.Point, p3: Shape.Point): Int =
     edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
-  private def rawWeights(x: Int, y: Int): Iterator[Int] =
-    (0 until vertices.size).iterator.map(idx =>
+  private def rawWeights(x: Int, y: Int): Iterator[Int] = {
+    (0 until size).iterator.map(idx =>
       val current = vertices(idx)
-      val next    = if (idx + 1 >= vertices.size) vertices(0) else vertices(idx + 1)
+      val next    = if (idx + 1 >= size) vertices(0) else vertices(idx + 1)
       edgeFunction(current.x, current.y, next.x, next.y, x, y)
     )
+  }
 
-  private val maxWeight: Int =
+  private lazy val maxWeight: Int =
     (vertices.tail)
       .sliding(2)
       .collect { case Vector(b, c) =>
@@ -47,14 +47,35 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
       .sum
 
   def faceAt(x: Int, y: Int): Option[Shape.Face] = {
-    val sides = rawWeights(x, y).filter(_ != 0).map(_ >= 0).distinct.toVector
-    if (sides.size == 1) {
-      if (sides.head) Shape.someFront else Shape.someBack
-    } else None
+    val it                      = rawWeights(x, y).filter(_ != 0).map(_ >= 0)
+    var res: Option[Shape.Face] = null
+    if (it.hasNext) {
+      var last = it.next()
+      while (it.hasNext && res != None) {
+        val value = it.next()
+        if (last != value) res = None
+        last = value
+      }
+      if (res == null) {
+        if (last) res = Shape.someFront
+        else res = Shape.someBack
+      }
+    }
+    if (res == null) None else res
   }
 
   override def contains(x: Int, y: Int): Boolean = {
-    rawWeights(x, y).filter(_ != 0).map(_ >= 0).distinct.size == 1
+    val it  = rawWeights(x, y).filter(_ != 0).map(_ >= 0)
+    var res = true
+    if (it.hasNext) {
+      var last = it.next()
+      while (it.hasNext && res) {
+        val value = it.next()
+        if (last != value) res = false
+        last = value
+      }
+    }
+    res
   }
 
   /** Checks if this polygon contains another polygon.
