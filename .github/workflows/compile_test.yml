@@ -173,4 +173,4 @@ jobs:
     - name: Compute coverage
       run: sbt -J-Xmx3G -Dsbt.color=always rootJVM/clean coverage rootJVM/test rootJVM/coverageAggregate
     - name: Upload report
-      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r jvm/target/scala-3.3.3/coverage-report/cobertura.xml
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r jvm/target/scala-3.3.4/coverage-report/cobertura.xml
