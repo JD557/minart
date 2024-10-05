@@ -27,7 +27,7 @@ Minart already comes with some basic shapes, such as circle and convex polygons,
 First, let's create a few shapes with those methods.
 
 ```scala
-import eu.joaocosta.minart.geometry.Shape.Point
+import eu.joaocosta.minart.geometry.Point
 
 val triangle = Shape.triangle(Point(-16, 16), Point(0, -16), Point(16, 16))
 val square = Shape.rectangle(Point(-16, -16), Point(16, 16))
@@ -57,20 +57,30 @@ This is helpful if, for some reason, you know you don't want to draw back faces.
 
 ### Rasterizing
 
-Now we just need to use the `rasterize` operation, just like we did with `blit`.
+Now we just need to use the `rasterizeShape` operation, just like we did with `blit`.
 
 In this example we will also scale our images with time, to show how the color changes when the face flips.
+
+There's also a `rasterizeStroke` operation to draw lines and a `rasterizeContour` operation to draw only the shape
+contours (note that not all shapes support this, some transformations can make the contour computation impossible).
 
 ```scala
 val frontfaceColor = Color(255, 0, 0)
 val backfaceColor = Color(0, 255, 0)
+val contourColor = Color(255, 255, 255)
 
 def application(t: Double, canvas: Canvas): Unit = {
   val scale = math.sin(t)
-  canvas.rasterize(triangle.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(32, 32)
-  canvas.rasterize(square.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(64, 32)
-  canvas.rasterize(octagon.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(32, 64)
-  canvas.rasterize(circle.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(64, 64)
+  canvas.rasterizeShape(triangle.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(32, 32)
+  canvas.rasterizeShape(square.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(64, 32)
+  canvas.rasterizeShape(octagon.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(32, 64)
+  canvas.rasterizeShape(circle.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(64, 64)
+
+  canvas.rasterizeContour(triangle.scale(scale, 1.0), contourColor)(32, 32)
+  canvas.rasterizeContour(square.scale(scale, 1.0), contourColor)(64, 32)
+  canvas.rasterizeContour(octagon.scale(scale, 1.0), contourColor)(32, 64)
+  // Can't compute the contour of a circle scaled on only one dimension
+  //canvas.rasterizeContour(circle.scale(scale, 1.0), contourColor)(64, 64)
 }
 ```
 

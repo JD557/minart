@@ -11,7 +11,7 @@ package eu.joaocosta.minart.geometry
   *
   * @param vertices ordered sequence of vertices.
   */
-final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
+final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithContour {
   val size = vertices.size
   require(size >= 3, "A polygon needs at least 3 vertices")
 
@@ -24,10 +24,18 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
   lazy val knownFace: Option[Shape.Face] =
     faceAt(vertices.head)
 
+  lazy val contour: Vector[Stroke] =
+    (vertices :+ vertices.head)
+      .sliding(2)
+      .collect { case Vector(a, b) =>
+        Stroke.Line(a, b)
+      }
+      .toVector
+
   private def edgeFunction(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
-  private def edgeFunction(p1: Shape.Point, p2: Shape.Point, p3: Shape.Point): Double =
+  private def edgeFunction(p1: Point, p2: Point, p3: Point): Double =
     edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
   private def rawWeights(x: Double, y: Double): Iterator[Double] = {
@@ -129,20 +137,37 @@ final case class ConvexPolygon(vertices: Vector[Shape.Point]) extends Shape {
     * @param point point to test
     * @return weight
     */
-  def edgeWeights(point: Shape.Point): Vector[Double] = {
+  def edgeWeights(point: Point): Vector[Double] = {
     rawWeights(point.x, point.y).map(_ / maxWeight.toDouble).toVector
   }
 
-  override def mapMatrix(matrix: Matrix) =
+  override def mapMatrix(matrix: Matrix): Shape.ShapeWithContour =
     if (matrix == Matrix.identity) this
     else ConvexPolygon.MatrixPolygon(matrix, this)
+
+  // Overrides to refine the type signature
+  override def contramapMatrix(matrix: Matrix): Shape.ShapeWithContour =
+    mapMatrix(matrix.inverse)
+  override def translate(dx: Double, dy: Double): Shape.ShapeWithContour =
+    mapMatrix(Matrix.translation(dx, dy))
+  override def flipH: Shape.ShapeWithContour = mapMatrix(Matrix.flipH)
+  override def flipV: Shape.ShapeWithContour = mapMatrix(Matrix.flipV)
+  override def scale(sx: Double, sy: Double): Shape.ShapeWithContour =
+    mapMatrix(Matrix.scaling(sx, sy))
+  override def scale(s: Double): Shape.ShapeWithContour = scale(s, s)
+  override def rotate(theta: Double): Shape.ShapeWithContour =
+    mapMatrix(Matrix.rotation(theta))
+  override def shear(sx: Double, sy: Double): Shape.ShapeWithContour =
+    mapMatrix(Matrix.shear(sx, sy))
+  override def transpose: Shape.ShapeWithContour = mapMatrix(Matrix.transpose)
 }
 
 object ConvexPolygon {
-  private[ConvexPolygon] final case class MatrixPolygon(matrix: Matrix, polygon: ConvexPolygon) extends Shape {
+  private[ConvexPolygon] final case class MatrixPolygon(matrix: Matrix, polygon: ConvexPolygon)
+      extends Shape.ShapeWithContour {
     lazy val toConvexPolygon = ConvexPolygon(
       vertices = polygon.vertices.map { point =>
-        Shape.Point(
+        Point(
           matrix.applyX(point.x, point.y),
           matrix.applyY(point.x, point.y)
         )
@@ -151,12 +176,15 @@ object ConvexPolygon {
 
     def knownFace: Option[Shape.Face] = toConvexPolygon.knownFace
     def aabb: AxisAlignedBoundingBox  = toConvexPolygon.aabb
+    def contour                       = toConvexPolygon.contour
     def faceAt(x: Int, y: Int): Option[Shape.Face] =
       toConvexPolygon.faceAt(x, y)
     override def contains(x: Int, y: Int): Boolean =
       toConvexPolygon.contains(x, y)
-    override def mapMatrix(matrix: Matrix) =
+    override def mapMatrix(matrix: Matrix): MatrixPolygon =
       if (matrix == Matrix.identity) this
       else MatrixPolygon(matrix.multiply(this.matrix), polygon)
+    override def translate(dx: Double, dy: Double): MatrixPolygon =
+      mapMatrix(Matrix.translation(dx, dy))
   }
 }

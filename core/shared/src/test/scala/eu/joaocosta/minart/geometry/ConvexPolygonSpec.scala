@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.geometry
 
-import eu.joaocosta.minart.geometry.Shape.Point
-
 class ConvexPolygonSpec extends munit.FunSuite {
   test("Computes the bounding box of a polygon") {
     val polygon = ConvexPolygon(

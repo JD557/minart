@@ -109,6 +109,22 @@ trait MutableSurface extends Surface {
     blit(surface, blendMode)(0, 0)
   }
 
+  /** Draws a stroke on top of this surface.
+    *
+    * This API is *experimental* and might change in the near future.
+    *
+    * @param stroke shape to draw
+    * @param color color of the line
+    * @param x position of the shape origin on the destination surface
+    * @param y position of the shape origin on the destination surface
+    */
+  def rasterizeStroke(
+      stroke: Stroke,
+      color: Color
+  )(x: Int, y: Int): Unit = {
+    Rasterizer.rasterizeStroke(this, stroke, color, x, y)
+  }
+
   /** Draws a shape on top of this surface.
     *
     * This API is *experimental* and might change in the near future.
@@ -120,13 +136,29 @@ trait MutableSurface extends Surface {
     * @param x position of the shape origin on the destination surface
     * @param y position of the shape origin on the destination surface
     */
-  def rasterize(
+  def rasterizeShape(
       shape: Shape,
       frontfaceColor: Option[Color],
       backfaceColor: Option[Color] = None,
       blendMode: BlendMode = BlendMode.Copy
   )(x: Int, y: Int): Unit = {
     Rasterizer.rasterizeShape(this, shape.translate(x, y), frontfaceColor, backfaceColor, blendMode)
+  }
+
+  /** Draws the contour of a shape on top of this surface.
+    *
+    * This API is *experimental* and might change in the near future.
+    *
+    * @param shape shape whose countour to draw
+    * @param color color of the line
+    * @param x position of the shape origin on the destination surface
+    * @param y position of the shape origin on the destination surface
+    */
+  def rasterizeContour(
+      shape: Shape.ShapeWithContour,
+      color: Color
+  )(x: Int, y: Int): Unit = {
+    shape.contour.foreach(stroke => rasterizeStroke(stroke, color)(x, y))
   }
 
   /** Modifies this surface using surface view transformations
