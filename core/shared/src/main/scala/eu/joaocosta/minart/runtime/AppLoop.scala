@@ -4,7 +4,6 @@ import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.backend.defaults.*
 import eu.joaocosta.minart.backend.subsystem.*
 import eu.joaocosta.minart.graphics.*
-import eu.joaocosta.minart.runtime.*
 
 /** App loop that keeps an internal state that is passed to every iteration.
   */

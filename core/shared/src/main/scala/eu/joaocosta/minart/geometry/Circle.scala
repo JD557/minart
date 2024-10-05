@@ -9,7 +9,7 @@ package eu.joaocosta.minart.geometry
   * @param center center of the circle.
   * @param radius circle radius
   */
-final case class Circle(center: Shape.Point, radius: Double) extends Shape {
+final case class Circle(center: Point, radius: Double) extends Shape.ShapeWithContour {
 
   /** The absolute radius */
   val absRadius = math.abs(radius)
@@ -28,6 +28,8 @@ final case class Circle(center: Shape.Point, radius: Double) extends Shape {
     if (radius > 0) Shape.someFront
     else if (radius < 0) Shape.someBack
     else None
+
+  def contour: Vector[Stroke] = Vector(Stroke.Circle(center, radius))
 
   def faceAt(x: Int, y: Int): Option[Shape.Face] = {
     if ((x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) <= squareRadius)
@@ -57,26 +59,26 @@ final case class Circle(center: Shape.Point, radius: Double) extends Shape {
     (this.center.x - that.center.x) * (this.center.x - that.center.x) +
       (this.center.y - that.center.y) * (this.center.y - that.center.y) <= sumRadius * sumRadius
 
-  override def translate(dx: Double, dy: Double): Shape =
+  override def translate(dx: Double, dy: Double): Circle =
     if (dx == 0 && dy == 0) this
-    else Circle(Shape.Point(center.x + dx, center.y + dy), radius)
+    else Circle(Point(center.x + dx, center.y + dy), radius)
 
   override def flipH: Circle =
-    Circle(Shape.Point(-center.x, center.y), -radius)
+    Circle(Point(-center.x, center.y), -radius)
 
   override def flipV: Circle =
-    Circle(Shape.Point(center.x, -center.y), -radius)
+    Circle(Point(center.x, -center.y), -radius)
 
-  override def scale(s: Double): Shape =
+  override def scale(s: Double): Circle =
     if (s == 1.0) this
-    else Circle(Shape.Point(center.x * s, center.y * s), radius * s)
+    else Circle(Point(center.x * s, center.y * s), radius * s)
 
   override def rotate(theta: Double): Shape = {
     val matrix = Matrix.rotation(theta)
     if (matrix == Matrix.identity) this
     else {
       Circle(
-        Shape.Point(
+        Point(
           matrix.applyX(center.x.toDouble, center.y.toDouble),
           matrix.applyY(center.x.toDouble, center.y.toDouble)
         ),
@@ -86,5 +88,5 @@ final case class Circle(center: Shape.Point, radius: Double) extends Shape {
   }
 
   override def transpose: Circle =
-    Circle(center = Shape.Point(center.y, center.x), -radius)
+    Circle(center = Point(center.y, center.x), -radius)
 }

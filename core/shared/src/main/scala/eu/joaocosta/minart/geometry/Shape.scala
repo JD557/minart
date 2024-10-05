@@ -2,7 +2,7 @@ package eu.joaocosta.minart.geometry
 
 /** Abstract shape.
   *
-  *  Can be combined with other shapes and can check if a point is inside of it.
+  * Can be combined with other shapes and can check if a point is inside of it.
   *
   * This API is *experimental* and might change in the near future.
   */
@@ -40,7 +40,7 @@ trait Shape {
     * @param y y coordinates of the point
     * @return None if the point is not contained, Some(face) if the point is contained.
     */
-  final def faceAt(point: Shape.Point): Option[Shape.Face] = faceAt(point.x.toInt, point.y.toInt)
+  final def faceAt(point: Point): Option[Shape.Face] = faceAt(point.x.toInt, point.y.toInt)
 
   /** Checks if this shape contains a point.
     *
@@ -60,7 +60,7 @@ trait Shape {
     * @param y y coordinates of the point
     * @return None if the point is not contained, Some(face) if the point is contained.
     */
-  final def contains(point: Shape.Point): Boolean = contains(point.x.toInt, point.y.toInt)
+  final def contains(point: Point): Boolean = contains(point.x.toInt, point.y.toInt)
 
   /** Contramaps the points in this shape using a matrix.
     *
@@ -89,14 +89,14 @@ trait Shape {
     * Internally, this method will invert the matrix, so for performance sensitive operations it is recommended to use
     * mapMatrix with the direct matrix instead.
     */
-  def contramapMatrix(matrix: Matrix) =
+  def contramapMatrix(matrix: Matrix): Shape =
     mapMatrix(matrix.inverse)
 
   /** Maps this the points in this shape using a matrix.
     *
     * This method can be chained multiple times efficiently.
     */
-  def mapMatrix(matrix: Matrix) =
+  def mapMatrix(matrix: Matrix): Shape =
     if (matrix == Matrix.identity) this
     else Shape.MatrixShape(matrix, this)
 
@@ -131,10 +131,6 @@ trait Shape {
 }
 
 object Shape {
-
-  /** Coordinates of a point in the shape.
-    */
-  final case class Point(x: Double, y: Double)
 
   /** The shape of a circle.
     *
@@ -192,6 +188,17 @@ object Shape {
   enum Face {
     case Front
     case Back
+  }
+
+  /** Shape with a contour that can be rendered.
+    *
+    * It's OK for some shapes to not provide a contour.
+    */
+  trait ShapeWithContour extends Shape {
+
+    /** Contour of this shape as a list of strokes.
+      */
+    def contour: Vector[Stroke]
   }
 
   // Preallocated values to avoid repeated allocations

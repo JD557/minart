@@ -1,7 +1,5 @@
 package eu.joaocosta.minart.geometry
 
-import eu.joaocosta.minart.geometry.Shape.Point
-
 class CircleSpec extends munit.FunSuite {
   test("Computes the bounding box of a circle") {
     val circle = Circle(

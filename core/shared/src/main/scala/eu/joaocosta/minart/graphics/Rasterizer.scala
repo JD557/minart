@@ -27,7 +27,7 @@ private[graphics] object Rasterizer {
     }
   }
 
-  private def rasterizeShapeBothFaces(
+  def rasterizeShapeBothFaces(
       dest: MutableSurface,
       area: AxisAlignedBoundingBox,
       shape: Shape,
@@ -90,6 +90,74 @@ private[graphics] object Rasterizer {
           case _ => // Do nothing, there's nothing to draw
         }
     }
+  }
+
+  // From https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+  def rasterizeLine(dest: MutableSurface, stroke: Stroke.Line, color: Color): Unit = {
+    val x1 = math.round(stroke.p1.x).toInt
+    val y1 = math.round(stroke.p1.y).toInt
+    val x2 = math.round(stroke.p2.x).toInt
+    val y2 = math.round(stroke.p2.y).toInt
+
+    val dx = math.abs(x2 - x1)
+    val sx = if (x1 < x2) 1 else -1
+
+    val dy = -math.abs(y2 - y1)
+    val sy = if (y1 < y2) 1 else -1
+
+    var x     = x1
+    var y     = y1
+    var error = dx + dy
+
+    while (!(x == x2 && y == y2)) {
+      dest.putPixel(x, y, color)
+      val doubleError = 2 * error
+      if (doubleError >= dy && x != x2) {
+        error = error + dy
+        x = x + sx
+      }
+      if (doubleError <= dx && y != y2) {
+        error = error + dx
+        y = y + sy
+      }
+    }
+    dest.putPixel(x, y, color)
+  }
+
+  // From https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+  def rasterizeCircle(dest: MutableSurface, stroke: Stroke.Circle, color: Color): Unit = {
+    val cx = math.round(stroke.center.x).toInt
+    val cy = math.round(stroke.center.y).toInt
+
+    var t  = math.round(stroke.radius / 16).toInt
+    var dx = math.round(stroke.radius).toInt
+    var dy = 0
+
+    while (dx >= dy) {
+      dest.putPixel(cx + dx, cy + dy, color)
+      dest.putPixel(cx + dx, cy - dy, color)
+      dest.putPixel(cx - dx, cy + dy, color)
+      dest.putPixel(cx - dx, cy - dy, color)
+
+      dest.putPixel(cx + dy, cy + dx, color)
+      dest.putPixel(cx + dy, cy - dx, color)
+      dest.putPixel(cx - dy, cy + dx, color)
+      dest.putPixel(cx - dy, cy - dx, color)
+
+      dy = dy + 1
+      t = t + dy
+      if (t - dx >= 0) {
+        t = t - dx
+        dx = dx - 1
+      }
+    }
+  }
+
+  def rasterizeStroke(dest: MutableSurface, stroke: Stroke, color: Color, dx: Int, dy: Int): Unit = stroke match {
+    case Stroke.Line(Point(x1, y1), Point(x2, y2)) =>
+      rasterizeLine(dest, Stroke.Line(Point(x1 + dx, y1 + dy), Point(x2 + dx, y2 + dy)), color)
+    case Stroke.Circle(Point(cx, cy), radius) =>
+      rasterizeCircle(dest, Stroke.Circle(Point(cx + dx, cy + dy), radius), color)
   }
 
 }

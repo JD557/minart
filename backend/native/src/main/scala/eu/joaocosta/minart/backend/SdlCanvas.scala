@@ -7,7 +7,6 @@ import sdl2.all.*
 import sdl2.enumerations.SDL_BlendMode.*
 import sdl2.enumerations.SDL_EventType.*
 import sdl2.enumerations.SDL_InitFlag.*
-import sdl2.enumerations.SDL_KeyCode.*
 import sdl2.enumerations.SDL_WindowFlags.*
 
 import eu.joaocosta.minart.graphics.*

@@ -129,7 +129,7 @@ object AxisAlignedBoundingBox {
       this
     }
 
-    def add(point: Shape.Point): this.type = add(point.x, point.y)
+    def add(point: Point): this.type = add(point.x, point.y)
 
     def result(): AxisAlignedBoundingBox =
       if (x1 > x2 || y1 > y2) AxisAlignedBoundingBox(0, 0, 0, 0)
