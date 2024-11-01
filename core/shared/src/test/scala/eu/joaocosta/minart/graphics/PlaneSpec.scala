@@ -103,10 +103,35 @@ class PlaneSpec extends munit.FunSuite {
     assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
   }
 
-  test("Coflatmapping it updates the colors based on the kernel") {
+  test("Coflatmapping it updates the colors based on the kernel function") {
     val newSurface =
       surface.view.repeating
         .coflatMap(img => img(1, 2))
+        .toRamSurface(surface.width, surface.height)
+    val newPixels = newSurface.getPixels()
+    val expectedPixels =
+      surface.view.repeating
+        .translate(-1, -2)
+        .toRamSurface(surface.width, surface.height)
+        .getPixels()
+
+    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+  }
+
+  test("Coflatmapping it updates the colors based on the kernel") {
+    val kernel = Kernel(
+      Seq(
+        Seq(0, 0, 0),
+        Seq(0, 0, 0),
+        Seq(0, 0, 0),
+        Seq(0, 0, 0),
+        Seq(0, 0, 1)
+      ),
+      1
+    )
+    val newSurface =
+      surface.view.repeating
+        .coflatMap(kernel)
         .toRamSurface(surface.width, surface.height)
     val newPixels = newSurface.getPixels()
     val expectedPixels =
