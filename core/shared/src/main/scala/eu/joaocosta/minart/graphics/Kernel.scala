@@ -18,8 +18,8 @@ sealed trait Kernel {
 
 object Kernel {
 
-  def apply(matrix: Seq[Seq[Int]] = Seq(Seq(1)), normalization: Int = 1): SingleKernel =
-    new SingleKernel(IArray.from(matrix.iterator.map(IArray.from)), normalization)
+  def apply(matrix: Seq[Seq[Int]] = Seq(Seq(1)), normalization: Int = 1, constant: Int = 0): SingleKernel =
+    new SingleKernel(IArray.from(matrix.iterator.map(IArray.from)), normalization, constant: Int)
 
   /** Identity kernel, does nothing.
     */
@@ -34,6 +34,18 @@ object Kernel {
     SingleKernel(IArray.fill(height)(line), width * height)
   }
 
+  /** Horizontal Sobel operator. Returns the horizontal derivative of the image.
+    * Since colors cannot have a negative value, a derivative of 0 corresponds to 127.
+    */
+  val horizontalSobel: SingleKernel =
+    SingleKernel(IArray(IArray(-1, 0, 1), IArray(-2, 0, 2), IArray(-1, 0, 1)), 8, 127)
+
+  /** Vertical Sobel operator. Returns the vertical derivative of the image.
+    * Since colors cannot have a negative value, a derivative of 0 corresponds to 127.
+    */
+  val verticalSobel: SingleKernel =
+    SingleKernel(IArray(IArray(-1, -2, -1), IArray(0, 0, 0), IArray(1, 2, 1)), 8, 127)
+
   /** Convolution kernel using a single matrix., where all color chanels are handled the same way.
     * The alpha channel is discarded (forced to 255).
     *
@@ -41,9 +53,14 @@ object Kernel {
     *
     * For performance reasons, all entries are integers, but are then divided by normalization
     * constant.
+    *
+    * A constant value can also be added. This value is added only after the normalization.
     */
-  final case class SingleKernel(matrix: IArray[IArray[Int]] = IArray(IArray(1)), normalization: Int = 1)
-      extends Kernel {
+  final case class SingleKernel(
+      matrix: IArray[IArray[Int]] = IArray(IArray(1)),
+      normalization: Int = 1,
+      constant: Int = 0
+  ) extends Kernel {
     val width: Int  = matrix.headOption.map(_.size).getOrElse(0)
     val height: Int = matrix.size
     require(matrix.forall(_.size == width), "Invalid kernel, not all rows have the same size")
@@ -82,16 +99,20 @@ object Kernel {
       }
 
       if (normalization != 1)
-        Color((accR / normalization).toInt, (accG / normalization).toInt, (accB / normalization).toInt)
+        Color(
+          constant + (accR / normalization).toInt,
+          constant + (accG / normalization).toInt,
+          constant + (accB / normalization).toInt
+        )
       else
-        Color(accR, accG, accB)
+        Color(constant + accR, constant + accG, constant + accB)
     }
 
     /** Creates a kernel equivalent to this one, but resized (keeping the center unchanged).
       * The new width and height must be odd.
       *
       * Increases in size add a padding of 0s, while decreases just crop the values.
-      * The normalization constant stays unchanged.
+      * The normalization factor and constant stays unchanged.
       */
     def resize(newWidth: Int, newHeight: Int): SingleKernel = {
       val dw = newWidth - width
@@ -114,7 +135,8 @@ object Kernel {
             IArray.fill(dh / 2)(emptyLine) ++ lines ++ IArray.fill(dh / 2)(emptyLine)
           } else if (dh < 0) lines.drop(dh / 2).dropRight(dh / 2)
           else lines,
-          normalization
+          normalization,
+          constant
         )
       }
     }
@@ -123,13 +145,14 @@ object Kernel {
       super.equals(that) ||
         (that.isInstanceOf[SingleKernel] &&
           this.matrix.toVector.map(_.toVector) == that.asInstanceOf[SingleKernel].matrix.toVector.map(_.toVector) &&
-          this.normalization == that.asInstanceOf[SingleKernel].normalization)
+          this.normalization == that.asInstanceOf[SingleKernel].normalization &&
+          this.constant == that.asInstanceOf[SingleKernel].constant)
 
     override def toString(): String =
-      s"SingleKernel(1 / ${normalization} * ${matrix.iterator.map(_.mkString("[", ",", "]")).mkString("[", ",", "]")})"
+      s"SingleKernel(${constant} + 1 / ${normalization} * ${matrix.iterator.map(_.mkString("[", ",", "]")).mkString("[", ",", "]")})"
 
     override def hashCode(): Int =
-      (this.matrix.toVector.map(_.toVector), this.normalization).hashCode()
+      (this.matrix.toVector.map(_.toVector), this.normalization, this.constant).hashCode()
   }
 
   /** Convolution kernel using a matrix per color channel.
@@ -185,10 +208,10 @@ object Kernel {
       }
 
       Color(
-        (accR / kernelR.normalization).toInt,
-        (accG / kernelG.normalization).toInt,
-        (accB / kernelB.normalization).toInt,
-        (accA / kernelA.normalization).toInt
+        kernelR.constant + (accR / kernelR.normalization).toInt,
+        kernelG.constant + (accG / kernelG.normalization).toInt,
+        kernelB.constant + (accB / kernelB.normalization).toInt,
+        kernelA.constant + (accA / kernelA.normalization).toInt
       )
     }
   }

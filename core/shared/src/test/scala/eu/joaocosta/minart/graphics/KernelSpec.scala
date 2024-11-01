@@ -9,7 +9,8 @@ class KernelSpec extends munit.FunSuite {
         Seq(3, 2, 1, 0, 0),
         Seq(1, 1, 1, 1, 1)
       ),
-      1
+      1,
+      0
     )
     assert(kernel.width == 5)
     assert(kernel.height == 3)
@@ -22,7 +23,8 @@ class KernelSpec extends munit.FunSuite {
           Seq(1, 2, 3, 0, 0),
           Seq(3, 2, 1, 0, 0)
         ),
-        1
+        1,
+        0
       )
     }
   }
@@ -35,7 +37,8 @@ class KernelSpec extends munit.FunSuite {
           Seq(3),
           Seq(1, 1, 1, 1, 1)
         ),
-        1
+        1,
+        0
       )
     }
   }
@@ -48,6 +51,7 @@ class KernelSpec extends munit.FunSuite {
           Seq(3, 2, 1, 0, 0),
           Seq(1, 1, 1, 1, 1)
         ),
+        0,
         0
       )
     }
@@ -60,7 +64,8 @@ class KernelSpec extends munit.FunSuite {
         Seq(0, 1, 0),
         Seq(1, 0, 1)
       ),
-      1
+      1,
+      0
     )
     val kernelB = Kernel(
       Seq(
@@ -68,28 +73,40 @@ class KernelSpec extends munit.FunSuite {
         Seq(0, 1, 0),
         Seq(1, 0, 1)
       ),
-      1
+      1,
+      0
     )
     val kernelC = Kernel(
-      Seq(
-        Seq(1, 0, 1),
-        Seq(0, 1, 0),
-        Seq(1, 0, 1)
-      ),
-      2
-    )
-    val kernelD = Kernel(
       Seq(
         Seq(1, 0, 1),
         Seq(0, 2, 0),
         Seq(1, 0, 1)
       ),
-      1
+      1,
+      0
+    )
+    val kernelD = Kernel(
+      Seq(
+        Seq(1, 0, 1),
+        Seq(0, 1, 0),
+        Seq(1, 0, 1)
+      ),
+      2,
+      0
+    )
+    val kernelE = Kernel(
+      Seq(
+        Seq(1, 0, 1),
+        Seq(0, 1, 0),
+        Seq(1, 0, 1)
+      ),
+      1,
+      127
     )
     assert(kernelA == kernelB)
     assert(kernelA != kernelC)
     assert(kernelA != kernelD)
-
+    assert(kernelA != kernelE)
   }
 
 }
