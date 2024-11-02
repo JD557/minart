@@ -27,35 +27,24 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
   lazy val contour: Vector[Stroke] =
     (vertices :+ vertices.head)
       .sliding(2)
-      .collect { case Vector(a, b) =>
-        Stroke.Line(a, b)
-      }
+      .collect { case Vector(a, b) => Stroke.Line(a, b) }
       .toVector
 
-  private def edgeFunction(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
+  // See https://jtsorlinis.github.io/rendering-tutorial/ and
+  // https://lisyarus.github.io/blog/posts/implementing-a-tiny-cpu-rasterizer-part-2.html
+  private def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
-  private def edgeFunction(p1: Point, p2: Point, p3: Point): Double =
-    edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
-
-  private def rawWeights(x: Double, y: Double): Iterator[Double] = {
+  private def determinants(x: Double, y: Double): Iterator[Double] = {
     (0 until size).iterator.map(idx =>
       val current = vertices(idx)
       val next    = if (idx + 1 >= size) vertices(0) else vertices(idx + 1)
-      edgeFunction(current.x, current.y, next.x, next.y, x, y)
+      determinant(current.x, current.y, next.x, next.y, x, y)
     )
   }
 
-  private lazy val maxWeight: Double =
-    (vertices.tail)
-      .sliding(2)
-      .collect { case Vector(b, c) =>
-        edgeFunction(vertices.head, b, c)
-      }
-      .sum
-
   def faceAt(x: Int, y: Int): Option[Shape.Face] = {
-    val it                      = rawWeights(x, y).filter(_ != 0).map(_ >= 0)
+    val it                      = determinants(x, y).filter(_ != 0).map(_ >= 0)
     var res: Option[Shape.Face] = null
     if (it.hasNext) {
       var last = it.next()
@@ -73,7 +62,7 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
   }
 
   override def contains(x: Int, y: Int): Boolean = {
-    val it  = rawWeights(x, y).filter(_ != 0).map(_ >= 0)
+    val it  = determinants(x, y).filter(_ != 0).map(_ >= 0)
     var res = true
     if (it.hasNext) {
       var last = it.next()
@@ -101,45 +90,6 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
     */
   def collides(that: ConvexPolygon): Boolean =
     this.vertices.exists(v => that.contains(v)) || that.vertices.exists(v => this.contains(v))
-
-  /** Normalized distance from an edge. Useful for some tricks like color interpolation.
-    *
-    * This can be a bit confusing on polygons with more than 3 edges, but on a triangle is similar
-    * vertex weights.
-    *
-    * On a triangle:
-    *   - a value of 0 means that the point is on top of the edge,
-    *   - a value of 1 means that the point is on the vertex opposite to the edge.
-    *   - a negative value means that the point is on the wrong side of the edge
-    *
-    * So, on a triangle, and edge weight can be seen as the vetex weight of the vertex opposed to the edge.
-    *
-    * @param x x coordinates of the point
-    * @param y x coordinates of the point
-    * @return weight
-    */
-  def edgeWeights(x: Int, y: Int): Vector[Double] = {
-    rawWeights(x, y).map(_ / maxWeight.toDouble).toVector
-  }
-
-  /** Normalized distance from an edge. Useful for some tricks like color interpolation.
-    *
-    * This can be a bit confusing on polygons with more than 3 edges, but on a triangle is similar
-    * vertex weights.
-    *
-    * On a triangle:
-    *   - a value of 0 means that the point is on top of the edge,
-    *   - a value of 1 means that the point is on the vertex opposite to the edge.
-    *   - a negative value means that the point is on the wrong side of the edge
-    *
-    * So, on a triangle, and edge weight can be seen as the vetex weight of the vertex opposed to the edge.
-    *
-    * @param point point to test
-    * @return weight
-    */
-  def edgeWeights(point: Point): Vector[Double] = {
-    rawWeights(point.x, point.y).map(_ / maxWeight.toDouble).toVector
-  }
 
   override def mapMatrix(matrix: Matrix): Shape.ShapeWithContour =
     if (matrix == Matrix.identity) this
