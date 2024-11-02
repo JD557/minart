@@ -237,9 +237,18 @@ object SurfaceView {
     def unsafeGetPixel(x: Int, y: Int): Color = ramSurface.getPixelOrElse(cx + x, cy + y, SurfaceView.defaultColor)
 
     override def getPixels(): Vector[Array[Color]] = {
-      Vector.tabulate(height) { y =>
-        ramSurface.dataBuffer(cy + y).slice(cx, cx + width)
+      val b = Vector.newBuilder[Array[Color]]
+      b.sizeHint(height)
+      var y = 0
+      while (y < height) {
+        if (width <= 0) {
+          b += Array.empty[Color]
+        } else {
+          b += ramSurface.dataBuffer(cy + y).slice(cx, cx + width)
+        }
+        y += 1
       }
+      b.result()
     }
 
     def map(f: Color => Color): SurfaceView = toPlaneSurfaceView().map(f)
