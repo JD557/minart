@@ -59,9 +59,24 @@ trait Surface {
     * @return color matrix
     */
   def getPixels(): Vector[Array[Color]] = {
-    Vector.tabulate(height) { y =>
-      Array.tabulate(width)(x => unsafeGetPixel(x, y))
+    val b = Vector.newBuilder[Array[Color]]
+    b.sizeHint(height)
+    var y = 0
+    while (y < height) {
+      if (width <= 0) {
+        b += Array.empty[Color]
+      } else {
+        val array = new Array[Color](width)
+        var x     = 0
+        while (x < width) {
+          array(x) = unsafeGetPixel(x, y)
+          x += 1
+        }
+        b += array
+      }
+      y += 1
     }
+    b.result()
   }
 
   /** Copies this surface into a new surface stored in RAM. */
