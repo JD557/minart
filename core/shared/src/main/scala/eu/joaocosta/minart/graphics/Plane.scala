@@ -63,6 +63,14 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
         f((dx: Int, dy: Int) => outer.getPixel(x + dx, y + dy))
     }
 
+  /** Coflatmaps this plane with a convolution kernel.
+    */
+  final def coflatMap(kernel: Kernel): Plane =
+    new Plane {
+      def getPixel(x: Int, y: Int): Color =
+        kernel.apply((dx: Int, dy: Int) => outer.getPixel(x + dx, y + dy))
+    }
+
   /** Clips this plane to a chosen rectangle
     *
     * @param cx leftmost pixel on the surface
