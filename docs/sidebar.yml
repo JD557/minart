@@ -30,7 +30,9 @@ subsection:
         page: ../../examples/release/08-loading-images.md
       - title: "9. Surface Views"
         page: ../../examples/release/09-surface-views.md
-      - title: "10. Audio Playback"
-        page: ../../examples/release/10-audio-playback.md
-      - title: "11. Loading Sounds"
-        page: ../../examples/release/11-loading-sounds.md
+      - title: "10. Vector Shapes"
+        page: ../../examples/release/10-vector-shapes.md
+      - title: "11. Audio Playback"
+        page: ../../examples/release/11-audio-playback.md
+      - title: "12. Loading Sounds"
+        page: ../../examples/release/12-loading-sounds.md
