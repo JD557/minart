@@ -13,8 +13,8 @@ In this example, we will show how to write applications that manipulate a state 
 The dependencies will be the same as before. We also include Scala's `Random` here just to make the game more interesting.
 
 ```scala
-//> using scala "3.3.3"
-//> using dep "eu.joaocosta::minart::0.6.2-SNAPSHOT"
+//> using scala "3.3.4"
+//> using dep "eu.joaocosta::minart::0.6.3-SNAPSHOT"
 
 import scala.util.Random
 

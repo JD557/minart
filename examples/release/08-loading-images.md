@@ -2,7 +2,7 @@
 
 So far we always created our surfaces manually. This is fine for small demos and procedural graphics, but often it can be useful to load an image from an external file.
 
-Minart has support for some image file formats (PPM, BMP and QOI). Here we will see how to load them.
+Minart has support for some image file formats (PBM/PPM, PDI, BMP and QOI). Here we will see how to load them.
 
 ## A simple image viewer
 
@@ -14,8 +14,8 @@ This package also has an `Image` object with helpers to call the loaders.
 
 
 ```scala
-//> using scala "3.3.3"
-//> using dep "eu.joaocosta::minart::0.6.1"
+//> using scala "3.3.4"
+//> using dep "eu.joaocosta::minart::0.6.2"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*

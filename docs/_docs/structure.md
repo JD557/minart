@@ -29,6 +29,13 @@ A `Canvas` is a special type of `MutableSurface`, which represents a window.
 
 `SurfaceView`s and `Planes` are abstractions to quickly and efficiently manipulate `Surface`s.
 
+## `eu.joaocosta.minart.geometry`
+
+This package contains abstractions related to geometric primitives, such as
+`Point`, `Matrix`, `Shape` and `Stroke`.
+
+Most of the APIs in this package are still experimental, and may change in future versions.
+
 ## `eu.joaocosta.minart.audio`
 
 This package contains all abstractions related to audio playback.
