@@ -12,8 +12,8 @@ This tutorial will show how to use those
 ### Dependencies and imports
 
 ```scala
-//> using scala "3.3.3"
-//> using dep "eu.joaocosta::minart::0.6.1"
+//> using scala "3.3.4"
+//> using dep "eu.joaocosta::minart::0.6.2"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
@@ -59,13 +59,12 @@ Let's see an example with multiple effects, such as:
  - Wobble
  - Checkerboard invert
 
-Before we start, let's precompute the convolution window that we will use for the blur
+Before we start, let's precompute the convolution kernel that we will use for the blur.
+We could use a simple function, but Minart already provides some optimized kernels
+out of the box.
 
 ```scala
-val convolutionWindow = for {
-  x <- (-1 to 1)
-  y <- (-1 to 1)
-} yield (x, y)
+val blurKernel = Kernel.averageBlur(3, 3)
 
 ```
 
@@ -79,14 +78,8 @@ def application(t: Double, canvas: Canvas): Unit = {
 
   val image = updatedBitmap.view.repeating // Create an infinite Plane from our surface
     .scale(zoom, zoom)  // Scale
-    .coflatMap { img => // Average blur
-      convolutionWindow.iterator
-        .map { case (x, y) => img(x, y) }
-        .foldLeft(Color(0, 0, 0)) { case (Color(r, g, b), Color(rr, gg, bb)) =>
-          Color(r + rr / 9, g + gg / 9, b + bb / 9)
-        }
-    }
-    .rotate(t)                                                        // Rotate
+    .coflatMap(blurKernel) // Average blur
+    .rotate(t) // Rotate
     .contramap((x, y) => (x + (5 * Math.sin(t + y / 10.0)).toInt, y)) // Wobbly effect
     .flatMap(color =>
       (x, y) => // Checkerboard effect

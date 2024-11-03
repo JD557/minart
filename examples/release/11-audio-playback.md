@@ -1,4 +1,4 @@
-# 10. Audio playback
+# 11. Audio playback
 
 Besides graphics and input, Minart also supports loading and playing back audio.
 
@@ -9,8 +9,8 @@ Here we will see how to generate audio waves and play a simple audio clip.
 ### Dependencies and imports
 
 ```scala
-//> using scala "3.3.3"
-//> using dep "eu.joaocosta::minart::0.6.1"
+//> using scala "3.3.4"
+//> using dep "eu.joaocosta::minart::0.6.2"
 
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.backend.defaults.given
