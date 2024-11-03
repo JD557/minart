@@ -12,7 +12,7 @@ This tutorial will show how to use those
 ### Dependencies and imports
 
 ```scala
-//> using scala "3.3.3"
+//> using scala "3.3.4"
 //> using dep "eu.joaocosta::minart::0.6.3-SNAPSHOT"
 
 import eu.joaocosta.minart.backend.defaults.given
