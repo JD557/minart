@@ -24,6 +24,7 @@ Minart comes out of the box with some basic graphic features, such as:
   - Double buffered canvas
   - Integer scaling
   - Surface blitting (with multiple blending modes)
+  - Simple shape and line rendering
 
 It also includes **Surface views** and **Planes** which makes it possible to manipulate
 (possibly unbounded) images with familiar operations such as `map` and `flatMap`.
