@@ -1,8 +1,8 @@
-# 11. Loading sounds
+# 12. Loading sounds
 
 Just like we did with images, we can also load audio clips from files.
 
-Minart supports multiple audio formats (RTTL AIFF, WAV and QOA).
+Minart supports multiple audio formats (RTTL, AIFF, WAV and QOA).
 
 Here's a small example to play a clip from a file
 
@@ -17,7 +17,7 @@ This package also has an `Sound` object with helpers to call the loaders.
 
 ```scala
 //> using scala "3.3.3"
-//> using dep "eu.joaocosta::minart::0.6.1"
+//> using dep "eu.joaocosta::minart::0.6.2"
 
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.audio.sound.*

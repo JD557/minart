@@ -17,7 +17,7 @@ For this example, we just need to use the graphics and runtime
 
 ```scala
 //> using scala "3.3.3"
-//> using dep "eu.joaocosta::minart::0.6.1"
+//> using dep "eu.joaocosta::minart::0.6.2"
 
 
 import eu.joaocosta.minart.backend.defaults.given
