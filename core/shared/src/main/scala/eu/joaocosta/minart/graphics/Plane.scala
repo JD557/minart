@@ -46,10 +46,9 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     new Plane {
       def getPixel(x: Int, y: Int): Color = {
         val c1 = outer.getPixel(x, y)
-        if (x >= 0 && y >= 0 && x < that.width && y < that.height) {
-          val c2 = that.unsafeGetPixel(x, y)
-          f(c1, c2)
-        } else c1
+        // This plane is clipped into a surface view, so x and y will always be in bounds
+        val c2 = that.unsafeGetPixel(x, y)
+        f(c1, c2)
       }
     },
     width = that.width,
