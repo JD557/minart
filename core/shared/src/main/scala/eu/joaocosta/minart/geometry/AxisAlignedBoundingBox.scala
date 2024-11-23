@@ -92,11 +92,17 @@ final case class AxisAlignedBoundingBox(
     *
     * @param f side effect, receiving (x, y) points
     */
-  def foreach(f: (Int, Int) => Unit): Unit =
-    for {
-      y <- (y1 until y2).iterator
-      x <- (x1 until x2).iterator
-    } f(x, y)
+  def foreach(f: (Int, Int) => Unit): Unit = {
+    var y = y1
+    while (y < y2) {
+      var x = x1
+      while (x < x2) {
+        f(x, y)
+        x = x + 1
+      }
+      y = y + 1
+    }
+  }
 }
 
 object AxisAlignedBoundingBox {
