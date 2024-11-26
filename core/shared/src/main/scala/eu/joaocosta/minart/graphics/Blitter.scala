@@ -6,6 +6,115 @@ import scala.annotation.tailrec
   */
 private[graphics] object Blitter {
 
+  def unsafeBlitSurfaceCopy(
+      dest: MutableSurface,
+      source: Surface,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        val color = source.unsafeGetPixel(dx + cx, srcY)
+        dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
+  def unsafeBlitSurfaceColorMask(
+      dest: MutableSurface,
+      source: Surface,
+      maskColor: Color,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        val color = source.unsafeGetPixel(dx + cx, srcY)
+        if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
+  def unsafeBlitSurfaceAlphaTest(
+      dest: MutableSurface,
+      source: Surface,
+      alpha: Int,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        val color = source.unsafeGetPixel(dx + cx, srcY)
+        if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
+  def unsafeBlitSurfaceAlphaAdd(
+      dest: MutableSurface,
+      source: Surface,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      var dx    = 0
+      while (dx < maxX) {
+        val destX       = dx + x
+        val colorSource = source.unsafeGetPixel(dx + cx, srcY)
+        val colorDest   = dest.unsafeGetPixel(destX, destY)
+        val factor      = 255 - colorSource.a
+        val color = Color(
+          Math.min(Color.mulDiv255(colorDest.r, factor) + colorSource.r, 255),
+          Math.min(Color.mulDiv255(colorDest.g, factor) + colorSource.g, 255),
+          Math.min(Color.mulDiv255(colorDest.b, factor) + colorSource.b, 255)
+        )
+        dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
   def unsafeBlitSurface(
       dest: MutableSurface,
       source: Surface,
@@ -17,67 +126,17 @@ private[graphics] object Blitter {
       maxX: Int,
       maxY: Int
   ): Unit = {
-    var dy = 0
     blendMode match {
       case BlendMode.Copy =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source.unsafeGetPixel(dx + cx, srcY)
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceCopy(dest, source, x, y, cx, cy, maxX, maxY)
       case BlendMode.ColorMask(maskColor) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source.unsafeGetPixel(dx + cx, srcY)
-            if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceColorMask(dest, source, maskColor, x, y, cx, cy, maxX, maxY)
       case BlendMode.AlphaTest(alpha) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source.unsafeGetPixel(dx + cx, srcY)
-            if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceAlphaTest(dest, source, alpha, x, y, cx, cy, maxX, maxY)
       case BlendMode.AlphaAdd =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX       = dx + x
-            val colorSource = source.unsafeGetPixel(dx + cx, srcY)
-            val colorDest   = dest.unsafeGetPixel(destX, destY)
-            val color = Color(
-              Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-              Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-              Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-            )
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceAlphaAdd(dest, source, x, y, cx, cy, maxX, maxY)
       case blendMode => // Custom BlendMode
+        var dy = 0
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
@@ -93,6 +152,119 @@ private[graphics] object Blitter {
     }
   }
 
+  def unsafeBlitMatrixCopy(
+      dest: MutableSurface,
+      source: Vector[Array[Color]],
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      val line  = source(srcY)
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        val color = line(dx + cx)
+        dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
+  def unsafeBlitMatrixColorMask(
+      dest: MutableSurface,
+      source: Vector[Array[Color]],
+      maskColor: Color,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      val line  = source(srcY)
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        val color = line(dx + cx)
+        if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
+  def unsafeBlitMatrixAlphaTest(
+      dest: MutableSurface,
+      source: Vector[Array[Color]],
+      alpha: Int,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      val line  = source(srcY)
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        val color = line(dx + cx)
+        if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
+  def unsafeBlitMatrixAlphaAdd(
+      dest: MutableSurface,
+      source: Vector[Array[Color]],
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  ): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      val line  = source(srcY)
+      var dx    = 0
+      while (dx < maxX) {
+        val destX       = dx + x
+        val colorSource = line(dx + cx)
+        val colorDest   = dest.unsafeGetPixel(destX, destY)
+        val factor      = 255 - colorSource.a
+        val color = Color(
+          Math.min(Color.mulDiv255(colorDest.r, factor) + colorSource.r, 255),
+          Math.min(Color.mulDiv255(colorDest.g, factor) + colorSource.g, 255),
+          Math.min(Color.mulDiv255(colorDest.b, factor) + colorSource.b, 255)
+        )
+        dest.unsafePutPixel(destX, destY, color)
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
   def unsafeBlitMatrix(
       dest: MutableSurface,
       source: Vector[Array[Color]],
@@ -104,71 +276,17 @@ private[graphics] object Blitter {
       maxX: Int,
       maxY: Int
   ): Unit = {
-    var dy = 0
     blendMode match {
       case BlendMode.Copy =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val line  = source(srcY)
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = line(dx + cx)
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitMatrixCopy(dest, source, x, y, cx, cy, maxX, maxY)
       case BlendMode.ColorMask(maskColor) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val line  = source(srcY)
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = line(dx + cx)
-            if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitMatrixColorMask(dest, source, maskColor, x, y, cx, cy, maxX, maxY)
       case BlendMode.AlphaTest(alpha) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val line  = source(srcY)
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = line(dx + cx)
-            if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitMatrixAlphaTest(dest, source, alpha, x, y, cx, cy, maxX, maxY)
       case BlendMode.AlphaAdd =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val line  = source(srcY)
-          var dx    = 0
-          while (dx < maxX) {
-            val destX       = dx + x
-            val colorSource = line(dx + cx)
-            val colorDest   = dest.unsafeGetPixel(destX, destY)
-            val color = Color(
-              Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-              Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-              Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-            )
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitMatrixAlphaAdd(dest, source, x, y, cx, cy, maxX, maxY)
       case blendMode => // Custom BlendMode
+        var dy = 0
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
