@@ -35,9 +35,9 @@ object Color {
       */
     def +(that: Color): Color =
       Color(
-        Math.min(color.r + that.r, 255).toInt,
-        Math.min(color.g + that.g, 255).toInt,
-        Math.min(color.b + that.b, 255).toInt
+        Math.min(color.r + that.r, 255),
+        Math.min(color.g + that.g, 255),
+        Math.min(color.b + that.b, 255)
       )
 
     /** Combines this with another color by summing each RGB value.
@@ -47,9 +47,9 @@ object Color {
       */
     def :+(that: Color): Color =
       Color(
-        Math.min(color.r + that.r, 255).toInt,
-        Math.min(color.g + that.g, 255).toInt,
-        Math.min(color.b + that.b, 255).toInt,
+        Math.min(color.r + that.r, 255),
+        Math.min(color.g + that.g, 255),
+        Math.min(color.b + that.b, 255),
         color.a
       )
 
@@ -60,9 +60,9 @@ object Color {
       */
     def +:(that: Color): Color =
       Color(
-        Math.min(color.r + that.r, 255).toInt,
-        Math.min(color.g + that.g, 255).toInt,
-        Math.min(color.b + that.b, 255).toInt,
+        Math.min(color.r + that.r, 255),
+        Math.min(color.g + that.g, 255),
+        Math.min(color.b + that.b, 255),
         that.a
       )
 
@@ -73,9 +73,9 @@ object Color {
       */
     def -(that: Color): Color =
       Color(
-        Math.max(color.r - that.r, 0).toInt,
-        Math.max(color.g - that.g, 0).toInt,
-        Math.max(color.b - that.b, 0).toInt
+        Math.max(color.r - that.r, 0),
+        Math.max(color.g - that.g, 0),
+        Math.max(color.b - that.b, 0)
       )
 
     /** Combines this with another color by subtracting each RGB value.
@@ -85,9 +85,9 @@ object Color {
       */
     def :-(that: Color): Color =
       Color(
-        Math.max(color.r - that.r, 0).toInt,
-        Math.max(color.g - that.g, 0).toInt,
-        Math.max(color.b - that.b, 0).toInt,
+        Math.max(color.r - that.r, 0),
+        Math.max(color.g - that.g, 0),
+        Math.max(color.b - that.b, 0),
         color.a
       )
 
@@ -98,9 +98,9 @@ object Color {
       */
     def -:(that: Color): Color =
       Color(
-        Math.max(color.r - that.r, 0).toInt,
-        Math.max(color.g - that.g, 0).toInt,
-        Math.max(color.b - that.b, 0).toInt,
+        Math.max(color.r - that.r, 0),
+        Math.max(color.g - that.g, 0),
+        Math.max(color.b - that.b, 0),
         that.a
       )
 
@@ -111,9 +111,9 @@ object Color {
       */
     def *(that: Color): Color =
       Color(
-        (color.r * that.r) / 255,
-        (color.g * that.g) / 255,
-        (color.b * that.b) / 255
+        mulDiv255(color.r, that.r),
+        mulDiv255(color.g, that.g),
+        mulDiv255(color.b, that.b)
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -123,9 +123,9 @@ object Color {
       */
     def :*(that: Color): Color =
       Color(
-        (color.r * that.r) / 255,
-        (color.g * that.g) / 255,
-        (color.b * that.b) / 255,
+        mulDiv255(color.r, that.r),
+        mulDiv255(color.g, that.g),
+        mulDiv255(color.b, that.b),
         color.a
       )
 
@@ -136,9 +136,9 @@ object Color {
       */
     def *:(that: Color): Color =
       Color(
-        (color.r * that.r) / 255,
-        (color.g * that.g) / 255,
-        (color.b * that.b) / 255,
+        mulDiv255(color.r, that.r),
+        mulDiv255(color.g, that.g),
+        mulDiv255(color.b, that.b),
         that.a
       )
 
@@ -164,34 +164,34 @@ object Color {
   /** Creates a new color from RGB values (on the [0-255] range).
     *  Overflow/Underflow will wrap around.
     */
-  def apply(r: Int, g: Int, b: Int): Color =
+  inline def apply(r: Int, g: Int, b: Int): Color =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   /** Creates a new color from RGBA values (on the [0-255] range).
     *  Overflow/Underflow will wrap around.
     */
-  def apply(r: Int, g: Int, b: Int, a: Int): Color =
+  inline def apply(r: Int, g: Int, b: Int, a: Int): Color =
     (a << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   /** Creates a new color from RGB values (assuming unsinged bytes on the [0-255] range).
     */
-  def apply(r: Byte, g: Byte, b: Byte): Color =
+  inline def apply(r: Byte, g: Byte, b: Byte): Color =
     (255 << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   /** Creates a new color from RGBA values (assuming unsinged bytes on the [0-255] range).
     */
-  def apply(r: Byte, g: Byte, b: Byte, a: Byte): Color =
+  inline def apply(r: Byte, g: Byte, b: Byte, a: Byte): Color =
     ((a & 255) << 24) | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255)
 
   /** Creates a new color from a grayscale value (on the [0-255] range).
     * Overflow/Underflow will wrap around.
     */
-  def grayscale(gray: Int): Color =
+  inline def grayscale(gray: Int): Color =
     (255 << 24) | ((gray & 255) << 16) | ((gray & 255) << 8) | (gray & 255)
 
   /** Creates a new color from a grayscale value (assuming unsigned bytes on the [0-255] range).
     */
-  def grayscale(gray: Byte): Color =
+  inline def grayscale(gray: Byte): Color =
     (255 << 24) | ((gray & 255) << 16) | ((gray & 255) << 8) | (gray & 255)
 
   /** Creates a new color from a 24bit backed RGB integer.
@@ -225,4 +225,12 @@ object Color {
     */
   def unapply(color: Color): Some[(Int, Int, Int)] =
     Some(color.r, color.g, color.b)
+
+  /** Computes (x * y) / 255
+    * Based on https://github.com/libsdl-org/SDL/blob/bbc9c75618fbc60583123e03f31f4e856f2654bf/src/video/SDL_blit.h#L524-L530
+    */
+  inline private[graphics] def mulDiv255(x: Int, y: Int): Int = {
+    val out = (x * y) + 1
+    (out + (out >> 8) >> 8)
+  }
 }
