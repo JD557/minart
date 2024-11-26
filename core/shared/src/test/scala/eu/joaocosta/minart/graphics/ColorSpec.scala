@@ -69,7 +69,7 @@ class ColorSpec extends munit.FunSuite {
     assert(colorC - colorA == Color(240, 20, 210))
   }
 
-  test("Can be multiplied without overflowing/undeflowing") {
+  test("Can be multiplied without overflowing/underflowing") {
     val color = Color(0, 128, 255)
 
     assert(color * color == Color(0, 64, 255))
