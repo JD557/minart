@@ -111,9 +111,9 @@ object Color {
       */
     def *(that: Color): Color =
       Color(
-        mulDiv255(color.r, that.r),
-        mulDiv255(color.g, that.g),
-        mulDiv255(color.b, that.b)
+        color.r * that.r / 255,
+        color.g * that.g / 255,
+        color.b * that.b / 255
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -123,9 +123,9 @@ object Color {
       */
     def :*(that: Color): Color =
       Color(
-        mulDiv255(color.r, that.r),
-        mulDiv255(color.g, that.g),
-        mulDiv255(color.b, that.b),
+        color.r * that.r / 255,
+        color.g * that.g / 255,
+        color.b * that.b / 255,
         color.a
       )
 
@@ -136,9 +136,9 @@ object Color {
       */
     def *:(that: Color): Color =
       Color(
-        mulDiv255(color.r, that.r),
-        mulDiv255(color.g, that.g),
-        mulDiv255(color.b, that.b),
+        color.r * that.r / 255,
+        color.g * that.g / 255,
+        color.b * that.b / 255,
         that.a
       )
 
@@ -225,12 +225,4 @@ object Color {
     */
   def unapply(color: Color): Some[(Int, Int, Int)] =
     Some(color.r, color.g, color.b)
-
-  /** Computes (x * y) / 255
-    * Based on https://github.com/libsdl-org/SDL/blob/bbc9c75618fbc60583123e03f31f4e856f2654bf/src/video/SDL_blit.h#L524-L530
-    */
-  inline private[graphics] def mulDiv255(x: Int, y: Int): Int = {
-    val out = (x * y) + 1
-    (out + (out >> 8) >> 8)
-  }
 }
