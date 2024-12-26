@@ -23,26 +23,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Java 8 and SBT
-      uses: actions/setup-java@v2
+    - name: Set up JDK (8)
+      uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: 8
-    - name: Cache Coursier
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
-    - name: Cache SBT ivy cache
-      uses: actions/cache@v1
-      with:
-        path: ~/.ivy2/cache
-        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
-    - name: Cache SBT
-      uses: actions/cache@v1
-      with:
-        path: ~/.sbt
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+        cache: sbt
+    - name: Setup SBT
+      uses: sbt/setup-sbt@v1
     - name: Compile (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
       run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
     - name: Install scala-native libraries
@@ -62,31 +50,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Java 17 and SBT
-      uses: actions/setup-java@v2
+    - name: Set up JDK (17)
+      uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: 17
-    - name: Cache Coursier
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
-    - name: Cache SBT ivy cache
-      uses: actions/cache@v1
-      with:
-        path: ~/.ivy2/cache
-        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
-    - name: Cache SBT
-      uses: actions/cache@v1
-      with:
-        path: ~/.sbt
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+        cache: sbt
+    - name: Setup SBT
+      uses: sbt/setup-sbt@v1
     - name: Install Scala-CLI
       run: |
         curl -fL https://github.com/Virtuslab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gzip -d > scala-cli
         chmod +x scala-cli
-        sudo mv scala-cli /usr/local/bin/scala-cli
+        sudo mv scala-cli /usr/local/bin/scala-cli   
     - name: Compile examples (Release)
       run: |
         cd examples/release
@@ -107,26 +83,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Java 17 and SBT
-      uses: actions/setup-java@v2
+    - name: Set up JDK (17)
+      uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: 17
-    - name: Cache Coursier
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
-    - name: Cache SBT ivy cache
-      uses: actions/cache@v1
-      with:
-        path: ~/.ivy2/cache
-        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
-    - name: Cache SBT
-      uses: actions/cache@v1
-      with:
-        path: ~/.sbt
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+        cache: sbt
+    - name: Setup SBT
+      uses: sbt/setup-sbt@v1
     - name: Install Tools
       run: |
         curl -fL "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz" | gzip -d > cs
@@ -150,26 +114,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Java 8 and SBT
-      uses: actions/setup-java@v2
+    - name: Set up JDK (17)
+      uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: 8
-    - name: Cache Coursier
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
-    - name: Cache SBT ivy cache
-      uses: actions/cache@v1
-      with:
-        path: ~/.ivy2/cache
-        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
-    - name: Cache SBT
-      uses: actions/cache@v1
-      with:
-        path: ~/.sbt
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+        java-version: 17
+        cache: sbt
+    - name: Setup SBT
+      uses: sbt/setup-sbt@v1
     - name: Compute coverage
       run: sbt -J-Xmx3G -Dsbt.color=always rootJVM/clean coverage rootJVM/test rootJVM/coverageAggregate
     - name: Upload report
