@@ -82,3 +82,16 @@ trait Surface {
   /** Copies this surface into a new surface stored in RAM. */
   final def toRamSurface(): RamSurface = new RamSurface(getPixels())
 }
+
+object Surface {
+
+  /** Produces a surface containing values of a given function
+    *  over ranges of integer values starting from 0.
+    *
+    *  @param width the surface width
+    *  @param height the surface height
+    *  @param f the function computing the element values
+    */
+  def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): Surface =
+    MutableSurface.tabulate(width, height)(f)
+}

@@ -226,7 +226,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * @param height surface height
     */
   final def toRamSurface(width: Int, height: Int): RamSurface =
-    toSurfaceView(width, height).toRamSurface()
+    RamSurface.tabulate(width, height)(getPixel)
 }
 
 object Plane {
