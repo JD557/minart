@@ -40,3 +40,34 @@ final class RamSurface(val dataBuffer: Vector[Array[Color]]) extends MutableSurf
     }
   }
 }
+
+object RamSurface {
+
+  /** Produces a RAM surface containing values of a given function
+    *  over ranges of integer values starting from 0.
+    *
+    *  @param width the surface width
+    *  @param height the surface height
+    *  @param f the function computing the element values
+    */
+  def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): RamSurface = {
+    val b = Vector.newBuilder[Array[Color]]
+    b.sizeHint(height)
+    var y = 0
+    while (y < height) {
+      if (width <= 0) {
+        b += Array.empty[Color]
+      } else {
+        val array = new Array[Color](width)
+        var x     = 0
+        while (x < width) {
+          array(x) = f(x, y)
+          x += 1
+        }
+        b += array
+      }
+      y += 1
+    }
+    new RamSurface(b.result())
+  }
+}

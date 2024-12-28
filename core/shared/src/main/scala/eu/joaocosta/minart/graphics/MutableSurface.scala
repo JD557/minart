@@ -169,3 +169,16 @@ trait MutableSurface extends Surface {
     blit(f(this.view).toRamSurface())(0, 0)
   }
 }
+
+object MutableSurface {
+
+  /** Produces a mutable surface containing values of a given function
+    *  over ranges of integer values starting from 0.
+    *
+    *  @param width the surface width
+    *  @param height the surface height
+    *  @param f the function computing the element values
+    */
+  def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): MutableSurface =
+    RamSurface.tabulate(width, height)(f)
+}
