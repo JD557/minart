@@ -67,3 +67,29 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
         super.blit(that, blendMode)(x, y, cx, cy, cw, ch)
     }
 }
+
+object BufferedImageSurface {
+
+  /** Produces a BufferedImage backed surface containing values of a given function
+    *  over ranges of integer values starting from 0.
+    *
+    *  @param width the surface width
+    *  @param height the surface height
+    *  @param f the function computing the element values
+    */
+  def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): BufferedImageSurface = {
+    val surface =
+      new BufferedImageSurface(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB))
+    var y = 0
+    while (y < height) {
+      var x = 0
+      while (x < width) {
+        surface.unsafePutPixel(x, y, f(x, y))
+        x += 1
+      }
+      y += 1
+    }
+    surface
+  }
+
+}

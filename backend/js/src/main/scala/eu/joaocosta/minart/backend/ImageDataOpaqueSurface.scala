@@ -80,6 +80,28 @@ final class ImageDataOpaqueSurface(val data: ImageData) extends MutableSurface {
 
 object ImageDataOpaqueSurface {
 
+  /** Produces an opaque ImageData backed surface containing values of a given function
+    *  over ranges of integer values starting from 0.
+    *
+    *  @param width the surface width
+    *  @param height the surface height
+    *  @param f the function computing the element values
+    */
+  def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): ImageDataOpaqueSurface = {
+    val surface =
+      ImageDataOpaqueSurface.fromImage(new Image(width, height))
+    var y = 0
+    while (y < height) {
+      var x = 0
+      while (x < width) {
+        surface.unsafePutPixel(x, y, f(x, y))
+        x += 1
+      }
+      y += 1
+    }
+    surface
+  }
+
   /** Loads an ImageDataOpaqueSurface from an offscreen canvas
     *
     * @param canvas offscreen canvas
