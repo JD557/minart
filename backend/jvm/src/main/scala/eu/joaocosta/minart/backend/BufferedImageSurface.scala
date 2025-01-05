@@ -70,6 +70,13 @@ final class BufferedImageSurface(val bufferedImage: BufferedImage) extends Mutab
 
 object BufferedImageSurface {
 
+  /** Copies a surface into an BufferedImage backed surface.
+    *
+    *  @param surface surface to copy from
+    */
+  def copyFrom(surface: Surface): BufferedImageSurface =
+    BufferedImageSurface.tabulate(surface.width, surface.height)(surface.unsafeGetPixel)
+
   /** Produces a BufferedImage backed surface containing values of a given function
     *  over ranges of integer values starting from 0.
     *

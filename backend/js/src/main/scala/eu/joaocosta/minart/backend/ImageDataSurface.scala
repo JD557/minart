@@ -15,7 +15,7 @@ import org.scalajs.dom.{
   window
 }
 
-import eu.joaocosta.minart.graphics.{Color, MutableSurface}
+import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
 
 /** A mutable surface backed by an ImageData.
   *
@@ -77,6 +77,13 @@ final class ImageDataSurface(val data: ImageData) extends MutableSurface {
 }
 
 object ImageDataSurface {
+
+  /** Copies a surface into an ImageData backed surface.
+    *
+    *  @param surface surface to copy from
+    */
+  def copyFrom(surface: Surface): ImageDataSurface =
+    ImageDataSurface.tabulate(surface.width, surface.height)(surface.unsafeGetPixel)
 
   /** Produces an ImageData backed surface containing values of a given function
     *  over ranges of integer values starting from 0.
