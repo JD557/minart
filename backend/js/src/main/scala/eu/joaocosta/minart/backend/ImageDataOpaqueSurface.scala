@@ -16,7 +16,7 @@ import org.scalajs.dom.{
   window
 }
 
-import eu.joaocosta.minart.graphics.{Color, MutableSurface}
+import eu.joaocosta.minart.graphics.{Color, MutableSurface, Surface}
 
 /** A mutable surface backed by an ImageData that drops the alpha channel when puting pixels.
   *
@@ -79,6 +79,35 @@ final class ImageDataOpaqueSurface(val data: ImageData) extends MutableSurface {
 }
 
 object ImageDataOpaqueSurface {
+
+  /** Copies a surface into an opaque ImageData backed surface.
+    *
+    *  @param surface surface to copy from
+    */
+  def copyFrom(surface: Surface): ImageDataOpaqueSurface =
+    ImageDataOpaqueSurface.tabulate(surface.width, surface.height)(surface.unsafeGetPixel)
+
+  /** Produces an opaque ImageData backed surface containing values of a given function
+    *  over ranges of integer values starting from 0.
+    *
+    *  @param width the surface width
+    *  @param height the surface height
+    *  @param f the function computing the element values
+    */
+  def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): ImageDataOpaqueSurface = {
+    val surface =
+      ImageDataOpaqueSurface.fromImage(new Image(width, height))
+    var y = 0
+    while (y < height) {
+      var x = 0
+      while (x < width) {
+        surface.unsafePutPixel(x, y, f(x, y))
+        x += 1
+      }
+      y += 1
+    }
+    surface
+  }
 
   /** Loads an ImageDataOpaqueSurface from an offscreen canvas
     *
