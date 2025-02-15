@@ -29,9 +29,10 @@ trait AudioPlayer {
   final def play(wave: AudioWave): Unit = play(wave, 0)
 
   /** Enqueues an audio wave to be played later in a certain channel.
-    *  The Audio Wave will play infinitely until stop() is called.
-    *  @param wave audio wave to play
-    *  @param channel channel where to play the audio wave
+    * The Audio Wave will play infinitely until stop() is called.
+    *
+    * @param wave audio wave to play
+    * @param channel channel where to play the audio wave
     */
   final def play(wave: AudioWave, channel: Int): Unit =
     play(AudioClip(wave, Double.PositiveInfinity), channel)
@@ -58,6 +59,38 @@ trait AudioPlayer {
     *  @param channel channel to stop
     */
   def stop(channel: Int): Unit
+
+  /** Stops channel 0 and plays an audio clip right away.
+    *
+    *  @param clip audio clip to play
+    */
+  final def playNow(clip: AudioClip): Unit = playNow(clip, 0)
+
+  /** Stops a certain channel and plays an audio clip right away.
+    *
+    *  @param clip audio clip to play
+    *  @param channel channel where to play the audio clip
+    */
+  final def playNow(clip: AudioClip, channel: Int): Unit = {
+    stop(channel)
+    play(clip, channel)
+  }
+
+  /** Stops channel 0 and plays an audio wave.
+    * The Audio Wave will play infinitely until stop() is called.
+    *
+    *  @param wave audio wave to play
+    */
+  final def playNow(wave: AudioWave): Unit = playNow(wave, 0)
+
+  /** Stops a certain channel and plays an audio wave.
+    * The Audio Wave will play infinitely until stop() is called.
+    *
+    * @param wave audio wave to play
+    * @param channel channel where to play the audio wave
+    */
+  final def playNow(wave: AudioWave, channel: Int): Unit =
+    playNow(AudioClip(wave, Double.PositiveInfinity), channel)
 
   /** Gets the mixing definitions for a channel.
     *
