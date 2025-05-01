@@ -16,8 +16,8 @@ A `Surface` is something with a `getPixel` operation (`MutableSurface`s also pro
 For this example, we just need to use the graphics and runtime
 
 ```scala
-//> using scala "3.3.4"
-//> using dep "eu.joaocosta::minart::0.6.3-SNAPSHOT"
+//> using scala "3.3.5"
+//> using dep "eu.joaocosta::minart::0.6.4-SNAPSHOT"
 
 
 import eu.joaocosta.minart.backend.defaults.given
