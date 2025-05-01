@@ -11,8 +11,8 @@ This time, we'll write an animated fire, updating at 60 frames per second!
 As before, let's import the backend, graphics and runtime.
 
 ```scala
-//> using scala "3.3.4"
-//> using dep "eu.joaocosta::minart::0.6.2"
+//> using scala "3.3.5"
+//> using dep "eu.joaocosta::minart::0.6.3"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
@@ -40,7 +40,7 @@ def automata(canvas: Canvas, x: Int, y: Int): Color = {
   // The pixel temperature will be the average of the neighbors intensity, with the random loss applied
   val temperature = ((neighbors.map(c => (c.r + c.g + c.b) / 3).sum / 3) * randomLoss).toInt
 
-  // Then we generate a nice yelow-red tint based on the temperature
+  // Then we generate a nice yellow-red tint based on the temperature
   Color(
     Math.min(255, temperature * 1.6).toInt,
     (temperature * 0.8).toInt,
