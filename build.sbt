@@ -63,7 +63,7 @@ val sharedSettings = Seq()
 
 val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scalameta" %%% "munit" % "1.1.0" % Test // Bootlegged
+    "org.scalameta" %%% "munit" % "1.1.1" % Test // Bootlegged
   ),
   testFrameworks += new TestFramework("munit.Framework")
 )
