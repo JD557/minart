@@ -117,9 +117,8 @@ trait QoiImageReader extends ImageReader {
             finalState.imageAcc.reverseIterator
               .take(expectedPixels)
               .map(_.minartColor)
-              .grouped(header.width.toInt)
-              .map(_.toArray)
-              .toVector
+              .toArray,
+            header.height.toInt
           ),
           s"Invalid number of pixels! Got ${finalState.imageAcc.size}, expected ${expectedPixels}"
         )

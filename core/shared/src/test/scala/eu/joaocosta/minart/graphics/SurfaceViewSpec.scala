@@ -5,7 +5,7 @@ import scala.util.Random
 class SurfaceViewSpec extends munit.FunSuite {
 
   lazy val surface = new RamSurface(
-    Vector.fill(16)(Array.fill(8)(Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255))))
+    Vector.fill(16)(Vector.fill(8)(Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255))))
   )
   lazy val originalPixels = surface.getPixels()
 
@@ -13,9 +13,9 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newSurface = surface.view.toRamSurface()
     val newPixels  = newSurface.getPixels()
 
-    assert(newSurface.width == surface.width)
-    assert(newSurface.height == surface.height)
-    assert(newPixels.map(_.toVector) == originalPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.width)
+    assertEquals(newSurface.height, surface.height)
+    assertEquals(newPixels.map(_.toVector), originalPixels.map(_.toVector))
   }
 
   test("The map view updates the colors") {
@@ -23,9 +23,9 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.map(_.map(_.invert))
 
-    assert(newSurface.width == surface.width)
-    assert(newSurface.height == surface.height)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.width)
+    assertEquals(newSurface.height, surface.height)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("The flatMap view updates the colors based on the position") {
@@ -36,9 +36,9 @@ class SurfaceViewSpec extends munit.FunSuite {
     val expectedPixels =
       originalPixels.take(8) ++ originalPixels.drop(8).map(_.map(_.invert))
 
-    assert(newSurface.width == surface.width)
-    assert(newSurface.height == surface.height)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.width)
+    assertEquals(newSurface.height, surface.height)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("The contramap view updates the positions") {
@@ -46,9 +46,9 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newPixels  = newSurface.getPixels()
     val expectedPixels = originalPixels.transpose
 
-    assert(newSurface.width == surface.height)
-    assert(newSurface.height == surface.width)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.height)
+    assertEquals(newSurface.height, surface.width)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("The zip view combines two surfaces") {
@@ -59,9 +59,9 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.map(_.map(_ => Color(0, 0, 0)))
 
-    assert(newSurface.width == surface.width)
-    assert(newSurface.height == surface.height)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.width)
+    assertEquals(newSurface.height, surface.height)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("Coflatmapping it updates the colors based on the kernel") {
@@ -77,7 +77,7 @@ class SurfaceViewSpec extends munit.FunSuite {
         .toRamSurface(surface.width, surface.height)
         .getPixels()
 
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("The clip view clips a surface") {
@@ -86,9 +86,9 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.slice(5, 7).map(_.slice(5, 7))
 
-    assert(newSurface.width == 2)
-    assert(newSurface.height == 2)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, 2)
+    assertEquals(newSurface.height, 2)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("Overlay combines two surfaces") {
@@ -102,9 +102,9 @@ class SurfaceViewSpec extends munit.FunSuite {
           oldLine.take(2) ++ newLine.dropRight(2)
         }
 
-    assert(newSurface.width == surface.width)
-    assert(newSurface.height == surface.height)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.width)
+    assertEquals(newSurface.height, surface.height)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("FlipH mirrors the surface horizontally") {
@@ -112,7 +112,7 @@ class SurfaceViewSpec extends munit.FunSuite {
       surface.view.flipH.toRamSurface()
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.map(_.reverse)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("FlipV mirrors the surface vertically") {
@@ -120,31 +120,31 @@ class SurfaceViewSpec extends munit.FunSuite {
       surface.view.flipV.toRamSurface()
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.reverse
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
   test("Scale upscales the surface") {
     val newSurface =
       surface.view.scale(2.0).toRamSurface()
 
-    assert(newSurface.width == 2 * surface.width)
-    assert(newSurface.height == 2 * surface.height)
+    assertEquals(newSurface.width, 2 * surface.width)
+    assertEquals(newSurface.height, 2 * surface.height)
   }
 
   test("Scale downscales the plane") {
     val newSurface =
       surface.view.scale(0.5).toRamSurface()
 
-    assert(newSurface.width == surface.width / 2)
-    assert(newSurface.height == surface.height / 2)
+    assertEquals(newSurface.width, surface.width / 2)
+    assertEquals(newSurface.height, surface.height / 2)
   }
 
   test("Scale upscale/downscales the plane across independent axis") {
     val newSurface =
       surface.view.scale(0.5, 2.0).toRamSurface()
 
-    assert(newSurface.width == surface.width / 2)
-    assert(newSurface.height == surface.height * 2)
+    assertEquals(newSurface.width, surface.width / 2)
+    assertEquals(newSurface.height, surface.height * 2)
   }
 
   test("Transpose transposes the image") {
@@ -153,8 +153,8 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newPixels      = newSurface.getPixels()
     val expectedPixels = originalPixels.transpose
 
-    assert(newSurface.width == surface.height)
-    assert(newSurface.height == surface.width)
-    assert(newPixels.map(_.toVector) == expectedPixels.map(_.toVector))
+    assertEquals(newSurface.width, surface.height)
+    assertEquals(newSurface.height, surface.width)
+    assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 }

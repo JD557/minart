@@ -4,22 +4,36 @@ package eu.joaocosta.minart.graphics
   *
   * @param data the raw data that backs this surface
   */
-final class RamSurface(val dataBuffer: Vector[Array[Color]]) extends MutableSurface {
-  val width  = dataBuffer.headOption.map(_.size).getOrElse(0)
-  val height = dataBuffer.size
+final class RamSurface(val dataBuffer: Array[Color], val height: Int) extends MutableSurface {
+  val width = if (height <= 0) 0 else dataBuffer.size / height
 
   def this(colors: Seq[Seq[Color]]) =
-    this(colors.map(_.toArray).toVector)
+    this(colors.iterator.flatten.toArray, colors.size)
 
   def this(width: Int, height: Int, color: Color) =
-    this(Vector.fill(height)(Array.fill(width)(color)))
+    this(Array.fill(width * height)(color), height)
 
   def unsafeGetPixel(x: Int, y: Int): Color =
-    dataBuffer(y)(x)
+    dataBuffer(y * width + x)
 
-  override def getPixels(): Vector[Array[Color]] = dataBuffer.map(_.clone())
+  override def getPixels(): Vector[Array[Color]] = {
+    val b = Vector.newBuilder[Array[Color]]
+    b.sizeHint(height)
+    var y = 0
+    while (y < height) {
+      if (width <= 0) {
+        b += Array.empty[Color]
+      } else {
+        val base = y * width
+        b += dataBuffer.slice(base, base + width)
+      }
+      y += 1
+    }
+    b.result()
+  }
 
-  def unsafePutPixel(x: Int, y: Int, color: Color): Unit = dataBuffer(y)(x) = color
+  def unsafePutPixel(x: Int, y: Int, color: Color): Unit =
+    dataBuffer(y * width + x) = color
 
   def fillRegion(x: Int, y: Int, w: Int, h: Int, color: Color): Unit = {
     val x1 = Math.max(x, 0)
@@ -29,10 +43,9 @@ final class RamSurface(val dataBuffer: Vector[Array[Color]]) extends MutableSurf
     if (x1 != x2 && y1 != y2) {
       var _y = y1
       while (_y < y2) {
-        var _x   = x1
-        val line = dataBuffer(_y)
+        var _x = x1
         while (_x < x2) {
-          line(_x) = color
+          dataBuffer(_y * width + _x) = color
           _x += 1
         }
         _y += 1
@@ -60,23 +73,17 @@ object RamSurface {
     * @param f the function computing the element values
     */
   def tabulate(width: Int, height: Int)(f: (Int, Int) => Color): RamSurface = {
-    val b = Vector.newBuilder[Array[Color]]
+    val b = Array.newBuilder[Color]
     b.sizeHint(height)
     var y = 0
     while (y < height) {
-      if (width <= 0) {
-        b += Array.empty[Color]
-      } else {
-        val array = new Array[Color](width)
-        var x     = 0
-        while (x < width) {
-          array(x) = f(x, y)
-          x += 1
-        }
-        b += array
+      var x = 0
+      while (x < width) {
+        b += f(x, y)
+        x += 1
       }
       y += 1
     }
-    new RamSurface(b.result())
+    new RamSurface(b.result(), height)
   }
 }
