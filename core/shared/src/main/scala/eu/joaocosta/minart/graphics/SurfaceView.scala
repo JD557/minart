@@ -244,7 +244,8 @@ object SurfaceView {
         if (width <= 0) {
           b += Array.empty[Color]
         } else {
-          b += ramSurface.dataBuffer(cy + y).slice(cx, cx + width)
+          val base = (cy + y) * ramSurface.width + cx
+          b += ramSurface.dataBuffer.slice(base, base + width)
         }
         y += 1
       }

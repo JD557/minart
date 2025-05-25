@@ -93,9 +93,10 @@ private[graphics] object Blitter {
     }
   }
 
-  def unsafeBlitMatrix(
+  def unsafeBlitArray(
       dest: MutableSurface,
-      source: Vector[Array[Color]],
+      source: Array[Color],
+      lineSize: Int,
       blendMode: BlendMode,
       x: Int,
       y: Int,
@@ -110,11 +111,11 @@ private[graphics] object Blitter {
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
-          val line  = source(srcY)
+          val base  = srcY * lineSize + cx
           var dx    = 0
           while (dx < maxX) {
             val destX = dx + x
-            val color = line(dx + cx)
+            val color = source(base + dx)
             dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
@@ -124,11 +125,11 @@ private[graphics] object Blitter {
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
-          val line  = source(srcY)
+          val base  = srcY * lineSize + cx
           var dx    = 0
           while (dx < maxX) {
             val destX = dx + x
-            val color = line(dx + cx)
+            val color = source(base + dx)
             if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
@@ -138,11 +139,11 @@ private[graphics] object Blitter {
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
-          val line  = source(srcY)
+          val base  = srcY * lineSize + cx
           var dx    = 0
           while (dx < maxX) {
             val destX = dx + x
-            val color = line(dx + cx)
+            val color = source(base + dx)
             if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
@@ -152,11 +153,11 @@ private[graphics] object Blitter {
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
-          val line  = source(srcY)
+          val base  = srcY * lineSize + cx
           var dx    = 0
           while (dx < maxX) {
             val destX       = dx + x
-            val colorSource = line(dx + cx)
+            val colorSource = source(base + dx)
             val colorDest   = dest.unsafeGetPixel(destX, destY)
             val color = Color(
               Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
@@ -172,11 +173,11 @@ private[graphics] object Blitter {
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
-          val line  = source(srcY)
+          val base  = srcY * lineSize + cx
           var dx    = 0
           while (dx < maxX) {
             val destX = dx + x
-            val color = blendMode.blend(line(dx + cx), dest.unsafeGetPixel(destX, destY))
+            val color = blendMode.blend(source(base + dx), dest.unsafeGetPixel(destX, destY))
             dest.unsafePutPixel(destX, destY, color)
             dx += 1
           }
@@ -208,7 +209,8 @@ private[graphics] object Blitter {
 
       if (maxX > 0 && maxY > 0) {
         source match {
-          case ramSurf: RamSurface => unsafeBlitMatrix(dest, ramSurf.dataBuffer, blendMode, x, y, cx, cy, maxX, maxY)
+          case ramSurf: RamSurface =>
+            unsafeBlitArray(dest, ramSurf.dataBuffer, ramSurf.width, blendMode, x, y, cx, cy, maxX, maxY)
           case SurfaceView.RamSurfaceView(surface, _cx, _cy, _, _) =>
             fullBlit(dest, surface, blendMode, x, y, cx + _cx, cy + _cy, cw, ch)
           case _ => unsafeBlitSurface(dest, source, blendMode, x, y, cx, cy, maxX, maxY)

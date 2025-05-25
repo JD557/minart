@@ -3,6 +3,7 @@ package eu.joaocosta.minart.graphics.image.bmp
 import java.io.InputStream
 
 import scala.annotation.tailrec
+import scala.collection.immutable.ArraySeq
 
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.image.*
@@ -136,7 +137,7 @@ trait BmpImageReader extends ImageReader {
           Left(s"Invalid number of lines: Got ${pixelMatrix.size}, expected ${header.height}")
         else if (pixelMatrix.nonEmpty && pixelMatrix.last.size != header.width)
           Left(s"Invalid number of pixels in the last line: Got ${pixelMatrix.last.size}, expected ${header.width}")
-        else Right(new RamSurface(pixelMatrix))
+        else Right(new RamSurface(pixelMatrix.map(ArraySeq.unsafeWrapArray)))
       }
     }
   }

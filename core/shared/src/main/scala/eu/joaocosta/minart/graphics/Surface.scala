@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import scala.collection.immutable.ArraySeq
+
 /** A Surface is an object that contains a set of pixels.
   */
 trait Surface {
@@ -80,7 +82,7 @@ trait Surface {
   }
 
   /** Copies this surface into a new surface stored in RAM. */
-  final def toRamSurface(): RamSurface = new RamSurface(getPixels())
+  final def toRamSurface(): RamSurface = new RamSurface(getPixels().map(ArraySeq.unsafeWrapArray))
 }
 
 object Surface {

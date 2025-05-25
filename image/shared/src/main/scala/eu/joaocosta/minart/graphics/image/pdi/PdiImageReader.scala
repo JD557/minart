@@ -3,6 +3,7 @@ package eu.joaocosta.minart.graphics.image.pdi
 import java.io.InputStream
 
 import scala.annotation.tailrec
+import scala.collection.immutable.ArraySeq
 
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.image.*
@@ -81,7 +82,7 @@ trait PdiImageReader extends ImageReader {
           Vector.fill(cellHeader.clipTop)(Array.fill(width)(emptyColor)) ++
             centerPixels.map(center => leftPad ++ center ++ rightPad) ++
             Vector.fill(cellHeader.clipBottom)(Array.fill(width)(emptyColor))
-      } yield (new RamSurface(pixels))
+      } yield (new RamSurface(pixels.map(ArraySeq.unsafeWrapArray)))
     }
   }
 }
