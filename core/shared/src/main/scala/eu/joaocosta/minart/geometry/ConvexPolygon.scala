@@ -35,44 +35,48 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
   private def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
-  private def determinants(x: Double, y: Double): Iterator[Double] = {
-    (0 until size).iterator.map(idx =>
+  // Helpful loop to avoid boxing and allocations
+  private inline def determinantsForEach(x: Double, y: Double)(inline f: Double => Unit): Unit = {
+    var idx = 0
+    while (idx < size) {
       val current = vertices(idx)
       val next    = if (idx + 1 >= size) vertices(0) else vertices(idx + 1)
-      determinant(current.x, current.y, next.x, next.y, x, y)
-    )
+      val det     = determinant(current.x, current.y, next.x, next.y, x, y)
+      f(det)
+      idx += 1
+    }
   }
 
   def faceAt(x: Int, y: Int): Option[Shape.Face] = {
-    val it                      = determinants(x, y).filter(_ != 0).map(_ >= 0)
-    var res: Option[Shape.Face] = null
-    if (it.hasNext) {
-      var last = it.next()
-      while (it.hasNext && res != None) {
-        val value = it.next()
-        if (last != value) res = None
-        last = value
-      }
-      if (res == null) {
-        if (last) res = Shape.someFront
-        else res = Shape.someBack
+    var inside: Boolean         = true
+    var firstIteration: Boolean = true
+    var last: Boolean           = true
+    determinantsForEach(x, y) { det =>
+      if (det != 0 && inside) {
+        val sign = det >= 0
+        if (!firstIteration && last != sign) inside = false
+        last = sign
+        firstIteration = false
       }
     }
-    if (res == null) None else res
+    if (!inside || firstIteration) None
+    else if (last) Shape.someFront
+    else Shape.someBack
   }
 
   override def contains(x: Int, y: Int): Boolean = {
-    val it  = determinants(x, y).filter(_ != 0).map(_ >= 0)
-    var res = true
-    if (it.hasNext) {
-      var last = it.next()
-      while (it.hasNext && res) {
-        val value = it.next()
-        if (last != value) res = false
-        last = value
+    var inside: Boolean         = true
+    var firstIteration: Boolean = true
+    var last: Boolean           = true
+    determinantsForEach(x, y) { det =>
+      if (det != 0 && inside) {
+        val sign = det >= 0
+        if (!firstIteration && last != sign) inside = false
+        last = sign
+        firstIteration = false
       }
     }
-    res
+    inside
   }
 
   /** Checks if this polygon contains another polygon.
