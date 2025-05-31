@@ -6,6 +6,30 @@ import scala.annotation.tailrec
   */
 private[graphics] object Blitter {
 
+  inline def unsafeBlitSurfaceLoop(
+      dest: MutableSurface,
+      source: Surface,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  )(inline putColor: (Int, Int, Color) => Unit): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        putColor(destX, destY, source.unsafeGetPixel(dx + cx, srcY))
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
   def unsafeBlitSurface(
       dest: MutableSurface,
       source: Surface,
@@ -17,67 +41,31 @@ private[graphics] object Blitter {
       maxX: Int,
       maxY: Int
   ): Unit = {
-    var dy = 0
     blendMode match {
       case BlendMode.Copy =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source.unsafeGetPixel(dx + cx, srcY)
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+          dest.unsafePutPixel(destX, destY, color)
+        )
       case BlendMode.ColorMask(maskColor) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source.unsafeGetPixel(dx + cx, srcY)
-            if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+          if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
+        )
       case BlendMode.AlphaTest(alpha) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source.unsafeGetPixel(dx + cx, srcY)
-            if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+          if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
+        )
       case BlendMode.AlphaAdd =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          var dx    = 0
-          while (dx < maxX) {
-            val destX       = dx + x
-            val colorSource = source.unsafeGetPixel(dx + cx, srcY)
-            val colorDest   = dest.unsafeGetPixel(destX, destY)
-            val color = Color(
-              Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-              Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-              Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-            )
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
+          val colorDest = dest.unsafeGetPixel(destX, destY)
+          val color = Color(
+            Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
+            Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
+            Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
+          )
+          dest.unsafePutPixel(destX, destY, color)
+        )
       case blendMode => // Custom BlendMode
+        var dy = 0
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
@@ -93,6 +81,32 @@ private[graphics] object Blitter {
     }
   }
 
+  inline def unsafeBlitArrayLoop(
+      dest: MutableSurface,
+      source: Array[Color],
+      lineSize: Int,
+      x: Int,
+      y: Int,
+      cx: Int,
+      cy: Int,
+      maxX: Int,
+      maxY: Int
+  )(inline putColor: (Int, Int, Color) => Unit): Unit = {
+    var dy = 0
+    while (dy < maxY) {
+      val srcY  = dy + cy
+      val destY = dy + y
+      val base  = srcY * lineSize + cx
+      var dx    = 0
+      while (dx < maxX) {
+        val destX = dx + x
+        putColor(destX, destY, source(base + dx))
+        dx += 1
+      }
+      dy += 1
+    }
+  }
+
   def unsafeBlitArray(
       dest: MutableSurface,
       source: Array[Color],
@@ -105,71 +119,31 @@ private[graphics] object Blitter {
       maxX: Int,
       maxY: Int
   ): Unit = {
-    var dy = 0
     blendMode match {
       case BlendMode.Copy =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val base  = srcY * lineSize + cx
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source(base + dx)
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+          dest.unsafePutPixel(destX, destY, color)
+        )
       case BlendMode.ColorMask(maskColor) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val base  = srcY * lineSize + cx
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source(base + dx)
-            if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+          if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
+        )
       case BlendMode.AlphaTest(alpha) =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val base  = srcY * lineSize + cx
-          var dx    = 0
-          while (dx < maxX) {
-            val destX = dx + x
-            val color = source(base + dx)
-            if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+          if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
+        )
       case BlendMode.AlphaAdd =>
-        while (dy < maxY) {
-          val srcY  = dy + cy
-          val destY = dy + y
-          val base  = srcY * lineSize + cx
-          var dx    = 0
-          while (dx < maxX) {
-            val destX       = dx + x
-            val colorSource = source(base + dx)
-            val colorDest   = dest.unsafeGetPixel(destX, destY)
-            val color = Color(
-              Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-              Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-              Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-            )
-            dest.unsafePutPixel(destX, destY, color)
-            dx += 1
-          }
-          dy += 1
-        }
+        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
+          val colorDest = dest.unsafeGetPixel(destX, destY)
+          val color = Color(
+            Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
+            Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
+            Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
+          )
+          dest.unsafePutPixel(destX, destY, color)
+        )
       case blendMode => // Custom BlendMode
+        var dy = 0
         while (dy < maxY) {
           val srcY  = dy + cy
           val destY = dy + y
