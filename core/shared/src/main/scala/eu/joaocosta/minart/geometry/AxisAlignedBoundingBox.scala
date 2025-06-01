@@ -107,13 +107,35 @@ final case class AxisAlignedBoundingBox(
 
 object AxisAlignedBoundingBox {
 
+  /** Construct an AABB that contains a sequence of points */
+  def fromPoints(points: Seq[Point]): AxisAlignedBoundingBox = {
+    var x1: Double = Double.MaxValue
+    var y1: Double = Double.MaxValue
+    var x2: Double = Double.MinValue
+    var y2: Double = Double.MinValue
+
+    points.foreach { point =>
+      if (point.x < x1) x1 = point.x
+      if (point.y < y1) y1 = point.y
+      if (point.x > x2) x2 = point.x
+      if (point.y > y2) y2 = point.y
+    }
+
+    val _x1 = math.floor(x1).toInt
+    val _y1 = math.floor(y1).toInt
+    val _x2 = math.ceil(x2).toInt
+    val _y2 = math.ceil(y2).toInt
+    if (_x1 > _x2 || _y1 > _y2) AxisAlignedBoundingBox(0, 0, 0, 0)
+    else AxisAlignedBoundingBox(_x1, _y1, _x2 - _x1, _y2 - _y1)
+  }
+
   /** Mutable Builder for AABBs.
     */
   final class Builder() {
-    private var x1: Int = Int.MaxValue
-    private var y1: Int = Int.MaxValue
-    private var x2: Int = Int.MinValue
-    private var y2: Int = Int.MinValue
+    private var x1: Double = Double.MaxValue
+    private var y1: Double = Double.MaxValue
+    private var x2: Double = Double.MinValue
+    private var y2: Double = Double.MinValue
 
     def add(x: Int, y: Int): this.type = {
       if (x < x1) x1 = x
@@ -124,21 +146,22 @@ object AxisAlignedBoundingBox {
     }
 
     def add(x: Double, y: Double): this.type = {
-      val floorX = math.floor(x).toInt
-      val floorY = math.floor(y).toInt
-      val ceilX  = math.ceil(x).toInt
-      val ceilY  = math.ceil(y).toInt
-      if (floorX < x1) x1 = floorX
-      if (floorY < y1) y1 = floorY
-      if (ceilX > x2) x2 = ceilX
-      if (ceilY > y2) y2 = ceilY
+      if (x < x1) x1 = x
+      if (y < y1) y1 = y
+      if (x > x2) x2 = x
+      if (y > y2) y2 = y
       this
     }
 
     def add(point: Point): this.type = add(point.x, point.y)
 
-    def result(): AxisAlignedBoundingBox =
-      if (x1 > x2 || y1 > y2) AxisAlignedBoundingBox(0, 0, 0, 0)
-      else AxisAlignedBoundingBox(x1, y1, x2 - x1, y2 - y1)
+    def result(): AxisAlignedBoundingBox = {
+      val _x1 = math.floor(x1).toInt
+      val _y1 = math.floor(y1).toInt
+      val _x2 = math.ceil(x2).toInt
+      val _y2 = math.ceil(y2).toInt
+      if (_x1 > _x2 || _y1 > _y2) AxisAlignedBoundingBox(0, 0, 0, 0)
+      else AxisAlignedBoundingBox(_x1, _y1, _x2 - _x1, _y2 - _y1)
+    }
   }
 }
