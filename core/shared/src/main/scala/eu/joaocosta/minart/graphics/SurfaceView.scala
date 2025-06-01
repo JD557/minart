@@ -25,11 +25,17 @@ sealed trait SurfaceView extends Surface {
   /** Combines this view with a plane by combining their colors with the given function. */
   def zipWith(that: Plane, f: (Color, Color) => Color): SurfaceView
 
-  /** Coflatmaps this plane with a SurfaceView => Color function.
+  /** Coflatmaps this surface view with a SurfaceView => Color function.
     * Effectively, each pixel of the new view is computed from a translated view, which can be used to
     * implement convolutions.
     */
   def coflatMap(f: SurfaceView => Color): SurfaceView
+
+  /** Coflatmaps this surface view with a convolution kernel.
+    *
+    *  Out of bounds pixels are treated as if the view was clamped into a plane
+    */
+  def coflatMap(kernel: Kernel): SurfaceView
 
   /** Clips this view to a chosen region
     *
@@ -168,6 +174,9 @@ object SurfaceView {
           f(outer.clip(x, y, width - x, height - y))
       })
 
+    def coflatMap(kernel: Kernel): SurfaceView =
+      copy(plane = clamped.coflatMap(kernel))
+
     def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView = {
       val newWidth  = Math.min(cw, this.width - cx)
       val newHeight = Math.min(ch, this.height - cy)
@@ -268,6 +277,9 @@ object SurfaceView {
 
     def coflatMap(f: SurfaceView => Color): SurfaceView =
       toPlaneSurfaceView().coflatMap(f)
+
+    def coflatMap(kernel: Kernel): SurfaceView =
+      toPlaneSurfaceView().coflatMap(kernel)
 
     def clip(cx: Int, cy: Int, cw: Int, ch: Int): SurfaceView =
       val newCx     = this.cx + cx
