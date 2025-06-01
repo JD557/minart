@@ -101,11 +101,11 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
     mapMatrix(matrix.inverse)
   override def translate(dx: Double, dy: Double): Shape.ShapeWithContour =
     mapMatrix(Matrix.translation(dx, dy))
-  override def flipH: Shape.ShapeWithContour = mapMatrix(Matrix.flipH)
-  override def flipV: Shape.ShapeWithContour = mapMatrix(Matrix.flipV)
+  override def flipH: Shape.ShapeWithContour                         = mapMatrix(Matrix.flipH)
+  override def flipV: Shape.ShapeWithContour                         = mapMatrix(Matrix.flipV)
   override def scale(sx: Double, sy: Double): Shape.ShapeWithContour =
     mapMatrix(Matrix.scaling(sx, sy))
-  override def scale(s: Double): Shape.ShapeWithContour = scale(s, s)
+  override def scale(s: Double): Shape.ShapeWithContour      = scale(s, s)
   override def rotate(theta: Double): Shape.ShapeWithContour =
     mapMatrix(Matrix.rotation(theta))
   override def shear(sx: Double, sy: Double): Shape.ShapeWithContour =
@@ -125,9 +125,9 @@ object ConvexPolygon {
       }
     )
 
-    def knownFace: Option[Shape.Face] = toConvexPolygon.knownFace
-    def aabb: AxisAlignedBoundingBox  = toConvexPolygon.aabb
-    def contour                       = toConvexPolygon.contour
+    def knownFace: Option[Shape.Face]              = toConvexPolygon.knownFace
+    def aabb: AxisAlignedBoundingBox               = toConvexPolygon.aabb
+    def contour                                    = toConvexPolygon.contour
     def faceAt(x: Int, y: Int): Option[Shape.Face] =
       toConvexPolygon.faceAt(x, y)
     override def contains(x: Int, y: Int): Boolean =

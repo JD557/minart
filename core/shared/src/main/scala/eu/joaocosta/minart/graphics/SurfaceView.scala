@@ -129,7 +129,7 @@ sealed trait SurfaceView extends Surface {
 }
 
 object SurfaceView {
-  private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
+  private val defaultColor: Color           = Color(0, 0, 0) // Fallback color used for safety
   private def floorMod(x: Int, y: Int): Int = {
     val rem = x % y
     if (rem >= 0) rem
@@ -142,7 +142,7 @@ object SurfaceView {
   def apply(surface: Surface): SurfaceView = surface match {
     case sv: SurfaceView        => sv
     case ramSurface: RamSurface => RamSurfaceView(ramSurface, 0, 0, surface.width, surface.height)
-    case _ =>
+    case _                      =>
       PlaneSurfaceView(Plane.fromSurfaceWithFallback(surface, defaultColor), surface.width, surface.height)
   }
 

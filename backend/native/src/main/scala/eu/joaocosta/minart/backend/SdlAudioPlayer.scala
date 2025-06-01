@@ -47,14 +47,14 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
       i = i + 1
     }
   }*/
-  given ExecutionContext = ExecutionContext.global
+  given ExecutionContext                                          = ExecutionContext.global
   private def callbackEventLoop(nextSchedule: Long): Future[Unit] = Future {
     if (playQueue.nonEmpty() && SDL_WasInit(SDL_INIT_AUDIO) != 0) {
       if (
         System.currentTimeMillis() > nextSchedule && SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)
       ) {
         val samples = Math.min(settings.bufferSize, playQueue.size)
-        val buf = Iterator
+        val buf     = Iterator
           .fill(samples) {
             val next  = playQueue.dequeue()
             val short = (Math.min(Math.max(-1.0, next), 1.0) * Short.MaxValue).toInt
@@ -81,7 +81,7 @@ final class SdlAudioPlayer() extends LowLevelAudioPlayer {
     while (!abort && playQueue.nonEmpty() && SDL_WasInit(SDL_INIT_AUDIO) != 0) {
       if (SDL_GetQueuedAudioSize(device).toInt < (settings.bufferSize * 2)) {
         val samples = Math.min(settings.bufferSize, playQueue.size)
-        val buf = Iterator
+        val buf     = Iterator
           .fill(samples) {
             val next  = playQueue.dequeue()
             val short = (Math.min(Math.max(-1.0, next), 1.0) * Short.MaxValue).toInt

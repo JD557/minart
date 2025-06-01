@@ -7,14 +7,14 @@ import scala.annotation.tailrec
 private[minart] sealed trait State[S, +E, +A] {
   @tailrec
   final def run(initial: S): Either[E, (S, A)] = this match {
-    case State.Point(f)     => Right(f(initial))
-    case State.Error(error) => Left(error)
+    case State.Point(f)             => Right(f(initial))
+    case State.Error(error)         => Left(error)
     case State.FlatMap(st, andThen) =>
       st match {
         case State.Point(f) =>
           val (nextState, nextValue) = f(initial)
           andThen(nextValue).run(nextState)
-        case State.Error(error) => Left(error)
+        case State.Error(error)                 => Left(error)
         case State.FlatMap(nextSt, nextAndThen) =>
           nextSt.flatMap(next => nextAndThen(next).flatMap(andThen)).run(initial)
       }
@@ -39,12 +39,12 @@ private[minart] object State {
   private final case class FlatMap[S, +E, A, +B](st: State[S, E, A], andThen: A => State[S, E, B])
       extends State[S, E, B]
 
-  def apply[S, A](f: S => (S, A)): State[S, Nothing, A] = Point(f)
-  def pure[S, A](a: A): State[S, Nothing, A]            = Point(s => (s, a))
-  def error[S, E](e: E): State[S, E, Nothing]           = Error(e)
-  def modify[S](f: S => S): State[S, Nothing, Unit]     = Point(s => (f(s), ()))
-  def get[S]: State[S, Nothing, S]                      = Point(s => (s, s))
-  def set[S](s: S): State[S, Nothing, Unit]             = Point(_ => (s, ()))
+  def apply[S, A](f: S => (S, A)): State[S, Nothing, A]         = Point(f)
+  def pure[S, A](a: A): State[S, Nothing, A]                    = Point(s => (s, a))
+  def error[S, E](e: E): State[S, E, Nothing]                   = Error(e)
+  def modify[S](f: S => S): State[S, Nothing, Unit]             = Point(s => (f(s), ()))
+  def get[S]: State[S, Nothing, S]                              = Point(s => (s, s))
+  def set[S](s: S): State[S, Nothing, Unit]                     = Point(_ => (s, ()))
   def fromEither[S, A, E](either: Either[E, A]): State[S, E, A] = either match {
     case Right(a) => pure[S, A](a)
     case Left(e)  => error[S, E](e)

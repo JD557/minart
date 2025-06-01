@@ -40,15 +40,15 @@ object enumerations:
     */
   opaque type SDL_ArrayOrder = CInt
   object SDL_ArrayOrder extends CEnum[SDL_ArrayOrder]:
-    given _tag: Tag[SDL_ArrayOrder]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_ArrayOrder = a
-    val SDL_ARRAYORDER_NONE                           = define(0)
-    val SDL_ARRAYORDER_RGB                            = define(1)
-    val SDL_ARRAYORDER_RGBA                           = define(2)
-    val SDL_ARRAYORDER_ARGB                           = define(3)
-    val SDL_ARRAYORDER_BGR                            = define(4)
-    val SDL_ARRAYORDER_BGRA                           = define(5)
-    val SDL_ARRAYORDER_ABGR                           = define(6)
+    given _tag: Tag[SDL_ArrayOrder]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_ArrayOrder                = a
+    val SDL_ARRAYORDER_NONE                                          = define(0)
+    val SDL_ARRAYORDER_RGB                                           = define(1)
+    val SDL_ARRAYORDER_RGBA                                          = define(2)
+    val SDL_ARRAYORDER_ARGB                                          = define(3)
+    val SDL_ARRAYORDER_BGR                                           = define(4)
+    val SDL_ARRAYORDER_BGRA                                          = define(5)
+    val SDL_ARRAYORDER_ABGR                                          = define(6)
     inline def getName(inline value: SDL_ArrayOrder): Option[String] =
       inline value match
         case SDL_ARRAYORDER_NONE => Some("SDL_ARRAYORDER_NONE")
@@ -68,13 +68,13 @@ object enumerations:
     */
   opaque type SDL_AssertState = CInt
   object SDL_AssertState extends CEnum[SDL_AssertState]:
-    given _tag: Tag[SDL_AssertState]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_AssertState = a
-    val SDL_ASSERTION_RETRY                            = define(0)
-    val SDL_ASSERTION_BREAK                            = define(1)
-    val SDL_ASSERTION_ABORT                            = define(2)
-    val SDL_ASSERTION_IGNORE                           = define(3)
-    val SDL_ASSERTION_ALWAYS_IGNORE                    = define(4)
+    given _tag: Tag[SDL_AssertState]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_AssertState                = a
+    val SDL_ASSERTION_RETRY                                           = define(0)
+    val SDL_ASSERTION_BREAK                                           = define(1)
+    val SDL_ASSERTION_ABORT                                           = define(2)
+    val SDL_ASSERTION_IGNORE                                          = define(3)
+    val SDL_ASSERTION_ALWAYS_IGNORE                                   = define(4)
     inline def getName(inline value: SDL_AssertState): Option[String] =
       inline value match
         case SDL_ASSERTION_RETRY         => Some("SDL_ASSERTION_RETRY")
@@ -102,18 +102,18 @@ object enumerations:
     */
   opaque type SDL_AudioFormat = UShort
   object SDL_AudioFormat extends CEnumUS[SDL_AudioFormat]:
-    given _tag: Tag[SDL_AudioFormat]                  = Tag.UShort
-    inline def define(inline a: Int): SDL_AudioFormat = a.toUShort
-    val AUDIO_U8                                      = define(0x0008)
-    val AUDIO_S8                                      = define(0x8008)
-    val AUDIO_U16LSB                                  = define(0x0010)
-    val AUDIO_S16LSB                                  = define(0x8010)
-    val AUDIO_U16MSB                                  = define(0x1010)
-    val AUDIO_S16MSB                                  = define(0x9010)
-    val AUDIO_S32LSB                                  = define(0x8020)
-    val AUDIO_S32MSB                                  = define(0x9020)
-    val AUDIO_F32LSB                                  = define(0x8120)
-    val AUDIO_F32MSB                                  = define(0x9120)
+    given _tag: Tag[SDL_AudioFormat]                                  = Tag.UShort
+    inline def define(inline a: Int): SDL_AudioFormat                 = a.toUShort
+    val AUDIO_U8                                                      = define(0x0008)
+    val AUDIO_S8                                                      = define(0x8008)
+    val AUDIO_U16LSB                                                  = define(0x0010)
+    val AUDIO_S16LSB                                                  = define(0x8010)
+    val AUDIO_U16MSB                                                  = define(0x1010)
+    val AUDIO_S16MSB                                                  = define(0x9010)
+    val AUDIO_S32LSB                                                  = define(0x8020)
+    val AUDIO_S32MSB                                                  = define(0x9020)
+    val AUDIO_F32LSB                                                  = define(0x8120)
+    val AUDIO_F32MSB                                                  = define(0x9120)
     inline def getName(inline value: SDL_AudioFormat): Option[String] =
       inline value match
         case AUDIO_U8     => Some("AUDIO_U8")
@@ -136,11 +136,11 @@ object enumerations:
     */
   opaque type SDL_AudioStatus = CInt
   object SDL_AudioStatus extends CEnum[SDL_AudioStatus]:
-    given _tag: Tag[SDL_AudioStatus]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_AudioStatus = a
-    val SDL_AUDIO_STOPPED                              = define(0)
-    val SDL_AUDIO_PLAYING                              = define(1)
-    val SDL_AUDIO_PAUSED                               = define(2)
+    given _tag: Tag[SDL_AudioStatus]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_AudioStatus                = a
+    val SDL_AUDIO_STOPPED                                             = define(0)
+    val SDL_AUDIO_PLAYING                                             = define(1)
+    val SDL_AUDIO_PAUSED                                              = define(2)
     inline def getName(inline value: SDL_AudioStatus): Option[String] =
       inline value match
         case SDL_AUDIO_STOPPED => Some("SDL_AUDIO_STOPPED")
@@ -158,11 +158,11 @@ object enumerations:
     */
   opaque type SDL_BitmapOrder = CInt
   object SDL_BitmapOrder extends CEnum[SDL_BitmapOrder]:
-    given _tag: Tag[SDL_BitmapOrder]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_BitmapOrder = a
-    val SDL_BITMAPORDER_NONE                           = define(0)
-    val SDL_BITMAPORDER_4321                           = define(1)
-    val SDL_BITMAPORDER_1234                           = define(2)
+    given _tag: Tag[SDL_BitmapOrder]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_BitmapOrder                = a
+    val SDL_BITMAPORDER_NONE                                          = define(0)
+    val SDL_BITMAPORDER_4321                                          = define(1)
+    val SDL_BITMAPORDER_1234                                          = define(2)
     inline def getName(inline value: SDL_BitmapOrder): Option[String] =
       inline value match
         case SDL_BITMAPORDER_NONE => Some("SDL_BITMAPORDER_NONE")
@@ -180,18 +180,18 @@ object enumerations:
     */
   opaque type SDL_BlendFactor = CInt
   object SDL_BlendFactor extends CEnum[SDL_BlendFactor]:
-    given _tag: Tag[SDL_BlendFactor]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_BlendFactor = a
-    val SDL_BLENDFACTOR_ZERO                           = define(1)
-    val SDL_BLENDFACTOR_ONE                            = define(2)
-    val SDL_BLENDFACTOR_SRC_COLOR                      = define(3)
-    val SDL_BLENDFACTOR_ONE_MINUS_SRC_COLOR            = define(4)
-    val SDL_BLENDFACTOR_SRC_ALPHA                      = define(5)
-    val SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA            = define(6)
-    val SDL_BLENDFACTOR_DST_COLOR                      = define(7)
-    val SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR            = define(8)
-    val SDL_BLENDFACTOR_DST_ALPHA                      = define(9)
-    val SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA            = define(10)
+    given _tag: Tag[SDL_BlendFactor]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_BlendFactor                = a
+    val SDL_BLENDFACTOR_ZERO                                          = define(1)
+    val SDL_BLENDFACTOR_ONE                                           = define(2)
+    val SDL_BLENDFACTOR_SRC_COLOR                                     = define(3)
+    val SDL_BLENDFACTOR_ONE_MINUS_SRC_COLOR                           = define(4)
+    val SDL_BLENDFACTOR_SRC_ALPHA                                     = define(5)
+    val SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA                           = define(6)
+    val SDL_BLENDFACTOR_DST_COLOR                                     = define(7)
+    val SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR                           = define(8)
+    val SDL_BLENDFACTOR_DST_ALPHA                                     = define(9)
+    val SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA                           = define(10)
     inline def getName(inline value: SDL_BlendFactor): Option[String] =
       inline value match
         case SDL_BLENDFACTOR_ZERO                => Some("SDL_BLENDFACTOR_ZERO")
@@ -216,14 +216,14 @@ object enumerations:
     */
   opaque type SDL_BlendMode = CInt
   object SDL_BlendMode extends CEnum[SDL_BlendMode]:
-    given _tag: Tag[SDL_BlendMode]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_BlendMode = a
-    val SDL_BLENDMODE_NONE                           = define(0)
-    val SDL_BLENDMODE_BLEND                          = define(1)
-    val SDL_BLENDMODE_ADD                            = define(2)
-    val SDL_BLENDMODE_MOD                            = define(4)
-    val SDL_BLENDMODE_MUL                            = define(8)
-    val SDL_BLENDMODE_INVALID                        = define(2147483647)
+    given _tag: Tag[SDL_BlendMode]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_BlendMode                = a
+    val SDL_BLENDMODE_NONE                                          = define(0)
+    val SDL_BLENDMODE_BLEND                                         = define(1)
+    val SDL_BLENDMODE_ADD                                           = define(2)
+    val SDL_BLENDMODE_MOD                                           = define(4)
+    val SDL_BLENDMODE_MUL                                           = define(8)
+    val SDL_BLENDMODE_INVALID                                       = define(2147483647)
     inline def getName(inline value: SDL_BlendMode): Option[String] =
       inline value match
         case SDL_BLENDMODE_NONE    => Some("SDL_BLENDMODE_NONE")
@@ -244,13 +244,13 @@ object enumerations:
     */
   opaque type SDL_BlendOperation = CInt
   object SDL_BlendOperation extends CEnum[SDL_BlendOperation]:
-    given _tag: Tag[SDL_BlendOperation]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_BlendOperation = a
-    val SDL_BLENDOPERATION_ADD                            = define(1)
-    val SDL_BLENDOPERATION_SUBTRACT                       = define(2)
-    val SDL_BLENDOPERATION_REV_SUBTRACT                   = define(3)
-    val SDL_BLENDOPERATION_MINIMUM                        = define(4)
-    val SDL_BLENDOPERATION_MAXIMUM                        = define(5)
+    given _tag: Tag[SDL_BlendOperation]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_BlendOperation                = a
+    val SDL_BLENDOPERATION_ADD                                           = define(1)
+    val SDL_BLENDOPERATION_SUBTRACT                                      = define(2)
+    val SDL_BLENDOPERATION_REV_SUBTRACT                                  = define(3)
+    val SDL_BLENDOPERATION_MINIMUM                                       = define(4)
+    val SDL_BLENDOPERATION_MAXIMUM                                       = define(5)
     inline def getName(inline value: SDL_BlendOperation): Option[String] =
       inline value match
         case SDL_BLENDOPERATION_ADD          => Some("SDL_BLENDOPERATION_ADD")
@@ -268,9 +268,9 @@ object enumerations:
     */
   opaque type SDL_DUMMY_ENUM = CInt
   object SDL_DUMMY_ENUM extends CEnum[SDL_DUMMY_ENUM]:
-    given _tag: Tag[SDL_DUMMY_ENUM]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_DUMMY_ENUM = a
-    val DUMMY_ENUM_VALUE                              = define(0)
+    given _tag: Tag[SDL_DUMMY_ENUM]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_DUMMY_ENUM                = a
+    val DUMMY_ENUM_VALUE                                             = define(0)
     inline def getName(inline value: SDL_DUMMY_ENUM): Option[String] =
       inline value match
         case DUMMY_ENUM_VALUE => Some("DUMMY_ENUM_VALUE")
@@ -286,13 +286,13 @@ object enumerations:
     */
   opaque type SDL_DisplayEventID = CInt
   object SDL_DisplayEventID extends CEnum[SDL_DisplayEventID]:
-    given _tag: Tag[SDL_DisplayEventID]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_DisplayEventID = a
-    val SDL_DISPLAYEVENT_NONE                             = define(0)
-    val SDL_DISPLAYEVENT_ORIENTATION                      = define(1)
-    val SDL_DISPLAYEVENT_CONNECTED                        = define(2)
-    val SDL_DISPLAYEVENT_DISCONNECTED                     = define(3)
-    val SDL_DISPLAYEVENT_MOVED                            = define(4)
+    given _tag: Tag[SDL_DisplayEventID]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_DisplayEventID                = a
+    val SDL_DISPLAYEVENT_NONE                                            = define(0)
+    val SDL_DISPLAYEVENT_ORIENTATION                                     = define(1)
+    val SDL_DISPLAYEVENT_CONNECTED                                       = define(2)
+    val SDL_DISPLAYEVENT_DISCONNECTED                                    = define(3)
+    val SDL_DISPLAYEVENT_MOVED                                           = define(4)
     inline def getName(inline value: SDL_DisplayEventID): Option[String] =
       inline value match
         case SDL_DISPLAYEVENT_NONE         => Some("SDL_DISPLAYEVENT_NONE")
@@ -312,13 +312,13 @@ object enumerations:
     */
   opaque type SDL_DisplayOrientation = CInt
   object SDL_DisplayOrientation extends CEnum[SDL_DisplayOrientation]:
-    given _tag: Tag[SDL_DisplayOrientation]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_DisplayOrientation = a
-    val SDL_ORIENTATION_UNKNOWN                               = define(0)
-    val SDL_ORIENTATION_LANDSCAPE                             = define(1)
-    val SDL_ORIENTATION_LANDSCAPE_FLIPPED                     = define(2)
-    val SDL_ORIENTATION_PORTRAIT                              = define(3)
-    val SDL_ORIENTATION_PORTRAIT_FLIPPED                      = define(4)
+    given _tag: Tag[SDL_DisplayOrientation]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_DisplayOrientation                = a
+    val SDL_ORIENTATION_UNKNOWN                                              = define(0)
+    val SDL_ORIENTATION_LANDSCAPE                                            = define(1)
+    val SDL_ORIENTATION_LANDSCAPE_FLIPPED                                    = define(2)
+    val SDL_ORIENTATION_PORTRAIT                                             = define(3)
+    val SDL_ORIENTATION_PORTRAIT_FLIPPED                                     = define(4)
     inline def getName(inline value: SDL_DisplayOrientation): Option[String] =
       inline value match
         case SDL_ORIENTATION_UNKNOWN           => Some("SDL_ORIENTATION_UNKNOWN")
@@ -338,70 +338,70 @@ object enumerations:
     */
   opaque type SDL_EventType = CInt
   object SDL_EventType extends CEnum[SDL_EventType]:
-    given _tag: Tag[SDL_EventType]                     = Tag.Int
-    inline def define(inline a: CInt): SDL_EventType   = a
-    inline def define(inline a: UInt): SDL_EventType   = a.toInt
-    val SDL_FIRSTEVENT                                 = define(0)
-    val SDL_QUIT                                       = define(256)
-    val SDL_APP_TERMINATING                            = define(257)
-    val SDL_APP_LOWMEMORY                              = define(258)
-    val SDL_APP_WILLENTERBACKGROUND                    = define(259)
-    val SDL_APP_DIDENTERBACKGROUND                     = define(260)
-    val SDL_APP_WILLENTERFOREGROUND                    = define(261)
-    val SDL_APP_DIDENTERFOREGROUND                     = define(262)
-    val SDL_LOCALECHANGED                              = define(263)
-    val SDL_DISPLAYEVENT                               = define(336)
-    val SDL_WINDOWEVENT                                = define(512)
-    val SDL_SYSWMEVENT                                 = define(513)
-    val SDL_KEYDOWN                                    = define(768)
-    val SDL_KEYUP                                      = define(769)
-    val SDL_TEXTEDITING                                = define(770)
-    val SDL_TEXTINPUT                                  = define(771)
-    val SDL_KEYMAPCHANGED                              = define(772)
-    val SDL_TEXTEDITING_EXT                            = define(773)
-    val SDL_MOUSEMOTION                                = define(1024)
-    val SDL_MOUSEBUTTONDOWN                            = define(1025)
-    val SDL_MOUSEBUTTONUP                              = define(1026)
-    val SDL_MOUSEWHEEL                                 = define(1027)
-    val SDL_JOYAXISMOTION                              = define(1536)
-    val SDL_JOYBALLMOTION                              = define(1537)
-    val SDL_JOYHATMOTION                               = define(1538)
-    val SDL_JOYBUTTONDOWN                              = define(1539)
-    val SDL_JOYBUTTONUP                                = define(1540)
-    val SDL_JOYDEVICEADDED                             = define(1541)
-    val SDL_JOYDEVICEREMOVED                           = define(1542)
-    val SDL_JOYBATTERYUPDATED                          = define(1543)
-    val SDL_CONTROLLERAXISMOTION                       = define(1616)
-    val SDL_CONTROLLERBUTTONDOWN                       = define(1617)
-    val SDL_CONTROLLERBUTTONUP                         = define(1618)
-    val SDL_CONTROLLERDEVICEADDED                      = define(1619)
-    val SDL_CONTROLLERDEVICEREMOVED                    = define(1620)
-    val SDL_CONTROLLERDEVICEREMAPPED                   = define(1621)
-    val SDL_CONTROLLERTOUCHPADDOWN                     = define(1622)
-    val SDL_CONTROLLERTOUCHPADMOTION                   = define(1623)
-    val SDL_CONTROLLERTOUCHPADUP                       = define(1624)
-    val SDL_CONTROLLERSENSORUPDATE                     = define(1625)
-    val SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3 = define(1626)
-    val SDL_CONTROLLERSTEAMHANDLEUPDATED               = define(1627)
-    val SDL_FINGERDOWN                                 = define(1792)
-    val SDL_FINGERUP                                   = define(1793)
-    val SDL_FINGERMOTION                               = define(1794)
-    val SDL_DOLLARGESTURE                              = define(2048)
-    val SDL_DOLLARRECORD                               = define(2049)
-    val SDL_MULTIGESTURE                               = define(2050)
-    val SDL_CLIPBOARDUPDATE                            = define(2304)
-    val SDL_DROPFILE                                   = define(4096)
-    val SDL_DROPTEXT                                   = define(4097)
-    val SDL_DROPBEGIN                                  = define(4098)
-    val SDL_DROPCOMPLETE                               = define(4099)
-    val SDL_AUDIODEVICEADDED                           = define(4352)
-    val SDL_AUDIODEVICEREMOVED                         = define(4353)
-    val SDL_SENSORUPDATE                               = define(4608)
-    val SDL_RENDER_TARGETS_RESET                       = define(8192)
-    val SDL_RENDER_DEVICE_RESET                        = define(8193)
-    val SDL_POLLSENTINEL                               = define(32512)
-    val SDL_USEREVENT                                  = define(32768)
-    val SDL_LASTEVENT                                  = define(65535)
+    given _tag: Tag[SDL_EventType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_EventType                = a
+    inline def define(inline a: UInt): SDL_EventType                = a.toInt
+    val SDL_FIRSTEVENT                                              = define(0)
+    val SDL_QUIT                                                    = define(256)
+    val SDL_APP_TERMINATING                                         = define(257)
+    val SDL_APP_LOWMEMORY                                           = define(258)
+    val SDL_APP_WILLENTERBACKGROUND                                 = define(259)
+    val SDL_APP_DIDENTERBACKGROUND                                  = define(260)
+    val SDL_APP_WILLENTERFOREGROUND                                 = define(261)
+    val SDL_APP_DIDENTERFOREGROUND                                  = define(262)
+    val SDL_LOCALECHANGED                                           = define(263)
+    val SDL_DISPLAYEVENT                                            = define(336)
+    val SDL_WINDOWEVENT                                             = define(512)
+    val SDL_SYSWMEVENT                                              = define(513)
+    val SDL_KEYDOWN                                                 = define(768)
+    val SDL_KEYUP                                                   = define(769)
+    val SDL_TEXTEDITING                                             = define(770)
+    val SDL_TEXTINPUT                                               = define(771)
+    val SDL_KEYMAPCHANGED                                           = define(772)
+    val SDL_TEXTEDITING_EXT                                         = define(773)
+    val SDL_MOUSEMOTION                                             = define(1024)
+    val SDL_MOUSEBUTTONDOWN                                         = define(1025)
+    val SDL_MOUSEBUTTONUP                                           = define(1026)
+    val SDL_MOUSEWHEEL                                              = define(1027)
+    val SDL_JOYAXISMOTION                                           = define(1536)
+    val SDL_JOYBALLMOTION                                           = define(1537)
+    val SDL_JOYHATMOTION                                            = define(1538)
+    val SDL_JOYBUTTONDOWN                                           = define(1539)
+    val SDL_JOYBUTTONUP                                             = define(1540)
+    val SDL_JOYDEVICEADDED                                          = define(1541)
+    val SDL_JOYDEVICEREMOVED                                        = define(1542)
+    val SDL_JOYBATTERYUPDATED                                       = define(1543)
+    val SDL_CONTROLLERAXISMOTION                                    = define(1616)
+    val SDL_CONTROLLERBUTTONDOWN                                    = define(1617)
+    val SDL_CONTROLLERBUTTONUP                                      = define(1618)
+    val SDL_CONTROLLERDEVICEADDED                                   = define(1619)
+    val SDL_CONTROLLERDEVICEREMOVED                                 = define(1620)
+    val SDL_CONTROLLERDEVICEREMAPPED                                = define(1621)
+    val SDL_CONTROLLERTOUCHPADDOWN                                  = define(1622)
+    val SDL_CONTROLLERTOUCHPADMOTION                                = define(1623)
+    val SDL_CONTROLLERTOUCHPADUP                                    = define(1624)
+    val SDL_CONTROLLERSENSORUPDATE                                  = define(1625)
+    val SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3              = define(1626)
+    val SDL_CONTROLLERSTEAMHANDLEUPDATED                            = define(1627)
+    val SDL_FINGERDOWN                                              = define(1792)
+    val SDL_FINGERUP                                                = define(1793)
+    val SDL_FINGERMOTION                                            = define(1794)
+    val SDL_DOLLARGESTURE                                           = define(2048)
+    val SDL_DOLLARRECORD                                            = define(2049)
+    val SDL_MULTIGESTURE                                            = define(2050)
+    val SDL_CLIPBOARDUPDATE                                         = define(2304)
+    val SDL_DROPFILE                                                = define(4096)
+    val SDL_DROPTEXT                                                = define(4097)
+    val SDL_DROPBEGIN                                               = define(4098)
+    val SDL_DROPCOMPLETE                                            = define(4099)
+    val SDL_AUDIODEVICEADDED                                        = define(4352)
+    val SDL_AUDIODEVICEREMOVED                                      = define(4353)
+    val SDL_SENSORUPDATE                                            = define(4608)
+    val SDL_RENDER_TARGETS_RESET                                    = define(8192)
+    val SDL_RENDER_DEVICE_RESET                                     = define(8193)
+    val SDL_POLLSENTINEL                                            = define(32512)
+    val SDL_USEREVENT                                               = define(32768)
+    val SDL_LASTEVENT                                               = define(65535)
     inline def getName(inline value: SDL_EventType): Option[String] =
       inline value match
         case SDL_FIRSTEVENT                                 => Some("SDL_FIRSTEVENT")
@@ -477,11 +477,11 @@ object enumerations:
     */
   opaque type SDL_FlashOperation = CInt
   object SDL_FlashOperation extends CEnum[SDL_FlashOperation]:
-    given _tag: Tag[SDL_FlashOperation]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_FlashOperation = a
-    val SDL_FLASH_CANCEL                                  = define(0)
-    val SDL_FLASH_BRIEFLY                                 = define(1)
-    val SDL_FLASH_UNTIL_FOCUSED                           = define(2)
+    given _tag: Tag[SDL_FlashOperation]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_FlashOperation                = a
+    val SDL_FLASH_CANCEL                                                 = define(0)
+    val SDL_FLASH_BRIEFLY                                                = define(1)
+    val SDL_FLASH_UNTIL_FOCUSED                                          = define(2)
     inline def getName(inline value: SDL_FlashOperation): Option[String] =
       inline value match
         case SDL_FLASH_CANCEL        => Some("SDL_FLASH_CANCEL")
@@ -497,10 +497,10 @@ object enumerations:
     */
   opaque type SDL_GLContextResetNotification = CInt
   object SDL_GLContextResetNotification extends CEnum[SDL_GLContextResetNotification]:
-    given _tag: Tag[SDL_GLContextResetNotification]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GLContextResetNotification = a
-    val SDL_GL_CONTEXT_RESET_NO_NOTIFICATION                          = define(0)
-    val SDL_GL_CONTEXT_RESET_LOSE_CONTEXT                             = define(1)
+    given _tag: Tag[SDL_GLContextResetNotification]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GLContextResetNotification                = a
+    val SDL_GL_CONTEXT_RESET_NO_NOTIFICATION                                         = define(0)
+    val SDL_GL_CONTEXT_RESET_LOSE_CONTEXT                                            = define(1)
     inline def getName(inline value: SDL_GLContextResetNotification): Option[String] =
       inline value match
         case SDL_GL_CONTEXT_RESET_NO_NOTIFICATION => Some("SDL_GL_CONTEXT_RESET_NO_NOTIFICATION")
@@ -517,36 +517,36 @@ object enumerations:
     */
   opaque type SDL_GLattr = CInt
   object SDL_GLattr extends CEnum[SDL_GLattr]:
-    given _tag: Tag[SDL_GLattr]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GLattr = a
-    val SDL_GL_RED_SIZE                           = define(0)
-    val SDL_GL_GREEN_SIZE                         = define(1)
-    val SDL_GL_BLUE_SIZE                          = define(2)
-    val SDL_GL_ALPHA_SIZE                         = define(3)
-    val SDL_GL_BUFFER_SIZE                        = define(4)
-    val SDL_GL_DOUBLEBUFFER                       = define(5)
-    val SDL_GL_DEPTH_SIZE                         = define(6)
-    val SDL_GL_STENCIL_SIZE                       = define(7)
-    val SDL_GL_ACCUM_RED_SIZE                     = define(8)
-    val SDL_GL_ACCUM_GREEN_SIZE                   = define(9)
-    val SDL_GL_ACCUM_BLUE_SIZE                    = define(10)
-    val SDL_GL_ACCUM_ALPHA_SIZE                   = define(11)
-    val SDL_GL_STEREO                             = define(12)
-    val SDL_GL_MULTISAMPLEBUFFERS                 = define(13)
-    val SDL_GL_MULTISAMPLESAMPLES                 = define(14)
-    val SDL_GL_ACCELERATED_VISUAL                 = define(15)
-    val SDL_GL_RETAINED_BACKING                   = define(16)
-    val SDL_GL_CONTEXT_MAJOR_VERSION              = define(17)
-    val SDL_GL_CONTEXT_MINOR_VERSION              = define(18)
-    val SDL_GL_CONTEXT_EGL                        = define(19)
-    val SDL_GL_CONTEXT_FLAGS                      = define(20)
-    val SDL_GL_CONTEXT_PROFILE_MASK               = define(21)
-    val SDL_GL_SHARE_WITH_CURRENT_CONTEXT         = define(22)
-    val SDL_GL_FRAMEBUFFER_SRGB_CAPABLE           = define(23)
-    val SDL_GL_CONTEXT_RELEASE_BEHAVIOR           = define(24)
-    val SDL_GL_CONTEXT_RESET_NOTIFICATION         = define(25)
-    val SDL_GL_CONTEXT_NO_ERROR                   = define(26)
-    val SDL_GL_FLOATBUFFERS                       = define(27)
+    given _tag: Tag[SDL_GLattr]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GLattr                = a
+    val SDL_GL_RED_SIZE                                          = define(0)
+    val SDL_GL_GREEN_SIZE                                        = define(1)
+    val SDL_GL_BLUE_SIZE                                         = define(2)
+    val SDL_GL_ALPHA_SIZE                                        = define(3)
+    val SDL_GL_BUFFER_SIZE                                       = define(4)
+    val SDL_GL_DOUBLEBUFFER                                      = define(5)
+    val SDL_GL_DEPTH_SIZE                                        = define(6)
+    val SDL_GL_STENCIL_SIZE                                      = define(7)
+    val SDL_GL_ACCUM_RED_SIZE                                    = define(8)
+    val SDL_GL_ACCUM_GREEN_SIZE                                  = define(9)
+    val SDL_GL_ACCUM_BLUE_SIZE                                   = define(10)
+    val SDL_GL_ACCUM_ALPHA_SIZE                                  = define(11)
+    val SDL_GL_STEREO                                            = define(12)
+    val SDL_GL_MULTISAMPLEBUFFERS                                = define(13)
+    val SDL_GL_MULTISAMPLESAMPLES                                = define(14)
+    val SDL_GL_ACCELERATED_VISUAL                                = define(15)
+    val SDL_GL_RETAINED_BACKING                                  = define(16)
+    val SDL_GL_CONTEXT_MAJOR_VERSION                             = define(17)
+    val SDL_GL_CONTEXT_MINOR_VERSION                             = define(18)
+    val SDL_GL_CONTEXT_EGL                                       = define(19)
+    val SDL_GL_CONTEXT_FLAGS                                     = define(20)
+    val SDL_GL_CONTEXT_PROFILE_MASK                              = define(21)
+    val SDL_GL_SHARE_WITH_CURRENT_CONTEXT                        = define(22)
+    val SDL_GL_FRAMEBUFFER_SRGB_CAPABLE                          = define(23)
+    val SDL_GL_CONTEXT_RELEASE_BEHAVIOR                          = define(24)
+    val SDL_GL_CONTEXT_RESET_NOTIFICATION                        = define(25)
+    val SDL_GL_CONTEXT_NO_ERROR                                  = define(26)
+    val SDL_GL_FLOATBUFFERS                                      = define(27)
     inline def getName(inline value: SDL_GLattr): Option[String] =
       inline value match
         case SDL_GL_RED_SIZE                   => Some("SDL_GL_RED_SIZE")
@@ -587,12 +587,12 @@ object enumerations:
     */
   opaque type SDL_GLcontextFlag = CInt
   object SDL_GLcontextFlag extends CEnum[SDL_GLcontextFlag]:
-    given _tag: Tag[SDL_GLcontextFlag]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GLcontextFlag = a
-    val SDL_GL_CONTEXT_DEBUG_FLAG                        = define(1)
-    val SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG           = define(2)
-    val SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG                = define(4)
-    val SDL_GL_CONTEXT_RESET_ISOLATION_FLAG              = define(8)
+    given _tag: Tag[SDL_GLcontextFlag]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GLcontextFlag                = a
+    val SDL_GL_CONTEXT_DEBUG_FLAG                                       = define(1)
+    val SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG                          = define(2)
+    val SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG                               = define(4)
+    val SDL_GL_CONTEXT_RESET_ISOLATION_FLAG                             = define(8)
     inline def getName(inline value: SDL_GLcontextFlag): Option[String] =
       inline value match
         case SDL_GL_CONTEXT_DEBUG_FLAG              => Some("SDL_GL_CONTEXT_DEBUG_FLAG")
@@ -609,10 +609,10 @@ object enumerations:
     */
   opaque type SDL_GLcontextReleaseFlag = CInt
   object SDL_GLcontextReleaseFlag extends CEnum[SDL_GLcontextReleaseFlag]:
-    given _tag: Tag[SDL_GLcontextReleaseFlag]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GLcontextReleaseFlag = a
-    val SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE                    = define(0)
-    val SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH                   = define(1)
+    given _tag: Tag[SDL_GLcontextReleaseFlag]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GLcontextReleaseFlag                = a
+    val SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE                                   = define(0)
+    val SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH                                  = define(1)
     inline def getName(inline value: SDL_GLcontextReleaseFlag): Option[String] =
       inline value match
         case SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE  => Some("SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE")
@@ -627,11 +627,11 @@ object enumerations:
     */
   opaque type SDL_GLprofile = CInt
   object SDL_GLprofile extends CEnum[SDL_GLprofile]:
-    given _tag: Tag[SDL_GLprofile]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GLprofile = a
-    val SDL_GL_CONTEXT_PROFILE_CORE                  = define(1)
-    val SDL_GL_CONTEXT_PROFILE_COMPATIBILITY         = define(2)
-    val SDL_GL_CONTEXT_PROFILE_ES                    = define(4)
+    given _tag: Tag[SDL_GLprofile]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GLprofile                = a
+    val SDL_GL_CONTEXT_PROFILE_CORE                                 = define(1)
+    val SDL_GL_CONTEXT_PROFILE_COMPATIBILITY                        = define(2)
+    val SDL_GL_CONTEXT_PROFILE_ES                                   = define(4)
     inline def getName(inline value: SDL_GLprofile): Option[String] =
       inline value match
         case SDL_GL_CONTEXT_PROFILE_CORE          => Some("SDL_GL_CONTEXT_PROFILE_CORE")
@@ -649,16 +649,16 @@ object enumerations:
     */
   opaque type SDL_GameControllerAxis = CInt
   object SDL_GameControllerAxis extends CEnum[SDL_GameControllerAxis]:
-    given _tag: Tag[SDL_GameControllerAxis]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GameControllerAxis = a
-    val SDL_CONTROLLER_AXIS_INVALID                           = define(-1)
-    val SDL_CONTROLLER_AXIS_LEFTX                             = define(0)
-    val SDL_CONTROLLER_AXIS_LEFTY                             = define(1)
-    val SDL_CONTROLLER_AXIS_RIGHTX                            = define(2)
-    val SDL_CONTROLLER_AXIS_RIGHTY                            = define(3)
-    val SDL_CONTROLLER_AXIS_TRIGGERLEFT                       = define(4)
-    val SDL_CONTROLLER_AXIS_TRIGGERRIGHT                      = define(5)
-    val SDL_CONTROLLER_AXIS_MAX                               = define(6)
+    given _tag: Tag[SDL_GameControllerAxis]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GameControllerAxis                = a
+    val SDL_CONTROLLER_AXIS_INVALID                                          = define(-1)
+    val SDL_CONTROLLER_AXIS_LEFTX                                            = define(0)
+    val SDL_CONTROLLER_AXIS_LEFTY                                            = define(1)
+    val SDL_CONTROLLER_AXIS_RIGHTX                                           = define(2)
+    val SDL_CONTROLLER_AXIS_RIGHTY                                           = define(3)
+    val SDL_CONTROLLER_AXIS_TRIGGERLEFT                                      = define(4)
+    val SDL_CONTROLLER_AXIS_TRIGGERRIGHT                                     = define(5)
+    val SDL_CONTROLLER_AXIS_MAX                                              = define(6)
     inline def getName(inline value: SDL_GameControllerAxis): Option[String] =
       inline value match
         case SDL_CONTROLLER_AXIS_INVALID      => Some("SDL_CONTROLLER_AXIS_INVALID")
@@ -679,12 +679,12 @@ object enumerations:
     */
   opaque type SDL_GameControllerBindType = CInt
   object SDL_GameControllerBindType extends CEnum[SDL_GameControllerBindType]:
-    given _tag: Tag[SDL_GameControllerBindType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GameControllerBindType = a
-    val SDL_CONTROLLER_BINDTYPE_NONE                              = define(0)
-    val SDL_CONTROLLER_BINDTYPE_BUTTON                            = define(1)
-    val SDL_CONTROLLER_BINDTYPE_AXIS                              = define(2)
-    val SDL_CONTROLLER_BINDTYPE_HAT                               = define(3)
+    given _tag: Tag[SDL_GameControllerBindType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GameControllerBindType                = a
+    val SDL_CONTROLLER_BINDTYPE_NONE                                             = define(0)
+    val SDL_CONTROLLER_BINDTYPE_BUTTON                                           = define(1)
+    val SDL_CONTROLLER_BINDTYPE_AXIS                                             = define(2)
+    val SDL_CONTROLLER_BINDTYPE_HAT                                              = define(3)
     inline def getName(inline value: SDL_GameControllerBindType): Option[String] =
       inline value match
         case SDL_CONTROLLER_BINDTYPE_NONE   => Some("SDL_CONTROLLER_BINDTYPE_NONE")
@@ -703,31 +703,31 @@ object enumerations:
     */
   opaque type SDL_GameControllerButton = CInt
   object SDL_GameControllerButton extends CEnum[SDL_GameControllerButton]:
-    given _tag: Tag[SDL_GameControllerButton]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GameControllerButton = a
-    val SDL_CONTROLLER_BUTTON_INVALID                           = define(-1)
-    val SDL_CONTROLLER_BUTTON_A                                 = define(0)
-    val SDL_CONTROLLER_BUTTON_B                                 = define(1)
-    val SDL_CONTROLLER_BUTTON_X                                 = define(2)
-    val SDL_CONTROLLER_BUTTON_Y                                 = define(3)
-    val SDL_CONTROLLER_BUTTON_BACK                              = define(4)
-    val SDL_CONTROLLER_BUTTON_GUIDE                             = define(5)
-    val SDL_CONTROLLER_BUTTON_START                             = define(6)
-    val SDL_CONTROLLER_BUTTON_LEFTSTICK                         = define(7)
-    val SDL_CONTROLLER_BUTTON_RIGHTSTICK                        = define(8)
-    val SDL_CONTROLLER_BUTTON_LEFTSHOULDER                      = define(9)
-    val SDL_CONTROLLER_BUTTON_RIGHTSHOULDER                     = define(10)
-    val SDL_CONTROLLER_BUTTON_DPAD_UP                           = define(11)
-    val SDL_CONTROLLER_BUTTON_DPAD_DOWN                         = define(12)
-    val SDL_CONTROLLER_BUTTON_DPAD_LEFT                         = define(13)
-    val SDL_CONTROLLER_BUTTON_DPAD_RIGHT                        = define(14)
-    val SDL_CONTROLLER_BUTTON_MISC1                             = define(15)
-    val SDL_CONTROLLER_BUTTON_PADDLE1                           = define(16)
-    val SDL_CONTROLLER_BUTTON_PADDLE2                           = define(17)
-    val SDL_CONTROLLER_BUTTON_PADDLE3                           = define(18)
-    val SDL_CONTROLLER_BUTTON_PADDLE4                           = define(19)
-    val SDL_CONTROLLER_BUTTON_TOUCHPAD                          = define(20)
-    val SDL_CONTROLLER_BUTTON_MAX                               = define(21)
+    given _tag: Tag[SDL_GameControllerButton]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GameControllerButton                = a
+    val SDL_CONTROLLER_BUTTON_INVALID                                          = define(-1)
+    val SDL_CONTROLLER_BUTTON_A                                                = define(0)
+    val SDL_CONTROLLER_BUTTON_B                                                = define(1)
+    val SDL_CONTROLLER_BUTTON_X                                                = define(2)
+    val SDL_CONTROLLER_BUTTON_Y                                                = define(3)
+    val SDL_CONTROLLER_BUTTON_BACK                                             = define(4)
+    val SDL_CONTROLLER_BUTTON_GUIDE                                            = define(5)
+    val SDL_CONTROLLER_BUTTON_START                                            = define(6)
+    val SDL_CONTROLLER_BUTTON_LEFTSTICK                                        = define(7)
+    val SDL_CONTROLLER_BUTTON_RIGHTSTICK                                       = define(8)
+    val SDL_CONTROLLER_BUTTON_LEFTSHOULDER                                     = define(9)
+    val SDL_CONTROLLER_BUTTON_RIGHTSHOULDER                                    = define(10)
+    val SDL_CONTROLLER_BUTTON_DPAD_UP                                          = define(11)
+    val SDL_CONTROLLER_BUTTON_DPAD_DOWN                                        = define(12)
+    val SDL_CONTROLLER_BUTTON_DPAD_LEFT                                        = define(13)
+    val SDL_CONTROLLER_BUTTON_DPAD_RIGHT                                       = define(14)
+    val SDL_CONTROLLER_BUTTON_MISC1                                            = define(15)
+    val SDL_CONTROLLER_BUTTON_PADDLE1                                          = define(16)
+    val SDL_CONTROLLER_BUTTON_PADDLE2                                          = define(17)
+    val SDL_CONTROLLER_BUTTON_PADDLE3                                          = define(18)
+    val SDL_CONTROLLER_BUTTON_PADDLE4                                          = define(19)
+    val SDL_CONTROLLER_BUTTON_TOUCHPAD                                         = define(20)
+    val SDL_CONTROLLER_BUTTON_MAX                                              = define(21)
     inline def getName(inline value: SDL_GameControllerButton): Option[String] =
       inline value match
         case SDL_CONTROLLER_BUTTON_INVALID       => Some("SDL_CONTROLLER_BUTTON_INVALID")
@@ -763,37 +763,37 @@ object enumerations:
     */
   opaque type SDL_GameControllerType = CInt
   object SDL_GameControllerType extends CEnum[SDL_GameControllerType]:
-    given _tag: Tag[SDL_GameControllerType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_GameControllerType = a
-    val SDL_CONTROLLER_TYPE_UNKNOWN                           = define(0)
-    val SDL_CONTROLLER_TYPE_XBOX360                           = define(1)
-    val SDL_CONTROLLER_TYPE_XBOXONE                           = define(2)
-    val SDL_CONTROLLER_TYPE_PS3                               = define(3)
-    val SDL_CONTROLLER_TYPE_PS4                               = define(4)
-    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO               = define(5)
-    val SDL_CONTROLLER_TYPE_VIRTUAL                           = define(6)
-    val SDL_CONTROLLER_TYPE_PS5                               = define(7)
-    val SDL_CONTROLLER_TYPE_AMAZON_LUNA                       = define(8)
-    val SDL_CONTROLLER_TYPE_GOOGLE_STADIA                     = define(9)
-    val SDL_CONTROLLER_TYPE_NVIDIA_SHIELD                     = define(10)
-    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT       = define(11)
-    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT      = define(12)
-    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR       = define(13)
-    val SDL_CONTROLLER_TYPE_MAX                               = define(14)
+    given _tag: Tag[SDL_GameControllerType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_GameControllerType                = a
+    val SDL_CONTROLLER_TYPE_UNKNOWN                                          = define(0)
+    val SDL_CONTROLLER_TYPE_XBOX360                                          = define(1)
+    val SDL_CONTROLLER_TYPE_XBOXONE                                          = define(2)
+    val SDL_CONTROLLER_TYPE_PS3                                              = define(3)
+    val SDL_CONTROLLER_TYPE_PS4                                              = define(4)
+    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO                              = define(5)
+    val SDL_CONTROLLER_TYPE_VIRTUAL                                          = define(6)
+    val SDL_CONTROLLER_TYPE_PS5                                              = define(7)
+    val SDL_CONTROLLER_TYPE_AMAZON_LUNA                                      = define(8)
+    val SDL_CONTROLLER_TYPE_GOOGLE_STADIA                                    = define(9)
+    val SDL_CONTROLLER_TYPE_NVIDIA_SHIELD                                    = define(10)
+    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT                      = define(11)
+    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT                     = define(12)
+    val SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR                      = define(13)
+    val SDL_CONTROLLER_TYPE_MAX                                              = define(14)
     inline def getName(inline value: SDL_GameControllerType): Option[String] =
       inline value match
-        case SDL_CONTROLLER_TYPE_UNKNOWN                     => Some("SDL_CONTROLLER_TYPE_UNKNOWN")
-        case SDL_CONTROLLER_TYPE_XBOX360                     => Some("SDL_CONTROLLER_TYPE_XBOX360")
-        case SDL_CONTROLLER_TYPE_XBOXONE                     => Some("SDL_CONTROLLER_TYPE_XBOXONE")
-        case SDL_CONTROLLER_TYPE_PS3                         => Some("SDL_CONTROLLER_TYPE_PS3")
-        case SDL_CONTROLLER_TYPE_PS4                         => Some("SDL_CONTROLLER_TYPE_PS4")
-        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO         => Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO")
-        case SDL_CONTROLLER_TYPE_VIRTUAL                     => Some("SDL_CONTROLLER_TYPE_VIRTUAL")
-        case SDL_CONTROLLER_TYPE_PS5                         => Some("SDL_CONTROLLER_TYPE_PS5")
-        case SDL_CONTROLLER_TYPE_AMAZON_LUNA                 => Some("SDL_CONTROLLER_TYPE_AMAZON_LUNA")
-        case SDL_CONTROLLER_TYPE_GOOGLE_STADIA               => Some("SDL_CONTROLLER_TYPE_GOOGLE_STADIA")
-        case SDL_CONTROLLER_TYPE_NVIDIA_SHIELD               => Some("SDL_CONTROLLER_TYPE_NVIDIA_SHIELD")
-        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT => Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT")
+        case SDL_CONTROLLER_TYPE_UNKNOWN                      => Some("SDL_CONTROLLER_TYPE_UNKNOWN")
+        case SDL_CONTROLLER_TYPE_XBOX360                      => Some("SDL_CONTROLLER_TYPE_XBOX360")
+        case SDL_CONTROLLER_TYPE_XBOXONE                      => Some("SDL_CONTROLLER_TYPE_XBOXONE")
+        case SDL_CONTROLLER_TYPE_PS3                          => Some("SDL_CONTROLLER_TYPE_PS3")
+        case SDL_CONTROLLER_TYPE_PS4                          => Some("SDL_CONTROLLER_TYPE_PS4")
+        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO          => Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO")
+        case SDL_CONTROLLER_TYPE_VIRTUAL                      => Some("SDL_CONTROLLER_TYPE_VIRTUAL")
+        case SDL_CONTROLLER_TYPE_PS5                          => Some("SDL_CONTROLLER_TYPE_PS5")
+        case SDL_CONTROLLER_TYPE_AMAZON_LUNA                  => Some("SDL_CONTROLLER_TYPE_AMAZON_LUNA")
+        case SDL_CONTROLLER_TYPE_GOOGLE_STADIA                => Some("SDL_CONTROLLER_TYPE_GOOGLE_STADIA")
+        case SDL_CONTROLLER_TYPE_NVIDIA_SHIELD                => Some("SDL_CONTROLLER_TYPE_NVIDIA_SHIELD")
+        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT  => Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT")
         case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT =>
           Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT")
         case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR => Some("SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR")
@@ -810,11 +810,11 @@ object enumerations:
     */
   opaque type SDL_HintPriority = CInt
   object SDL_HintPriority extends CEnum[SDL_HintPriority]:
-    given _tag: Tag[SDL_HintPriority]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_HintPriority = a
-    val SDL_HINT_DEFAULT                                = define(0)
-    val SDL_HINT_NORMAL                                 = define(1)
-    val SDL_HINT_OVERRIDE                               = define(2)
+    given _tag: Tag[SDL_HintPriority]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_HintPriority                = a
+    val SDL_HINT_DEFAULT                                               = define(0)
+    val SDL_HINT_NORMAL                                                = define(1)
+    val SDL_HINT_OVERRIDE                                              = define(2)
     inline def getName(inline value: SDL_HintPriority): Option[String] =
       inline value match
         case SDL_HINT_DEFAULT  => Some("SDL_HINT_DEFAULT")
@@ -832,18 +832,18 @@ object enumerations:
     */
   opaque type SDL_HitTestResult = CInt
   object SDL_HitTestResult extends CEnum[SDL_HitTestResult]:
-    given _tag: Tag[SDL_HitTestResult]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_HitTestResult = a
-    val SDL_HITTEST_NORMAL                               = define(0)
-    val SDL_HITTEST_DRAGGABLE                            = define(1)
-    val SDL_HITTEST_RESIZE_TOPLEFT                       = define(2)
-    val SDL_HITTEST_RESIZE_TOP                           = define(3)
-    val SDL_HITTEST_RESIZE_TOPRIGHT                      = define(4)
-    val SDL_HITTEST_RESIZE_RIGHT                         = define(5)
-    val SDL_HITTEST_RESIZE_BOTTOMRIGHT                   = define(6)
-    val SDL_HITTEST_RESIZE_BOTTOM                        = define(7)
-    val SDL_HITTEST_RESIZE_BOTTOMLEFT                    = define(8)
-    val SDL_HITTEST_RESIZE_LEFT                          = define(9)
+    given _tag: Tag[SDL_HitTestResult]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_HitTestResult                = a
+    val SDL_HITTEST_NORMAL                                              = define(0)
+    val SDL_HITTEST_DRAGGABLE                                           = define(1)
+    val SDL_HITTEST_RESIZE_TOPLEFT                                      = define(2)
+    val SDL_HITTEST_RESIZE_TOP                                          = define(3)
+    val SDL_HITTEST_RESIZE_TOPRIGHT                                     = define(4)
+    val SDL_HITTEST_RESIZE_RIGHT                                        = define(5)
+    val SDL_HITTEST_RESIZE_BOTTOMRIGHT                                  = define(6)
+    val SDL_HITTEST_RESIZE_BOTTOM                                       = define(7)
+    val SDL_HITTEST_RESIZE_BOTTOMLEFT                                   = define(8)
+    val SDL_HITTEST_RESIZE_LEFT                                         = define(9)
     inline def getName(inline value: SDL_HitTestResult): Option[String] =
       inline value match
         case SDL_HITTEST_NORMAL             => Some("SDL_HITTEST_NORMAL")
@@ -869,17 +869,17 @@ object enumerations:
     */
   opaque type SDL_InitFlag = UInt
   object SDL_InitFlag extends CEnumUI[SDL_InitFlag]:
-    given _tag: Tag[SDL_InitFlag]                  = Tag.UInt
-    inline def define(inline a: Int): SDL_InitFlag = a.toUInt
-    val SDL_INIT_TIMER                             = define(0x00000001)
-    val SDL_INIT_AUDIO                             = define(0x00000010)
-    val SDL_INIT_VIDEO                             = define(0x00000020)
-    val SDL_INIT_JOYSTICK                          = define(0x00000200)
-    val SDL_INIT_HAPTIC                            = define(0x00001000)
-    val SDL_INIT_GAMECONTROLLER                    = define(0x00002000)
-    val SDL_INIT_EVENTS                            = define(0x00004000)
-    val SDL_INIT_SENSOR                            = define(0x00008000)
-    val SDL_INIT_NOPARACHUTE                       = define(0x00100000)
+    given _tag: Tag[SDL_InitFlag]                                  = Tag.UInt
+    inline def define(inline a: Int): SDL_InitFlag                 = a.toUInt
+    val SDL_INIT_TIMER                                             = define(0x00000001)
+    val SDL_INIT_AUDIO                                             = define(0x00000010)
+    val SDL_INIT_VIDEO                                             = define(0x00000020)
+    val SDL_INIT_JOYSTICK                                          = define(0x00000200)
+    val SDL_INIT_HAPTIC                                            = define(0x00001000)
+    val SDL_INIT_GAMECONTROLLER                                    = define(0x00002000)
+    val SDL_INIT_EVENTS                                            = define(0x00004000)
+    val SDL_INIT_SENSOR                                            = define(0x00008000)
+    val SDL_INIT_NOPARACHUTE                                       = define(0x00100000)
     inline def getName(inline value: SDL_InitFlag): Option[String] =
       inline value match
         case SDL_INIT_TIMER          => Some("SDL_INIT_TIMER")
@@ -901,15 +901,15 @@ object enumerations:
     */
   opaque type SDL_JoystickPowerLevel = CInt
   object SDL_JoystickPowerLevel extends CEnum[SDL_JoystickPowerLevel]:
-    given _tag: Tag[SDL_JoystickPowerLevel]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_JoystickPowerLevel = a
-    val SDL_JOYSTICK_POWER_UNKNOWN                            = define(-1)
-    val SDL_JOYSTICK_POWER_EMPTY                              = define(0)
-    val SDL_JOYSTICK_POWER_LOW                                = define(1)
-    val SDL_JOYSTICK_POWER_MEDIUM                             = define(2)
-    val SDL_JOYSTICK_POWER_FULL                               = define(3)
-    val SDL_JOYSTICK_POWER_WIRED                              = define(4)
-    val SDL_JOYSTICK_POWER_MAX                                = define(5)
+    given _tag: Tag[SDL_JoystickPowerLevel]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_JoystickPowerLevel                = a
+    val SDL_JOYSTICK_POWER_UNKNOWN                                           = define(-1)
+    val SDL_JOYSTICK_POWER_EMPTY                                             = define(0)
+    val SDL_JOYSTICK_POWER_LOW                                               = define(1)
+    val SDL_JOYSTICK_POWER_MEDIUM                                            = define(2)
+    val SDL_JOYSTICK_POWER_FULL                                              = define(3)
+    val SDL_JOYSTICK_POWER_WIRED                                             = define(4)
+    val SDL_JOYSTICK_POWER_MAX                                               = define(5)
     inline def getName(inline value: SDL_JoystickPowerLevel): Option[String] =
       inline value match
         case SDL_JOYSTICK_POWER_UNKNOWN => Some("SDL_JOYSTICK_POWER_UNKNOWN")
@@ -929,18 +929,18 @@ object enumerations:
     */
   opaque type SDL_JoystickType = CInt
   object SDL_JoystickType extends CEnum[SDL_JoystickType]:
-    given _tag: Tag[SDL_JoystickType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_JoystickType = a
-    val SDL_JOYSTICK_TYPE_UNKNOWN                       = define(0)
-    val SDL_JOYSTICK_TYPE_GAMECONTROLLER                = define(1)
-    val SDL_JOYSTICK_TYPE_WHEEL                         = define(2)
-    val SDL_JOYSTICK_TYPE_ARCADE_STICK                  = define(3)
-    val SDL_JOYSTICK_TYPE_FLIGHT_STICK                  = define(4)
-    val SDL_JOYSTICK_TYPE_DANCE_PAD                     = define(5)
-    val SDL_JOYSTICK_TYPE_GUITAR                        = define(6)
-    val SDL_JOYSTICK_TYPE_DRUM_KIT                      = define(7)
-    val SDL_JOYSTICK_TYPE_ARCADE_PAD                    = define(8)
-    val SDL_JOYSTICK_TYPE_THROTTLE                      = define(9)
+    given _tag: Tag[SDL_JoystickType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_JoystickType                = a
+    val SDL_JOYSTICK_TYPE_UNKNOWN                                      = define(0)
+    val SDL_JOYSTICK_TYPE_GAMECONTROLLER                               = define(1)
+    val SDL_JOYSTICK_TYPE_WHEEL                                        = define(2)
+    val SDL_JOYSTICK_TYPE_ARCADE_STICK                                 = define(3)
+    val SDL_JOYSTICK_TYPE_FLIGHT_STICK                                 = define(4)
+    val SDL_JOYSTICK_TYPE_DANCE_PAD                                    = define(5)
+    val SDL_JOYSTICK_TYPE_GUITAR                                       = define(6)
+    val SDL_JOYSTICK_TYPE_DRUM_KIT                                     = define(7)
+    val SDL_JOYSTICK_TYPE_ARCADE_PAD                                   = define(8)
+    val SDL_JOYSTICK_TYPE_THROTTLE                                     = define(9)
     inline def getName(inline value: SDL_JoystickType): Option[String] =
       inline value match
         case SDL_JOYSTICK_TYPE_UNKNOWN        => Some("SDL_JOYSTICK_TYPE_UNKNOWN")
@@ -963,252 +963,252 @@ object enumerations:
     */
   opaque type SDL_KeyCode = CInt
   object SDL_KeyCode extends CEnum[SDL_KeyCode]:
-    given _tag: Tag[SDL_KeyCode]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_KeyCode = a
-    val SDLK_UNKNOWN                               = define(0)
-    val SDLK_RETURN                                = define(13)
-    val SDLK_ESCAPE                                = define(27)
-    val SDLK_BACKSPACE                             = define(8)
-    val SDLK_TAB                                   = define(9)
-    val SDLK_SPACE                                 = define(32)
-    val SDLK_EXCLAIM                               = define(33)
-    val SDLK_QUOTEDBL                              = define(34)
-    val SDLK_HASH                                  = define(35)
-    val SDLK_PERCENT                               = define(37)
-    val SDLK_DOLLAR                                = define(36)
-    val SDLK_AMPERSAND                             = define(38)
-    val SDLK_QUOTE                                 = define(39)
-    val SDLK_LEFTPAREN                             = define(40)
-    val SDLK_RIGHTPAREN                            = define(41)
-    val SDLK_ASTERISK                              = define(42)
-    val SDLK_PLUS                                  = define(43)
-    val SDLK_COMMA                                 = define(44)
-    val SDLK_MINUS                                 = define(45)
-    val SDLK_PERIOD                                = define(46)
-    val SDLK_SLASH                                 = define(47)
-    val SDLK_0                                     = define(48)
-    val SDLK_1                                     = define(49)
-    val SDLK_2                                     = define(50)
-    val SDLK_3                                     = define(51)
-    val SDLK_4                                     = define(52)
-    val SDLK_5                                     = define(53)
-    val SDLK_6                                     = define(54)
-    val SDLK_7                                     = define(55)
-    val SDLK_8                                     = define(56)
-    val SDLK_9                                     = define(57)
-    val SDLK_COLON                                 = define(58)
-    val SDLK_SEMICOLON                             = define(59)
-    val SDLK_LESS                                  = define(60)
-    val SDLK_EQUALS                                = define(61)
-    val SDLK_GREATER                               = define(62)
-    val SDLK_QUESTION                              = define(63)
-    val SDLK_AT                                    = define(64)
-    val SDLK_LEFTBRACKET                           = define(91)
-    val SDLK_BACKSLASH                             = define(92)
-    val SDLK_RIGHTBRACKET                          = define(93)
-    val SDLK_CARET                                 = define(94)
-    val SDLK_UNDERSCORE                            = define(95)
-    val SDLK_BACKQUOTE                             = define(96)
-    val SDLK_a                                     = define(97)
-    val SDLK_b                                     = define(98)
-    val SDLK_c                                     = define(99)
-    val SDLK_d                                     = define(100)
-    val SDLK_e                                     = define(101)
-    val SDLK_f                                     = define(102)
-    val SDLK_g                                     = define(103)
-    val SDLK_h                                     = define(104)
-    val SDLK_i                                     = define(105)
-    val SDLK_j                                     = define(106)
-    val SDLK_k                                     = define(107)
-    val SDLK_l                                     = define(108)
-    val SDLK_m                                     = define(109)
-    val SDLK_n                                     = define(110)
-    val SDLK_o                                     = define(111)
-    val SDLK_p                                     = define(112)
-    val SDLK_q                                     = define(113)
-    val SDLK_r                                     = define(114)
-    val SDLK_s                                     = define(115)
-    val SDLK_t                                     = define(116)
-    val SDLK_u                                     = define(117)
-    val SDLK_v                                     = define(118)
-    val SDLK_w                                     = define(119)
-    val SDLK_x                                     = define(120)
-    val SDLK_y                                     = define(121)
-    val SDLK_z                                     = define(122)
-    val SDLK_CAPSLOCK                              = define(1073741881)
-    val SDLK_F1                                    = define(1073741882)
-    val SDLK_F2                                    = define(1073741883)
-    val SDLK_F3                                    = define(1073741884)
-    val SDLK_F4                                    = define(1073741885)
-    val SDLK_F5                                    = define(1073741886)
-    val SDLK_F6                                    = define(1073741887)
-    val SDLK_F7                                    = define(1073741888)
-    val SDLK_F8                                    = define(1073741889)
-    val SDLK_F9                                    = define(1073741890)
-    val SDLK_F10                                   = define(1073741891)
-    val SDLK_F11                                   = define(1073741892)
-    val SDLK_F12                                   = define(1073741893)
-    val SDLK_PRINTSCREEN                           = define(1073741894)
-    val SDLK_SCROLLLOCK                            = define(1073741895)
-    val SDLK_PAUSE                                 = define(1073741896)
-    val SDLK_INSERT                                = define(1073741897)
-    val SDLK_HOME                                  = define(1073741898)
-    val SDLK_PAGEUP                                = define(1073741899)
-    val SDLK_DELETE                                = define(127)
-    val SDLK_END                                   = define(1073741901)
-    val SDLK_PAGEDOWN                              = define(1073741902)
-    val SDLK_RIGHT                                 = define(1073741903)
-    val SDLK_LEFT                                  = define(1073741904)
-    val SDLK_DOWN                                  = define(1073741905)
-    val SDLK_UP                                    = define(1073741906)
-    val SDLK_NUMLOCKCLEAR                          = define(1073741907)
-    val SDLK_KP_DIVIDE                             = define(1073741908)
-    val SDLK_KP_MULTIPLY                           = define(1073741909)
-    val SDLK_KP_MINUS                              = define(1073741910)
-    val SDLK_KP_PLUS                               = define(1073741911)
-    val SDLK_KP_ENTER                              = define(1073741912)
-    val SDLK_KP_1                                  = define(1073741913)
-    val SDLK_KP_2                                  = define(1073741914)
-    val SDLK_KP_3                                  = define(1073741915)
-    val SDLK_KP_4                                  = define(1073741916)
-    val SDLK_KP_5                                  = define(1073741917)
-    val SDLK_KP_6                                  = define(1073741918)
-    val SDLK_KP_7                                  = define(1073741919)
-    val SDLK_KP_8                                  = define(1073741920)
-    val SDLK_KP_9                                  = define(1073741921)
-    val SDLK_KP_0                                  = define(1073741922)
-    val SDLK_KP_PERIOD                             = define(1073741923)
-    val SDLK_APPLICATION                           = define(1073741925)
-    val SDLK_POWER                                 = define(1073741926)
-    val SDLK_KP_EQUALS                             = define(1073741927)
-    val SDLK_F13                                   = define(1073741928)
-    val SDLK_F14                                   = define(1073741929)
-    val SDLK_F15                                   = define(1073741930)
-    val SDLK_F16                                   = define(1073741931)
-    val SDLK_F17                                   = define(1073741932)
-    val SDLK_F18                                   = define(1073741933)
-    val SDLK_F19                                   = define(1073741934)
-    val SDLK_F20                                   = define(1073741935)
-    val SDLK_F21                                   = define(1073741936)
-    val SDLK_F22                                   = define(1073741937)
-    val SDLK_F23                                   = define(1073741938)
-    val SDLK_F24                                   = define(1073741939)
-    val SDLK_EXECUTE                               = define(1073741940)
-    val SDLK_HELP                                  = define(1073741941)
-    val SDLK_MENU                                  = define(1073741942)
-    val SDLK_SELECT                                = define(1073741943)
-    val SDLK_STOP                                  = define(1073741944)
-    val SDLK_AGAIN                                 = define(1073741945)
-    val SDLK_UNDO                                  = define(1073741946)
-    val SDLK_CUT                                   = define(1073741947)
-    val SDLK_COPY                                  = define(1073741948)
-    val SDLK_PASTE                                 = define(1073741949)
-    val SDLK_FIND                                  = define(1073741950)
-    val SDLK_MUTE                                  = define(1073741951)
-    val SDLK_VOLUMEUP                              = define(1073741952)
-    val SDLK_VOLUMEDOWN                            = define(1073741953)
-    val SDLK_KP_COMMA                              = define(1073741957)
-    val SDLK_KP_EQUALSAS400                        = define(1073741958)
-    val SDLK_ALTERASE                              = define(1073741977)
-    val SDLK_SYSREQ                                = define(1073741978)
-    val SDLK_CANCEL                                = define(1073741979)
-    val SDLK_CLEAR                                 = define(1073741980)
-    val SDLK_PRIOR                                 = define(1073741981)
-    val SDLK_RETURN2                               = define(1073741982)
-    val SDLK_SEPARATOR                             = define(1073741983)
-    val SDLK_OUT                                   = define(1073741984)
-    val SDLK_OPER                                  = define(1073741985)
-    val SDLK_CLEARAGAIN                            = define(1073741986)
-    val SDLK_CRSEL                                 = define(1073741987)
-    val SDLK_EXSEL                                 = define(1073741988)
-    val SDLK_KP_00                                 = define(1073742000)
-    val SDLK_KP_000                                = define(1073742001)
-    val SDLK_THOUSANDSSEPARATOR                    = define(1073742002)
-    val SDLK_DECIMALSEPARATOR                      = define(1073742003)
-    val SDLK_CURRENCYUNIT                          = define(1073742004)
-    val SDLK_CURRENCYSUBUNIT                       = define(1073742005)
-    val SDLK_KP_LEFTPAREN                          = define(1073742006)
-    val SDLK_KP_RIGHTPAREN                         = define(1073742007)
-    val SDLK_KP_LEFTBRACE                          = define(1073742008)
-    val SDLK_KP_RIGHTBRACE                         = define(1073742009)
-    val SDLK_KP_TAB                                = define(1073742010)
-    val SDLK_KP_BACKSPACE                          = define(1073742011)
-    val SDLK_KP_A                                  = define(1073742012)
-    val SDLK_KP_B                                  = define(1073742013)
-    val SDLK_KP_C                                  = define(1073742014)
-    val SDLK_KP_D                                  = define(1073742015)
-    val SDLK_KP_E                                  = define(1073742016)
-    val SDLK_KP_F                                  = define(1073742017)
-    val SDLK_KP_XOR                                = define(1073742018)
-    val SDLK_KP_POWER                              = define(1073742019)
-    val SDLK_KP_PERCENT                            = define(1073742020)
-    val SDLK_KP_LESS                               = define(1073742021)
-    val SDLK_KP_GREATER                            = define(1073742022)
-    val SDLK_KP_AMPERSAND                          = define(1073742023)
-    val SDLK_KP_DBLAMPERSAND                       = define(1073742024)
-    val SDLK_KP_VERTICALBAR                        = define(1073742025)
-    val SDLK_KP_DBLVERTICALBAR                     = define(1073742026)
-    val SDLK_KP_COLON                              = define(1073742027)
-    val SDLK_KP_HASH                               = define(1073742028)
-    val SDLK_KP_SPACE                              = define(1073742029)
-    val SDLK_KP_AT                                 = define(1073742030)
-    val SDLK_KP_EXCLAM                             = define(1073742031)
-    val SDLK_KP_MEMSTORE                           = define(1073742032)
-    val SDLK_KP_MEMRECALL                          = define(1073742033)
-    val SDLK_KP_MEMCLEAR                           = define(1073742034)
-    val SDLK_KP_MEMADD                             = define(1073742035)
-    val SDLK_KP_MEMSUBTRACT                        = define(1073742036)
-    val SDLK_KP_MEMMULTIPLY                        = define(1073742037)
-    val SDLK_KP_MEMDIVIDE                          = define(1073742038)
-    val SDLK_KP_PLUSMINUS                          = define(1073742039)
-    val SDLK_KP_CLEAR                              = define(1073742040)
-    val SDLK_KP_CLEARENTRY                         = define(1073742041)
-    val SDLK_KP_BINARY                             = define(1073742042)
-    val SDLK_KP_OCTAL                              = define(1073742043)
-    val SDLK_KP_DECIMAL                            = define(1073742044)
-    val SDLK_KP_HEXADECIMAL                        = define(1073742045)
-    val SDLK_LCTRL                                 = define(1073742048)
-    val SDLK_LSHIFT                                = define(1073742049)
-    val SDLK_LALT                                  = define(1073742050)
-    val SDLK_LGUI                                  = define(1073742051)
-    val SDLK_RCTRL                                 = define(1073742052)
-    val SDLK_RSHIFT                                = define(1073742053)
-    val SDLK_RALT                                  = define(1073742054)
-    val SDLK_RGUI                                  = define(1073742055)
-    val SDLK_MODE                                  = define(1073742081)
-    val SDLK_AUDIONEXT                             = define(1073742082)
-    val SDLK_AUDIOPREV                             = define(1073742083)
-    val SDLK_AUDIOSTOP                             = define(1073742084)
-    val SDLK_AUDIOPLAY                             = define(1073742085)
-    val SDLK_AUDIOMUTE                             = define(1073742086)
-    val SDLK_MEDIASELECT                           = define(1073742087)
-    val SDLK_WWW                                   = define(1073742088)
-    val SDLK_MAIL                                  = define(1073742089)
-    val SDLK_CALCULATOR                            = define(1073742090)
-    val SDLK_COMPUTER                              = define(1073742091)
-    val SDLK_AC_SEARCH                             = define(1073742092)
-    val SDLK_AC_HOME                               = define(1073742093)
-    val SDLK_AC_BACK                               = define(1073742094)
-    val SDLK_AC_FORWARD                            = define(1073742095)
-    val SDLK_AC_STOP                               = define(1073742096)
-    val SDLK_AC_REFRESH                            = define(1073742097)
-    val SDLK_AC_BOOKMARKS                          = define(1073742098)
-    val SDLK_BRIGHTNESSDOWN                        = define(1073742099)
-    val SDLK_BRIGHTNESSUP                          = define(1073742100)
-    val SDLK_DISPLAYSWITCH                         = define(1073742101)
-    val SDLK_KBDILLUMTOGGLE                        = define(1073742102)
-    val SDLK_KBDILLUMDOWN                          = define(1073742103)
-    val SDLK_KBDILLUMUP                            = define(1073742104)
-    val SDLK_EJECT                                 = define(1073742105)
-    val SDLK_SLEEP                                 = define(1073742106)
-    val SDLK_APP1                                  = define(1073742107)
-    val SDLK_APP2                                  = define(1073742108)
-    val SDLK_AUDIOREWIND                           = define(1073742109)
-    val SDLK_AUDIOFASTFORWARD                      = define(1073742110)
-    val SDLK_SOFTLEFT                              = define(1073742111)
-    val SDLK_SOFTRIGHT                             = define(1073742112)
-    val SDLK_CALL                                  = define(1073742113)
-    val SDLK_ENDCALL                               = define(1073742114)
+    given _tag: Tag[SDL_KeyCode]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_KeyCode                = a
+    val SDLK_UNKNOWN                                              = define(0)
+    val SDLK_RETURN                                               = define(13)
+    val SDLK_ESCAPE                                               = define(27)
+    val SDLK_BACKSPACE                                            = define(8)
+    val SDLK_TAB                                                  = define(9)
+    val SDLK_SPACE                                                = define(32)
+    val SDLK_EXCLAIM                                              = define(33)
+    val SDLK_QUOTEDBL                                             = define(34)
+    val SDLK_HASH                                                 = define(35)
+    val SDLK_PERCENT                                              = define(37)
+    val SDLK_DOLLAR                                               = define(36)
+    val SDLK_AMPERSAND                                            = define(38)
+    val SDLK_QUOTE                                                = define(39)
+    val SDLK_LEFTPAREN                                            = define(40)
+    val SDLK_RIGHTPAREN                                           = define(41)
+    val SDLK_ASTERISK                                             = define(42)
+    val SDLK_PLUS                                                 = define(43)
+    val SDLK_COMMA                                                = define(44)
+    val SDLK_MINUS                                                = define(45)
+    val SDLK_PERIOD                                               = define(46)
+    val SDLK_SLASH                                                = define(47)
+    val SDLK_0                                                    = define(48)
+    val SDLK_1                                                    = define(49)
+    val SDLK_2                                                    = define(50)
+    val SDLK_3                                                    = define(51)
+    val SDLK_4                                                    = define(52)
+    val SDLK_5                                                    = define(53)
+    val SDLK_6                                                    = define(54)
+    val SDLK_7                                                    = define(55)
+    val SDLK_8                                                    = define(56)
+    val SDLK_9                                                    = define(57)
+    val SDLK_COLON                                                = define(58)
+    val SDLK_SEMICOLON                                            = define(59)
+    val SDLK_LESS                                                 = define(60)
+    val SDLK_EQUALS                                               = define(61)
+    val SDLK_GREATER                                              = define(62)
+    val SDLK_QUESTION                                             = define(63)
+    val SDLK_AT                                                   = define(64)
+    val SDLK_LEFTBRACKET                                          = define(91)
+    val SDLK_BACKSLASH                                            = define(92)
+    val SDLK_RIGHTBRACKET                                         = define(93)
+    val SDLK_CARET                                                = define(94)
+    val SDLK_UNDERSCORE                                           = define(95)
+    val SDLK_BACKQUOTE                                            = define(96)
+    val SDLK_a                                                    = define(97)
+    val SDLK_b                                                    = define(98)
+    val SDLK_c                                                    = define(99)
+    val SDLK_d                                                    = define(100)
+    val SDLK_e                                                    = define(101)
+    val SDLK_f                                                    = define(102)
+    val SDLK_g                                                    = define(103)
+    val SDLK_h                                                    = define(104)
+    val SDLK_i                                                    = define(105)
+    val SDLK_j                                                    = define(106)
+    val SDLK_k                                                    = define(107)
+    val SDLK_l                                                    = define(108)
+    val SDLK_m                                                    = define(109)
+    val SDLK_n                                                    = define(110)
+    val SDLK_o                                                    = define(111)
+    val SDLK_p                                                    = define(112)
+    val SDLK_q                                                    = define(113)
+    val SDLK_r                                                    = define(114)
+    val SDLK_s                                                    = define(115)
+    val SDLK_t                                                    = define(116)
+    val SDLK_u                                                    = define(117)
+    val SDLK_v                                                    = define(118)
+    val SDLK_w                                                    = define(119)
+    val SDLK_x                                                    = define(120)
+    val SDLK_y                                                    = define(121)
+    val SDLK_z                                                    = define(122)
+    val SDLK_CAPSLOCK                                             = define(1073741881)
+    val SDLK_F1                                                   = define(1073741882)
+    val SDLK_F2                                                   = define(1073741883)
+    val SDLK_F3                                                   = define(1073741884)
+    val SDLK_F4                                                   = define(1073741885)
+    val SDLK_F5                                                   = define(1073741886)
+    val SDLK_F6                                                   = define(1073741887)
+    val SDLK_F7                                                   = define(1073741888)
+    val SDLK_F8                                                   = define(1073741889)
+    val SDLK_F9                                                   = define(1073741890)
+    val SDLK_F10                                                  = define(1073741891)
+    val SDLK_F11                                                  = define(1073741892)
+    val SDLK_F12                                                  = define(1073741893)
+    val SDLK_PRINTSCREEN                                          = define(1073741894)
+    val SDLK_SCROLLLOCK                                           = define(1073741895)
+    val SDLK_PAUSE                                                = define(1073741896)
+    val SDLK_INSERT                                               = define(1073741897)
+    val SDLK_HOME                                                 = define(1073741898)
+    val SDLK_PAGEUP                                               = define(1073741899)
+    val SDLK_DELETE                                               = define(127)
+    val SDLK_END                                                  = define(1073741901)
+    val SDLK_PAGEDOWN                                             = define(1073741902)
+    val SDLK_RIGHT                                                = define(1073741903)
+    val SDLK_LEFT                                                 = define(1073741904)
+    val SDLK_DOWN                                                 = define(1073741905)
+    val SDLK_UP                                                   = define(1073741906)
+    val SDLK_NUMLOCKCLEAR                                         = define(1073741907)
+    val SDLK_KP_DIVIDE                                            = define(1073741908)
+    val SDLK_KP_MULTIPLY                                          = define(1073741909)
+    val SDLK_KP_MINUS                                             = define(1073741910)
+    val SDLK_KP_PLUS                                              = define(1073741911)
+    val SDLK_KP_ENTER                                             = define(1073741912)
+    val SDLK_KP_1                                                 = define(1073741913)
+    val SDLK_KP_2                                                 = define(1073741914)
+    val SDLK_KP_3                                                 = define(1073741915)
+    val SDLK_KP_4                                                 = define(1073741916)
+    val SDLK_KP_5                                                 = define(1073741917)
+    val SDLK_KP_6                                                 = define(1073741918)
+    val SDLK_KP_7                                                 = define(1073741919)
+    val SDLK_KP_8                                                 = define(1073741920)
+    val SDLK_KP_9                                                 = define(1073741921)
+    val SDLK_KP_0                                                 = define(1073741922)
+    val SDLK_KP_PERIOD                                            = define(1073741923)
+    val SDLK_APPLICATION                                          = define(1073741925)
+    val SDLK_POWER                                                = define(1073741926)
+    val SDLK_KP_EQUALS                                            = define(1073741927)
+    val SDLK_F13                                                  = define(1073741928)
+    val SDLK_F14                                                  = define(1073741929)
+    val SDLK_F15                                                  = define(1073741930)
+    val SDLK_F16                                                  = define(1073741931)
+    val SDLK_F17                                                  = define(1073741932)
+    val SDLK_F18                                                  = define(1073741933)
+    val SDLK_F19                                                  = define(1073741934)
+    val SDLK_F20                                                  = define(1073741935)
+    val SDLK_F21                                                  = define(1073741936)
+    val SDLK_F22                                                  = define(1073741937)
+    val SDLK_F23                                                  = define(1073741938)
+    val SDLK_F24                                                  = define(1073741939)
+    val SDLK_EXECUTE                                              = define(1073741940)
+    val SDLK_HELP                                                 = define(1073741941)
+    val SDLK_MENU                                                 = define(1073741942)
+    val SDLK_SELECT                                               = define(1073741943)
+    val SDLK_STOP                                                 = define(1073741944)
+    val SDLK_AGAIN                                                = define(1073741945)
+    val SDLK_UNDO                                                 = define(1073741946)
+    val SDLK_CUT                                                  = define(1073741947)
+    val SDLK_COPY                                                 = define(1073741948)
+    val SDLK_PASTE                                                = define(1073741949)
+    val SDLK_FIND                                                 = define(1073741950)
+    val SDLK_MUTE                                                 = define(1073741951)
+    val SDLK_VOLUMEUP                                             = define(1073741952)
+    val SDLK_VOLUMEDOWN                                           = define(1073741953)
+    val SDLK_KP_COMMA                                             = define(1073741957)
+    val SDLK_KP_EQUALSAS400                                       = define(1073741958)
+    val SDLK_ALTERASE                                             = define(1073741977)
+    val SDLK_SYSREQ                                               = define(1073741978)
+    val SDLK_CANCEL                                               = define(1073741979)
+    val SDLK_CLEAR                                                = define(1073741980)
+    val SDLK_PRIOR                                                = define(1073741981)
+    val SDLK_RETURN2                                              = define(1073741982)
+    val SDLK_SEPARATOR                                            = define(1073741983)
+    val SDLK_OUT                                                  = define(1073741984)
+    val SDLK_OPER                                                 = define(1073741985)
+    val SDLK_CLEARAGAIN                                           = define(1073741986)
+    val SDLK_CRSEL                                                = define(1073741987)
+    val SDLK_EXSEL                                                = define(1073741988)
+    val SDLK_KP_00                                                = define(1073742000)
+    val SDLK_KP_000                                               = define(1073742001)
+    val SDLK_THOUSANDSSEPARATOR                                   = define(1073742002)
+    val SDLK_DECIMALSEPARATOR                                     = define(1073742003)
+    val SDLK_CURRENCYUNIT                                         = define(1073742004)
+    val SDLK_CURRENCYSUBUNIT                                      = define(1073742005)
+    val SDLK_KP_LEFTPAREN                                         = define(1073742006)
+    val SDLK_KP_RIGHTPAREN                                        = define(1073742007)
+    val SDLK_KP_LEFTBRACE                                         = define(1073742008)
+    val SDLK_KP_RIGHTBRACE                                        = define(1073742009)
+    val SDLK_KP_TAB                                               = define(1073742010)
+    val SDLK_KP_BACKSPACE                                         = define(1073742011)
+    val SDLK_KP_A                                                 = define(1073742012)
+    val SDLK_KP_B                                                 = define(1073742013)
+    val SDLK_KP_C                                                 = define(1073742014)
+    val SDLK_KP_D                                                 = define(1073742015)
+    val SDLK_KP_E                                                 = define(1073742016)
+    val SDLK_KP_F                                                 = define(1073742017)
+    val SDLK_KP_XOR                                               = define(1073742018)
+    val SDLK_KP_POWER                                             = define(1073742019)
+    val SDLK_KP_PERCENT                                           = define(1073742020)
+    val SDLK_KP_LESS                                              = define(1073742021)
+    val SDLK_KP_GREATER                                           = define(1073742022)
+    val SDLK_KP_AMPERSAND                                         = define(1073742023)
+    val SDLK_KP_DBLAMPERSAND                                      = define(1073742024)
+    val SDLK_KP_VERTICALBAR                                       = define(1073742025)
+    val SDLK_KP_DBLVERTICALBAR                                    = define(1073742026)
+    val SDLK_KP_COLON                                             = define(1073742027)
+    val SDLK_KP_HASH                                              = define(1073742028)
+    val SDLK_KP_SPACE                                             = define(1073742029)
+    val SDLK_KP_AT                                                = define(1073742030)
+    val SDLK_KP_EXCLAM                                            = define(1073742031)
+    val SDLK_KP_MEMSTORE                                          = define(1073742032)
+    val SDLK_KP_MEMRECALL                                         = define(1073742033)
+    val SDLK_KP_MEMCLEAR                                          = define(1073742034)
+    val SDLK_KP_MEMADD                                            = define(1073742035)
+    val SDLK_KP_MEMSUBTRACT                                       = define(1073742036)
+    val SDLK_KP_MEMMULTIPLY                                       = define(1073742037)
+    val SDLK_KP_MEMDIVIDE                                         = define(1073742038)
+    val SDLK_KP_PLUSMINUS                                         = define(1073742039)
+    val SDLK_KP_CLEAR                                             = define(1073742040)
+    val SDLK_KP_CLEARENTRY                                        = define(1073742041)
+    val SDLK_KP_BINARY                                            = define(1073742042)
+    val SDLK_KP_OCTAL                                             = define(1073742043)
+    val SDLK_KP_DECIMAL                                           = define(1073742044)
+    val SDLK_KP_HEXADECIMAL                                       = define(1073742045)
+    val SDLK_LCTRL                                                = define(1073742048)
+    val SDLK_LSHIFT                                               = define(1073742049)
+    val SDLK_LALT                                                 = define(1073742050)
+    val SDLK_LGUI                                                 = define(1073742051)
+    val SDLK_RCTRL                                                = define(1073742052)
+    val SDLK_RSHIFT                                               = define(1073742053)
+    val SDLK_RALT                                                 = define(1073742054)
+    val SDLK_RGUI                                                 = define(1073742055)
+    val SDLK_MODE                                                 = define(1073742081)
+    val SDLK_AUDIONEXT                                            = define(1073742082)
+    val SDLK_AUDIOPREV                                            = define(1073742083)
+    val SDLK_AUDIOSTOP                                            = define(1073742084)
+    val SDLK_AUDIOPLAY                                            = define(1073742085)
+    val SDLK_AUDIOMUTE                                            = define(1073742086)
+    val SDLK_MEDIASELECT                                          = define(1073742087)
+    val SDLK_WWW                                                  = define(1073742088)
+    val SDLK_MAIL                                                 = define(1073742089)
+    val SDLK_CALCULATOR                                           = define(1073742090)
+    val SDLK_COMPUTER                                             = define(1073742091)
+    val SDLK_AC_SEARCH                                            = define(1073742092)
+    val SDLK_AC_HOME                                              = define(1073742093)
+    val SDLK_AC_BACK                                              = define(1073742094)
+    val SDLK_AC_FORWARD                                           = define(1073742095)
+    val SDLK_AC_STOP                                              = define(1073742096)
+    val SDLK_AC_REFRESH                                           = define(1073742097)
+    val SDLK_AC_BOOKMARKS                                         = define(1073742098)
+    val SDLK_BRIGHTNESSDOWN                                       = define(1073742099)
+    val SDLK_BRIGHTNESSUP                                         = define(1073742100)
+    val SDLK_DISPLAYSWITCH                                        = define(1073742101)
+    val SDLK_KBDILLUMTOGGLE                                       = define(1073742102)
+    val SDLK_KBDILLUMDOWN                                         = define(1073742103)
+    val SDLK_KBDILLUMUP                                           = define(1073742104)
+    val SDLK_EJECT                                                = define(1073742105)
+    val SDLK_SLEEP                                                = define(1073742106)
+    val SDLK_APP1                                                 = define(1073742107)
+    val SDLK_APP2                                                 = define(1073742108)
+    val SDLK_AUDIOREWIND                                          = define(1073742109)
+    val SDLK_AUDIOFASTFORWARD                                     = define(1073742110)
+    val SDLK_SOFTLEFT                                             = define(1073742111)
+    val SDLK_SOFTRIGHT                                            = define(1073742112)
+    val SDLK_CALL                                                 = define(1073742113)
+    val SDLK_ENDCALL                                              = define(1073742114)
     inline def getName(inline value: SDL_KeyCode): Option[String] =
       inline value match
         case SDLK_UNKNOWN            => Some("SDLK_UNKNOWN")
@@ -1467,26 +1467,26 @@ object enumerations:
     */
   opaque type SDL_Keymod = CInt
   object SDL_Keymod extends CEnum[SDL_Keymod]:
-    given _tag: Tag[SDL_Keymod]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_Keymod = a
-    val KMOD_NONE                                 = define(0)
-    val KMOD_LSHIFT                               = define(1)
-    val KMOD_RSHIFT                               = define(2)
-    val KMOD_LCTRL                                = define(64)
-    val KMOD_RCTRL                                = define(128)
-    val KMOD_LALT                                 = define(256)
-    val KMOD_RALT                                 = define(512)
-    val KMOD_LGUI                                 = define(1024)
-    val KMOD_RGUI                                 = define(2048)
-    val KMOD_NUM                                  = define(4096)
-    val KMOD_CAPS                                 = define(8192)
-    val KMOD_MODE                                 = define(16384)
-    val KMOD_SCROLL                               = define(32768)
-    val KMOD_CTRL                                 = define(192)
-    val KMOD_SHIFT                                = define(3)
-    val KMOD_ALT                                  = define(768)
-    val KMOD_GUI                                  = define(3072)
-    val KMOD_RESERVED                             = define(32768)
+    given _tag: Tag[SDL_Keymod]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_Keymod                = a
+    val KMOD_NONE                                                = define(0)
+    val KMOD_LSHIFT                                              = define(1)
+    val KMOD_RSHIFT                                              = define(2)
+    val KMOD_LCTRL                                               = define(64)
+    val KMOD_RCTRL                                               = define(128)
+    val KMOD_LALT                                                = define(256)
+    val KMOD_RALT                                                = define(512)
+    val KMOD_LGUI                                                = define(1024)
+    val KMOD_RGUI                                                = define(2048)
+    val KMOD_NUM                                                 = define(4096)
+    val KMOD_CAPS                                                = define(8192)
+    val KMOD_MODE                                                = define(16384)
+    val KMOD_SCROLL                                              = define(32768)
+    val KMOD_CTRL                                                = define(192)
+    val KMOD_SHIFT                                               = define(3)
+    val KMOD_ALT                                                 = define(768)
+    val KMOD_GUI                                                 = define(3072)
+    val KMOD_RESERVED                                            = define(32768)
     inline def getName(inline value: SDL_Keymod): Option[String] =
       inline value match
         case KMOD_NONE     => Some("KMOD_NONE")
@@ -1519,28 +1519,28 @@ object enumerations:
     */
   opaque type SDL_LogCategory = CInt
   object SDL_LogCategory extends CEnum[SDL_LogCategory]:
-    given _tag: Tag[SDL_LogCategory]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_LogCategory = a
-    val SDL_LOG_CATEGORY_APPLICATION                   = define(0)
-    val SDL_LOG_CATEGORY_ERROR                         = define(1)
-    val SDL_LOG_CATEGORY_ASSERT                        = define(2)
-    val SDL_LOG_CATEGORY_SYSTEM                        = define(3)
-    val SDL_LOG_CATEGORY_AUDIO                         = define(4)
-    val SDL_LOG_CATEGORY_VIDEO                         = define(5)
-    val SDL_LOG_CATEGORY_RENDER                        = define(6)
-    val SDL_LOG_CATEGORY_INPUT                         = define(7)
-    val SDL_LOG_CATEGORY_TEST                          = define(8)
-    val SDL_LOG_CATEGORY_RESERVED1                     = define(9)
-    val SDL_LOG_CATEGORY_RESERVED2                     = define(10)
-    val SDL_LOG_CATEGORY_RESERVED3                     = define(11)
-    val SDL_LOG_CATEGORY_RESERVED4                     = define(12)
-    val SDL_LOG_CATEGORY_RESERVED5                     = define(13)
-    val SDL_LOG_CATEGORY_RESERVED6                     = define(14)
-    val SDL_LOG_CATEGORY_RESERVED7                     = define(15)
-    val SDL_LOG_CATEGORY_RESERVED8                     = define(16)
-    val SDL_LOG_CATEGORY_RESERVED9                     = define(17)
-    val SDL_LOG_CATEGORY_RESERVED10                    = define(18)
-    val SDL_LOG_CATEGORY_CUSTOM                        = define(19)
+    given _tag: Tag[SDL_LogCategory]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_LogCategory                = a
+    val SDL_LOG_CATEGORY_APPLICATION                                  = define(0)
+    val SDL_LOG_CATEGORY_ERROR                                        = define(1)
+    val SDL_LOG_CATEGORY_ASSERT                                       = define(2)
+    val SDL_LOG_CATEGORY_SYSTEM                                       = define(3)
+    val SDL_LOG_CATEGORY_AUDIO                                        = define(4)
+    val SDL_LOG_CATEGORY_VIDEO                                        = define(5)
+    val SDL_LOG_CATEGORY_RENDER                                       = define(6)
+    val SDL_LOG_CATEGORY_INPUT                                        = define(7)
+    val SDL_LOG_CATEGORY_TEST                                         = define(8)
+    val SDL_LOG_CATEGORY_RESERVED1                                    = define(9)
+    val SDL_LOG_CATEGORY_RESERVED2                                    = define(10)
+    val SDL_LOG_CATEGORY_RESERVED3                                    = define(11)
+    val SDL_LOG_CATEGORY_RESERVED4                                    = define(12)
+    val SDL_LOG_CATEGORY_RESERVED5                                    = define(13)
+    val SDL_LOG_CATEGORY_RESERVED6                                    = define(14)
+    val SDL_LOG_CATEGORY_RESERVED7                                    = define(15)
+    val SDL_LOG_CATEGORY_RESERVED8                                    = define(16)
+    val SDL_LOG_CATEGORY_RESERVED9                                    = define(17)
+    val SDL_LOG_CATEGORY_RESERVED10                                   = define(18)
+    val SDL_LOG_CATEGORY_CUSTOM                                       = define(19)
     inline def getName(inline value: SDL_LogCategory): Option[String] =
       inline value match
         case SDL_LOG_CATEGORY_APPLICATION => Some("SDL_LOG_CATEGORY_APPLICATION")
@@ -1575,15 +1575,15 @@ object enumerations:
     */
   opaque type SDL_LogPriority = CInt
   object SDL_LogPriority extends CEnum[SDL_LogPriority]:
-    given _tag: Tag[SDL_LogPriority]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_LogPriority = a
-    val SDL_LOG_PRIORITY_VERBOSE                       = define(1)
-    val SDL_LOG_PRIORITY_DEBUG                         = define(2)
-    val SDL_LOG_PRIORITY_INFO                          = define(3)
-    val SDL_LOG_PRIORITY_WARN                          = define(4)
-    val SDL_LOG_PRIORITY_ERROR                         = define(5)
-    val SDL_LOG_PRIORITY_CRITICAL                      = define(6)
-    val SDL_NUM_LOG_PRIORITIES                         = define(7)
+    given _tag: Tag[SDL_LogPriority]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_LogPriority                = a
+    val SDL_LOG_PRIORITY_VERBOSE                                      = define(1)
+    val SDL_LOG_PRIORITY_DEBUG                                        = define(2)
+    val SDL_LOG_PRIORITY_INFO                                         = define(3)
+    val SDL_LOG_PRIORITY_WARN                                         = define(4)
+    val SDL_LOG_PRIORITY_ERROR                                        = define(5)
+    val SDL_LOG_PRIORITY_CRITICAL                                     = define(6)
+    val SDL_NUM_LOG_PRIORITIES                                        = define(7)
     inline def getName(inline value: SDL_LogPriority): Option[String] =
       inline value match
         case SDL_LOG_PRIORITY_VERBOSE  => Some("SDL_LOG_PRIORITY_VERBOSE")
@@ -1605,10 +1605,10 @@ object enumerations:
     */
   opaque type SDL_MessageBoxButtonFlags = CInt
   object SDL_MessageBoxButtonFlags extends CEnum[SDL_MessageBoxButtonFlags]:
-    given _tag: Tag[SDL_MessageBoxButtonFlags]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_MessageBoxButtonFlags = a
-    val SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT                  = define(1)
-    val SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT                  = define(2)
+    given _tag: Tag[SDL_MessageBoxButtonFlags]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_MessageBoxButtonFlags                = a
+    val SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT                                 = define(1)
+    val SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT                                 = define(2)
     inline def getName(inline value: SDL_MessageBoxButtonFlags): Option[String] =
       inline value match
         case SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT => Some("SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT")
@@ -1623,14 +1623,14 @@ object enumerations:
     */
   opaque type SDL_MessageBoxColorType = CInt
   object SDL_MessageBoxColorType extends CEnum[SDL_MessageBoxColorType]:
-    given _tag: Tag[SDL_MessageBoxColorType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_MessageBoxColorType = a
-    val SDL_MESSAGEBOX_COLOR_BACKGROUND                        = define(0)
-    val SDL_MESSAGEBOX_COLOR_TEXT                              = define(1)
-    val SDL_MESSAGEBOX_COLOR_BUTTON_BORDER                     = define(2)
-    val SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND                 = define(3)
-    val SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED                   = define(4)
-    val SDL_MESSAGEBOX_COLOR_MAX                               = define(5)
+    given _tag: Tag[SDL_MessageBoxColorType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_MessageBoxColorType                = a
+    val SDL_MESSAGEBOX_COLOR_BACKGROUND                                       = define(0)
+    val SDL_MESSAGEBOX_COLOR_TEXT                                             = define(1)
+    val SDL_MESSAGEBOX_COLOR_BUTTON_BORDER                                    = define(2)
+    val SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND                                = define(3)
+    val SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED                                  = define(4)
+    val SDL_MESSAGEBOX_COLOR_MAX                                              = define(5)
     inline def getName(inline value: SDL_MessageBoxColorType): Option[String] =
       inline value match
         case SDL_MESSAGEBOX_COLOR_BACKGROUND        => Some("SDL_MESSAGEBOX_COLOR_BACKGROUND")
@@ -1651,13 +1651,13 @@ object enumerations:
     */
   opaque type SDL_MessageBoxFlags = CInt
   object SDL_MessageBoxFlags extends CEnum[SDL_MessageBoxFlags]:
-    given _tag: Tag[SDL_MessageBoxFlags]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_MessageBoxFlags = a
-    val SDL_MESSAGEBOX_ERROR                               = define(16)
-    val SDL_MESSAGEBOX_WARNING                             = define(32)
-    val SDL_MESSAGEBOX_INFORMATION                         = define(64)
-    val SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT               = define(128)
-    val SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT               = define(256)
+    given _tag: Tag[SDL_MessageBoxFlags]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_MessageBoxFlags                = a
+    val SDL_MESSAGEBOX_ERROR                                              = define(16)
+    val SDL_MESSAGEBOX_WARNING                                            = define(32)
+    val SDL_MESSAGEBOX_INFORMATION                                        = define(64)
+    val SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT                              = define(128)
+    val SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT                              = define(256)
     inline def getName(inline value: SDL_MessageBoxFlags): Option[String] =
       inline value match
         case SDL_MESSAGEBOX_ERROR                 => Some("SDL_MESSAGEBOX_ERROR")
@@ -1677,10 +1677,10 @@ object enumerations:
     */
   opaque type SDL_MouseWheelDirection = CInt
   object SDL_MouseWheelDirection extends CEnum[SDL_MouseWheelDirection]:
-    given _tag: Tag[SDL_MouseWheelDirection]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_MouseWheelDirection = a
-    val SDL_MOUSEWHEEL_NORMAL                                  = define(0)
-    val SDL_MOUSEWHEEL_FLIPPED                                 = define(1)
+    given _tag: Tag[SDL_MouseWheelDirection]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_MouseWheelDirection                = a
+    val SDL_MOUSEWHEEL_NORMAL                                                 = define(0)
+    val SDL_MOUSEWHEEL_FLIPPED                                                = define(1)
     inline def getName(inline value: SDL_MouseWheelDirection): Option[String] =
       inline value match
         case SDL_MOUSEWHEEL_NORMAL  => Some("SDL_MOUSEWHEEL_NORMAL")
@@ -1697,17 +1697,17 @@ object enumerations:
     */
   opaque type SDL_PackedLayout = CInt
   object SDL_PackedLayout extends CEnum[SDL_PackedLayout]:
-    given _tag: Tag[SDL_PackedLayout]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_PackedLayout = a
-    val SDL_PACKEDLAYOUT_NONE                           = define(0)
-    val SDL_PACKEDLAYOUT_332                            = define(1)
-    val SDL_PACKEDLAYOUT_4444                           = define(2)
-    val SDL_PACKEDLAYOUT_1555                           = define(3)
-    val SDL_PACKEDLAYOUT_5551                           = define(4)
-    val SDL_PACKEDLAYOUT_565                            = define(5)
-    val SDL_PACKEDLAYOUT_8888                           = define(6)
-    val SDL_PACKEDLAYOUT_2101010                        = define(7)
-    val SDL_PACKEDLAYOUT_1010102                        = define(8)
+    given _tag: Tag[SDL_PackedLayout]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_PackedLayout                = a
+    val SDL_PACKEDLAYOUT_NONE                                          = define(0)
+    val SDL_PACKEDLAYOUT_332                                           = define(1)
+    val SDL_PACKEDLAYOUT_4444                                          = define(2)
+    val SDL_PACKEDLAYOUT_1555                                          = define(3)
+    val SDL_PACKEDLAYOUT_5551                                          = define(4)
+    val SDL_PACKEDLAYOUT_565                                           = define(5)
+    val SDL_PACKEDLAYOUT_8888                                          = define(6)
+    val SDL_PACKEDLAYOUT_2101010                                       = define(7)
+    val SDL_PACKEDLAYOUT_1010102                                       = define(8)
     inline def getName(inline value: SDL_PackedLayout): Option[String] =
       inline value match
         case SDL_PACKEDLAYOUT_NONE    => Some("SDL_PACKEDLAYOUT_NONE")
@@ -1731,17 +1731,17 @@ object enumerations:
     */
   opaque type SDL_PackedOrder = CInt
   object SDL_PackedOrder extends CEnum[SDL_PackedOrder]:
-    given _tag: Tag[SDL_PackedOrder]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_PackedOrder = a
-    val SDL_PACKEDORDER_NONE                           = define(0)
-    val SDL_PACKEDORDER_XRGB                           = define(1)
-    val SDL_PACKEDORDER_RGBX                           = define(2)
-    val SDL_PACKEDORDER_ARGB                           = define(3)
-    val SDL_PACKEDORDER_RGBA                           = define(4)
-    val SDL_PACKEDORDER_XBGR                           = define(5)
-    val SDL_PACKEDORDER_BGRX                           = define(6)
-    val SDL_PACKEDORDER_ABGR                           = define(7)
-    val SDL_PACKEDORDER_BGRA                           = define(8)
+    given _tag: Tag[SDL_PackedOrder]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_PackedOrder                = a
+    val SDL_PACKEDORDER_NONE                                          = define(0)
+    val SDL_PACKEDORDER_XRGB                                          = define(1)
+    val SDL_PACKEDORDER_RGBX                                          = define(2)
+    val SDL_PACKEDORDER_ARGB                                          = define(3)
+    val SDL_PACKEDORDER_RGBA                                          = define(4)
+    val SDL_PACKEDORDER_XBGR                                          = define(5)
+    val SDL_PACKEDORDER_BGRX                                          = define(6)
+    val SDL_PACKEDORDER_ABGR                                          = define(7)
+    val SDL_PACKEDORDER_BGRA                                          = define(8)
     inline def getName(inline value: SDL_PackedOrder): Option[String] =
       inline value match
         case SDL_PACKEDORDER_NONE => Some("SDL_PACKEDORDER_NONE")
@@ -1763,64 +1763,64 @@ object enumerations:
     */
   opaque type SDL_PixelFormatEnum = UInt
   object SDL_PixelFormatEnum extends CEnumUI[SDL_PixelFormatEnum]:
-    given _tag: Tag[SDL_PixelFormatEnum]                  = Tag.UInt
-    inline def define(inline a: Int): SDL_PixelFormatEnum = a.toUInt
-    val SDL_PIXELFORMAT_UNKNOWN                           = define(0)
-    val SDL_PIXELFORMAT_INDEX1LSB                         = define(286261504)
-    val SDL_PIXELFORMAT_INDEX1MSB                         = define(287310080)
-    val SDL_PIXELFORMAT_INDEX2LSB                         = define(470811136)
-    val SDL_PIXELFORMAT_INDEX2MSB                         = define(471859712)
-    val SDL_PIXELFORMAT_INDEX4LSB                         = define(303039488)
-    val SDL_PIXELFORMAT_INDEX4MSB                         = define(304088064)
-    val SDL_PIXELFORMAT_INDEX8                            = define(318769153)
-    val SDL_PIXELFORMAT_RGB332                            = define(336660481)
-    val SDL_PIXELFORMAT_XRGB4444                          = define(353504258)
-    val SDL_PIXELFORMAT_RGB444                            = define(353504258)
-    val SDL_PIXELFORMAT_XBGR4444                          = define(357698562)
-    val SDL_PIXELFORMAT_BGR444                            = define(357698562)
-    val SDL_PIXELFORMAT_XRGB1555                          = define(353570562)
-    val SDL_PIXELFORMAT_RGB555                            = define(353570562)
-    val SDL_PIXELFORMAT_XBGR1555                          = define(357764866)
-    val SDL_PIXELFORMAT_BGR555                            = define(357764866)
-    val SDL_PIXELFORMAT_ARGB4444                          = define(355602434)
-    val SDL_PIXELFORMAT_RGBA4444                          = define(356651010)
-    val SDL_PIXELFORMAT_ABGR4444                          = define(359796738)
-    val SDL_PIXELFORMAT_BGRA4444                          = define(360845314)
-    val SDL_PIXELFORMAT_ARGB1555                          = define(355667970)
-    val SDL_PIXELFORMAT_RGBA5551                          = define(356782082)
-    val SDL_PIXELFORMAT_ABGR1555                          = define(359862274)
-    val SDL_PIXELFORMAT_BGRA5551                          = define(360976386)
-    val SDL_PIXELFORMAT_RGB565                            = define(353701890)
-    val SDL_PIXELFORMAT_BGR565                            = define(357896194)
-    val SDL_PIXELFORMAT_RGB24                             = define(386930691)
-    val SDL_PIXELFORMAT_BGR24                             = define(390076419)
-    val SDL_PIXELFORMAT_XRGB8888                          = define(370546692)
-    val SDL_PIXELFORMAT_RGB888                            = define(370546692)
-    val SDL_PIXELFORMAT_RGBX8888                          = define(371595268)
-    val SDL_PIXELFORMAT_XBGR8888                          = define(374740996)
-    val SDL_PIXELFORMAT_BGR888                            = define(374740996)
-    val SDL_PIXELFORMAT_BGRX8888                          = define(375789572)
-    val SDL_PIXELFORMAT_ARGB8888                          = define(372645892)
-    val SDL_PIXELFORMAT_RGBA8888                          = define(373694468)
-    val SDL_PIXELFORMAT_ABGR8888                          = define(376840196)
-    val SDL_PIXELFORMAT_BGRA8888                          = define(377888772)
-    val SDL_PIXELFORMAT_ARGB2101010                       = define(372711428)
-    val SDL_PIXELFORMAT_RGBA32                            = define(376840196)
-    val SDL_PIXELFORMAT_ARGB32                            = define(377888772)
-    val SDL_PIXELFORMAT_BGRA32                            = define(372645892)
-    val SDL_PIXELFORMAT_ABGR32                            = define(373694468)
-    val SDL_PIXELFORMAT_RGBX32                            = define(374740996)
-    val SDL_PIXELFORMAT_XRGB32                            = define(375789572)
-    val SDL_PIXELFORMAT_BGRX32                            = define(370546692)
-    val SDL_PIXELFORMAT_XBGR32                            = define(371595268)
-    val SDL_PIXELFORMAT_YV12                              = define(842094169)
-    val SDL_PIXELFORMAT_IYUV                              = define(1448433993)
-    val SDL_PIXELFORMAT_YUY2                              = define(844715353)
-    val SDL_PIXELFORMAT_UYVY                              = define(1498831189)
-    val SDL_PIXELFORMAT_YVYU                              = define(1431918169)
-    val SDL_PIXELFORMAT_NV12                              = define(842094158)
-    val SDL_PIXELFORMAT_NV21                              = define(825382478)
-    val SDL_PIXELFORMAT_EXTERNAL_OES                      = define(542328143)
+    given _tag: Tag[SDL_PixelFormatEnum]                                  = Tag.UInt
+    inline def define(inline a: Int): SDL_PixelFormatEnum                 = a.toUInt
+    val SDL_PIXELFORMAT_UNKNOWN                                           = define(0)
+    val SDL_PIXELFORMAT_INDEX1LSB                                         = define(286261504)
+    val SDL_PIXELFORMAT_INDEX1MSB                                         = define(287310080)
+    val SDL_PIXELFORMAT_INDEX2LSB                                         = define(470811136)
+    val SDL_PIXELFORMAT_INDEX2MSB                                         = define(471859712)
+    val SDL_PIXELFORMAT_INDEX4LSB                                         = define(303039488)
+    val SDL_PIXELFORMAT_INDEX4MSB                                         = define(304088064)
+    val SDL_PIXELFORMAT_INDEX8                                            = define(318769153)
+    val SDL_PIXELFORMAT_RGB332                                            = define(336660481)
+    val SDL_PIXELFORMAT_XRGB4444                                          = define(353504258)
+    val SDL_PIXELFORMAT_RGB444                                            = define(353504258)
+    val SDL_PIXELFORMAT_XBGR4444                                          = define(357698562)
+    val SDL_PIXELFORMAT_BGR444                                            = define(357698562)
+    val SDL_PIXELFORMAT_XRGB1555                                          = define(353570562)
+    val SDL_PIXELFORMAT_RGB555                                            = define(353570562)
+    val SDL_PIXELFORMAT_XBGR1555                                          = define(357764866)
+    val SDL_PIXELFORMAT_BGR555                                            = define(357764866)
+    val SDL_PIXELFORMAT_ARGB4444                                          = define(355602434)
+    val SDL_PIXELFORMAT_RGBA4444                                          = define(356651010)
+    val SDL_PIXELFORMAT_ABGR4444                                          = define(359796738)
+    val SDL_PIXELFORMAT_BGRA4444                                          = define(360845314)
+    val SDL_PIXELFORMAT_ARGB1555                                          = define(355667970)
+    val SDL_PIXELFORMAT_RGBA5551                                          = define(356782082)
+    val SDL_PIXELFORMAT_ABGR1555                                          = define(359862274)
+    val SDL_PIXELFORMAT_BGRA5551                                          = define(360976386)
+    val SDL_PIXELFORMAT_RGB565                                            = define(353701890)
+    val SDL_PIXELFORMAT_BGR565                                            = define(357896194)
+    val SDL_PIXELFORMAT_RGB24                                             = define(386930691)
+    val SDL_PIXELFORMAT_BGR24                                             = define(390076419)
+    val SDL_PIXELFORMAT_XRGB8888                                          = define(370546692)
+    val SDL_PIXELFORMAT_RGB888                                            = define(370546692)
+    val SDL_PIXELFORMAT_RGBX8888                                          = define(371595268)
+    val SDL_PIXELFORMAT_XBGR8888                                          = define(374740996)
+    val SDL_PIXELFORMAT_BGR888                                            = define(374740996)
+    val SDL_PIXELFORMAT_BGRX8888                                          = define(375789572)
+    val SDL_PIXELFORMAT_ARGB8888                                          = define(372645892)
+    val SDL_PIXELFORMAT_RGBA8888                                          = define(373694468)
+    val SDL_PIXELFORMAT_ABGR8888                                          = define(376840196)
+    val SDL_PIXELFORMAT_BGRA8888                                          = define(377888772)
+    val SDL_PIXELFORMAT_ARGB2101010                                       = define(372711428)
+    val SDL_PIXELFORMAT_RGBA32                                            = define(376840196)
+    val SDL_PIXELFORMAT_ARGB32                                            = define(377888772)
+    val SDL_PIXELFORMAT_BGRA32                                            = define(372645892)
+    val SDL_PIXELFORMAT_ABGR32                                            = define(373694468)
+    val SDL_PIXELFORMAT_RGBX32                                            = define(374740996)
+    val SDL_PIXELFORMAT_XRGB32                                            = define(375789572)
+    val SDL_PIXELFORMAT_BGRX32                                            = define(370546692)
+    val SDL_PIXELFORMAT_XBGR32                                            = define(371595268)
+    val SDL_PIXELFORMAT_YV12                                              = define(842094169)
+    val SDL_PIXELFORMAT_IYUV                                              = define(1448433993)
+    val SDL_PIXELFORMAT_YUY2                                              = define(844715353)
+    val SDL_PIXELFORMAT_UYVY                                              = define(1498831189)
+    val SDL_PIXELFORMAT_YVYU                                              = define(1431918169)
+    val SDL_PIXELFORMAT_NV12                                              = define(842094158)
+    val SDL_PIXELFORMAT_NV21                                              = define(825382478)
+    val SDL_PIXELFORMAT_EXTERNAL_OES                                      = define(542328143)
     inline def getName(inline value: SDL_PixelFormatEnum): Option[String] =
       inline value match
         case SDL_PIXELFORMAT_UNKNOWN      => Some("SDL_PIXELFORMAT_UNKNOWN")
@@ -1891,21 +1891,21 @@ object enumerations:
     */
   opaque type SDL_PixelType = CInt
   object SDL_PixelType extends CEnum[SDL_PixelType]:
-    given _tag: Tag[SDL_PixelType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_PixelType = a
-    val SDL_PIXELTYPE_UNKNOWN                        = define(0)
-    val SDL_PIXELTYPE_INDEX1                         = define(1)
-    val SDL_PIXELTYPE_INDEX4                         = define(2)
-    val SDL_PIXELTYPE_INDEX8                         = define(3)
-    val SDL_PIXELTYPE_PACKED8                        = define(4)
-    val SDL_PIXELTYPE_PACKED16                       = define(5)
-    val SDL_PIXELTYPE_PACKED32                       = define(6)
-    val SDL_PIXELTYPE_ARRAYU8                        = define(7)
-    val SDL_PIXELTYPE_ARRAYU16                       = define(8)
-    val SDL_PIXELTYPE_ARRAYU32                       = define(9)
-    val SDL_PIXELTYPE_ARRAYF16                       = define(10)
-    val SDL_PIXELTYPE_ARRAYF32                       = define(11)
-    val SDL_PIXELTYPE_INDEX2                         = define(12)
+    given _tag: Tag[SDL_PixelType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_PixelType                = a
+    val SDL_PIXELTYPE_UNKNOWN                                       = define(0)
+    val SDL_PIXELTYPE_INDEX1                                        = define(1)
+    val SDL_PIXELTYPE_INDEX4                                        = define(2)
+    val SDL_PIXELTYPE_INDEX8                                        = define(3)
+    val SDL_PIXELTYPE_PACKED8                                       = define(4)
+    val SDL_PIXELTYPE_PACKED16                                      = define(5)
+    val SDL_PIXELTYPE_PACKED32                                      = define(6)
+    val SDL_PIXELTYPE_ARRAYU8                                       = define(7)
+    val SDL_PIXELTYPE_ARRAYU16                                      = define(8)
+    val SDL_PIXELTYPE_ARRAYU32                                      = define(9)
+    val SDL_PIXELTYPE_ARRAYF16                                      = define(10)
+    val SDL_PIXELTYPE_ARRAYF32                                      = define(11)
+    val SDL_PIXELTYPE_INDEX2                                        = define(12)
     inline def getName(inline value: SDL_PixelType): Option[String] =
       inline value match
         case SDL_PIXELTYPE_UNKNOWN  => Some("SDL_PIXELTYPE_UNKNOWN")
@@ -1933,13 +1933,13 @@ object enumerations:
     */
   opaque type SDL_PowerState = CInt
   object SDL_PowerState extends CEnum[SDL_PowerState]:
-    given _tag: Tag[SDL_PowerState]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_PowerState = a
-    val SDL_POWERSTATE_UNKNOWN                        = define(0)
-    val SDL_POWERSTATE_ON_BATTERY                     = define(1)
-    val SDL_POWERSTATE_NO_BATTERY                     = define(2)
-    val SDL_POWERSTATE_CHARGING                       = define(3)
-    val SDL_POWERSTATE_CHARGED                        = define(4)
+    given _tag: Tag[SDL_PowerState]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_PowerState                = a
+    val SDL_POWERSTATE_UNKNOWN                                       = define(0)
+    val SDL_POWERSTATE_ON_BATTERY                                    = define(1)
+    val SDL_POWERSTATE_NO_BATTERY                                    = define(2)
+    val SDL_POWERSTATE_CHARGING                                      = define(3)
+    val SDL_POWERSTATE_CHARGED                                       = define(4)
     inline def getName(inline value: SDL_PowerState): Option[String] =
       inline value match
         case SDL_POWERSTATE_UNKNOWN    => Some("SDL_POWERSTATE_UNKNOWN")
@@ -1959,12 +1959,12 @@ object enumerations:
     */
   opaque type SDL_RendererFlags = CInt
   object SDL_RendererFlags extends CEnum[SDL_RendererFlags]:
-    given _tag: Tag[SDL_RendererFlags]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_RendererFlags = a
-    val SDL_RENDERER_SOFTWARE                            = define(1)
-    val SDL_RENDERER_ACCELERATED                         = define(2)
-    val SDL_RENDERER_PRESENTVSYNC                        = define(4)
-    val SDL_RENDERER_TARGETTEXTURE                       = define(8)
+    given _tag: Tag[SDL_RendererFlags]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_RendererFlags                = a
+    val SDL_RENDERER_SOFTWARE                                           = define(1)
+    val SDL_RENDERER_ACCELERATED                                        = define(2)
+    val SDL_RENDERER_PRESENTVSYNC                                       = define(4)
+    val SDL_RENDERER_TARGETTEXTURE                                      = define(8)
     inline def getName(inline value: SDL_RendererFlags): Option[String] =
       inline value match
         case SDL_RENDERER_SOFTWARE      => Some("SDL_RENDERER_SOFTWARE")
@@ -1983,11 +1983,11 @@ object enumerations:
     */
   opaque type SDL_RendererFlip = CInt
   object SDL_RendererFlip extends CEnum[SDL_RendererFlip]:
-    given _tag: Tag[SDL_RendererFlip]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_RendererFlip = a
-    val SDL_FLIP_NONE                                   = define(0)
-    val SDL_FLIP_HORIZONTAL                             = define(1)
-    val SDL_FLIP_VERTICAL                               = define(2)
+    given _tag: Tag[SDL_RendererFlip]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_RendererFlip                = a
+    val SDL_FLIP_NONE                                                  = define(0)
+    val SDL_FLIP_HORIZONTAL                                            = define(1)
+    val SDL_FLIP_VERTICAL                                              = define(2)
     inline def getName(inline value: SDL_RendererFlip): Option[String] =
       inline value match
         case SDL_FLIP_NONE       => Some("SDL_FLIP_NONE")
@@ -2005,11 +2005,11 @@ object enumerations:
     */
   opaque type SDL_ScaleMode = CInt
   object SDL_ScaleMode extends CEnum[SDL_ScaleMode]:
-    given _tag: Tag[SDL_ScaleMode]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_ScaleMode = a
-    val SDL_ScaleModeNearest                         = define(0)
-    val SDL_ScaleModeLinear                          = define(1)
-    val SDL_ScaleModeBest                            = define(2)
+    given _tag: Tag[SDL_ScaleMode]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_ScaleMode                = a
+    val SDL_ScaleModeNearest                                        = define(0)
+    val SDL_ScaleModeLinear                                         = define(1)
+    val SDL_ScaleModeBest                                           = define(2)
     inline def getName(inline value: SDL_ScaleMode): Option[String] =
       inline value match
         case SDL_ScaleModeNearest => Some("SDL_ScaleModeNearest")
@@ -2027,256 +2027,256 @@ object enumerations:
     */
   opaque type SDL_Scancode = CInt
   object SDL_Scancode extends CEnum[SDL_Scancode]:
-    given _tag: Tag[SDL_Scancode]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_Scancode = a
-    val SDL_SCANCODE_UNKNOWN                        = define(0)
-    val SDL_SCANCODE_A                              = define(4)
-    val SDL_SCANCODE_B                              = define(5)
-    val SDL_SCANCODE_C                              = define(6)
-    val SDL_SCANCODE_D                              = define(7)
-    val SDL_SCANCODE_E                              = define(8)
-    val SDL_SCANCODE_F                              = define(9)
-    val SDL_SCANCODE_G                              = define(10)
-    val SDL_SCANCODE_H                              = define(11)
-    val SDL_SCANCODE_I                              = define(12)
-    val SDL_SCANCODE_J                              = define(13)
-    val SDL_SCANCODE_K                              = define(14)
-    val SDL_SCANCODE_L                              = define(15)
-    val SDL_SCANCODE_M                              = define(16)
-    val SDL_SCANCODE_N                              = define(17)
-    val SDL_SCANCODE_O                              = define(18)
-    val SDL_SCANCODE_P                              = define(19)
-    val SDL_SCANCODE_Q                              = define(20)
-    val SDL_SCANCODE_R                              = define(21)
-    val SDL_SCANCODE_S                              = define(22)
-    val SDL_SCANCODE_T                              = define(23)
-    val SDL_SCANCODE_U                              = define(24)
-    val SDL_SCANCODE_V                              = define(25)
-    val SDL_SCANCODE_W                              = define(26)
-    val SDL_SCANCODE_X                              = define(27)
-    val SDL_SCANCODE_Y                              = define(28)
-    val SDL_SCANCODE_Z                              = define(29)
-    val SDL_SCANCODE_1                              = define(30)
-    val SDL_SCANCODE_2                              = define(31)
-    val SDL_SCANCODE_3                              = define(32)
-    val SDL_SCANCODE_4                              = define(33)
-    val SDL_SCANCODE_5                              = define(34)
-    val SDL_SCANCODE_6                              = define(35)
-    val SDL_SCANCODE_7                              = define(36)
-    val SDL_SCANCODE_8                              = define(37)
-    val SDL_SCANCODE_9                              = define(38)
-    val SDL_SCANCODE_0                              = define(39)
-    val SDL_SCANCODE_RETURN                         = define(40)
-    val SDL_SCANCODE_ESCAPE                         = define(41)
-    val SDL_SCANCODE_BACKSPACE                      = define(42)
-    val SDL_SCANCODE_TAB                            = define(43)
-    val SDL_SCANCODE_SPACE                          = define(44)
-    val SDL_SCANCODE_MINUS                          = define(45)
-    val SDL_SCANCODE_EQUALS                         = define(46)
-    val SDL_SCANCODE_LEFTBRACKET                    = define(47)
-    val SDL_SCANCODE_RIGHTBRACKET                   = define(48)
-    val SDL_SCANCODE_BACKSLASH                      = define(49)
-    val SDL_SCANCODE_NONUSHASH                      = define(50)
-    val SDL_SCANCODE_SEMICOLON                      = define(51)
-    val SDL_SCANCODE_APOSTROPHE                     = define(52)
-    val SDL_SCANCODE_GRAVE                          = define(53)
-    val SDL_SCANCODE_COMMA                          = define(54)
-    val SDL_SCANCODE_PERIOD                         = define(55)
-    val SDL_SCANCODE_SLASH                          = define(56)
-    val SDL_SCANCODE_CAPSLOCK                       = define(57)
-    val SDL_SCANCODE_F1                             = define(58)
-    val SDL_SCANCODE_F2                             = define(59)
-    val SDL_SCANCODE_F3                             = define(60)
-    val SDL_SCANCODE_F4                             = define(61)
-    val SDL_SCANCODE_F5                             = define(62)
-    val SDL_SCANCODE_F6                             = define(63)
-    val SDL_SCANCODE_F7                             = define(64)
-    val SDL_SCANCODE_F8                             = define(65)
-    val SDL_SCANCODE_F9                             = define(66)
-    val SDL_SCANCODE_F10                            = define(67)
-    val SDL_SCANCODE_F11                            = define(68)
-    val SDL_SCANCODE_F12                            = define(69)
-    val SDL_SCANCODE_PRINTSCREEN                    = define(70)
-    val SDL_SCANCODE_SCROLLLOCK                     = define(71)
-    val SDL_SCANCODE_PAUSE                          = define(72)
-    val SDL_SCANCODE_INSERT                         = define(73)
-    val SDL_SCANCODE_HOME                           = define(74)
-    val SDL_SCANCODE_PAGEUP                         = define(75)
-    val SDL_SCANCODE_DELETE                         = define(76)
-    val SDL_SCANCODE_END                            = define(77)
-    val SDL_SCANCODE_PAGEDOWN                       = define(78)
-    val SDL_SCANCODE_RIGHT                          = define(79)
-    val SDL_SCANCODE_LEFT                           = define(80)
-    val SDL_SCANCODE_DOWN                           = define(81)
-    val SDL_SCANCODE_UP                             = define(82)
-    val SDL_SCANCODE_NUMLOCKCLEAR                   = define(83)
-    val SDL_SCANCODE_KP_DIVIDE                      = define(84)
-    val SDL_SCANCODE_KP_MULTIPLY                    = define(85)
-    val SDL_SCANCODE_KP_MINUS                       = define(86)
-    val SDL_SCANCODE_KP_PLUS                        = define(87)
-    val SDL_SCANCODE_KP_ENTER                       = define(88)
-    val SDL_SCANCODE_KP_1                           = define(89)
-    val SDL_SCANCODE_KP_2                           = define(90)
-    val SDL_SCANCODE_KP_3                           = define(91)
-    val SDL_SCANCODE_KP_4                           = define(92)
-    val SDL_SCANCODE_KP_5                           = define(93)
-    val SDL_SCANCODE_KP_6                           = define(94)
-    val SDL_SCANCODE_KP_7                           = define(95)
-    val SDL_SCANCODE_KP_8                           = define(96)
-    val SDL_SCANCODE_KP_9                           = define(97)
-    val SDL_SCANCODE_KP_0                           = define(98)
-    val SDL_SCANCODE_KP_PERIOD                      = define(99)
-    val SDL_SCANCODE_NONUSBACKSLASH                 = define(100)
-    val SDL_SCANCODE_APPLICATION                    = define(101)
-    val SDL_SCANCODE_POWER                          = define(102)
-    val SDL_SCANCODE_KP_EQUALS                      = define(103)
-    val SDL_SCANCODE_F13                            = define(104)
-    val SDL_SCANCODE_F14                            = define(105)
-    val SDL_SCANCODE_F15                            = define(106)
-    val SDL_SCANCODE_F16                            = define(107)
-    val SDL_SCANCODE_F17                            = define(108)
-    val SDL_SCANCODE_F18                            = define(109)
-    val SDL_SCANCODE_F19                            = define(110)
-    val SDL_SCANCODE_F20                            = define(111)
-    val SDL_SCANCODE_F21                            = define(112)
-    val SDL_SCANCODE_F22                            = define(113)
-    val SDL_SCANCODE_F23                            = define(114)
-    val SDL_SCANCODE_F24                            = define(115)
-    val SDL_SCANCODE_EXECUTE                        = define(116)
-    val SDL_SCANCODE_HELP                           = define(117)
-    val SDL_SCANCODE_MENU                           = define(118)
-    val SDL_SCANCODE_SELECT                         = define(119)
-    val SDL_SCANCODE_STOP                           = define(120)
-    val SDL_SCANCODE_AGAIN                          = define(121)
-    val SDL_SCANCODE_UNDO                           = define(122)
-    val SDL_SCANCODE_CUT                            = define(123)
-    val SDL_SCANCODE_COPY                           = define(124)
-    val SDL_SCANCODE_PASTE                          = define(125)
-    val SDL_SCANCODE_FIND                           = define(126)
-    val SDL_SCANCODE_MUTE                           = define(127)
-    val SDL_SCANCODE_VOLUMEUP                       = define(128)
-    val SDL_SCANCODE_VOLUMEDOWN                     = define(129)
-    val SDL_SCANCODE_KP_COMMA                       = define(133)
-    val SDL_SCANCODE_KP_EQUALSAS400                 = define(134)
-    val SDL_SCANCODE_INTERNATIONAL1                 = define(135)
-    val SDL_SCANCODE_INTERNATIONAL2                 = define(136)
-    val SDL_SCANCODE_INTERNATIONAL3                 = define(137)
-    val SDL_SCANCODE_INTERNATIONAL4                 = define(138)
-    val SDL_SCANCODE_INTERNATIONAL5                 = define(139)
-    val SDL_SCANCODE_INTERNATIONAL6                 = define(140)
-    val SDL_SCANCODE_INTERNATIONAL7                 = define(141)
-    val SDL_SCANCODE_INTERNATIONAL8                 = define(142)
-    val SDL_SCANCODE_INTERNATIONAL9                 = define(143)
-    val SDL_SCANCODE_LANG1                          = define(144)
-    val SDL_SCANCODE_LANG2                          = define(145)
-    val SDL_SCANCODE_LANG3                          = define(146)
-    val SDL_SCANCODE_LANG4                          = define(147)
-    val SDL_SCANCODE_LANG5                          = define(148)
-    val SDL_SCANCODE_LANG6                          = define(149)
-    val SDL_SCANCODE_LANG7                          = define(150)
-    val SDL_SCANCODE_LANG8                          = define(151)
-    val SDL_SCANCODE_LANG9                          = define(152)
-    val SDL_SCANCODE_ALTERASE                       = define(153)
-    val SDL_SCANCODE_SYSREQ                         = define(154)
-    val SDL_SCANCODE_CANCEL                         = define(155)
-    val SDL_SCANCODE_CLEAR                          = define(156)
-    val SDL_SCANCODE_PRIOR                          = define(157)
-    val SDL_SCANCODE_RETURN2                        = define(158)
-    val SDL_SCANCODE_SEPARATOR                      = define(159)
-    val SDL_SCANCODE_OUT                            = define(160)
-    val SDL_SCANCODE_OPER                           = define(161)
-    val SDL_SCANCODE_CLEARAGAIN                     = define(162)
-    val SDL_SCANCODE_CRSEL                          = define(163)
-    val SDL_SCANCODE_EXSEL                          = define(164)
-    val SDL_SCANCODE_KP_00                          = define(176)
-    val SDL_SCANCODE_KP_000                         = define(177)
-    val SDL_SCANCODE_THOUSANDSSEPARATOR             = define(178)
-    val SDL_SCANCODE_DECIMALSEPARATOR               = define(179)
-    val SDL_SCANCODE_CURRENCYUNIT                   = define(180)
-    val SDL_SCANCODE_CURRENCYSUBUNIT                = define(181)
-    val SDL_SCANCODE_KP_LEFTPAREN                   = define(182)
-    val SDL_SCANCODE_KP_RIGHTPAREN                  = define(183)
-    val SDL_SCANCODE_KP_LEFTBRACE                   = define(184)
-    val SDL_SCANCODE_KP_RIGHTBRACE                  = define(185)
-    val SDL_SCANCODE_KP_TAB                         = define(186)
-    val SDL_SCANCODE_KP_BACKSPACE                   = define(187)
-    val SDL_SCANCODE_KP_A                           = define(188)
-    val SDL_SCANCODE_KP_B                           = define(189)
-    val SDL_SCANCODE_KP_C                           = define(190)
-    val SDL_SCANCODE_KP_D                           = define(191)
-    val SDL_SCANCODE_KP_E                           = define(192)
-    val SDL_SCANCODE_KP_F                           = define(193)
-    val SDL_SCANCODE_KP_XOR                         = define(194)
-    val SDL_SCANCODE_KP_POWER                       = define(195)
-    val SDL_SCANCODE_KP_PERCENT                     = define(196)
-    val SDL_SCANCODE_KP_LESS                        = define(197)
-    val SDL_SCANCODE_KP_GREATER                     = define(198)
-    val SDL_SCANCODE_KP_AMPERSAND                   = define(199)
-    val SDL_SCANCODE_KP_DBLAMPERSAND                = define(200)
-    val SDL_SCANCODE_KP_VERTICALBAR                 = define(201)
-    val SDL_SCANCODE_KP_DBLVERTICALBAR              = define(202)
-    val SDL_SCANCODE_KP_COLON                       = define(203)
-    val SDL_SCANCODE_KP_HASH                        = define(204)
-    val SDL_SCANCODE_KP_SPACE                       = define(205)
-    val SDL_SCANCODE_KP_AT                          = define(206)
-    val SDL_SCANCODE_KP_EXCLAM                      = define(207)
-    val SDL_SCANCODE_KP_MEMSTORE                    = define(208)
-    val SDL_SCANCODE_KP_MEMRECALL                   = define(209)
-    val SDL_SCANCODE_KP_MEMCLEAR                    = define(210)
-    val SDL_SCANCODE_KP_MEMADD                      = define(211)
-    val SDL_SCANCODE_KP_MEMSUBTRACT                 = define(212)
-    val SDL_SCANCODE_KP_MEMMULTIPLY                 = define(213)
-    val SDL_SCANCODE_KP_MEMDIVIDE                   = define(214)
-    val SDL_SCANCODE_KP_PLUSMINUS                   = define(215)
-    val SDL_SCANCODE_KP_CLEAR                       = define(216)
-    val SDL_SCANCODE_KP_CLEARENTRY                  = define(217)
-    val SDL_SCANCODE_KP_BINARY                      = define(218)
-    val SDL_SCANCODE_KP_OCTAL                       = define(219)
-    val SDL_SCANCODE_KP_DECIMAL                     = define(220)
-    val SDL_SCANCODE_KP_HEXADECIMAL                 = define(221)
-    val SDL_SCANCODE_LCTRL                          = define(224)
-    val SDL_SCANCODE_LSHIFT                         = define(225)
-    val SDL_SCANCODE_LALT                           = define(226)
-    val SDL_SCANCODE_LGUI                           = define(227)
-    val SDL_SCANCODE_RCTRL                          = define(228)
-    val SDL_SCANCODE_RSHIFT                         = define(229)
-    val SDL_SCANCODE_RALT                           = define(230)
-    val SDL_SCANCODE_RGUI                           = define(231)
-    val SDL_SCANCODE_MODE                           = define(257)
-    val SDL_SCANCODE_AUDIONEXT                      = define(258)
-    val SDL_SCANCODE_AUDIOPREV                      = define(259)
-    val SDL_SCANCODE_AUDIOSTOP                      = define(260)
-    val SDL_SCANCODE_AUDIOPLAY                      = define(261)
-    val SDL_SCANCODE_AUDIOMUTE                      = define(262)
-    val SDL_SCANCODE_MEDIASELECT                    = define(263)
-    val SDL_SCANCODE_WWW                            = define(264)
-    val SDL_SCANCODE_MAIL                           = define(265)
-    val SDL_SCANCODE_CALCULATOR                     = define(266)
-    val SDL_SCANCODE_COMPUTER                       = define(267)
-    val SDL_SCANCODE_AC_SEARCH                      = define(268)
-    val SDL_SCANCODE_AC_HOME                        = define(269)
-    val SDL_SCANCODE_AC_BACK                        = define(270)
-    val SDL_SCANCODE_AC_FORWARD                     = define(271)
-    val SDL_SCANCODE_AC_STOP                        = define(272)
-    val SDL_SCANCODE_AC_REFRESH                     = define(273)
-    val SDL_SCANCODE_AC_BOOKMARKS                   = define(274)
-    val SDL_SCANCODE_BRIGHTNESSDOWN                 = define(275)
-    val SDL_SCANCODE_BRIGHTNESSUP                   = define(276)
-    val SDL_SCANCODE_DISPLAYSWITCH                  = define(277)
-    val SDL_SCANCODE_KBDILLUMTOGGLE                 = define(278)
-    val SDL_SCANCODE_KBDILLUMDOWN                   = define(279)
-    val SDL_SCANCODE_KBDILLUMUP                     = define(280)
-    val SDL_SCANCODE_EJECT                          = define(281)
-    val SDL_SCANCODE_SLEEP                          = define(282)
-    val SDL_SCANCODE_APP1                           = define(283)
-    val SDL_SCANCODE_APP2                           = define(284)
-    val SDL_SCANCODE_AUDIOREWIND                    = define(285)
-    val SDL_SCANCODE_AUDIOFASTFORWARD               = define(286)
-    val SDL_SCANCODE_SOFTLEFT                       = define(287)
-    val SDL_SCANCODE_SOFTRIGHT                      = define(288)
-    val SDL_SCANCODE_CALL                           = define(289)
-    val SDL_SCANCODE_ENDCALL                        = define(290)
-    val SDL_NUM_SCANCODES                           = define(512)
+    given _tag: Tag[SDL_Scancode]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_Scancode                = a
+    val SDL_SCANCODE_UNKNOWN                                       = define(0)
+    val SDL_SCANCODE_A                                             = define(4)
+    val SDL_SCANCODE_B                                             = define(5)
+    val SDL_SCANCODE_C                                             = define(6)
+    val SDL_SCANCODE_D                                             = define(7)
+    val SDL_SCANCODE_E                                             = define(8)
+    val SDL_SCANCODE_F                                             = define(9)
+    val SDL_SCANCODE_G                                             = define(10)
+    val SDL_SCANCODE_H                                             = define(11)
+    val SDL_SCANCODE_I                                             = define(12)
+    val SDL_SCANCODE_J                                             = define(13)
+    val SDL_SCANCODE_K                                             = define(14)
+    val SDL_SCANCODE_L                                             = define(15)
+    val SDL_SCANCODE_M                                             = define(16)
+    val SDL_SCANCODE_N                                             = define(17)
+    val SDL_SCANCODE_O                                             = define(18)
+    val SDL_SCANCODE_P                                             = define(19)
+    val SDL_SCANCODE_Q                                             = define(20)
+    val SDL_SCANCODE_R                                             = define(21)
+    val SDL_SCANCODE_S                                             = define(22)
+    val SDL_SCANCODE_T                                             = define(23)
+    val SDL_SCANCODE_U                                             = define(24)
+    val SDL_SCANCODE_V                                             = define(25)
+    val SDL_SCANCODE_W                                             = define(26)
+    val SDL_SCANCODE_X                                             = define(27)
+    val SDL_SCANCODE_Y                                             = define(28)
+    val SDL_SCANCODE_Z                                             = define(29)
+    val SDL_SCANCODE_1                                             = define(30)
+    val SDL_SCANCODE_2                                             = define(31)
+    val SDL_SCANCODE_3                                             = define(32)
+    val SDL_SCANCODE_4                                             = define(33)
+    val SDL_SCANCODE_5                                             = define(34)
+    val SDL_SCANCODE_6                                             = define(35)
+    val SDL_SCANCODE_7                                             = define(36)
+    val SDL_SCANCODE_8                                             = define(37)
+    val SDL_SCANCODE_9                                             = define(38)
+    val SDL_SCANCODE_0                                             = define(39)
+    val SDL_SCANCODE_RETURN                                        = define(40)
+    val SDL_SCANCODE_ESCAPE                                        = define(41)
+    val SDL_SCANCODE_BACKSPACE                                     = define(42)
+    val SDL_SCANCODE_TAB                                           = define(43)
+    val SDL_SCANCODE_SPACE                                         = define(44)
+    val SDL_SCANCODE_MINUS                                         = define(45)
+    val SDL_SCANCODE_EQUALS                                        = define(46)
+    val SDL_SCANCODE_LEFTBRACKET                                   = define(47)
+    val SDL_SCANCODE_RIGHTBRACKET                                  = define(48)
+    val SDL_SCANCODE_BACKSLASH                                     = define(49)
+    val SDL_SCANCODE_NONUSHASH                                     = define(50)
+    val SDL_SCANCODE_SEMICOLON                                     = define(51)
+    val SDL_SCANCODE_APOSTROPHE                                    = define(52)
+    val SDL_SCANCODE_GRAVE                                         = define(53)
+    val SDL_SCANCODE_COMMA                                         = define(54)
+    val SDL_SCANCODE_PERIOD                                        = define(55)
+    val SDL_SCANCODE_SLASH                                         = define(56)
+    val SDL_SCANCODE_CAPSLOCK                                      = define(57)
+    val SDL_SCANCODE_F1                                            = define(58)
+    val SDL_SCANCODE_F2                                            = define(59)
+    val SDL_SCANCODE_F3                                            = define(60)
+    val SDL_SCANCODE_F4                                            = define(61)
+    val SDL_SCANCODE_F5                                            = define(62)
+    val SDL_SCANCODE_F6                                            = define(63)
+    val SDL_SCANCODE_F7                                            = define(64)
+    val SDL_SCANCODE_F8                                            = define(65)
+    val SDL_SCANCODE_F9                                            = define(66)
+    val SDL_SCANCODE_F10                                           = define(67)
+    val SDL_SCANCODE_F11                                           = define(68)
+    val SDL_SCANCODE_F12                                           = define(69)
+    val SDL_SCANCODE_PRINTSCREEN                                   = define(70)
+    val SDL_SCANCODE_SCROLLLOCK                                    = define(71)
+    val SDL_SCANCODE_PAUSE                                         = define(72)
+    val SDL_SCANCODE_INSERT                                        = define(73)
+    val SDL_SCANCODE_HOME                                          = define(74)
+    val SDL_SCANCODE_PAGEUP                                        = define(75)
+    val SDL_SCANCODE_DELETE                                        = define(76)
+    val SDL_SCANCODE_END                                           = define(77)
+    val SDL_SCANCODE_PAGEDOWN                                      = define(78)
+    val SDL_SCANCODE_RIGHT                                         = define(79)
+    val SDL_SCANCODE_LEFT                                          = define(80)
+    val SDL_SCANCODE_DOWN                                          = define(81)
+    val SDL_SCANCODE_UP                                            = define(82)
+    val SDL_SCANCODE_NUMLOCKCLEAR                                  = define(83)
+    val SDL_SCANCODE_KP_DIVIDE                                     = define(84)
+    val SDL_SCANCODE_KP_MULTIPLY                                   = define(85)
+    val SDL_SCANCODE_KP_MINUS                                      = define(86)
+    val SDL_SCANCODE_KP_PLUS                                       = define(87)
+    val SDL_SCANCODE_KP_ENTER                                      = define(88)
+    val SDL_SCANCODE_KP_1                                          = define(89)
+    val SDL_SCANCODE_KP_2                                          = define(90)
+    val SDL_SCANCODE_KP_3                                          = define(91)
+    val SDL_SCANCODE_KP_4                                          = define(92)
+    val SDL_SCANCODE_KP_5                                          = define(93)
+    val SDL_SCANCODE_KP_6                                          = define(94)
+    val SDL_SCANCODE_KP_7                                          = define(95)
+    val SDL_SCANCODE_KP_8                                          = define(96)
+    val SDL_SCANCODE_KP_9                                          = define(97)
+    val SDL_SCANCODE_KP_0                                          = define(98)
+    val SDL_SCANCODE_KP_PERIOD                                     = define(99)
+    val SDL_SCANCODE_NONUSBACKSLASH                                = define(100)
+    val SDL_SCANCODE_APPLICATION                                   = define(101)
+    val SDL_SCANCODE_POWER                                         = define(102)
+    val SDL_SCANCODE_KP_EQUALS                                     = define(103)
+    val SDL_SCANCODE_F13                                           = define(104)
+    val SDL_SCANCODE_F14                                           = define(105)
+    val SDL_SCANCODE_F15                                           = define(106)
+    val SDL_SCANCODE_F16                                           = define(107)
+    val SDL_SCANCODE_F17                                           = define(108)
+    val SDL_SCANCODE_F18                                           = define(109)
+    val SDL_SCANCODE_F19                                           = define(110)
+    val SDL_SCANCODE_F20                                           = define(111)
+    val SDL_SCANCODE_F21                                           = define(112)
+    val SDL_SCANCODE_F22                                           = define(113)
+    val SDL_SCANCODE_F23                                           = define(114)
+    val SDL_SCANCODE_F24                                           = define(115)
+    val SDL_SCANCODE_EXECUTE                                       = define(116)
+    val SDL_SCANCODE_HELP                                          = define(117)
+    val SDL_SCANCODE_MENU                                          = define(118)
+    val SDL_SCANCODE_SELECT                                        = define(119)
+    val SDL_SCANCODE_STOP                                          = define(120)
+    val SDL_SCANCODE_AGAIN                                         = define(121)
+    val SDL_SCANCODE_UNDO                                          = define(122)
+    val SDL_SCANCODE_CUT                                           = define(123)
+    val SDL_SCANCODE_COPY                                          = define(124)
+    val SDL_SCANCODE_PASTE                                         = define(125)
+    val SDL_SCANCODE_FIND                                          = define(126)
+    val SDL_SCANCODE_MUTE                                          = define(127)
+    val SDL_SCANCODE_VOLUMEUP                                      = define(128)
+    val SDL_SCANCODE_VOLUMEDOWN                                    = define(129)
+    val SDL_SCANCODE_KP_COMMA                                      = define(133)
+    val SDL_SCANCODE_KP_EQUALSAS400                                = define(134)
+    val SDL_SCANCODE_INTERNATIONAL1                                = define(135)
+    val SDL_SCANCODE_INTERNATIONAL2                                = define(136)
+    val SDL_SCANCODE_INTERNATIONAL3                                = define(137)
+    val SDL_SCANCODE_INTERNATIONAL4                                = define(138)
+    val SDL_SCANCODE_INTERNATIONAL5                                = define(139)
+    val SDL_SCANCODE_INTERNATIONAL6                                = define(140)
+    val SDL_SCANCODE_INTERNATIONAL7                                = define(141)
+    val SDL_SCANCODE_INTERNATIONAL8                                = define(142)
+    val SDL_SCANCODE_INTERNATIONAL9                                = define(143)
+    val SDL_SCANCODE_LANG1                                         = define(144)
+    val SDL_SCANCODE_LANG2                                         = define(145)
+    val SDL_SCANCODE_LANG3                                         = define(146)
+    val SDL_SCANCODE_LANG4                                         = define(147)
+    val SDL_SCANCODE_LANG5                                         = define(148)
+    val SDL_SCANCODE_LANG6                                         = define(149)
+    val SDL_SCANCODE_LANG7                                         = define(150)
+    val SDL_SCANCODE_LANG8                                         = define(151)
+    val SDL_SCANCODE_LANG9                                         = define(152)
+    val SDL_SCANCODE_ALTERASE                                      = define(153)
+    val SDL_SCANCODE_SYSREQ                                        = define(154)
+    val SDL_SCANCODE_CANCEL                                        = define(155)
+    val SDL_SCANCODE_CLEAR                                         = define(156)
+    val SDL_SCANCODE_PRIOR                                         = define(157)
+    val SDL_SCANCODE_RETURN2                                       = define(158)
+    val SDL_SCANCODE_SEPARATOR                                     = define(159)
+    val SDL_SCANCODE_OUT                                           = define(160)
+    val SDL_SCANCODE_OPER                                          = define(161)
+    val SDL_SCANCODE_CLEARAGAIN                                    = define(162)
+    val SDL_SCANCODE_CRSEL                                         = define(163)
+    val SDL_SCANCODE_EXSEL                                         = define(164)
+    val SDL_SCANCODE_KP_00                                         = define(176)
+    val SDL_SCANCODE_KP_000                                        = define(177)
+    val SDL_SCANCODE_THOUSANDSSEPARATOR                            = define(178)
+    val SDL_SCANCODE_DECIMALSEPARATOR                              = define(179)
+    val SDL_SCANCODE_CURRENCYUNIT                                  = define(180)
+    val SDL_SCANCODE_CURRENCYSUBUNIT                               = define(181)
+    val SDL_SCANCODE_KP_LEFTPAREN                                  = define(182)
+    val SDL_SCANCODE_KP_RIGHTPAREN                                 = define(183)
+    val SDL_SCANCODE_KP_LEFTBRACE                                  = define(184)
+    val SDL_SCANCODE_KP_RIGHTBRACE                                 = define(185)
+    val SDL_SCANCODE_KP_TAB                                        = define(186)
+    val SDL_SCANCODE_KP_BACKSPACE                                  = define(187)
+    val SDL_SCANCODE_KP_A                                          = define(188)
+    val SDL_SCANCODE_KP_B                                          = define(189)
+    val SDL_SCANCODE_KP_C                                          = define(190)
+    val SDL_SCANCODE_KP_D                                          = define(191)
+    val SDL_SCANCODE_KP_E                                          = define(192)
+    val SDL_SCANCODE_KP_F                                          = define(193)
+    val SDL_SCANCODE_KP_XOR                                        = define(194)
+    val SDL_SCANCODE_KP_POWER                                      = define(195)
+    val SDL_SCANCODE_KP_PERCENT                                    = define(196)
+    val SDL_SCANCODE_KP_LESS                                       = define(197)
+    val SDL_SCANCODE_KP_GREATER                                    = define(198)
+    val SDL_SCANCODE_KP_AMPERSAND                                  = define(199)
+    val SDL_SCANCODE_KP_DBLAMPERSAND                               = define(200)
+    val SDL_SCANCODE_KP_VERTICALBAR                                = define(201)
+    val SDL_SCANCODE_KP_DBLVERTICALBAR                             = define(202)
+    val SDL_SCANCODE_KP_COLON                                      = define(203)
+    val SDL_SCANCODE_KP_HASH                                       = define(204)
+    val SDL_SCANCODE_KP_SPACE                                      = define(205)
+    val SDL_SCANCODE_KP_AT                                         = define(206)
+    val SDL_SCANCODE_KP_EXCLAM                                     = define(207)
+    val SDL_SCANCODE_KP_MEMSTORE                                   = define(208)
+    val SDL_SCANCODE_KP_MEMRECALL                                  = define(209)
+    val SDL_SCANCODE_KP_MEMCLEAR                                   = define(210)
+    val SDL_SCANCODE_KP_MEMADD                                     = define(211)
+    val SDL_SCANCODE_KP_MEMSUBTRACT                                = define(212)
+    val SDL_SCANCODE_KP_MEMMULTIPLY                                = define(213)
+    val SDL_SCANCODE_KP_MEMDIVIDE                                  = define(214)
+    val SDL_SCANCODE_KP_PLUSMINUS                                  = define(215)
+    val SDL_SCANCODE_KP_CLEAR                                      = define(216)
+    val SDL_SCANCODE_KP_CLEARENTRY                                 = define(217)
+    val SDL_SCANCODE_KP_BINARY                                     = define(218)
+    val SDL_SCANCODE_KP_OCTAL                                      = define(219)
+    val SDL_SCANCODE_KP_DECIMAL                                    = define(220)
+    val SDL_SCANCODE_KP_HEXADECIMAL                                = define(221)
+    val SDL_SCANCODE_LCTRL                                         = define(224)
+    val SDL_SCANCODE_LSHIFT                                        = define(225)
+    val SDL_SCANCODE_LALT                                          = define(226)
+    val SDL_SCANCODE_LGUI                                          = define(227)
+    val SDL_SCANCODE_RCTRL                                         = define(228)
+    val SDL_SCANCODE_RSHIFT                                        = define(229)
+    val SDL_SCANCODE_RALT                                          = define(230)
+    val SDL_SCANCODE_RGUI                                          = define(231)
+    val SDL_SCANCODE_MODE                                          = define(257)
+    val SDL_SCANCODE_AUDIONEXT                                     = define(258)
+    val SDL_SCANCODE_AUDIOPREV                                     = define(259)
+    val SDL_SCANCODE_AUDIOSTOP                                     = define(260)
+    val SDL_SCANCODE_AUDIOPLAY                                     = define(261)
+    val SDL_SCANCODE_AUDIOMUTE                                     = define(262)
+    val SDL_SCANCODE_MEDIASELECT                                   = define(263)
+    val SDL_SCANCODE_WWW                                           = define(264)
+    val SDL_SCANCODE_MAIL                                          = define(265)
+    val SDL_SCANCODE_CALCULATOR                                    = define(266)
+    val SDL_SCANCODE_COMPUTER                                      = define(267)
+    val SDL_SCANCODE_AC_SEARCH                                     = define(268)
+    val SDL_SCANCODE_AC_HOME                                       = define(269)
+    val SDL_SCANCODE_AC_BACK                                       = define(270)
+    val SDL_SCANCODE_AC_FORWARD                                    = define(271)
+    val SDL_SCANCODE_AC_STOP                                       = define(272)
+    val SDL_SCANCODE_AC_REFRESH                                    = define(273)
+    val SDL_SCANCODE_AC_BOOKMARKS                                  = define(274)
+    val SDL_SCANCODE_BRIGHTNESSDOWN                                = define(275)
+    val SDL_SCANCODE_BRIGHTNESSUP                                  = define(276)
+    val SDL_SCANCODE_DISPLAYSWITCH                                 = define(277)
+    val SDL_SCANCODE_KBDILLUMTOGGLE                                = define(278)
+    val SDL_SCANCODE_KBDILLUMDOWN                                  = define(279)
+    val SDL_SCANCODE_KBDILLUMUP                                    = define(280)
+    val SDL_SCANCODE_EJECT                                         = define(281)
+    val SDL_SCANCODE_SLEEP                                         = define(282)
+    val SDL_SCANCODE_APP1                                          = define(283)
+    val SDL_SCANCODE_APP2                                          = define(284)
+    val SDL_SCANCODE_AUDIOREWIND                                   = define(285)
+    val SDL_SCANCODE_AUDIOFASTFORWARD                              = define(286)
+    val SDL_SCANCODE_SOFTLEFT                                      = define(287)
+    val SDL_SCANCODE_SOFTRIGHT                                     = define(288)
+    val SDL_SCANCODE_CALL                                          = define(289)
+    val SDL_SCANCODE_ENDCALL                                       = define(290)
+    val SDL_NUM_SCANCODES                                          = define(512)
     inline def getName(inline value: SDL_Scancode): Option[String] =
       inline value match
         case SDL_SCANCODE_UNKNOWN            => Some("SDL_SCANCODE_UNKNOWN")
@@ -2537,16 +2537,16 @@ object enumerations:
     */
   opaque type SDL_SensorType = CInt
   object SDL_SensorType extends CEnum[SDL_SensorType]:
-    given _tag: Tag[SDL_SensorType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_SensorType = a
-    val SDL_SENSOR_INVALID                            = define(-1)
-    val SDL_SENSOR_UNKNOWN                            = define(0)
-    val SDL_SENSOR_ACCEL                              = define(1)
-    val SDL_SENSOR_GYRO                               = define(2)
-    val SDL_SENSOR_ACCEL_L                            = define(3)
-    val SDL_SENSOR_GYRO_L                             = define(4)
-    val SDL_SENSOR_ACCEL_R                            = define(5)
-    val SDL_SENSOR_GYRO_R                             = define(6)
+    given _tag: Tag[SDL_SensorType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_SensorType                = a
+    val SDL_SENSOR_INVALID                                           = define(-1)
+    val SDL_SENSOR_UNKNOWN                                           = define(0)
+    val SDL_SENSOR_ACCEL                                             = define(1)
+    val SDL_SENSOR_GYRO                                              = define(2)
+    val SDL_SENSOR_ACCEL_L                                           = define(3)
+    val SDL_SENSOR_GYRO_L                                            = define(4)
+    val SDL_SENSOR_ACCEL_R                                           = define(5)
+    val SDL_SENSOR_GYRO_R                                            = define(6)
     inline def getName(inline value: SDL_SensorType): Option[String] =
       inline value match
         case SDL_SENSOR_INVALID => Some("SDL_SENSOR_INVALID")
@@ -2569,21 +2569,21 @@ object enumerations:
     */
   opaque type SDL_SystemCursor = CInt
   object SDL_SystemCursor extends CEnum[SDL_SystemCursor]:
-    given _tag: Tag[SDL_SystemCursor]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_SystemCursor = a
-    val SDL_SYSTEM_CURSOR_ARROW                         = define(0)
-    val SDL_SYSTEM_CURSOR_IBEAM                         = define(1)
-    val SDL_SYSTEM_CURSOR_WAIT                          = define(2)
-    val SDL_SYSTEM_CURSOR_CROSSHAIR                     = define(3)
-    val SDL_SYSTEM_CURSOR_WAITARROW                     = define(4)
-    val SDL_SYSTEM_CURSOR_SIZENWSE                      = define(5)
-    val SDL_SYSTEM_CURSOR_SIZENESW                      = define(6)
-    val SDL_SYSTEM_CURSOR_SIZEWE                        = define(7)
-    val SDL_SYSTEM_CURSOR_SIZENS                        = define(8)
-    val SDL_SYSTEM_CURSOR_SIZEALL                       = define(9)
-    val SDL_SYSTEM_CURSOR_NO                            = define(10)
-    val SDL_SYSTEM_CURSOR_HAND                          = define(11)
-    val SDL_NUM_SYSTEM_CURSORS                          = define(12)
+    given _tag: Tag[SDL_SystemCursor]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_SystemCursor                = a
+    val SDL_SYSTEM_CURSOR_ARROW                                        = define(0)
+    val SDL_SYSTEM_CURSOR_IBEAM                                        = define(1)
+    val SDL_SYSTEM_CURSOR_WAIT                                         = define(2)
+    val SDL_SYSTEM_CURSOR_CROSSHAIR                                    = define(3)
+    val SDL_SYSTEM_CURSOR_WAITARROW                                    = define(4)
+    val SDL_SYSTEM_CURSOR_SIZENWSE                                     = define(5)
+    val SDL_SYSTEM_CURSOR_SIZENESW                                     = define(6)
+    val SDL_SYSTEM_CURSOR_SIZEWE                                       = define(7)
+    val SDL_SYSTEM_CURSOR_SIZENS                                       = define(8)
+    val SDL_SYSTEM_CURSOR_SIZEALL                                      = define(9)
+    val SDL_SYSTEM_CURSOR_NO                                           = define(10)
+    val SDL_SYSTEM_CURSOR_HAND                                         = define(11)
+    val SDL_NUM_SYSTEM_CURSORS                                         = define(12)
     inline def getName(inline value: SDL_SystemCursor): Option[String] =
       inline value match
         case SDL_SYSTEM_CURSOR_ARROW     => Some("SDL_SYSTEM_CURSOR_ARROW")
@@ -2611,11 +2611,11 @@ object enumerations:
     */
   opaque type SDL_TextureAccess = CInt
   object SDL_TextureAccess extends CEnum[SDL_TextureAccess]:
-    given _tag: Tag[SDL_TextureAccess]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_TextureAccess = a
-    val SDL_TEXTUREACCESS_STATIC                         = define(0)
-    val SDL_TEXTUREACCESS_STREAMING                      = define(1)
-    val SDL_TEXTUREACCESS_TARGET                         = define(2)
+    given _tag: Tag[SDL_TextureAccess]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_TextureAccess                = a
+    val SDL_TEXTUREACCESS_STATIC                                        = define(0)
+    val SDL_TEXTUREACCESS_STREAMING                                     = define(1)
+    val SDL_TEXTUREACCESS_TARGET                                        = define(2)
     inline def getName(inline value: SDL_TextureAccess): Option[String] =
       inline value match
         case SDL_TEXTUREACCESS_STATIC    => Some("SDL_TEXTUREACCESS_STATIC")
@@ -2633,11 +2633,11 @@ object enumerations:
     */
   opaque type SDL_TextureModulate = CInt
   object SDL_TextureModulate extends CEnum[SDL_TextureModulate]:
-    given _tag: Tag[SDL_TextureModulate]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_TextureModulate = a
-    val SDL_TEXTUREMODULATE_NONE                           = define(0)
-    val SDL_TEXTUREMODULATE_COLOR                          = define(1)
-    val SDL_TEXTUREMODULATE_ALPHA                          = define(2)
+    given _tag: Tag[SDL_TextureModulate]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_TextureModulate                = a
+    val SDL_TEXTUREMODULATE_NONE                                          = define(0)
+    val SDL_TEXTUREMODULATE_COLOR                                         = define(1)
+    val SDL_TEXTUREMODULATE_ALPHA                                         = define(2)
     inline def getName(inline value: SDL_TextureModulate): Option[String] =
       inline value match
         case SDL_TEXTUREMODULATE_NONE  => Some("SDL_TEXTUREMODULATE_NONE")
@@ -2655,12 +2655,12 @@ object enumerations:
     */
   opaque type SDL_ThreadPriority = CInt
   object SDL_ThreadPriority extends CEnum[SDL_ThreadPriority]:
-    given _tag: Tag[SDL_ThreadPriority]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_ThreadPriority = a
-    val SDL_THREAD_PRIORITY_LOW                           = define(0)
-    val SDL_THREAD_PRIORITY_NORMAL                        = define(1)
-    val SDL_THREAD_PRIORITY_HIGH                          = define(2)
-    val SDL_THREAD_PRIORITY_TIME_CRITICAL                 = define(3)
+    given _tag: Tag[SDL_ThreadPriority]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_ThreadPriority                = a
+    val SDL_THREAD_PRIORITY_LOW                                          = define(0)
+    val SDL_THREAD_PRIORITY_NORMAL                                       = define(1)
+    val SDL_THREAD_PRIORITY_HIGH                                         = define(2)
+    val SDL_THREAD_PRIORITY_TIME_CRITICAL                                = define(3)
     inline def getName(inline value: SDL_ThreadPriority): Option[String] =
       inline value match
         case SDL_THREAD_PRIORITY_LOW           => Some("SDL_THREAD_PRIORITY_LOW")
@@ -2677,12 +2677,12 @@ object enumerations:
     */
   opaque type SDL_TouchDeviceType = CInt
   object SDL_TouchDeviceType extends CEnum[SDL_TouchDeviceType]:
-    given _tag: Tag[SDL_TouchDeviceType]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_TouchDeviceType = a
-    val SDL_TOUCH_DEVICE_INVALID                           = define(-1)
-    val SDL_TOUCH_DEVICE_DIRECT                            = define(0)
-    val SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE                 = define(1)
-    val SDL_TOUCH_DEVICE_INDIRECT_RELATIVE                 = define(2)
+    given _tag: Tag[SDL_TouchDeviceType]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_TouchDeviceType                = a
+    val SDL_TOUCH_DEVICE_INVALID                                          = define(-1)
+    val SDL_TOUCH_DEVICE_DIRECT                                           = define(0)
+    val SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE                                = define(1)
+    val SDL_TOUCH_DEVICE_INDIRECT_RELATIVE                                = define(2)
     inline def getName(inline value: SDL_TouchDeviceType): Option[String] =
       inline value match
         case SDL_TOUCH_DEVICE_INVALID           => Some("SDL_TOUCH_DEVICE_INVALID")
@@ -2701,27 +2701,27 @@ object enumerations:
     */
   opaque type SDL_WindowEventID = CInt
   object SDL_WindowEventID extends CEnum[SDL_WindowEventID]:
-    given _tag: Tag[SDL_WindowEventID]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_WindowEventID = a
-    val SDL_WINDOWEVENT_NONE                             = define(0)
-    val SDL_WINDOWEVENT_SHOWN                            = define(1)
-    val SDL_WINDOWEVENT_HIDDEN                           = define(2)
-    val SDL_WINDOWEVENT_EXPOSED                          = define(3)
-    val SDL_WINDOWEVENT_MOVED                            = define(4)
-    val SDL_WINDOWEVENT_RESIZED                          = define(5)
-    val SDL_WINDOWEVENT_SIZE_CHANGED                     = define(6)
-    val SDL_WINDOWEVENT_MINIMIZED                        = define(7)
-    val SDL_WINDOWEVENT_MAXIMIZED                        = define(8)
-    val SDL_WINDOWEVENT_RESTORED                         = define(9)
-    val SDL_WINDOWEVENT_ENTER                            = define(10)
-    val SDL_WINDOWEVENT_LEAVE                            = define(11)
-    val SDL_WINDOWEVENT_FOCUS_GAINED                     = define(12)
-    val SDL_WINDOWEVENT_FOCUS_LOST                       = define(13)
-    val SDL_WINDOWEVENT_CLOSE                            = define(14)
-    val SDL_WINDOWEVENT_TAKE_FOCUS                       = define(15)
-    val SDL_WINDOWEVENT_HIT_TEST                         = define(16)
-    val SDL_WINDOWEVENT_ICCPROF_CHANGED                  = define(17)
-    val SDL_WINDOWEVENT_DISPLAY_CHANGED                  = define(18)
+    given _tag: Tag[SDL_WindowEventID]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_WindowEventID                = a
+    val SDL_WINDOWEVENT_NONE                                            = define(0)
+    val SDL_WINDOWEVENT_SHOWN                                           = define(1)
+    val SDL_WINDOWEVENT_HIDDEN                                          = define(2)
+    val SDL_WINDOWEVENT_EXPOSED                                         = define(3)
+    val SDL_WINDOWEVENT_MOVED                                           = define(4)
+    val SDL_WINDOWEVENT_RESIZED                                         = define(5)
+    val SDL_WINDOWEVENT_SIZE_CHANGED                                    = define(6)
+    val SDL_WINDOWEVENT_MINIMIZED                                       = define(7)
+    val SDL_WINDOWEVENT_MAXIMIZED                                       = define(8)
+    val SDL_WINDOWEVENT_RESTORED                                        = define(9)
+    val SDL_WINDOWEVENT_ENTER                                           = define(10)
+    val SDL_WINDOWEVENT_LEAVE                                           = define(11)
+    val SDL_WINDOWEVENT_FOCUS_GAINED                                    = define(12)
+    val SDL_WINDOWEVENT_FOCUS_LOST                                      = define(13)
+    val SDL_WINDOWEVENT_CLOSE                                           = define(14)
+    val SDL_WINDOWEVENT_TAKE_FOCUS                                      = define(15)
+    val SDL_WINDOWEVENT_HIT_TEST                                        = define(16)
+    val SDL_WINDOWEVENT_ICCPROF_CHANGED                                 = define(17)
+    val SDL_WINDOWEVENT_DISPLAY_CHANGED                                 = define(18)
     inline def getName(inline value: SDL_WindowEventID): Option[String] =
       inline value match
         case SDL_WINDOWEVENT_NONE            => Some("SDL_WINDOWEVENT_NONE")
@@ -2755,32 +2755,32 @@ object enumerations:
     */
   opaque type SDL_WindowFlags = CInt
   object SDL_WindowFlags extends CEnum[SDL_WindowFlags]:
-    given _tag: Tag[SDL_WindowFlags]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_WindowFlags = a
-    val SDL_WINDOW_FULLSCREEN                          = define(1)
-    val SDL_WINDOW_OPENGL                              = define(2)
-    val SDL_WINDOW_SHOWN                               = define(4)
-    val SDL_WINDOW_HIDDEN                              = define(8)
-    val SDL_WINDOW_BORDERLESS                          = define(16)
-    val SDL_WINDOW_RESIZABLE                           = define(32)
-    val SDL_WINDOW_MINIMIZED                           = define(64)
-    val SDL_WINDOW_MAXIMIZED                           = define(128)
-    val SDL_WINDOW_MOUSE_GRABBED                       = define(256)
-    val SDL_WINDOW_INPUT_FOCUS                         = define(512)
-    val SDL_WINDOW_MOUSE_FOCUS                         = define(1024)
-    val SDL_WINDOW_FULLSCREEN_DESKTOP                  = define(4097)
-    val SDL_WINDOW_FOREIGN                             = define(2048)
-    val SDL_WINDOW_ALLOW_HIGHDPI                       = define(8192)
-    val SDL_WINDOW_MOUSE_CAPTURE                       = define(16384)
-    val SDL_WINDOW_ALWAYS_ON_TOP                       = define(32768)
-    val SDL_WINDOW_SKIP_TASKBAR                        = define(65536)
-    val SDL_WINDOW_UTILITY                             = define(131072)
-    val SDL_WINDOW_TOOLTIP                             = define(262144)
-    val SDL_WINDOW_POPUP_MENU                          = define(524288)
-    val SDL_WINDOW_KEYBOARD_GRABBED                    = define(1048576)
-    val SDL_WINDOW_VULKAN                              = define(268435456)
-    val SDL_WINDOW_METAL                               = define(536870912)
-    val SDL_WINDOW_INPUT_GRABBED                       = define(256)
+    given _tag: Tag[SDL_WindowFlags]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_WindowFlags                = a
+    val SDL_WINDOW_FULLSCREEN                                         = define(1)
+    val SDL_WINDOW_OPENGL                                             = define(2)
+    val SDL_WINDOW_SHOWN                                              = define(4)
+    val SDL_WINDOW_HIDDEN                                             = define(8)
+    val SDL_WINDOW_BORDERLESS                                         = define(16)
+    val SDL_WINDOW_RESIZABLE                                          = define(32)
+    val SDL_WINDOW_MINIMIZED                                          = define(64)
+    val SDL_WINDOW_MAXIMIZED                                          = define(128)
+    val SDL_WINDOW_MOUSE_GRABBED                                      = define(256)
+    val SDL_WINDOW_INPUT_FOCUS                                        = define(512)
+    val SDL_WINDOW_MOUSE_FOCUS                                        = define(1024)
+    val SDL_WINDOW_FULLSCREEN_DESKTOP                                 = define(4097)
+    val SDL_WINDOW_FOREIGN                                            = define(2048)
+    val SDL_WINDOW_ALLOW_HIGHDPI                                      = define(8192)
+    val SDL_WINDOW_MOUSE_CAPTURE                                      = define(16384)
+    val SDL_WINDOW_ALWAYS_ON_TOP                                      = define(32768)
+    val SDL_WINDOW_SKIP_TASKBAR                                       = define(65536)
+    val SDL_WINDOW_UTILITY                                            = define(131072)
+    val SDL_WINDOW_TOOLTIP                                            = define(262144)
+    val SDL_WINDOW_POPUP_MENU                                         = define(524288)
+    val SDL_WINDOW_KEYBOARD_GRABBED                                   = define(1048576)
+    val SDL_WINDOW_VULKAN                                             = define(268435456)
+    val SDL_WINDOW_METAL                                              = define(536870912)
+    val SDL_WINDOW_INPUT_GRABBED                                      = define(256)
     inline def getName(inline value: SDL_WindowFlags): Option[String] =
       inline value match
         case SDL_WINDOW_FULLSCREEN         => Some("SDL_WINDOW_FULLSCREEN")
@@ -2819,12 +2819,12 @@ object enumerations:
     */
   opaque type SDL_YUV_CONVERSION_MODE = CInt
   object SDL_YUV_CONVERSION_MODE extends CEnum[SDL_YUV_CONVERSION_MODE]:
-    given _tag: Tag[SDL_YUV_CONVERSION_MODE]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_YUV_CONVERSION_MODE = a
-    val SDL_YUV_CONVERSION_JPEG                                = define(0)
-    val SDL_YUV_CONVERSION_BT601                               = define(1)
-    val SDL_YUV_CONVERSION_BT709                               = define(2)
-    val SDL_YUV_CONVERSION_AUTOMATIC                           = define(3)
+    given _tag: Tag[SDL_YUV_CONVERSION_MODE]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_YUV_CONVERSION_MODE                = a
+    val SDL_YUV_CONVERSION_JPEG                                               = define(0)
+    val SDL_YUV_CONVERSION_BT601                                              = define(1)
+    val SDL_YUV_CONVERSION_BT709                                              = define(2)
+    val SDL_YUV_CONVERSION_AUTOMATIC                                          = define(3)
     inline def getName(inline value: SDL_YUV_CONVERSION_MODE): Option[String] =
       inline value match
         case SDL_YUV_CONVERSION_JPEG      => Some("SDL_YUV_CONVERSION_JPEG")
@@ -2841,10 +2841,10 @@ object enumerations:
     */
   opaque type SDL_bool = CInt
   object SDL_bool extends CEnum[SDL_bool]:
-    given _tag: Tag[SDL_bool]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_bool = a
-    val SDL_FALSE                               = define(0)
-    val SDL_TRUE                                = define(1)
+    given _tag: Tag[SDL_bool]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_bool                = a
+    val SDL_FALSE                                              = define(0)
+    val SDL_TRUE                                               = define(1)
     inline def getName(inline value: SDL_bool): Option[String] =
       inline value match
         case SDL_FALSE => Some("SDL_FALSE")
@@ -2859,14 +2859,14 @@ object enumerations:
     */
   opaque type SDL_errorcode = CInt
   object SDL_errorcode extends CEnum[SDL_errorcode]:
-    given _tag: Tag[SDL_errorcode]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_errorcode = a
-    val SDL_ENOMEM                                   = define(0)
-    val SDL_EFREAD                                   = define(1)
-    val SDL_EFWRITE                                  = define(2)
-    val SDL_EFSEEK                                   = define(3)
-    val SDL_UNSUPPORTED                              = define(4)
-    val SDL_LASTERROR                                = define(5)
+    given _tag: Tag[SDL_errorcode]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_errorcode                = a
+    val SDL_ENOMEM                                                  = define(0)
+    val SDL_EFREAD                                                  = define(1)
+    val SDL_EFWRITE                                                 = define(2)
+    val SDL_EFSEEK                                                  = define(3)
+    val SDL_UNSUPPORTED                                             = define(4)
+    val SDL_LASTERROR                                               = define(5)
     inline def getName(inline value: SDL_errorcode): Option[String] =
       inline value match
         case SDL_ENOMEM      => Some("SDL_ENOMEM")
@@ -2885,11 +2885,11 @@ object enumerations:
     */
   opaque type SDL_eventaction = CInt
   object SDL_eventaction extends CEnum[SDL_eventaction]:
-    given _tag: Tag[SDL_eventaction]                   = Tag.Int
-    inline def define(inline a: CInt): SDL_eventaction = a
-    val SDL_ADDEVENT                                   = define(0)
-    val SDL_PEEKEVENT                                  = define(1)
-    val SDL_GETEVENT                                   = define(2)
+    given _tag: Tag[SDL_eventaction]                                  = Tag.Int
+    inline def define(inline a: CInt): SDL_eventaction                = a
+    val SDL_ADDEVENT                                                  = define(0)
+    val SDL_PEEKEVENT                                                 = define(1)
+    val SDL_GETEVENT                                                  = define(2)
     inline def getName(inline value: SDL_eventaction): Option[String] =
       inline value match
         case SDL_ADDEVENT  => Some("SDL_ADDEVENT")
@@ -2907,12 +2907,12 @@ object enumerations:
     */
   opaque type WindowShapeMode = CInt
   object WindowShapeMode extends CEnum[WindowShapeMode]:
-    given _tag: Tag[WindowShapeMode]                   = Tag.Int
-    inline def define(inline a: CInt): WindowShapeMode = a
-    val ShapeModeDefault                               = define(0)
-    val ShapeModeBinarizeAlpha                         = define(1)
-    val ShapeModeReverseBinarizeAlpha                  = define(2)
-    val ShapeModeColorKey                              = define(3)
+    given _tag: Tag[WindowShapeMode]                                  = Tag.Int
+    inline def define(inline a: CInt): WindowShapeMode                = a
+    val ShapeModeDefault                                              = define(0)
+    val ShapeModeBinarizeAlpha                                        = define(1)
+    val ShapeModeReverseBinarizeAlpha                                 = define(2)
+    val ShapeModeColorKey                                             = define(3)
     inline def getName(inline value: WindowShapeMode): Option[String] =
       inline value match
         case ShapeModeDefault              => Some("ShapeModeDefault")
@@ -3545,24 +3545,24 @@ object structs:
       (!____ptr).filter_index = filter_index
       ____ptr
     extension (struct: SDL_AudioCVT)
-      def needed: CInt                               = struct._1
-      def needed_=(value: CInt): Unit                = !struct.at1 = value
-      def src_format: SDL_AudioFormat                = struct._2
-      def src_format_=(value: SDL_AudioFormat): Unit = !struct.at2 = value
-      def dst_format: SDL_AudioFormat                = struct._3
-      def dst_format_=(value: SDL_AudioFormat): Unit = !struct.at3 = value
-      def rate_incr: Double                          = struct._4
-      def rate_incr_=(value: Double): Unit           = !struct.at4 = value
-      def buf: Ptr[Uint8]                            = struct._5
-      def buf_=(value: Ptr[Uint8]): Unit             = !struct.at5 = value
-      def len: CInt                                  = struct._6
-      def len_=(value: CInt): Unit                   = !struct.at6 = value
-      def len_cvt: CInt                              = struct._7
-      def len_cvt_=(value: CInt): Unit               = !struct.at7 = value
-      def len_mult: CInt                             = struct._8
-      def len_mult_=(value: CInt): Unit              = !struct.at8 = value
-      def len_ratio: Double                          = struct._9
-      def len_ratio_=(value: Double): Unit           = !struct.at9 = value
+      def needed: CInt                                                 = struct._1
+      def needed_=(value: CInt): Unit                                  = !struct.at1 = value
+      def src_format: SDL_AudioFormat                                  = struct._2
+      def src_format_=(value: SDL_AudioFormat): Unit                   = !struct.at2 = value
+      def dst_format: SDL_AudioFormat                                  = struct._3
+      def dst_format_=(value: SDL_AudioFormat): Unit                   = !struct.at3 = value
+      def rate_incr: Double                                            = struct._4
+      def rate_incr_=(value: Double): Unit                             = !struct.at4 = value
+      def buf: Ptr[Uint8]                                              = struct._5
+      def buf_=(value: Ptr[Uint8]): Unit                               = !struct.at5 = value
+      def len: CInt                                                    = struct._6
+      def len_=(value: CInt): Unit                                     = !struct.at6 = value
+      def len_cvt: CInt                                                = struct._7
+      def len_cvt_=(value: CInt): Unit                                 = !struct.at7 = value
+      def len_mult: CInt                                               = struct._8
+      def len_mult_=(value: CInt): Unit                                = !struct.at8 = value
+      def len_ratio: Double                                            = struct._9
+      def len_ratio_=(value: Double): Unit                             = !struct.at9 = value
       def filters: CArray[SDL_AudioFilter, Nat.Digit2[Nat._1, Nat._0]] =
         struct._10.asInstanceOf[CArray[SDL_AudioFilter, Nat.Digit2[Nat._1, Nat._0]]]
       def filters_=(value: CArray[SDL_AudioFilter, Nat.Digit2[Nat._1, Nat._0]]): Unit = !struct.at10 =
@@ -3823,7 +3823,7 @@ object structs:
     */
   opaque type SDL_ControllerDeviceEvent = CStruct3[Uint32, Uint32, Sint32]
   object SDL_ControllerDeviceEvent:
-    given _tag: Tag[SDL_ControllerDeviceEvent] = Tag.materializeCStruct3Tag[Uint32, Uint32, Sint32]
+    given _tag: Tag[SDL_ControllerDeviceEvent]              = Tag.materializeCStruct3Tag[Uint32, Uint32, Sint32]
     def apply()(using Zone): Ptr[SDL_ControllerDeviceEvent] =
       scala.scalanative.unsafe.alloc[SDL_ControllerDeviceEvent](1)
     def apply(`type`: Uint32, timestamp: Uint32, which: Sint32)(using Zone): Ptr[SDL_ControllerDeviceEvent] =
@@ -4091,8 +4091,8 @@ object structs:
     */
   opaque type SDL_FPoint = CStruct2[Float, Float]
   object SDL_FPoint:
-    given _tag: Tag[SDL_FPoint]              = Tag.materializeCStruct2Tag[Float, Float]
-    def apply()(using Zone): Ptr[SDL_FPoint] = scala.scalanative.unsafe.alloc[SDL_FPoint](1)
+    given _tag: Tag[SDL_FPoint]                                = Tag.materializeCStruct2Tag[Float, Float]
+    def apply()(using Zone): Ptr[SDL_FPoint]                   = scala.scalanative.unsafe.alloc[SDL_FPoint](1)
     def apply(x: Float, y: Float)(using Zone): Ptr[SDL_FPoint] =
       val ____ptr = apply()
       (!____ptr).x = x
@@ -4190,8 +4190,8 @@ object structs:
         */
       opaque type Struct0 = CStruct2[CInt, CInt]
       object Struct0:
-        given _tag: Tag[Struct0]              = Tag.materializeCStruct2Tag[CInt, CInt]
-        def apply()(using Zone): Ptr[Struct0] = scala.scalanative.unsafe.alloc[Struct0](1)
+        given _tag: Tag[Struct0]                                       = Tag.materializeCStruct2Tag[CInt, CInt]
+        def apply()(using Zone): Ptr[Struct0]                          = scala.scalanative.unsafe.alloc[Struct0](1)
         def apply(hat: CInt, hat_mask: CInt)(using Zone): Ptr[Struct0] =
           val ____ptr = apply()
           (!____ptr).hat = hat
@@ -4202,7 +4202,7 @@ object structs:
           def hat_=(value: CInt): Unit      = !struct.at1 = value
           def hat_mask: CInt                = struct._2
           def hat_mask_=(value: CInt): Unit = !struct.at2 = value
-      given _tag: Tag[Union0] = Tag.CArray[CChar, Nat._8](Tag.Byte, Tag.Nat8)
+      given _tag: Tag[Union0]              = Tag.CArray[CChar, Nat._8](Tag.Byte, Tag.Nat8)
       def apply()(using Zone): Ptr[Union0] =
         val ___ptr = alloc[Union0](1)
         ___ptr
@@ -4225,10 +4225,10 @@ object structs:
         un.at(0).asInstanceOf[Ptr[SDL_GameControllerButtonBind.Union0.Struct0]].update(0, hat)
         ___ptr
       extension (struct: Union0)
-        def button: CInt                = !struct.at(0).asInstanceOf[Ptr[CInt]]
-        def button_=(value: CInt): Unit = !struct.at(0).asInstanceOf[Ptr[CInt]] = value
-        def axis: CInt                  = !struct.at(0).asInstanceOf[Ptr[CInt]]
-        def axis_=(value: CInt): Unit   = !struct.at(0).asInstanceOf[Ptr[CInt]] = value
+        def button: CInt                                     = !struct.at(0).asInstanceOf[Ptr[CInt]]
+        def button_=(value: CInt): Unit                      = !struct.at(0).asInstanceOf[Ptr[CInt]] = value
+        def axis: CInt                                       = !struct.at(0).asInstanceOf[Ptr[CInt]]
+        def axis_=(value: CInt): Unit                        = !struct.at(0).asInstanceOf[Ptr[CInt]] = value
         def hat: SDL_GameControllerButtonBind.Union0.Struct0 =
           !struct.at(0).asInstanceOf[Ptr[SDL_GameControllerButtonBind.Union0.Struct0]]
         def hat_=(value: SDL_GameControllerButtonBind.Union0.Struct0): Unit =
@@ -5525,8 +5525,8 @@ object structs:
     */
   opaque type SDL_Point = CStruct2[CInt, CInt]
   object SDL_Point:
-    given _tag: Tag[SDL_Point]              = Tag.materializeCStruct2Tag[CInt, CInt]
-    def apply()(using Zone): Ptr[SDL_Point] = scala.scalanative.unsafe.alloc[SDL_Point](1)
+    given _tag: Tag[SDL_Point]                              = Tag.materializeCStruct2Tag[CInt, CInt]
+    def apply()(using Zone): Ptr[SDL_Point]                 = scala.scalanative.unsafe.alloc[SDL_Point](1)
     def apply(x: CInt, y: CInt)(using Zone): Ptr[SDL_Point] =
       val ____ptr = apply()
       (!____ptr).x = x
@@ -5677,10 +5677,10 @@ object structs:
         def windowsio: SDL_RWops.Union0.Struct0 = !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct0]]
         def windowsio_=(value: SDL_RWops.Union0.Struct0): Unit =
           !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct0]] = value
-        def mem: SDL_RWops.Union0.Struct1 = !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct1]]
+        def mem: SDL_RWops.Union0.Struct1                = !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct1]]
         def mem_=(value: SDL_RWops.Union0.Struct1): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct1]] =
           value
-        def unknown: SDL_RWops.Union0.Struct2 = !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct2]]
+        def unknown: SDL_RWops.Union0.Struct2                = !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct2]]
         def unknown_=(value: SDL_RWops.Union0.Struct2): Unit =
           !struct.at(0).asInstanceOf[Ptr[SDL_RWops.Union0.Struct2]] = value
     given _tag: Tag[SDL_RWops] = Tag.materializeCStruct7Tag[
@@ -6373,8 +6373,8 @@ object structs:
     */
   opaque type SDL_atomic_t = CStruct1[CInt]
   object SDL_atomic_t:
-    given _tag: Tag[SDL_atomic_t]              = Tag.materializeCStruct1Tag[CInt]
-    def apply()(using Zone): Ptr[SDL_atomic_t] = scala.scalanative.unsafe.alloc[SDL_atomic_t](1)
+    given _tag: Tag[SDL_atomic_t]                         = Tag.materializeCStruct1Tag[CInt]
+    def apply()(using Zone): Ptr[SDL_atomic_t]            = scala.scalanative.unsafe.alloc[SDL_atomic_t](1)
     def apply(value: CInt)(using Zone): Ptr[SDL_atomic_t] =
       val ____ptr = apply()
       (!____ptr).value = value
@@ -6813,61 +6813,61 @@ object unions:
       def editExt: SDL_TextEditingExtEvent          = !struct.at(0).asInstanceOf[Ptr[SDL_TextEditingExtEvent]]
       def editExt_=(value: SDL_TextEditingExtEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_TextEditingExtEvent]] =
         value
-      def text: SDL_TextInputEvent                     = !struct.at(0).asInstanceOf[Ptr[SDL_TextInputEvent]]
-      def text_=(value: SDL_TextInputEvent): Unit      = !struct.at(0).asInstanceOf[Ptr[SDL_TextInputEvent]] = value
-      def motion: SDL_MouseMotionEvent                 = !struct.at(0).asInstanceOf[Ptr[SDL_MouseMotionEvent]]
-      def motion_=(value: SDL_MouseMotionEvent): Unit  = !struct.at(0).asInstanceOf[Ptr[SDL_MouseMotionEvent]] = value
-      def button: SDL_MouseButtonEvent                 = !struct.at(0).asInstanceOf[Ptr[SDL_MouseButtonEvent]]
-      def button_=(value: SDL_MouseButtonEvent): Unit  = !struct.at(0).asInstanceOf[Ptr[SDL_MouseButtonEvent]] = value
-      def wheel: SDL_MouseWheelEvent                   = !struct.at(0).asInstanceOf[Ptr[SDL_MouseWheelEvent]]
-      def wheel_=(value: SDL_MouseWheelEvent): Unit    = !struct.at(0).asInstanceOf[Ptr[SDL_MouseWheelEvent]] = value
-      def jaxis: SDL_JoyAxisEvent                      = !struct.at(0).asInstanceOf[Ptr[SDL_JoyAxisEvent]]
-      def jaxis_=(value: SDL_JoyAxisEvent): Unit       = !struct.at(0).asInstanceOf[Ptr[SDL_JoyAxisEvent]] = value
-      def jball: SDL_JoyBallEvent                      = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBallEvent]]
-      def jball_=(value: SDL_JoyBallEvent): Unit       = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBallEvent]] = value
-      def jhat: SDL_JoyHatEvent                        = !struct.at(0).asInstanceOf[Ptr[SDL_JoyHatEvent]]
-      def jhat_=(value: SDL_JoyHatEvent): Unit         = !struct.at(0).asInstanceOf[Ptr[SDL_JoyHatEvent]] = value
-      def jbutton: SDL_JoyButtonEvent                  = !struct.at(0).asInstanceOf[Ptr[SDL_JoyButtonEvent]]
-      def jbutton_=(value: SDL_JoyButtonEvent): Unit   = !struct.at(0).asInstanceOf[Ptr[SDL_JoyButtonEvent]] = value
-      def jdevice: SDL_JoyDeviceEvent                  = !struct.at(0).asInstanceOf[Ptr[SDL_JoyDeviceEvent]]
-      def jdevice_=(value: SDL_JoyDeviceEvent): Unit   = !struct.at(0).asInstanceOf[Ptr[SDL_JoyDeviceEvent]] = value
-      def jbattery: SDL_JoyBatteryEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBatteryEvent]]
-      def jbattery_=(value: SDL_JoyBatteryEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBatteryEvent]] = value
-      def caxis: SDL_ControllerAxisEvent               = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerAxisEvent]]
+      def text: SDL_TextInputEvent                      = !struct.at(0).asInstanceOf[Ptr[SDL_TextInputEvent]]
+      def text_=(value: SDL_TextInputEvent): Unit       = !struct.at(0).asInstanceOf[Ptr[SDL_TextInputEvent]] = value
+      def motion: SDL_MouseMotionEvent                  = !struct.at(0).asInstanceOf[Ptr[SDL_MouseMotionEvent]]
+      def motion_=(value: SDL_MouseMotionEvent): Unit   = !struct.at(0).asInstanceOf[Ptr[SDL_MouseMotionEvent]] = value
+      def button: SDL_MouseButtonEvent                  = !struct.at(0).asInstanceOf[Ptr[SDL_MouseButtonEvent]]
+      def button_=(value: SDL_MouseButtonEvent): Unit   = !struct.at(0).asInstanceOf[Ptr[SDL_MouseButtonEvent]] = value
+      def wheel: SDL_MouseWheelEvent                    = !struct.at(0).asInstanceOf[Ptr[SDL_MouseWheelEvent]]
+      def wheel_=(value: SDL_MouseWheelEvent): Unit     = !struct.at(0).asInstanceOf[Ptr[SDL_MouseWheelEvent]] = value
+      def jaxis: SDL_JoyAxisEvent                       = !struct.at(0).asInstanceOf[Ptr[SDL_JoyAxisEvent]]
+      def jaxis_=(value: SDL_JoyAxisEvent): Unit        = !struct.at(0).asInstanceOf[Ptr[SDL_JoyAxisEvent]] = value
+      def jball: SDL_JoyBallEvent                       = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBallEvent]]
+      def jball_=(value: SDL_JoyBallEvent): Unit        = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBallEvent]] = value
+      def jhat: SDL_JoyHatEvent                         = !struct.at(0).asInstanceOf[Ptr[SDL_JoyHatEvent]]
+      def jhat_=(value: SDL_JoyHatEvent): Unit          = !struct.at(0).asInstanceOf[Ptr[SDL_JoyHatEvent]] = value
+      def jbutton: SDL_JoyButtonEvent                   = !struct.at(0).asInstanceOf[Ptr[SDL_JoyButtonEvent]]
+      def jbutton_=(value: SDL_JoyButtonEvent): Unit    = !struct.at(0).asInstanceOf[Ptr[SDL_JoyButtonEvent]] = value
+      def jdevice: SDL_JoyDeviceEvent                   = !struct.at(0).asInstanceOf[Ptr[SDL_JoyDeviceEvent]]
+      def jdevice_=(value: SDL_JoyDeviceEvent): Unit    = !struct.at(0).asInstanceOf[Ptr[SDL_JoyDeviceEvent]] = value
+      def jbattery: SDL_JoyBatteryEvent                 = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBatteryEvent]]
+      def jbattery_=(value: SDL_JoyBatteryEvent): Unit  = !struct.at(0).asInstanceOf[Ptr[SDL_JoyBatteryEvent]] = value
+      def caxis: SDL_ControllerAxisEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerAxisEvent]]
       def caxis_=(value: SDL_ControllerAxisEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerAxisEvent]] =
         value
-      def cbutton: SDL_ControllerButtonEvent = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerButtonEvent]]
+      def cbutton: SDL_ControllerButtonEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerButtonEvent]]
       def cbutton_=(value: SDL_ControllerButtonEvent): Unit =
         !struct.at(0).asInstanceOf[Ptr[SDL_ControllerButtonEvent]] = value
-      def cdevice: SDL_ControllerDeviceEvent = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerDeviceEvent]]
+      def cdevice: SDL_ControllerDeviceEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerDeviceEvent]]
       def cdevice_=(value: SDL_ControllerDeviceEvent): Unit =
         !struct.at(0).asInstanceOf[Ptr[SDL_ControllerDeviceEvent]] = value
       def ctouchpad: SDL_ControllerTouchpadEvent = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerTouchpadEvent]]
       def ctouchpad_=(value: SDL_ControllerTouchpadEvent): Unit =
         !struct.at(0).asInstanceOf[Ptr[SDL_ControllerTouchpadEvent]] = value
-      def csensor: SDL_ControllerSensorEvent = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerSensorEvent]]
+      def csensor: SDL_ControllerSensorEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_ControllerSensorEvent]]
       def csensor_=(value: SDL_ControllerSensorEvent): Unit =
         !struct.at(0).asInstanceOf[Ptr[SDL_ControllerSensorEvent]] = value
-      def adevice: SDL_AudioDeviceEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_AudioDeviceEvent]]
-      def adevice_=(value: SDL_AudioDeviceEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_AudioDeviceEvent]] = value
-      def sensor: SDL_SensorEvent                      = !struct.at(0).asInstanceOf[Ptr[SDL_SensorEvent]]
-      def sensor_=(value: SDL_SensorEvent): Unit       = !struct.at(0).asInstanceOf[Ptr[SDL_SensorEvent]] = value
-      def quit: SDL_QuitEvent                          = !struct.at(0).asInstanceOf[Ptr[SDL_QuitEvent]]
-      def quit_=(value: SDL_QuitEvent): Unit           = !struct.at(0).asInstanceOf[Ptr[SDL_QuitEvent]] = value
-      def user: SDL_UserEvent                          = !struct.at(0).asInstanceOf[Ptr[SDL_UserEvent]]
-      def user_=(value: SDL_UserEvent): Unit           = !struct.at(0).asInstanceOf[Ptr[SDL_UserEvent]] = value
-      def syswm: SDL_SysWMEvent                        = !struct.at(0).asInstanceOf[Ptr[SDL_SysWMEvent]]
-      def syswm_=(value: SDL_SysWMEvent): Unit         = !struct.at(0).asInstanceOf[Ptr[SDL_SysWMEvent]] = value
-      def tfinger: SDL_TouchFingerEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_TouchFingerEvent]]
-      def tfinger_=(value: SDL_TouchFingerEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_TouchFingerEvent]] = value
-      def mgesture: SDL_MultiGestureEvent              = !struct.at(0).asInstanceOf[Ptr[SDL_MultiGestureEvent]]
+      def adevice: SDL_AudioDeviceEvent                  = !struct.at(0).asInstanceOf[Ptr[SDL_AudioDeviceEvent]]
+      def adevice_=(value: SDL_AudioDeviceEvent): Unit   = !struct.at(0).asInstanceOf[Ptr[SDL_AudioDeviceEvent]] = value
+      def sensor: SDL_SensorEvent                        = !struct.at(0).asInstanceOf[Ptr[SDL_SensorEvent]]
+      def sensor_=(value: SDL_SensorEvent): Unit         = !struct.at(0).asInstanceOf[Ptr[SDL_SensorEvent]] = value
+      def quit: SDL_QuitEvent                            = !struct.at(0).asInstanceOf[Ptr[SDL_QuitEvent]]
+      def quit_=(value: SDL_QuitEvent): Unit             = !struct.at(0).asInstanceOf[Ptr[SDL_QuitEvent]] = value
+      def user: SDL_UserEvent                            = !struct.at(0).asInstanceOf[Ptr[SDL_UserEvent]]
+      def user_=(value: SDL_UserEvent): Unit             = !struct.at(0).asInstanceOf[Ptr[SDL_UserEvent]] = value
+      def syswm: SDL_SysWMEvent                          = !struct.at(0).asInstanceOf[Ptr[SDL_SysWMEvent]]
+      def syswm_=(value: SDL_SysWMEvent): Unit           = !struct.at(0).asInstanceOf[Ptr[SDL_SysWMEvent]] = value
+      def tfinger: SDL_TouchFingerEvent                  = !struct.at(0).asInstanceOf[Ptr[SDL_TouchFingerEvent]]
+      def tfinger_=(value: SDL_TouchFingerEvent): Unit   = !struct.at(0).asInstanceOf[Ptr[SDL_TouchFingerEvent]] = value
+      def mgesture: SDL_MultiGestureEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_MultiGestureEvent]]
       def mgesture_=(value: SDL_MultiGestureEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_MultiGestureEvent]] =
         value
-      def dgesture: SDL_DollarGestureEvent = !struct.at(0).asInstanceOf[Ptr[SDL_DollarGestureEvent]]
+      def dgesture: SDL_DollarGestureEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_DollarGestureEvent]]
       def dgesture_=(value: SDL_DollarGestureEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_DollarGestureEvent]] =
         value
-      def drop: SDL_DropEvent                = !struct.at(0).asInstanceOf[Ptr[SDL_DropEvent]]
-      def drop_=(value: SDL_DropEvent): Unit = !struct.at(0).asInstanceOf[Ptr[SDL_DropEvent]] = value
+      def drop: SDL_DropEvent                                = !struct.at(0).asInstanceOf[Ptr[SDL_DropEvent]]
+      def drop_=(value: SDL_DropEvent): Unit                 = !struct.at(0).asInstanceOf[Ptr[SDL_DropEvent]] = value
       def padding: CArray[Uint8, Nat.Digit2[Nat._5, Nat._6]] =
         !struct.at(0).asInstanceOf[Ptr[CArray[Uint8, Nat.Digit2[Nat._5, Nat._6]]]]
       def padding_=(value: CArray[Uint8, Nat.Digit2[Nat._5, Nat._6]]): Unit =
@@ -6948,7 +6948,7 @@ object unions:
     */
   opaque type SDL_WindowShapeParams = CArray[Byte, Nat._4]
   object SDL_WindowShapeParams:
-    given _tag: Tag[SDL_WindowShapeParams] = Tag.CArray[CChar, Nat._4](Tag.Byte, Tag.Nat4)
+    given _tag: Tag[SDL_WindowShapeParams]              = Tag.CArray[CChar, Nat._4](Tag.Byte, Tag.Nat4)
     def apply()(using Zone): Ptr[SDL_WindowShapeParams] =
       val ___ptr = alloc[SDL_WindowShapeParams](1)
       ___ptr

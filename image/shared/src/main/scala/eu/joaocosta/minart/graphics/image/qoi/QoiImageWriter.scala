@@ -35,7 +35,7 @@ trait QoiImageWriter extends ImageWriter {
   private def writeOp(op: Op): ByteStreamState[String] = op match {
     case Op.OpRgb(r, g, b)     => writeBytes(Vector(254, r, g, b))
     case Op.OpRgba(r, g, b, a) => writeBytes(Vector(255, r, g, b, a))
-    case Op.OpIndex(index) =>
+    case Op.OpIndex(index)     =>
       if (index < 0 || index > 63) State.error(s"Invalid index: $index")
       else writeByte(index)
     case Op.OpRun(run) =>
@@ -47,7 +47,7 @@ trait QoiImageWriter extends ImageWriter {
 
   @tailrec
   private def storeOps(ops: List[Op], acc: ByteStreamState[String] = emptyStream): ByteStreamState[String] = ops match {
-    case Nil => acc
+    case Nil      => acc
     case op :: xs =>
       val nextStream = (for {
         _ <- acc
@@ -78,7 +78,7 @@ object QoiImageWriter {
       addColor(QoiColor.fromMinartColor(color))
     def addColor(color: QoiColor): QoiState = {
       lazy val hash = color.hash
-      val nextAcc =
+      val nextAcc   =
         if (previousColor.contains(color)) opAcc match {
           case Op.OpRun(run) :: xs if run < 62 => Op.OpRun(run + 1) :: xs
           case Op.OpRun(run) :: _              => Op.OpRgb(color.r, color.g, color.b) :: opAcc

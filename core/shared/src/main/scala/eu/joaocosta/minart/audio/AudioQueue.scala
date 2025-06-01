@@ -26,7 +26,7 @@ object AudioQueue {
     var mix                = AudioMix()
 
     def isEmpty() = synchronized { valueQueue.isEmpty && clipQueue.isEmpty }
-    def size = clipQueue.foldLeft(valueQueue.size) { case (acc, clip) =>
+    def size      = clipQueue.foldLeft(valueQueue.size) { case (acc, clip) =>
       if (acc == Int.MaxValue || clip.duration.isInfinite) Int.MaxValue
       else {
         val newValue = acc + Sampler.numSamples(clip, sampleRate)
@@ -66,7 +66,7 @@ object AudioQueue {
   final class MultiChannelAudioQueue(sampleRate: Int) extends AudioQueue {
     private val channels = scala.collection.mutable.Map[Int, SingleChannelAudioQueue]()
 
-    private val channelMixes = scala.collection.mutable.Map[Int, AudioMix]()
+    private val channelMixes                  = scala.collection.mutable.Map[Int, AudioMix]()
     def getChannelMix(channel: Int): AudioMix =
       channelMixes.getOrElse(channel, AudioMix())
     def setChannelMix(mix: AudioMix, channel: Int): Unit =
@@ -76,11 +76,11 @@ object AudioQueue {
     def isEmpty()              = channels.values.forall(_.isEmpty())
     def isEmpty(channel: Int)  = channels.get(channel).map(_.isEmpty()).getOrElse(true)
     def nonEmpty(channel: Int) = !isEmpty(channel)
-    def size =
+    def size                   =
       if (channels.isEmpty) 0
       else channels.values.maxBy(_.size).size
 
-    def enqueue(clip: AudioClip): this.type = enqueue(clip, 0)
+    def enqueue(clip: AudioClip): this.type               = enqueue(clip, 0)
     def enqueue(clip: AudioClip, channel: Int): this.type = synchronized {
       val queue = channels.getOrElseUpdate(channel, new SingleChannelAudioQueue(sampleRate))
       queue.mix = getChannelMix(channel)

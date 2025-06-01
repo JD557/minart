@@ -51,7 +51,7 @@ class PlaneSpec extends munit.FunSuite {
       surface.view.repeating
         .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
         .toRamSurface(surface.width, surface.height)
-    val newPixels = newSurface.getPixels()
+    val newPixels      = newSurface.getPixels()
     val expectedPixels =
       originalPixels.take(8) ++ originalPixels.drop(8).map(_.map(_.invert))
 
@@ -108,7 +108,7 @@ class PlaneSpec extends munit.FunSuite {
       surface.view.repeating
         .coflatMap(img => img(1, 2))
         .toRamSurface(surface.width, surface.height)
-    val newPixels = newSurface.getPixels()
+    val newPixels      = newSurface.getPixels()
     val expectedPixels =
       surface.view.repeating
         .translate(-1, -2)
@@ -133,7 +133,7 @@ class PlaneSpec extends munit.FunSuite {
       surface.view.repeating
         .coflatMap(kernel)
         .toRamSurface(surface.width, surface.height)
-    val newPixels = newSurface.getPixels()
+    val newPixels      = newSurface.getPixels()
     val expectedPixels =
       surface.view.repeating
         .translate(-1, -2)

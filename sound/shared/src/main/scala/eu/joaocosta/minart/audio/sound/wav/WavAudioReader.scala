@@ -66,12 +66,12 @@ trait WavAudioReader extends AudioClipReader {
         id match {
           case "fmt " =>
             val fmt = for {
-              size        <- readLENumber(4)
-              audioFormat <- readLENumber(2).validate(_ == 1, f => s"Expected PCM audio (format = 1), got format $f")
-              numChannels <- readLENumber(2).validate(_ == 1, c => s"Expected a Mono WAV file, got $c channels")
-              sampleRate  <- readLENumber(4)
-              byteRate    <- readLENumber(4)
-              blockAlign  <- readLENumber(2)
+              size          <- readLENumber(4)
+              audioFormat   <- readLENumber(2).validate(_ == 1, f => s"Expected PCM audio (format = 1), got format $f")
+              numChannels   <- readLENumber(2).validate(_ == 1, c => s"Expected a Mono WAV file, got $c channels")
+              sampleRate    <- readLENumber(4)
+              byteRate      <- readLENumber(4)
+              blockAlign    <- readLENumber(2)
               bitsPerSample <- readLENumber(2).validate(
                 Set(8, 16, 32),
                 b => s"Expected 8, 16 or 32 bit sound, got $b bit sound"
@@ -89,7 +89,7 @@ trait WavAudioReader extends AudioClipReader {
                 else loadChunks(header, newData.toVector)
               }
             }
-          case "" => State.error("Reached end of file without all required chunks")
+          case ""    => State.error("Reached end of file without all required chunks")
           case other =>
             readLENumber(4).flatMap(size => skipBytes(size)).flatMap(_ => loadChunks(header, data))
         }

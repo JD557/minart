@@ -30,13 +30,13 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
     sourceDataLine.close()
   }
 
-  given ExecutionContext = ExecutionContext.global
+  given ExecutionContext               = ExecutionContext.global
   private def callback(): Future[Unit] = Future {
     while (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
       if (available > 0) {
         val samples = Math.min(playQueue.size, available / 2)
-        val buf = Iterator
+        val buf     = Iterator
           .fill(samples) {
             val next  = playQueue.dequeue()
             val short = (Math.min(Math.max(-1.0, next), 1.0) * Short.MaxValue).toInt

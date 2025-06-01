@@ -126,7 +126,7 @@ object ImageDataSurface {
     */
   def fromImage(image: Image): ImageDataSurface = {
     val offscreenCanvas = new OffscreenCanvas(image.width, image.height)
-    val ctx = offscreenCanvas
+    val ctx             = offscreenCanvas
       .getContext("2d", new TwoDContextAttributes { alpha = true })
       .asInstanceOf[CanvasRenderingContext2D]
     ctx.drawImage(image, 0, 0)
