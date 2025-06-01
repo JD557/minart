@@ -105,13 +105,59 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
     * @param y topmost pixel on the destination plane
     */
   final def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): Plane =
-    new Plane {
-      def getPixel(dx: Int, dy: Int): Color = {
-        if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
-          blendMode.blend(that.unsafeGetPixel(dx - x, dy - y), outer.getPixel(dx, dy))
-        else
-          outer.getPixel(dx, dy)
-      }
+    blendMode match {
+      case BlendMode.Copy =>
+        new Plane {
+          def getPixel(dx: Int, dy: Int): Color = {
+            if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
+              that.unsafeGetPixel(dx - x, dy - y)
+            else
+              outer.getPixel(dx, dy)
+          }
+        }
+      case BlendMode.ColorMask(maskColor) =>
+        new Plane {
+          def getPixel(dx: Int, dy: Int): Color = {
+            if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height) {
+              val color = that.unsafeGetPixel(dx - x, dy - y)
+              if (color != maskColor) color
+              else outer.getPixel(dx, dy)
+            } else outer.getPixel(dx, dy)
+          }
+        }
+      case BlendMode.AlphaTest(alpha) =>
+        new Plane {
+          def getPixel(dx: Int, dy: Int): Color = {
+            if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
+              val color = that.unsafeGetPixel(dx - x, dy - y)
+              if (color.a > alpha) color
+              else outer.getPixel(dx, dy)
+            else outer.getPixel(dx, dy)
+          }
+        }
+      case BlendMode.AlphaAdd =>
+        new Plane {
+          def getPixel(dx: Int, dy: Int): Color = {
+            if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
+              val colorSource = that.unsafeGetPixel(dx - x, dy - y)
+              val colorDest   = outer.getPixel(dx, dy)
+              Color(
+                Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
+                Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
+                Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
+              )
+            else outer.getPixel(dx, dy)
+          }
+        }
+      case blendMode => // Custom BlendMode
+        new Plane {
+          def getPixel(dx: Int, dy: Int): Color = {
+            if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
+              blendMode.blend(that.unsafeGetPixel(dx - x, dy - y), outer.getPixel(dx, dy))
+            else
+              outer.getPixel(dx, dy)
+          }
+        }
     }
 
   /** Overlays a shape on top of this plane.
