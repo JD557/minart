@@ -15,11 +15,8 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
   val size = vertices.size
   require(size >= 3, "A polygon needs at least 3 vertices")
 
-  lazy val aabb: AxisAlignedBoundingBox = {
-    val builder = AxisAlignedBoundingBox.Builder()
-    vertices.foreach(builder.add)
-    builder.result()
-  }
+  lazy val aabb: AxisAlignedBoundingBox =
+    AxisAlignedBoundingBox.fromPoints(vertices)
 
   lazy val knownFace: Option[Shape.Face] =
     faceAt(vertices.head)
@@ -32,7 +29,7 @@ final case class ConvexPolygon(vertices: Vector[Point]) extends Shape.ShapeWithC
 
   // See https://jtsorlinis.github.io/rendering-tutorial/ and
   // https://lisyarus.github.io/blog/posts/implementing-a-tiny-cpu-rasterizer-part-2.html
-  private def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
+  private inline def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
   // Helpful loop to avoid boxing and allocations
