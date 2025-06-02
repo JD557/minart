@@ -14,10 +14,10 @@ import eu.joaocosta.minart.input.*
 final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBackedCanvas {
   // Rendering resources
 
-  private[this] var jsCanvas: JsCanvas                                  = _
-  private[this] var ctx: dom.CanvasRenderingContext2D                   = _
-  private[this] var childNode: dom.Node                                 = _
-  private[this] var globalListeners: List[(String, js.Function1[_, _])] = Nil
+  private[this] var jsCanvas: JsCanvas                                                                        = _
+  private[this] var ctx: dom.CanvasRenderingContext2D                                                         = _
+  private[this] var childNode: dom.Node                                                                       = _
+  private[this] var globalListeners: List[(String, js.Function1[_, _])]                                       = Nil
   private[this] def registerGlobalListener[T <: Event](eventType: String, listener: js.Function1[T, _]): Unit = {
     dom.document.addEventListener[T](eventType, listener)
     globalListeners = (eventType, listener) :: globalListeners
@@ -32,9 +32,9 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
 
   // Input resources
 
-  private[this] var keyboardInput: KeyboardInput = KeyboardInput.empty
-  private[this] var pointerInput: PointerInput   = PointerInput.empty
-  private[this] var rawPointerPos: (Int, Int)    = _
+  private[this] var keyboardInput: KeyboardInput                   = KeyboardInput.empty
+  private[this] var pointerInput: PointerInput                     = PointerInput.empty
+  private[this] var rawPointerPos: (Int, Int)                      = _
   private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).flatMap { case (x, y) =>
     val (offsetX, offsetY) = {
       val canvasRect = jsCanvas.getBoundingClientRect()
@@ -76,8 +76,8 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
       (ev: KeyboardEvent) => JsKeyMapping.getKey(ev.keyCode).foreach(k => keyboardInput = keyboardInput.release(k))
     )
 
-    def handlePress()   = { pointerInput = pointerInput.move(cleanPointerPos).press }
-    def handleRelease() = { pointerInput = pointerInput.move(cleanPointerPos).release }
+    def handlePress()              = { pointerInput = pointerInput.move(cleanPointerPos).press }
+    def handleRelease()            = { pointerInput = pointerInput.move(cleanPointerPos).release }
     def handleMove(x: Int, y: Int) = {
       rawPointerPos = (x, y)
     }
@@ -105,8 +105,8 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
   }
 
   protected def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
-    val oldSettings   = settings
-    val clearColorStr = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
+    val oldSettings      = settings
+    val clearColorStr    = s"rgb(${newSettings.clearColor.r},${newSettings.clearColor.g},${newSettings.clearColor.b})"
     val extendedSettings =
       LowLevelCanvas.ExtendedSettings(newSettings, dom.window.screen.width.toInt, dom.window.screen.height.toInt)
     jsCanvas.width = newSettings.width

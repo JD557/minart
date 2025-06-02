@@ -52,7 +52,7 @@ trait BmpImageReader extends ImageReader {
       skipBytes(padding).map(_ => acc.reverseIterator.toArray).run(data)
     else {
       loadColor.run(data) match {
-        case Left(error) => Left(error)
+        case Left(error)               => Left(error)
         case Right((remaining, color)) =>
           loadPixelLine(loadColor, remaining, remainingPixels - 1, padding, color :: acc)
       }
@@ -71,7 +71,7 @@ trait BmpImageReader extends ImageReader {
     if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
       loadPixelLine(loadColor, data, width, padding) match {
-        case Left(error) => Left(error)
+        case Left(error)              => Left(error)
         case Right((remaining, line)) =>
           loadPixels(loadColor, remaining, remainingLines - 1, width, padding, line +: acc)
       }
@@ -84,15 +84,15 @@ trait BmpImageReader extends ImageReader {
         BmpImageFormat.supportedFormats,
         m => s"Unsupported format: $m. Only windows BMPs are supported"
       )
-      size   <- readLENumber(4)
-      _      <- skipBytes(4)
-      offset <- readLENumber(4)
+      size          <- readLENumber(4)
+      _             <- skipBytes(4)
+      offset        <- readLENumber(4)
       dibHeaderSize <- readLENumber(4).validate(
         dib => dib >= 40 && dib <= 124,
         dib => s"Unsupported DIB header size: $dib"
       )
-      width  <- readLENumber(4)
-      height <- readLENumber(4)
+      width       <- readLENumber(4)
+      height      <- readLENumber(4)
       colorPlanes <- readLENumber(2).validate(
         _ == 1,
         planes => s"Invalid number of color planes (must be 1): $planes"
@@ -111,7 +111,7 @@ trait BmpImageReader extends ImageReader {
       greenMask <- if (loadColorMask) readLENumber(4) else State.pure[CustomInputStream, Int](0x0000ff00)
       blueMask  <- if (loadColorMask) readLENumber(4) else State.pure[CustomInputStream, Int](0x000000ff)
       _         <- if (loadColorMask) skipBytes(4) else noop // Skip alpha mask (or color space)
-      _ <- State.check(
+      _         <- State.check(
         redMask == 0x00ff0000 && greenMask == 0x0000ff00 && blueMask == 0x000000ff,
         "Unsupported color format (must be either RGB or ARGB)"
       )

@@ -11,8 +11,8 @@ private[qoi] final class QoiColor private (val argb: Int) {
   def hash        = (r * 3 + g * 5 + b * 7 + a * 11) % 64
   def minartColor = Color.fromARGB(argb)
 
-  override def toString: String = s"QoiColor($r,$g,$b)"
-  override def hashCode(): Int  = hash
+  override def toString: String  = s"QoiColor($r,$g,$b)"
+  override def hashCode(): Int   = hash
   override def equals(that: Any) =
     (that.isInstanceOf[QoiColor] && this.argb == that.asInstanceOf[QoiColor].argb)
 }

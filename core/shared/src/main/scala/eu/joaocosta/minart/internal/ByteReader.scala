@@ -127,7 +127,7 @@ private[minart] object ByteReader {
     override def close(): Unit              = inner.close()
     override def mark(readLimit: Int): Unit = ()
     override def markSupported(): Boolean   = false
-    override def read() = {
+    override def read()                     = {
       if (!hasBuffer) inner.read()
       else {
         hasBuffer = false
@@ -142,7 +142,7 @@ private[minart] object ByteReader {
         inner.read(b, 1, b.size - 1) + 1
       }
     }
-    override def reset(): Unit = ()
+    override def reset(): Unit       = ()
     override def skip(n: Long): Long = {
       if (!hasBuffer || n == 0) inner.skip(n)
       else {

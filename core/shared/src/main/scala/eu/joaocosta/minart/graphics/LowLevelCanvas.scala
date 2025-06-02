@@ -34,7 +34,7 @@ object LowLevelCanvas {
     val scale = settings.scale match {
       case Some(scale)                  => scale
       case None if !settings.fullScreen => 1
-      case _ =>
+      case _                            =>
         val wScale = windowWidth / settings.width
         val hScale = windowHeight / settings.height
         Math.max(1, Math.min(wScale, hScale))

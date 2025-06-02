@@ -61,7 +61,7 @@ trait PpmImageReader extends ImageReader {
     if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
       readPaddedBits(width, lineBytes).run(data) match {
-        case Left(error) => Left(error)
+        case Left(error)              => Left(error)
         case Right((remaining, line)) =>
           loadBits(remaining, remainingLines - 1, width, lineBytes, acc :+ line)
       }
@@ -103,7 +103,7 @@ trait PpmImageReader extends ImageReader {
       Right(data -> acc.reverseIterator.toArray)
     else {
       loadColor.run(data) match {
-        case Left(error) => Left(error)
+        case Left(error)               => Left(error)
         case Right((remaining, color)) =>
           loadPixelLine(loadColor, remaining, remainingPixels - 1, color :: acc)
       }
@@ -121,7 +121,7 @@ trait PpmImageReader extends ImageReader {
     if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
       loadPixelLine(loadColor, data, width) match {
-        case Left(error) => Left(error)
+        case Left(error)              => Left(error)
         case Right((remaining, line)) =>
           loadPixels(loadColor, remaining, remainingLines - 1, width, acc :+ line)
       }
@@ -131,9 +131,9 @@ trait PpmImageReader extends ImageReader {
   private def loadHeader(bytes: CustomInputStream): ParseResult[Header] = {
     (
       for {
-        magic  <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
-        width  <- parseNextInt(s"Invalid width")
-        height <- parseNextInt(s"Invalid height")
+        magic      <- readNextString.validate(PpmImageFormat.supportedFormats, m => s"Unsupported format: $m")
+        width      <- parseNextInt(s"Invalid width")
+        height     <- parseNextInt(s"Invalid height")
         colorRange <-
           if (magic == "P1" || magic == "P4") State.pure(1)
           else
@@ -179,7 +179,7 @@ object PpmImageReader {
 
     val readNextString: ParseState[String, String] =
       readByte.flatMap {
-        case None => State.pure("")
+        case None    => State.pure("")
         case Some(c) =>
           if (c == comment) skipLine.flatMap(_ => readNextString)
           else if (c == newLine || c == space) readNextString
@@ -191,7 +191,7 @@ object PpmImageReader {
 
     val readNextNonWhitespaceChar: ParseState[String, Option[Char]] =
       readByte.flatMap {
-        case None => State.pure(None)
+        case None    => State.pure(None)
         case Some(c) =>
           if (c == comment) skipLine.flatMap(_ => readNextNonWhitespaceChar)
           else if (c == newLine || c == space) readNextNonWhitespaceChar

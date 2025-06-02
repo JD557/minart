@@ -77,8 +77,8 @@ trait RtttlAudioReader extends AudioClipReader {
   private def sequenceNotes(notes: Array[Either[String, Note]]): Either[String, AudioClip] = {
     notes
       .foldLeft[Either[String, AudioClip]](Right(AudioClip.empty)) {
-        case (_, Left(error)) => Left(error)
-        case (Left(error), _) => Left(error)
+        case (_, Left(error))          => Left(error)
+        case (Left(error), _)          => Left(error)
         case (Right(acc), Right(note)) =>
           Right(acc.append(oscilator.generateClip(note.duration, note.frequency)))
       }
@@ -100,7 +100,7 @@ trait RtttlAudioReader extends AudioClipReader {
 object RtttlAudioReader {
   private case class Note(octave: Int, note: Option[Int], duration: Double) {
     def frequency: Double = note match {
-      case None => 0.0
+      case None    => 0.0
       case Some(n) =>
         val a1 = 55
         Math.pow(2, (octave - 1) + n / 12.0) * a1

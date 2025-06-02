@@ -89,11 +89,11 @@ trait QoiImageReader extends ImageReader {
   }
 
   private def loadOps(bytes: CustomInputStream): Iterator[Either[String, Op]] = new Iterator[Either[String, Op]] {
-    var currBytes = bytes
-    def hasNext   = !ByteReader.isEmpty(currBytes)
+    var currBytes                  = bytes
+    def hasNext                    = !ByteReader.isEmpty(currBytes)
     def next(): Either[String, Op] =
       opFromBytes.run(currBytes) match {
-        case Left(error) => Left(error)
+        case Left(error)            => Left(error)
         case Right((remaining, op)) =>
           currBytes = remaining
           Right(op)
@@ -128,10 +128,10 @@ trait QoiImageReader extends ImageReader {
   private def loadHeader(bytes: CustomInputStream): ParseResult[Header] = {
     (
       for {
-        magic    <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
-        width    <- readBENumber(4)
-        height   <- readBENumber(4)
-        channels <- readByte.collect({ case Some(byte) => byte.toByte }, _ => "Incomplete header: no channel byte")
+        magic      <- readString(4).validate(supportedFormats, m => s"Unsupported format: $m")
+        width      <- readBENumber(4)
+        height     <- readBENumber(4)
+        channels   <- readByte.collect({ case Some(byte) => byte.toByte }, _ => "Incomplete header: no channel byte")
         colorspace <- readByte.collect(
           { case Some(byte) => byte.toByte },
           _ => "Incomplete header: no color space byte"

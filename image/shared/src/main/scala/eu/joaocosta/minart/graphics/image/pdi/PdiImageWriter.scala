@@ -14,7 +14,7 @@ trait PdiImageWriter extends ImageWriter {
   import ByteWriter.*
 
   private def colorsToByte(acc: Byte, colors: List[Color], f: Color => Boolean): Byte = colors match {
-    case Nil => acc
+    case Nil          => acc
     case color :: rem =>
       if (f(color)) colorsToByte(((acc << 1) | 0x01).toByte, rem, f)
       else colorsToByte((acc << 1).toByte, rem, f)

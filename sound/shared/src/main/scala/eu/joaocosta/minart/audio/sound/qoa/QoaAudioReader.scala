@@ -24,7 +24,7 @@ trait QoaAudioReader extends AudioClipReader {
   @tailrec
   private def predict(residuals: List[Int], state: QoaState, acc: List[Short] = Nil): (QoaState, List[Short]) =
     residuals match {
-      case Nil => (state, acc.reverse)
+      case Nil     => (state, acc.reverse)
       case r :: rs =>
         val sample = Math.min(Math.max(Short.MinValue, state.prediction + r), Short.MaxValue).toShort
         predict(rs, state.update(sample, r), sample :: acc)
@@ -33,7 +33,7 @@ trait QoaAudioReader extends AudioClipReader {
   private def loadSlice(state: QoaState): ParseState[String, (QoaState, List[Short])] = readBytes(8).map { bytes =>
     val sfQuant          = (bytes(0) & 0xf0) >> 4
     val dequantizedScale = Math.round(Math.pow(sfQuant + 1, 2.75))
-    val longResiduals =
+    val longResiduals    =
       (bytes(0) & 0x0f).toLong << (8 * 7) |
         (bytes(1) & 0xff).toLong << (8 * 6) |
         (bytes(2) & 0xff).toLong << (8 * 5) |
@@ -42,7 +42,7 @@ trait QoaAudioReader extends AudioClipReader {
         (bytes(5) & 0xff).toLong << (8 * 2) |
         (bytes(6) & 0xff).toLong << (8 * 1) |
         (bytes(7) & 0xff).toLong
-    val residuals = extractResiduals(longResiduals)
+    val residuals            = extractResiduals(longResiduals)
     val dequantizedResiduals = residuals.map { res =>
       Vector(0.75, -0.75, 2.5, -2.5, 4.5, -4.5, 7, -7)(res)
     }

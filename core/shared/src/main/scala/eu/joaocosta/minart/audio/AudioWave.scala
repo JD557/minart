@@ -113,7 +113,7 @@ object AudioWave {
     * @param waves waves to mix
     */
   def mix(waves: Seq[AudioWave]): AudioWave = new AudioWave {
-    private val waveArray = waves.toArray
+    private val waveArray               = waves.toArray
     def getAmplitude(t: Double): Double = {
       var res: Double = 0.0
       var i: Int      = 0

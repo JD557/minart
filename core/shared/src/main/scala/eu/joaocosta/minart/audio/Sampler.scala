@@ -17,7 +17,7 @@ object Sampler {
     new Iterator[Double] {
       var position = 0
       def hasNext  = true
-      def next() = {
+      def next()   = {
         val res = wave.getAmplitude(position * stepSize)
         position += 1
         res

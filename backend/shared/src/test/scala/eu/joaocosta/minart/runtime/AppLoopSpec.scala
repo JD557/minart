@@ -10,13 +10,13 @@ import eu.joaocosta.minart.input.*
 class AppLoopSpec extends munit.FunSuite {
 
   object TestCanvas extends SurfaceBackedCanvas {
-    protected var surface: RamSurface = _
-    def unsafeInit(): Unit            = {}
+    protected var surface: RamSurface                                                      = _
+    def unsafeInit(): Unit                                                                 = {}
     def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
       surface = new RamSurface(newSettings.width, newSettings.height, newSettings.clearColor)
       LowLevelCanvas.ExtendedSettings(newSettings)
     }
-    def unsafeDestroy(): Unit = ()
+    def unsafeDestroy(): Unit                    = ()
     def clear(buffers: Set[Canvas.Buffer]): Unit = {
       if (buffers.contains(Canvas.Buffer.Backbuffer)) { fill(settings.clearColor) }
     }

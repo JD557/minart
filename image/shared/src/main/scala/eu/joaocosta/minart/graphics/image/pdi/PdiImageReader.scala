@@ -27,7 +27,7 @@ trait PdiImageReader extends ImageReader {
     if (isEmpty(data) || remainingLines == 0) Right(data -> acc)
     else {
       readPaddedBits(width, lineBytes).run(data) match {
-        case Left(error) => Left(error)
+        case Left(error)              => Left(error)
         case Right((remaining, line)) =>
           loadBits(remaining, remainingLines - 1, width, lineBytes, acc :+ line)
       }

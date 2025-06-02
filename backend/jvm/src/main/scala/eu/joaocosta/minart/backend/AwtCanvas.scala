@@ -165,7 +165,7 @@ object AwtCanvas {
       AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state.synchronized { state = state.release(key) })
     }
     def keyTyped(ev: KeyEvent): Unit = ()
-    def clearPressRelease(): Unit = state.synchronized {
+    def clearPressRelease(): Unit    = state.synchronized {
       state = state.clearPressRelease()
     }
     def getKeyboardInput(): KeyboardInput = state.synchronized {
@@ -198,7 +198,7 @@ object AwtCanvas {
     def mouseClicked(ev: MouseEvent): Unit = ()
     def mouseEntered(ev: MouseEvent): Unit = ()
     def mouseExited(ev: MouseEvent): Unit  = ()
-    def clearEvents(): Unit = synchronized {
+    def clearEvents(): Unit                = synchronized {
       state = state.clearEvents()
     }
     def getPointerInput(): PointerInput = synchronized {

@@ -23,7 +23,7 @@ object SdlSyncLoopRunner extends LoopRunner[Try] {
       frequency: LoopFrequency
   ): Try[S] = {
     val event: Ptr[SDL_Event] = malloc(sizeof[SDL_Event]).asInstanceOf[Ptr[SDL_Event]]
-    val fullCleanup = () => {
+    val fullCleanup           = () => {
       cleanup()
       free(event.asInstanceOf[Ptr[Byte]])
       SDL_Quit()

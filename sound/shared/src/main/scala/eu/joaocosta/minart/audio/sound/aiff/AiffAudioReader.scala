@@ -76,7 +76,7 @@ trait AiffAudioReader extends AudioClipReader {
               _               <- State.check(header.size == 18, s"Invalid COMM chunk size: ${header.size}")
               numChannels     <- readBENumber(2).validate(_ == 1, c => s"Expected a Mono AIFF file, got $c channels")
               numSampleFrames <- readBENumber(4)
-              sampleSize <- readBENumber(2).validate(
+              sampleSize      <- readBENumber(2).validate(
                 Set(8, 16, 32),
                 b => s"Expected a 8, 16 or 32 bit AIFF file, got $b bit"
               )

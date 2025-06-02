@@ -32,7 +32,7 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newSurface = surface.view
       .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
       .toRamSurface()
-    val newPixels = newSurface.getPixels()
+    val newPixels      = newSurface.getPixels()
     val expectedPixels =
       originalPixels.take(8) ++ originalPixels.drop(8).map(_.map(_.invert))
 
@@ -69,7 +69,7 @@ class SurfaceViewSpec extends munit.FunSuite {
       surface.view
         .coflatMap(img => img.getPixel(1, 2).getOrElse(Color(50, 150, 200)))
         .toRamSurface()
-    val newPixels = newSurface.getPixels()
+    val newPixels      = newSurface.getPixels()
     val expectedPixels =
       Plane
         .fromSurfaceWithFallback(surface, Color(50, 150, 200))
@@ -95,7 +95,7 @@ class SurfaceViewSpec extends munit.FunSuite {
     val newSurface =
       surface.view.overlay(surface)(2, 2).toRamSurface()
 
-    val newPixels = newSurface.getPixels()
+    val newPixels      = newSurface.getPixels()
     val expectedPixels =
       originalPixels.take(2) ++
         originalPixels.drop(2).zip(originalPixels).map { case (oldLine, newLine) =>

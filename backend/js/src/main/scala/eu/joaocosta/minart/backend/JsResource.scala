@@ -23,7 +23,7 @@ final case class JsResource(resourcePath: String) extends Resource {
   def unsafeInputStream(): InputStream = {
     val data = loadFromLocalStorage() match {
       case Some(d) => d
-      case None =>
+      case None    =>
         val xhr = new XMLHttpRequest()
         xhr.open("GET", path, false)
         xhr.overrideMimeType("text/plain; charset=x-user-defined")
@@ -35,7 +35,7 @@ final case class JsResource(resourcePath: String) extends Resource {
   }
 
   def unsafeOutputStream(): OutputStream = new OutputStream {
-    val inner = new ByteArrayOutputStream()
+    val inner                  = new ByteArrayOutputStream()
     override def close(): Unit = {
       flush()
       inner.close()
@@ -52,7 +52,7 @@ final case class JsResource(resourcePath: String) extends Resource {
   override def withSource[A](f: Source => A): Try[A] = Try {
     val data = loadFromLocalStorage() match {
       case Some(d) => d
-      case None =>
+      case None    =>
         val xhr = new XMLHttpRequest()
         xhr.open("GET", path, false)
         xhr.send()
