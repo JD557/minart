@@ -57,11 +57,7 @@ private[graphics] object Blitter {
       case BlendMode.AlphaAdd =>
         unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
           val colorDest = dest.unsafeGetPixel(destX, destY)
-          val color     = Color(
-            Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-            Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-            Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-          )
+          val color     = colorDest * Color.grayscale(255 - colorSource.a) + colorSource
           dest.unsafePutPixel(destX, destY, color)
         )
       case blendMode => // Custom BlendMode
@@ -135,11 +131,7 @@ private[graphics] object Blitter {
       case BlendMode.AlphaAdd =>
         unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
           val colorDest = dest.unsafeGetPixel(destX, destY)
-          val color     = Color(
-            Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-            Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-            Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-          )
+          val color     = colorDest * Color.grayscale(255 - colorSource.a) + colorSource
           dest.unsafePutPixel(destX, destY, color)
         )
       case blendMode => // Custom BlendMode

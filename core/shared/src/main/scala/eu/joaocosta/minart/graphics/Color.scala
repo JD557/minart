@@ -34,10 +34,10 @@ object Color {
       * The resulting alpha is set to 255.
       */
     def +(that: Color): Color =
-      Color(
-        Math.min(color.r + that.r, 255).toInt,
-        Math.min(color.g + that.g, 255).toInt,
-        Math.min(color.b + that.b, 255).toInt
+      Color.fromRGB(
+        Math.min((color.argb & 0x00ff0000) + (that.argb & 0x00ff0000), 0x00ff0000) |
+          Math.min((color.argb & 0x0000ff00) + (that.argb & 0x0000ff00), 0x0000ff00) |
+          Math.min((color.argb & 0x000000ff) + (that.argb & 0x000000ff), 0x000000ff)
       )
 
     /** Combines this with another color by summing each RGB value.
@@ -46,11 +46,11 @@ object Color {
       * The alpha of the left-side argument is kept.
       */
     def :+(that: Color): Color =
-      Color(
-        Math.min(color.r + that.r, 255).toInt,
-        Math.min(color.g + that.g, 255).toInt,
-        Math.min(color.b + that.b, 255).toInt,
-        color.a
+      Color.fromARGB(
+        (color.argb & 0xff000000) |
+          Math.min((color.argb & 0x00ff0000) + (that.argb & 0x00ff0000), 0x00ff0000) |
+          Math.min((color.argb & 0x0000ff00) + (that.argb & 0x0000ff00), 0x0000ff00) |
+          Math.min((color.argb & 0x000000ff) + (that.argb & 0x000000ff), 0x000000ff)
       )
 
     /** Combines this with another color by summing each RGB value.
@@ -59,11 +59,11 @@ object Color {
       * The alpha of the right-side argument is kept.
       */
     def +:(that: Color): Color =
-      Color(
-        Math.min(color.r + that.r, 255).toInt,
-        Math.min(color.g + that.g, 255).toInt,
-        Math.min(color.b + that.b, 255).toInt,
-        that.a
+      Color.fromARGB(
+        (that.argb & 0xff000000) |
+          Math.min((color.argb & 0x00ff0000) + (that.argb & 0x00ff0000), 0x00ff0000) |
+          Math.min((color.argb & 0x0000ff00) + (that.argb & 0x0000ff00), 0x0000ff00) |
+          Math.min((color.argb & 0x000000ff) + (that.argb & 0x000000ff), 0x000000ff)
       )
 
     /** Combines this with another color by subtracting each RGB value.
@@ -72,10 +72,10 @@ object Color {
       * The resulting alpha is set to 255.
       */
     def -(that: Color): Color =
-      Color(
-        Math.max(color.r - that.r, 0).toInt,
-        Math.max(color.g - that.g, 0).toInt,
-        Math.max(color.b - that.b, 0).toInt
+      Color.fromRGB(
+        (Math.max((color.argb & 0x00ff0000) - (that.argb & 0x00ff0000), 0x0000ffff) & 0x00ff0000) |
+          (Math.max((color.argb & 0x0000ff00) - (that.argb & 0x0000ff00), 0x000000ff) & 0x0000ff00) |
+          (Math.max((color.argb & 0x000000ff) - (that.argb & 0x000000ff), 0x00000000) & 0x000000ff)
       )
 
     /** Combines this with another color by subtracting each RGB value.
@@ -84,11 +84,11 @@ object Color {
       * The alpha of the left-side argument is kept.
       */
     def :-(that: Color): Color =
-      Color(
-        Math.max(color.r - that.r, 0).toInt,
-        Math.max(color.g - that.g, 0).toInt,
-        Math.max(color.b - that.b, 0).toInt,
-        color.a
+      Color.fromARGB(
+        (color.argb & 0xff000000) |
+          (Math.max((color.argb & 0x00ff0000) - (that.argb & 0x00ff0000), 0x0000ffff) & 0x00ff0000) |
+          (Math.max((color.argb & 0x0000ff00) - (that.argb & 0x0000ff00), 0x000000ff) & 0x0000ff00) |
+          (Math.max((color.argb & 0x000000ff) - (that.argb & 0x000000ff), 0x00000000) & 0x000000ff)
       )
 
     /** Combines this with another color by subtracting each RGB value.
@@ -97,11 +97,11 @@ object Color {
       * The alpha of the right-side argument is kept.
       */
     def -:(that: Color): Color =
-      Color(
-        Math.max(color.r - that.r, 0).toInt,
-        Math.max(color.g - that.g, 0).toInt,
-        Math.max(color.b - that.b, 0).toInt,
-        that.a
+      Color.fromARGB(
+        (that.argb & 0xff000000) |
+          (Math.max((color.argb & 0x00ff0000) - (that.argb & 0x00ff0000), 0x0000ffff) & 0x00ff0000) |
+          (Math.max((color.argb & 0x0000ff00) - (that.argb & 0x0000ff00), 0x000000ff) & 0x0000ff00) |
+          (Math.max((color.argb & 0x000000ff) - (that.argb & 0x000000ff), 0x00000000) & 0x000000ff)
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -110,10 +110,10 @@ object Color {
       * The resulting alpha is set to 255.
       */
     def *(that: Color): Color =
-      Color(
-        (color.r * that.r) / 255,
-        (color.g * that.g) / 255,
-        (color.b * that.b) / 255
+      Color.fromRGB(
+        (((color.argb & 0x00ff0000) * (that.argb & 0x00ff0000) / 255) & 0x00ff0000) |
+          (((color.argb & 0x0000ff00) * (that.argb & 0x0000ff00) / 255) & 0x0000ff00) |
+          (((color.argb & 0x000000ff) * (that.argb & 0x000000ff) / 255) & 0x000000ff)
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -122,11 +122,11 @@ object Color {
       * The alpha of the left-side argument is kept.
       */
     def :*(that: Color): Color =
-      Color(
-        (color.r * that.r) / 255,
-        (color.g * that.g) / 255,
-        (color.b * that.b) / 255,
-        color.a
+      Color.fromARGB(
+        color.argb & 0xff000000 |
+          (((color.argb & 0x00ff0000) * (that.argb & 0x00ff0000) / 255) & 0x00ff0000) |
+          (((color.argb & 0x0000ff00) * (that.argb & 0x0000ff00) / 255) & 0x0000ff00) |
+          (((color.argb & 0x000000ff) * (that.argb & 0x000000ff) / 255) & 0x000000ff)
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -135,18 +135,18 @@ object Color {
       * The alpha of the right-side argument is kept.
       */
     def *:(that: Color): Color =
-      Color(
-        (color.r * that.r) / 255,
-        (color.g * that.g) / 255,
-        (color.b * that.b) / 255,
-        that.a
+      Color.fromARGB(
+        that.argb & 0xff000000 |
+          (((color.argb & 0x00ff0000) * (that.argb & 0x00ff0000) / 255) & 0x00ff0000) |
+          (((color.argb & 0x0000ff00) * (that.argb & 0x0000ff00) / 255) & 0x0000ff00) |
+          (((color.argb & 0x000000ff) * (that.argb & 0x000000ff) / 255) & 0x000000ff)
       )
 
     /** Inverts this color by inverting every RGB channel.
       *
       *  The alpha is preserved
       */
-    def invert: Color = Color(255 - r, 255 - g, 255 - b, a)
+    def invert: Color = Color.grayscale(255) -: color
 
     /** Multiplies all channels by the alpha.
       */

@@ -141,11 +141,7 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
             if (dx >= x && dx < x + that.width && dy >= y && dy < y + that.height)
               val colorSource = that.unsafeGetPixel(dx - x, dy - y)
               val colorDest   = outer.getPixel(dx, dy)
-              Color(
-                Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-                Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-                Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-              )
+              colorDest * Color.grayscale(255 - colorSource.a) + colorSource
             else outer.getPixel(dx, dy)
           }
         }

@@ -46,11 +46,7 @@ object BlendMode {
     def blend(src: => Color, dst: => Color): Color = {
       val colorSource = src
       val colorDest   = dst
-      Color(
-        Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-        Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-        Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-      )
+      colorDest * Color.grayscale(255 - colorSource.a) + colorSource
     }
   }
 }
