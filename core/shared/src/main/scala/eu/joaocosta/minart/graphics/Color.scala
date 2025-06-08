@@ -111,9 +111,9 @@ object Color {
       */
     def *(that: Color): Color =
       Color.fromRGB(
-        (((color.argb & 0x00ff0000) * (that.argb & 0x00ff0000) / 255) & 0x00ff0000) |
-          (((color.argb & 0x0000ff00) * (that.argb & 0x0000ff00) / 255) & 0x0000ff00) |
-          (((color.argb & 0x000000ff) * (that.argb & 0x000000ff) / 255) & 0x000000ff)
+        (((color.argb & 0x00ff0000) * that.r / 255) & 0x00ff0000) |
+          (((color.argb & 0x0000ff00) * that.g / 255) & 0x0000ff00) |
+          (((color.argb & 0x000000ff) * that.b / 255) & 0x000000ff)
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -123,10 +123,10 @@ object Color {
       */
     def :*(that: Color): Color =
       Color.fromARGB(
-        color.argb & 0xff000000 |
-          (((color.argb & 0x00ff0000) * (that.argb & 0x00ff0000) / 255) & 0x00ff0000) |
-          (((color.argb & 0x0000ff00) * (that.argb & 0x0000ff00) / 255) & 0x0000ff00) |
-          (((color.argb & 0x000000ff) * (that.argb & 0x000000ff) / 255) & 0x000000ff)
+        (color.argb & 0xff000000) |
+          (((color.argb & 0x00ff0000) * that.r / 255) & 0x00ff0000) |
+          (((color.argb & 0x0000ff00) * that.g / 255) & 0x0000ff00) |
+          (((color.argb & 0x000000ff) * that.b / 255) & 0x000000ff)
       )
 
     /** Combines this with another color by multiplying each RGB value (on the [0.0, 1.0] range).
@@ -136,10 +136,10 @@ object Color {
       */
     def *:(that: Color): Color =
       Color.fromARGB(
-        that.argb & 0xff000000 |
-          (((color.argb & 0x00ff0000) * (that.argb & 0x00ff0000) / 255) & 0x00ff0000) |
-          (((color.argb & 0x0000ff00) * (that.argb & 0x0000ff00) / 255) & 0x0000ff00) |
-          (((color.argb & 0x000000ff) * (that.argb & 0x000000ff) / 255) & 0x000000ff)
+        (that.argb & 0xff000000) |
+          (((color.argb & 0x00ff0000) * that.r / 255) & 0x00ff0000) |
+          (((color.argb & 0x0000ff00) * that.g / 255) & 0x0000ff00) |
+          (((color.argb & 0x000000ff) * that.b / 255) & 0x000000ff)
       )
 
     /** Inverts this color by inverting every RGB channel.
