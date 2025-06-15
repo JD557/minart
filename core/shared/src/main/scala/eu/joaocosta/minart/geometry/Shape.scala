@@ -205,7 +205,7 @@ object Shape {
   private[geometry] val someFront = Some(Face.Front)
   private[geometry] val someBack  = Some(Face.Back)
 
-  private[Shape] final case class MatrixShape(matrix: Matrix, shape: Shape) extends Shape {
+  final case class MatrixShape private[Shape] (matrix: Matrix, shape: Shape) extends Shape {
     def knownFace: Option[Shape.Face] = if (matrix.a * matrix.e < 0)
       shape.knownFace.map {
         case Face.Front => Face.Back
@@ -235,7 +235,7 @@ object Shape {
       shape.faceAt(math.round(matrix.inverse.applyX(x, y)).toInt, math.round(matrix.inverse.applyY(x, y)).toInt)
     override def contains(x: Int, y: Int): Boolean =
       shape.contains(math.round(matrix.inverse.applyX(x, y)).toInt, math.round(matrix.inverse.applyY(x, y)).toInt)
-    override def mapMatrix(matrix: Matrix) =
+    override def mapMatrix(matrix: Matrix): MatrixShape =
       MatrixShape(matrix.multiply(this.matrix), shape)
   }
 }
