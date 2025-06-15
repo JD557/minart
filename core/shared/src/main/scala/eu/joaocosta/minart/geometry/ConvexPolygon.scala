@@ -130,8 +130,11 @@ object ConvexPolygon {
 
   // See https://jtsorlinis.github.io/rendering-tutorial/ and
   // https://lisyarus.github.io/blog/posts/implementing-a-tiny-cpu-rasterizer-part-2.html
-  private inline def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
+  inline def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
+
+  inline def determinant(p1: Point, p2: Point, p3: Point): Double =
+    determinant(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
   /** Convex Polygon with vertices computed ahead of time
     *
