@@ -65,7 +65,7 @@ object JavaAsyncLoopRunner extends LoopRunner[Future] {
       Thread.`yield`()
       if (!terminateWhen(newState)) {
         val goalNanos  = startTime + iterationNanos
-        val sleepNanos = goalNanos - startTime - busyLoopNanos
+        val sleepNanos = goalNanos - System.nanoTime() - busyLoopNanos
         if (sleepNanos > 0) {
           blocking { Thread.sleep(sleepNanos / 1000000) }
         }
