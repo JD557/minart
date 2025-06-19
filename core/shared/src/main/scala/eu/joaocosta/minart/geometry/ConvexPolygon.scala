@@ -29,15 +29,24 @@ sealed trait ConvexPolygon extends Shape.ShapeWithContour {
   final lazy val knownFace: Option[Shape.Face] =
     faceAt(vertices.head)
 
-  /** Iterates over all edges and applies a function f: (i, det(V_i - V_i+1, P - Vi)) => Unit.
+  /** Iterates over all edges and applies a function `f: (i, det(V_i, V_i+1, P)) => Unit`,
+    * with the last iteration being `(n, det(V_n, V_0, P)).
+    *
+    * In this case `det(P1, P2, P3)` is represents the determinant of the vectors (P2 - P1) and (P3 - P1).
     *
     * Useful for low level rasterization operations.
+    *
+    * If the shape is a triangle defined by `(V1, V2, V3)`, the values for a point `p` divided by `det(V1, V2, V3)`
+    * can be interpreted as the weight of each vertice:
+    * - `det(V1, V2, p)/det(V1, V2, V3)` is the weight of V3 (1 if P is on V3, 0 if P is on the edge V1-V2)
+    * - `det(V2, V3, p)/det(V1, V2, V3)` is the weight of V1 (1 if P is on V1, 0 if P is on the edge V2-V3)
+    * - `det(V3, V1, p)/det(V1, V2, V3)` is the weight of V2 (1 if P is on V2, 0 if P is on the edge V3-V1)
     *
     * @param x Px
     * @param y Py
     * @param f (i, det(V_i - V_i+1, P - Vi)) => Unit
     */
-  inline final def determinantsForEach(x: Double, y: Double)(inline f: (Int, Double) => Unit): Unit = {
+  inline final def foreachDeterminant(x: Double, y: Double)(inline f: (Int, Double) => Unit): Unit = {
     var idx = 0
     while (idx < size) {
       val current = vertices(idx)
@@ -47,6 +56,24 @@ sealed trait ConvexPolygon extends Shape.ShapeWithContour {
       idx += 1
     }
   }
+
+  /** Iterates over all edges and applies a function `f: (i, det(V_i, V_i+1, P)) => Unit`,
+    * with the last iteration being `(n, det(V_n, V_0, P)).
+    *
+    * In this case `det(P1, P2, P3)` is represents the determinant of the vectors (P2 - P1) and (P3 - P1).
+    *
+    * Useful for low level rasterization operations.
+    *
+    * If the shape is a triangle defined by `(V1, V2, V3)`, the values for a point `p` divided by `det(V1, V2, V3)`
+    * can be interpreted as the weight of each vertice:
+    * - `det(V1, V2, p)/det(V1, V2, V3)` is the weight of V3 (1 if P is on V3, 0 if P is on the edge V1-V2)
+    * - `det(V2, V3, p)/det(V1, V2, V3)` is the weight of V1 (1 if P is on V1, 0 if P is on the edge V2-V3)
+    * - `det(V3, V1, p)/det(V1, V2, V3)` is the weight of V2 (1 if P is on V2, 0 if P is on the edge V3-V1)
+    *
+    * @param p Point in question
+    * @param f (i, det(V_i - V_i+1, P - Vi)) => Unit
+    */
+  inline final def foreachDeterminant(p: Point)(inline f: (Int, Double) => Unit): Unit = foreachDeterminant(p.x, p.y)(f)
 
   /** Checks if this polygon contains another polygon.
     *
@@ -68,7 +95,7 @@ sealed trait ConvexPolygon extends Shape.ShapeWithContour {
     var inside: Boolean         = true
     var firstIteration: Boolean = true
     var last: Boolean           = true
-    determinantsForEach(x, y) { (_, det) =>
+    foreachDeterminant(x, y) { (_, det) =>
       if (det != 0 && inside) {
         val sign = det >= 0
         if (!firstIteration && last != sign) inside = false
@@ -85,7 +112,7 @@ sealed trait ConvexPolygon extends Shape.ShapeWithContour {
     var inside: Boolean         = true
     var firstIteration: Boolean = true
     var last: Boolean           = true
-    determinantsForEach(x, y) { (_, det) =>
+    foreachDeterminant(x, y) { (_, det) =>
       if (det != 0 && inside) {
         val sign = det >= 0
         if (!firstIteration && last != sign) inside = false
@@ -130,9 +157,19 @@ object ConvexPolygon {
 
   // See https://jtsorlinis.github.io/rendering-tutorial/ and
   // https://lisyarus.github.io/blog/posts/implementing-a-tiny-cpu-rasterizer-part-2.html
+  /** Computes the determinant of the vectors A=(x2, y2)-(x1, y1) and B=(x3, y3)-(x1, y1).
+    *
+    * The absolute value is the area of the trapezoid defined by both vectors, and
+    * the sign is positive if the rotation from A to B is clockwise, and is negative otherwise.
+    */
   inline def determinant(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double =
     (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
+  /** Computes the determinant of the vectors A=p2-p1 and B=p3-p1.
+    *
+    * The absolute value is the area of the trapezoid defined by both vectors, and
+    * the sign is positive if the rotation from A to B is clockwise, and is negative otherwise.
+    */
   inline def determinant(p1: Point, p2: Point, p3: Point): Double =
     determinant(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
