@@ -3,6 +3,7 @@ package eu.joaocosta.minart.backend
 import javax.sound.sampled.*
 
 import scala.concurrent.*
+import scala.concurrent.duration.*
 
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.runtime.*
@@ -31,6 +32,7 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
   }
 
   given ExecutionContext               = ExecutionContext.global
+  var currentCallback: Future[Unit]    = Future.successful(())
   private def callback(): Future[Unit] = Future {
     while (playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
@@ -56,8 +58,15 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
 
   def play(clip: AudioClip, channel: Int): Unit = {
     val alreadyPlaying = isPlaying()
+    if (!alreadyPlaying) {
+      // Make sure that the callback is stopped before creating a new one
+      try { Await.result(currentCallback, (settings.bufferSize / settings.sampleRate).seconds) }
+      catch { _ => () }
+    }
     playQueue.enqueue(clip, channel)
-    if (!alreadyPlaying) callback()
+    if (!alreadyPlaying) {
+      currentCallback = callback()
+    }
   }
 
   def isPlaying(): Boolean = playQueue.nonEmpty()
