@@ -10,12 +10,12 @@ final case class AudioClip(
     duration: Double
 ) { outer =>
 
-  /** Gets the amplitude at a certain point in time
+  /** Gets the amplitude at a certain point in time, defined between [0, duration).
     *  @param t time in seconds
     *  @return amplitude
     */
   def getAmplitude(t: Double): Option[Double] =
-    if (t < 0 || t > duration) None
+    if (t < 0 || t >= duration) None
     else Some(wave(t))
 
   /** Gets the amplitude at a certain point in time, falling back to a default value when out of bounds.
@@ -24,7 +24,7 @@ final case class AudioClip(
     *  @return amplitude
     */
   def getAmplitudeOrElse(t: Double, fallback: Double = 0.0): Double =
-    if (t < 0 || t > duration) fallback
+    if (t < 0 || t >= duration) fallback
     else wave(t)
 
   /** Returns a new Audio Clip with the first `time` seconds of this audio clip
@@ -82,7 +82,7 @@ final case class AudioClip(
   def append(that: AudioClip): AudioClip =
     AudioClip(
       AudioWave.fromFunction(t =>
-        if (t <= this.duration) this.wave(t)
+        if (t < this.duration) this.wave(t)
         else that.wave(t - this.duration)
       ),
       this.duration + that.duration
@@ -133,6 +133,14 @@ object AudioClip {
     val duration = data.size / sampleRate
     AudioWave.fromIndexedSeq(data, sampleRate).take(duration)
   }
+
+  /** Creates an audio clip from a generator function.
+    *
+    * @param generator generator function from a time t to an amplitude
+    * @param duration clip duration
+    */
+  def fromFunction(generator: Double => Double, duration: Double): AudioClip =
+    AudioClip(AudioWave.fromFunction(generator), duration)
 
   /** Generates an audio clip by mixing a sequence of clips.
     *
