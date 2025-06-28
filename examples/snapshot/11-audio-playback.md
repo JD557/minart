@@ -51,17 +51,17 @@ We then take the first 1.0 seconds, to turn our `AudioWave` into an `AudioClip`.
 
 An audio clip is jut a wave with a defined duration.
 
-### Audio from oscilators
+### Audio from oscillators
 
 In the code above, you can see that we generated our audio by:
  - Defining a frequency and duration
  - Converting it to an amplitude using `Math.sin`
 
-Turns out this use case is pretty common, so Minart provides some `Oscilator`s out of the box.
+Turns out this use case is pretty common, so Minart provides some `Oscillator`s out of the box.
 
-To combine the output from multiple oscilators, we can use `AudioClip#append`.
+To combine the output from multiple oscillators, we can use `AudioClip#append`.
 
-Here's a bass line generated using Oscilators:
+Here's a bass line generated using Oscillators:
 
 ```scala
 val bass =
