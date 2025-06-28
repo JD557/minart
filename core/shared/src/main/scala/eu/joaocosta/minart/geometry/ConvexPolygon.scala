@@ -15,7 +15,7 @@ sealed trait ConvexPolygon extends Shape.ShapeWithContour {
     */
   def vertices: Vector[Point]
 
-  final lazy val size = vertices.size
+  final def size = vertices.size
 
   final lazy val aabb: AxisAlignedBoundingBox =
     AxisAlignedBoundingBox.fromPoints(vertices)
@@ -47,10 +47,11 @@ sealed trait ConvexPolygon extends Shape.ShapeWithContour {
     * @param f (i, det(V_i - V_i+1, P - Vi)) => Unit
     */
   inline final def foreachDeterminant(x: Double, y: Double)(inline f: (Int, Double) => Unit): Unit = {
-    var idx = 0
-    while (idx < size) {
+    var idx   = 0
+    val limit = size
+    while (idx < limit) {
       val current = vertices(idx)
-      val next    = if (idx + 1 >= size) vertices(0) else vertices(idx + 1)
+      val next    = if (idx + 1 >= limit) vertices(0) else vertices(idx + 1)
       val det     = ConvexPolygon.determinant(current.x, current.y, next.x, next.y, x, y)
       f(idx, det)
       idx += 1
