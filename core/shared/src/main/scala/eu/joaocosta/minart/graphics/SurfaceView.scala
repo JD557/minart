@@ -10,10 +10,19 @@ import eu.joaocosta.minart.geometry.{AxisAlignedBoundingBox, Shape}
 sealed trait SurfaceView extends Surface {
   def unsafeGetPixel(x: Int, y: Int): Color
 
+  /** Applies a per-pixel transformation to all pixels on this surface voew
+    *
+    * This is similar to flatMap, but more performant.
+    */
+  def transformPixels(f: PerPixelTransformation): SurfaceView
+
   /** Maps the colors from this surface view. */
   def map(f: Color => Color): SurfaceView
 
-  /** Flatmaps the inner plane of this surface view */
+  /** Flatmaps the inner plane of this surface view.
+    *
+    * Note: Performance intensive applications should use [[transformPixels]] instead to avoid boxing.
+    */
   def flatMap(f: Color => Plane): SurfaceView
 
   /** Contramaps the positions from this surface view. */
@@ -152,6 +161,9 @@ object SurfaceView {
     def unsafeGetPixel(x: Int, y: Int): Color =
       plane.getPixel(x, y)
 
+    def transformPixels(f: PerPixelTransformation): SurfaceView =
+      copy(plane.transformPixels(f))
+
     def map(f: Color => Color): SurfaceView = copy(plane.map(f))
 
     def flatMap(f: Color => Plane): SurfaceView =
@@ -260,6 +272,8 @@ object SurfaceView {
       }
       b.result()
     }
+
+    def transformPixels(f: PerPixelTransformation): SurfaceView = toPlaneSurfaceView().transformPixels(f)
 
     def map(f: Color => Color): SurfaceView = toPlaneSurfaceView().map(f)
 
