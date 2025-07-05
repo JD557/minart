@@ -41,6 +41,23 @@ class SurfaceViewSpec extends munit.FunSuite {
     assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
+  test("Transforming pixels is similar to flatmap") {
+    val flatMapSurface =
+      surface.view
+        .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
+        .toRamSurface()
+    val transformSurface =
+      surface.view
+        .transformPixels((color, x, y) => if (y >= 8) color.invert else color)
+        .toRamSurface()
+    val expectedPixels =
+      flatMapSurface.getPixels()
+    val actualPixels =
+      transformSurface.getPixels()
+
+    assertEquals(actualPixels.map(_.toVector), expectedPixels.map(_.toVector))
+  }
+
   test("The contramap view updates the positions") {
     val newSurface = surface.view.contramap((x, y) => (y, x)).clip(0, 0, surface.height, surface.width).toRamSurface()
     val newPixels  = newSurface.getPixels()

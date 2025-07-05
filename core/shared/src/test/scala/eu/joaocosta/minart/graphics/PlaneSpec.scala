@@ -60,6 +60,23 @@ class PlaneSpec extends munit.FunSuite {
     assertEquals(newPixels.map(_.toVector), expectedPixels.map(_.toVector))
   }
 
+  test("Transforming pixels is similar to flatmap") {
+    val flatMapSurface =
+      surface.view.repeating
+        .flatMap(color => (x, y) => if (y >= 8) color.invert else color)
+        .toRamSurface(surface.width, surface.height)
+    val transformSurface =
+      surface.view.repeating
+        .transformPixels((color, x, y) => if (y >= 8) color.invert else color)
+        .toRamSurface(surface.width, surface.height)
+    val expectedPixels =
+      flatMapSurface.getPixels()
+    val actualPixels =
+      transformSurface.getPixels()
+
+    assertEquals(actualPixels.map(_.toVector), expectedPixels.map(_.toVector))
+  }
+
   test("Contramapping updates the positions") {
     val newSurface =
       surface.view.repeating
