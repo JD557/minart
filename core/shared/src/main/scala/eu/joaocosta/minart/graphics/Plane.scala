@@ -14,12 +14,23 @@ trait Plane extends Function2[Int, Int, Color] { outer =>
   /** Returns the color at position (x, y). */
   def getPixel(x: Int, y: Int): Color
 
+  /** Applies a per-pixel transformation to all pixels on this plane.
+    *
+    * This is similar to flatMap, but more performant.
+    */
+  final def transformPixels(f: PerPixelTransformation): Plane = new Plane {
+    def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y), x, y)
+  }
+
   /** Maps the colors from this plane. */
   final def map(f: Color => Color): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y))
   }
 
-  /** Flatmaps this plane */
+  /** Flatmaps this plane.
+    *
+    *  Note: Performance intensive applications should use [[transformPixels]] instead to avoid boxing.
+    */
   final def flatMap(f: Color => Plane): Plane = new Plane {
     def getPixel(x: Int, y: Int): Color = f(outer.getPixel(x, y)).getPixel(x, y)
   }
