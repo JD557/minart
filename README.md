@@ -1,6 +1,6 @@
 # Minart
 
-![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/eu.joaocosta/minart_3?server=https%3A%2F%2Foss.sonatype.org)
+![Latest Release](https://img.shields.io/maven-central/v/eu.joaocosta/minart_3)
  [![scaladoc (core)](https://javadoc.io/badge2/eu.joaocosta/minart-core_3/scaladoc%20%28core%29.svg)](https://javadoc.io/doc/eu.joaocosta/minart-core_3)
  [![scaladoc (image)](https://javadoc.io/badge2/eu.joaocosta/minart-image_3/scaladoc%20%28image%29.svg)](https://javadoc.io/doc/eu.joaocosta/minart-image_3)
  [![scaladoc (sound)](https://javadoc.io/badge2/eu.joaocosta/minart-sound_3/scaladoc%20%28sound%29.svg)](https://javadoc.io/doc/eu.joaocosta/minart-sound_3)
