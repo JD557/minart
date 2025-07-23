@@ -5,7 +5,7 @@ import scala.scalanative.build._
 name := "minart"
 
 ThisBuild / organization := "eu.joaocosta"
-ThisBuild / publishTo := {
+ThisBuild / publishTo    := {
   val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
   if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
   else localStaging.value
@@ -80,7 +80,7 @@ val publishSettings = Seq(
 
 val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "2.8.0"
+    "org.scala-js" %%% "scalajs-dom" % "2.8.1"
   )
 )
 
