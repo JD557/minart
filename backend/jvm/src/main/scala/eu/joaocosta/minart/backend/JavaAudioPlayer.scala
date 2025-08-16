@@ -31,12 +31,13 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
     sourceDataLine.close()
   }
 
-  given ExecutionContext               = ExecutionContext.global
-  var currentCallback: Future[Unit]    = Future.successful(())
-  private def callback(): Future[Unit] = Future {
-    while (playQueue.nonEmpty()) {
+  given ExecutionContext                            = ExecutionContext.global
+  private var threadRunning: Boolean                = false
+  private var currentBackgroundThread: Future[Unit] = Future.successful(())
+  private def backgroundThread(): Future[Unit]      = Future {
+    while (settings.threadFrequency != LoopFrequency.Never || playQueue.nonEmpty()) {
       val available = sourceDataLine.available()
-      if (available > 0) {
+      if (playQueue.nonEmpty() && available > 0) {
         val samples = Math.min(playQueue.size, available / 2)
         val buf     = Iterator
           .fill(samples) {
@@ -51,21 +52,31 @@ final class JavaAudioPlayer() extends LowLevelAudioPlayer {
         blocking {
           Thread.sleep(Math.max(0, bufferedMillis - preemptiveCallback))
         }
+      } else {
+        settings.threadFrequency match {
+          case ld: LoopFrequency.LoopDuration => blocking(Thread.sleep(ld.millis))
+          case _                              => ()
+        }
       }
     }
+    threadRunning = false
     ()
   }
 
   def play(clip: AudioClip, channel: Int): Unit = {
-    val alreadyPlaying = isPlaying()
-    if (!alreadyPlaying) {
-      // Make sure that the callback is stopped before creating a new one
-      try { Await.result(currentCallback, (settings.bufferSize / settings.sampleRate).seconds) }
+    val shouldLaunchThread = settings.threadFrequency match {
+      case LoopFrequency.Never => !isPlaying()
+      case _                   => !threadRunning
+    }
+    if (shouldLaunchThread) {
+      // Make sure that the backgroundThread is stopped before creating a new one
+      try { Await.result(currentBackgroundThread, (settings.bufferSize / settings.sampleRate).seconds) }
       catch { _ => () }
     }
     playQueue.enqueue(clip, channel)
-    if (!alreadyPlaying) {
-      currentCallback = callback()
+    if (shouldLaunchThread) {
+      threadRunning = true
+      currentBackgroundThread = backgroundThread()
     }
   }
 
