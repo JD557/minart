@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.audio
 
 import eu.joaocosta.minart.backend.defaults.*
+import eu.joaocosta.minart.runtime.LoopFrequency
 
 /** Multi-channel mono audio player.
   *
@@ -130,5 +131,9 @@ object AudioPlayer {
   def create(settings: AudioPlayer.Settings)(using backend: DefaultBackend[Any, LowLevelAudioPlayer]): AudioPlayer =
     LowLevelAudioPlayer.create().init(settings)
 
-  final case class Settings(sampleRate: Int = 44100, bufferSize: Int = 4096)
+  final case class Settings(
+      sampleRate: Int = 44100,
+      bufferSize: Int = 4096,
+      threadFrequency: LoopFrequency = LoopFrequency.Never
+  )
 }

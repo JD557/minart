@@ -26,22 +26,31 @@ final class JsAudioPlayer() extends LowLevelAudioPlayer {
 
   private val callback: (Double) => () => Unit = (startTime: Double) =>
     () => {
-      if (playQueue.nonEmpty()) {
-        val batchSize   = Math.min(settings.bufferSize, playQueue.size)
-        val duration    = batchSize.toDouble / settings.sampleRate
-        val audioSource = audioCtx.createBufferSource()
-        val buffer      = audioCtx.createBuffer(1, batchSize, settings.sampleRate)
-        val channelData = buffer.getChannelData(0)
-        (0 until batchSize).foreach { i =>
-          channelData(i) = playQueue.dequeue().toFloat
+      if (settings.threadFrequency != LoopFrequency.Never || playQueue.nonEmpty()) {
+        if (playQueue.nonEmpty()) {
+          val batchSize   = Math.min(settings.bufferSize, playQueue.size)
+          val duration    = batchSize.toDouble / settings.sampleRate
+          val audioSource = audioCtx.createBufferSource()
+          val buffer      = audioCtx.createBuffer(1, batchSize, settings.sampleRate)
+          val channelData = buffer.getChannelData(0)
+          (0 until batchSize).foreach { i =>
+            channelData(i) = playQueue.dequeue().toFloat
+          }
+          audioSource.buffer = buffer
+          audioSource.connect(audioCtx.destination)
+          val clampedStart = Math.max(audioCtx.currentTime, startTime)
+          audioSource.start(clampedStart)
+          val nextTarget    = clampedStart + duration
+          val sleepDuration = 1000 * (nextTarget - audioCtx.currentTime) - preemptiveCallback
+          window.setTimeout(callback(nextTarget), sleepDuration)
+        } else {
+          settings.threadFrequency match {
+            case ld: LoopFrequency.LoopDuration =>
+              window.setTimeout(callback(startTime), ld.millis.toDouble)
+            case _ =>
+              window.setTimeout(callback(startTime), 0)
+          }
         }
-        audioSource.buffer = buffer
-        audioSource.connect(audioCtx.destination)
-        val clampedStart = Math.max(audioCtx.currentTime, startTime)
-        audioSource.start(clampedStart)
-        val nextTarget    = clampedStart + duration
-        val sleepDuration = 1000 * (nextTarget - audioCtx.currentTime) - preemptiveCallback
-        window.setTimeout(callback(nextTarget), sleepDuration)
       } else {
         callbackRegistered = false
       }
