@@ -128,9 +128,9 @@ object Kernel {
 
       if (normalization != 1)
         Color(
-          constant + (accR / normalization).toInt,
-          constant + (accG / normalization).toInt,
-          constant + (accB / normalization).toInt
+          constant + (accR / normalization),
+          constant + (accG / normalization),
+          constant + (accB / normalization)
         )
       else
         Color(constant + accR, constant + accG, constant + accB)
@@ -236,10 +236,10 @@ object Kernel {
       }
 
       Color(
-        kernelR.constant + (accR / kernelR.normalization).toInt,
-        kernelG.constant + (accG / kernelG.normalization).toInt,
-        kernelB.constant + (accB / kernelB.normalization).toInt,
-        kernelA.constant + (accA / kernelA.normalization).toInt
+        kernelR.constant + (accR / kernelR.normalization),
+        kernelG.constant + (accG / kernelG.normalization),
+        kernelB.constant + (accB / kernelB.normalization),
+        kernelA.constant + (accA / kernelA.normalization)
       )
     }
   }
