@@ -109,4 +109,30 @@ class KernelSpec extends munit.FunSuite {
     assert(kernelA != kernelE)
   }
 
+  test("Can be created with automatic normalization") {
+    val kernelA = Kernel.normalized(
+      Seq(
+        Seq(1.0, 0.0, 0.0),
+        Seq(0.0, 1.0, 0.0),
+        Seq(1.0, 0.0, 1.0)
+      )
+    )
+    assert(
+      kernelA.matrix.flatten.map(_ / kernelA.normalization.toDouble).toVector == Vector(0.25, 0, 0, 0, 0.25, 0, 0.25, 0,
+        0.25)
+    )
+
+    val kernelB = Kernel.normalized(
+      Seq(
+        Seq(1.0, 0.0, 0.0),
+        Seq(0.0, -1.0, 0.0),
+        Seq(1.0, 0.0, -1.0)
+      )
+    )
+    assert(
+      kernelB.matrix.flatten.map(_ / kernelB.normalization.toDouble).toVector == Vector(0.25, 0, 0, 0, -0.25, 0, 0.25,
+        0, -0.25)
+    )
+  }
+
 }

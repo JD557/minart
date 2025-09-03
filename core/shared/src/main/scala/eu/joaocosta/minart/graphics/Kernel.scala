@@ -21,6 +21,22 @@ object Kernel {
   def apply(matrix: Seq[Seq[Int]] = Seq(Seq(1)), normalization: Int = 1, constant: Int = 0): SingleKernel =
     new SingleKernel(IArray.from(matrix.iterator.map(IArray.from)), normalization, constant: Int)
 
+  /** Given a matrix of doubles, creates a kernel where the absolute value of elements sum to 1.
+    */
+  def normalized(matrix: Seq[Seq[Double]]): SingleKernel = {
+    val maximumAllowedValue  = (1 << 53) / (matrix.iterator.map(_.size).sum * 255)
+    val minValue             = matrix.iterator.flatten.min
+    val maxValue             = matrix.iterator.flatten.max
+    val amplitude            = math.max(maxValue, -1 * minValue)
+    val multiplicationFactor = maximumAllowedValue / amplitude
+    val array                =
+      IArray.from(
+        matrix.iterator.map(seq => IArray.from(seq.iterator.map(x => math.round(x * multiplicationFactor).toInt)))
+      )
+    val normalization = array.iterator.flatten.map(math.abs).sum
+    SingleKernel(array, normalization)
+  }
+
   /** Identity kernel, does nothing.
     */
   val identity: SingleKernel = SingleKernel()
@@ -32,6 +48,18 @@ object Kernel {
   def averageBlur(width: Int, height: Int): SingleKernel = {
     val line = IArray.fill(width)(1)
     SingleKernel(IArray.fill(height)(line), width * height)
+  }
+
+  /** Gaussian blur kernel. Averages the pixels in a window according to a gaussian distribution.
+    *
+    *  Both the width and height must be odd.
+    */
+  def gaussianBlur(width: Int, height: Int, sigma: Double): SingleKernel = {
+    normalized(Vector.tabulate(height, width)((x, y) =>
+      val dx = x - width / 2
+      val dy = y - height / 2
+      math.exp(-(dx * dx + dy * dy) / (2.0 * sigma * sigma))
+    ))
   }
 
   /** Horizontal Sobel operator. Returns the horizontal derivative of the image.
