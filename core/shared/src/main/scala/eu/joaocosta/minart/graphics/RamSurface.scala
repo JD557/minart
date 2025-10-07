@@ -52,6 +52,14 @@ final class RamSurface(val dataBuffer: Array[Color], val height: Int) extends Mu
       }
     }
   }
+
+  override def fill(color: Color): Unit = {
+    var i = 0
+    while (i < dataBuffer.length) {
+      dataBuffer(i) = color
+      i = i + 1
+    }
+  }
 }
 
 object RamSurface {
