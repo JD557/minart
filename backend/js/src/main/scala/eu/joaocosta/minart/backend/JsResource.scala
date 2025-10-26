@@ -70,7 +70,7 @@ final case class JsResource(resourcePath: String) extends Resource {
       case None =>
         val xhr = new XMLHttpRequest()
         xhr.open("GET", path)
-        xhr.onloadend = (event: ProgressEvent) => {
+        xhr.onloadend = (_: ProgressEvent) => {
           if (xhr.status != 200)
             promise.failure(new Exception(s"Couldn't open resource: $resourcePath (${xhr.statusText})"))
           else promise.complete(Try(f(Source.fromString(xhr.responseText))))
@@ -90,7 +90,7 @@ final case class JsResource(resourcePath: String) extends Resource {
         val xhr = new XMLHttpRequest()
         xhr.open("GET", path)
         xhr.overrideMimeType("text/plain; charset=x-user-defined")
-        xhr.onloadend = (event: ProgressEvent) => {
+        xhr.onloadend = (_: ProgressEvent) => {
           if (xhr.status != 200)
             promise.failure(new Exception(s"Couldn't open resource: $resourcePath (${xhr.statusText})"))
           else promise.complete(Try(f(new ByteArrayInputStream(xhr.responseText.toCharArray.map(_.toByte)))))

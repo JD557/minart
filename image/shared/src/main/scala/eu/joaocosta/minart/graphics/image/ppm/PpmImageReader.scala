@@ -200,7 +200,8 @@ object PpmImageReader {
 
     def parseNextInt(errorMessage: String): ParseState[String, Int] =
       readNextString.flatMap { str =>
-        val intEither = str.toIntOption.map(int => Right(int)).getOrElse(Left(s"Failed to parse int: $str"))
+        val intEither =
+          str.toIntOption.map(int => Right(int)).getOrElse(Left(s"$errorMessage. Failed to parse int: $str"))
         State.fromEither(intEither)
       }
   }

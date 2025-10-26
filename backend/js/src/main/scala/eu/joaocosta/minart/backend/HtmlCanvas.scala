@@ -1,5 +1,6 @@
 package eu.joaocosta.minart.backend
 
+import scala.annotation.nowarn
 import scala.scalajs.js
 
 import org.scalajs.dom
@@ -59,8 +60,9 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
     jsCanvas = dom.document.createElement("canvas").asInstanceOf[JsCanvas]
     containerDiv.appendChild(jsCanvas)
     childNode = parentNode.appendChild(containerDiv)
-    ctx =
-      jsCanvas.getContext("2d", new js.Object { val alpha: Boolean = false }).asInstanceOf[dom.CanvasRenderingContext2D]
+    ctx = jsCanvas
+      .getContext("2d", new js.Object { @nowarn val alpha: Boolean = false })
+      .asInstanceOf[dom.CanvasRenderingContext2D]
     registerGlobalListener[Event](
       "fullscreenchange",
       (_: Event) => if (dom.document.fullscreenElement == null) changeSettings(settings.copy(fullScreen = false))

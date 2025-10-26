@@ -55,7 +55,7 @@ trait QoaAudioReader extends AudioClipReader {
 
   private def loadSlices(
       state: QoaState,
-      remainingSlices: Int = 256,
+      remainingSlices: Int,
       acc: List[Short] = Nil
   ): ParseState[String, (QoaState, List[Short])] =
     if (remainingSlices == 0) State.pure((state, acc.reverse))
