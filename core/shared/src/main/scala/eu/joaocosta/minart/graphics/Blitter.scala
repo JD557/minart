@@ -7,7 +7,6 @@ import scala.annotation.tailrec
 private[graphics] object Blitter {
 
   inline def unsafeBlitSurfaceLoop(
-      dest: MutableSurface,
       source: Surface,
       x: Int,
       y: Int,
@@ -43,19 +42,19 @@ private[graphics] object Blitter {
   ): Unit = {
     blendMode match {
       case BlendMode.Copy =>
-        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+        unsafeBlitSurfaceLoop(source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
           dest.unsafePutPixel(destX, destY, color)
         )
       case BlendMode.ColorMask(maskColor) =>
-        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+        unsafeBlitSurfaceLoop(source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
           if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
         )
       case BlendMode.AlphaTest(alpha) =>
-        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+        unsafeBlitSurfaceLoop(source, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
           if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
         )
       case BlendMode.AlphaAdd =>
-        unsafeBlitSurfaceLoop(dest, source, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
+        unsafeBlitSurfaceLoop(source, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
           val colorDest = dest.unsafeGetPixel(destX, destY)
           val color     = Color(
             Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
@@ -82,7 +81,6 @@ private[graphics] object Blitter {
   }
 
   inline def unsafeBlitArrayLoop(
-      dest: MutableSurface,
       source: Array[Color],
       lineSize: Int,
       x: Int,
@@ -121,19 +119,19 @@ private[graphics] object Blitter {
   ): Unit = {
     blendMode match {
       case BlendMode.Copy =>
-        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+        unsafeBlitArrayLoop(source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
           dest.unsafePutPixel(destX, destY, color)
         )
       case BlendMode.ColorMask(maskColor) =>
-        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+        unsafeBlitArrayLoop(source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
           if (color != maskColor) dest.unsafePutPixel(destX, destY, color)
         )
       case BlendMode.AlphaTest(alpha) =>
-        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
+        unsafeBlitArrayLoop(source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, color) =>
           if (color.a > alpha) dest.unsafePutPixel(destX, destY, color)
         )
       case BlendMode.AlphaAdd =>
-        unsafeBlitArrayLoop(dest, source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
+        unsafeBlitArrayLoop(source, lineSize, x, y, cx, cy, maxX, maxY)((destX, destY, colorSource) =>
           val colorDest = dest.unsafeGetPixel(destX, destY)
           val color     = Color(
             Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
