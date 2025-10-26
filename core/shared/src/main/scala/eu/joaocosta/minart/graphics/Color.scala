@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.graphics
 
+import scala.annotation.nowarn
+
 /** Representation of a RGB Color. */
 opaque type Color = Int
 
@@ -156,6 +158,7 @@ object Color {
     def copy(r: Int = color.r, g: Int = color.g, b: Int = color.b, a: Int = color.a) =
       Color(r, g, b, a)
 
+    @nowarn
     def toString: String =
       if (a == 255) s"Color($r,$g,$b)"
       else s"Color($r,$g,$b,$a)"

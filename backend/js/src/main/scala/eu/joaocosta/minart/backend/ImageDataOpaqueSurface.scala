@@ -1,5 +1,6 @@
 package eu.joaocosta.minart.backend
 
+import scala.annotation.nowarn
 import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.typedarray.*
@@ -67,7 +68,9 @@ final class ImageDataOpaqueSurface(val data: ImageData) extends MutableSurface {
     canvas.width = width
     canvas.height = height
     val ctx =
-      canvas.getContext("2d", new js.Object { val alpha: Boolean = false }).asInstanceOf[CanvasRenderingContext2D]
+      canvas
+        .getContext("2d", new js.Object { @nowarn val alpha: Boolean = false })
+        .asInstanceOf[CanvasRenderingContext2D]
     ctx.putImageData(data, 0, 0)
     val dataUrl = canvas.toDataURL(format)
     val image   = new Image()
