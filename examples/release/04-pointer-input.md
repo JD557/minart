@@ -13,8 +13,8 @@ As before, let's import the backend, graphics and runtime.
 We also need to import the input package. We need this to read data from input devices, such as keyboard and mouse.
 
 ```scala
-//> using scala "3.3.6"
-//> using dep "eu.joaocosta::minart::0.6.4"
+//> using scala "3.3.7"
+//> using dep "eu.joaocosta::minart::0.6.5"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
