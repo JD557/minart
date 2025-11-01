@@ -23,8 +23,8 @@ scala-cli 01-introduction.md
 The simplest way to use Minart is to simply include the `minart` library, which packages all modules.
 
 ```scala
-//> using scala "3.3.6"
-//> using dep "eu.joaocosta::minart::0.6.4"
+//> using scala "3.3.7"
+//> using dep "eu.joaocosta::minart::0.6.5"
 ```
 
 As for the imports, the `eu.joaocosta.minart.backend.defaults` package contains the givens with the backend-specific (JVM/JS/Native) logic.
