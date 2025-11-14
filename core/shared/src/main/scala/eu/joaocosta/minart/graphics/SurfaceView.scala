@@ -138,11 +138,19 @@ sealed trait SurfaceView extends Surface {
 }
 
 object SurfaceView {
-  private val defaultColor: Color           = Color(0, 0, 0) // Fallback color used for safety
+  private val defaultColor: Color = Color(0, 0, 0) // Fallback color used for safety
+
+  // https://stackoverflow.com/questions/600293/how-to-check-if-a-number-is-a-power-of-2
+  private inline def isPowerOfTwo(x: Int): Boolean =
+    (x != 0) && ((x & (x - 1)) == 0)
+
   private def floorMod(x: Int, y: Int): Int = {
-    val rem = x % y
-    if (rem >= 0) rem
-    else rem + y
+    if (isPowerOfTwo(y)) x & (y - 1)
+    else {
+      val rem = x % y
+      if (rem >= 0) rem
+      else rem + y
+    }
   }
   private def clamp(minValue: Int, value: Int, maxValue: Int): Int =
     Math.max(minValue, Math.min(value, maxValue))
