@@ -45,10 +45,10 @@ After getting the `Surface`, we can just draw the image in the canvas.
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
 AppLoop
-  .statelessRenderLoop((canvas: Canvas) => {
+  .statelessRenderLoop((canvas: Canvas) ?=>
     canvas.blit(bitmap)(0, 0)
     canvas.redraw()
-  })
+  )
   .configure(canvasSettings, LoopFrequency.Never)
   .run()
 ```

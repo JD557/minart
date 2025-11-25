@@ -9,8 +9,7 @@ import eu.joaocosta.minart.graphics.*
 final case class LowLevelAllSubsystems(
     lowLevelCanvas: LowLevelCanvas,
     lowLevelAudioPlayer: LowLevelAudioPlayer
-) extends AllSubsystems(lowLevelCanvas, lowLevelAudioPlayer)
-    with LowLevelSubsystem[(Canvas.Settings, AudioPlayer.Settings)] {
+) extends LowLevelSubsystem[(Canvas.Settings, AudioPlayer.Settings)] {
   def settings: (Canvas.Settings, AudioPlayer.Settings) = (lowLevelCanvas.settings, lowLevelAudioPlayer.settings)
   def isCreated(): Boolean                              = lowLevelCanvas.isCreated() && lowLevelAudioPlayer.isCreated()
   def init(settings: (Canvas.Settings, AudioPlayer.Settings)): this.type = {
@@ -26,6 +25,9 @@ final case class LowLevelAllSubsystems(
     lowLevelCanvas.close()
     lowLevelAudioPlayer.close()
   }
+
+  val canvas: Canvas           = lowLevelCanvas
+  val audioPlayer: AudioPlayer = lowLevelAudioPlayer
 }
 
 object LowLevelAllSubsystems {

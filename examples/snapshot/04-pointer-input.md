@@ -38,7 +38,7 @@ This not only clears the image with the clear color, but also clears some inform
 > and then process the input.
 
 ```scala
-def application(canvas: Canvas): Unit = {
+def application(using canvas: Canvas): Unit = {
   val mouse = canvas.getPointerInput()
 
   canvas.clear()

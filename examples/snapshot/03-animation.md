@@ -28,7 +28,7 @@ For each pixel we look at the 3 pixels below (using `Canvas#getPixel`) and retur
 The details are not very important. Feel free to skip over this step (or to play around with the numbers).
 
 ```scala
-def automata(canvas: Canvas, x: Int, y: Int): Color = {
+def automata(x: Int, y: Int)(using canvas: Canvas): Color = {
   // For each pixel, we fetch the colors 3 pixels below (SW, S, SE)
   val neighbors = (x - 1 to x + 1).toList.flatMap { xx =>
     canvas.getPixel(xx, y + 1)
@@ -61,7 +61,7 @@ We could also have used `LoopFrequency.Uncapped` to not cap the frame rate.
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4))
 
 AppLoop
-  .statelessRenderLoop((canvas: Canvas) => {
+  .statelessRenderLoop((canvas: Canvas) ?=>
     // We set some pixels to always be white, so that the fire keeps growing from there
     // Add bottom fire root
     for {
@@ -84,11 +84,11 @@ AppLoop
       x <- (0 until canvas.width)
       y <- (0 until (canvas.height - 1)).reverse
     } {
-      val color = automata(canvas, x, y)
+      val color = automata(x, y)
       canvas.putPixel(x, y, color)
     }
     canvas.redraw()
-  })
+  )
   .configure(canvasSettings, LoopFrequency.hz60)
   .run()
 ```

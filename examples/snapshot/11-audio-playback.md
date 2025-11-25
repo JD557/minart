@@ -90,8 +90,7 @@ Here we use `statelessAppLoop` instead of `statelessRenderLoop` so that we get a
 
 ```scala
 AppLoop
-  .statelessAppLoop((system: CanvasSubsystem with AudioPlayerSubsystem) => {
-    import system._
+  .statelessAppLoop((canvas: Canvas, audioPlayer: AudioPlayer) ?=> {
     // When someone presses "Space", we send our sound wave to the queue
     if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
       audioPlayer.play(clip)

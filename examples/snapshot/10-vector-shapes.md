@@ -69,7 +69,9 @@ val frontfaceColor = Color(255, 0, 0)
 val backfaceColor = Color(0, 255, 0)
 val contourColor = Color(255, 255, 255)
 
-def application(t: Double, canvas: Canvas): Unit = {
+def application(t: Double)(using canvas: Canvas): Double = {
+  canvas.clear()
+
   val scale = math.sin(t)
   canvas.rasterizeShape(triangle.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(32, 32)
   canvas.rasterizeShape(square.scale(scale, 1.0), Some(frontfaceColor), Some(backfaceColor))(64, 32)
@@ -81,6 +83,9 @@ def application(t: Double, canvas: Canvas): Unit = {
   canvas.rasterizeContour(octagon.scale(scale, 1.0), contourColor)(32, 64)
   // Can't compute the contour of a circle scaled on only one dimension
   //canvas.rasterizeContour(circle.scale(scale, 1.0), contourColor)(64, 64)
+
+  canvas.redraw()
+  t + 0.01
 }
 ```
 
@@ -90,13 +95,7 @@ def application(t: Double, canvas: Canvas): Unit = {
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(0, 0, 0))
 
 AppLoop
-  .statefulRenderLoop((t: Double) => (canvas: Canvas) => {
-      canvas.clear()
-      application(t, canvas)
-      canvas.redraw()
-      t + 0.01
-    }
-  )
+  .statefulRenderLoop(application)
   .configure(canvasSettings, LoopFrequency.hz60, 0)
   .run()
 ```

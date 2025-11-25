@@ -38,7 +38,7 @@ val settingsD = Canvas.Settings(width = 640, height = 480, scale = None, fullScr
 The application logic is pretty simple: We grab the keyboard input and, based on the key that is pressed, we call `canvas.changeSettings` with the desired settings.
 
 ```scala
-def changeSettings(canvas: Canvas, keyboardInput: KeyboardInput): Unit = {
+def changeSettings(keyboardInput: KeyboardInput)(using canvas: Canvas): Unit = {
   if (keyboardInput.keysPressed(KeyboardInput.Key.A)) canvas.changeSettings(settingsA)
   else if (keyboardInput.keysPressed(KeyboardInput.Key.B)) canvas.changeSettings(settingsB)
   else if (keyboardInput.keysPressed(KeyboardInput.Key.C)) canvas.changeSettings(settingsC)
@@ -50,15 +50,15 @@ def changeSettings(canvas: Canvas, keyboardInput: KeyboardInput): Unit = {
 
 Since our settings will change, we also need to make sure we read the updated values. Those can be read by using `Canvas#canvasSettings`.
 
-In this example, we'll draw a colored gradient that fills the screen, so we need to fetch the current width and height of the canvas. Since this is so common, we can actually just use the `Canvas#width` and `Canvas#height` methods.
+In this example, we'll draw a colored gradient that fills the screen, so we need to fetch the current width and height of the canvas. Since a `Canvas` is also a `Surface`, we can actually just use the `Surface#width` and `Surface#height` methods.
 
 ```scala
-def drawColors(canvas: Canvas): Unit = {
+def drawColors(target: MutableSurface): Unit = {
   for {
-    x <- (0 until canvas.width)
-    y <- (0 until canvas.height)
-    color = Color((255 * x.toDouble / canvas.width).toInt, (255 * y.toDouble / canvas.height).toInt, 255)
-  } canvas.putPixel(x, y, color)
+    x <- (0 until target.width)
+    y <- (0 until target.height)
+    color = Color((255 * x.toDouble / target.width).toInt, (255 * y.toDouble / target.height).toInt, 255)
+  } target.putPixel(x, y, color)
 }
 ```
 
@@ -66,10 +66,10 @@ def drawColors(canvas: Canvas): Unit = {
 
 ```scala
 AppLoop
-  .statelessRenderLoop((canvas: Canvas) => {
+  .statelessRenderLoop((canvas: Canvas) ?=> {
     val keyboardInput = canvas.getKeyboardInput()
     canvas.clear()
-    changeSettings(canvas, keyboardInput)
+    changeSettings(keyboardInput)
     drawColors(canvas)
     canvas.redraw()
   })

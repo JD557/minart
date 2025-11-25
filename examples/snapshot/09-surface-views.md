@@ -71,7 +71,9 @@ val blurKernel = Kernel.averageBlur(3, 3)
 Now, here's our application with all the effects:
 
 ```scala
-def application(t: Double, canvas: Canvas): Unit = {
+def application(t: Double)(using canvas: Canvas): Double = {
+  canvas.clear()
+
   val frameSin = Math.sin(t)
   val frameCos = Math.cos(t)
   val zoom     = 1.0 / (frameSin + 2.0)
@@ -88,6 +90,9 @@ def application(t: Double, canvas: Canvas): Unit = {
     )
 
   canvas.blitPlane(image)(0, 0)
+
+  canvas.redraw()
+  t + 0.01
 }
 ```
 
@@ -97,13 +102,7 @@ def application(t: Double, canvas: Canvas): Unit = {
 val canvasSettings = Canvas.Settings(width = 128, height = 128, scale = Some(4), clearColor = Color(0, 0, 0))
 
 AppLoop
-  .statefulRenderLoop((t: Double) => (canvas: Canvas) => {
-      canvas.clear()
-      application(t, canvas)
-      canvas.redraw()
-      t + 0.01
-    }
-  )
+  .statefulRenderLoop(application)
   .configure(canvasSettings, LoopFrequency.hz60, 0)
   .run()
 ```

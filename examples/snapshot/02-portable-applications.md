@@ -52,7 +52,7 @@ The application logic is pretty much the same.
 We will just extract it to a function for reasons that will be clearer in the next step.
 
 ```scala
-def application(canvas: Canvas): Unit = {
+def application(using canvas: Canvas): Unit = {
   for {
     x <- (0 until canvas.width)
     y <- (0 until canvas.height)

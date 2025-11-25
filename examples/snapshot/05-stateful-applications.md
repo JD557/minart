@@ -121,7 +121,7 @@ val initialState = GameState(Vector.fill(canvasSettings.height)(Vector.fill(canv
 Then we define our application logic. Note that this time our logic takes both a `GameState` and a `Canvas`
 
 ```scala
-def application(state: GameState, canvas: Canvas): GameState = {
+def application(state: GameState)(using canvas: Canvas): GameState = {
   canvas.clear()
 
   // Draw the snake body
@@ -159,7 +159,7 @@ This is very similar to the `statelessRenderLoop`, but now our render function t
 
 ```scala
 AppLoop
-  .statefulRenderLoop((state: GameState) => (canvas: Canvas) => application(state, canvas))
+  .statefulRenderLoop(application)
   .configure(
     canvasSettings,
     LoopFrequency.fromHz(15),

@@ -66,11 +66,11 @@ val background: Surface = {
 
 A surface can be drawn on top of a mutable surface with the `blit` operation.
 
-Here's how we could draw the background in the canvas, at position (0, 0):
+Here's how we could draw the background in a target surface, at position (0, 0):
 
 ```scala
-def drawBackground(canvas: Canvas): Unit = {
-  canvas.blit(background)(0, 0)
+def drawBackground(target: MutableSurface): Unit = {
+  target.blit(background)(0, 0)
 }
 ```
 
@@ -79,8 +79,8 @@ The `blit` operation does allow for more advanced use cases, such as clipping.
 For example, say we want to draw our sprite at position (t, t), but we only want to draw the 8x8 portion starting at the pixel (4, 4), we can do:
 
 ```scala
-def drawSprite(canvas: Canvas, t: Int): Unit = {
-  canvas.blit(image)(t, t, 4, 4, 8, 8)
+def drawSprite(target: MutableSurface, t: Int): Unit = {
+  target.blit(image)(t, t, 4, 4, 8, 8)
 }
 ```
 
@@ -93,8 +93,8 @@ For example, using `BlendMode.ColorMask`, pixels with the mask color are ignored
 Here, let's apply a mask that makes the black corner transparent.
 
 ```scala
-def blendSprite(canvas: Canvas, t: Int): Unit = {
-  canvas.blit(image, BlendMode.ColorMask(Color(0, 0, 0)))(111 - t, t, 4, 4, 8, 8)
+def blendSprite(target: MutableSurface, t: Int): Unit = {
+  target.blit(image, BlendMode.ColorMask(Color(0, 0, 0)))(111 - t, t, 4, 4, 8, 8)
 }
 ```
 
@@ -102,14 +102,12 @@ def blendSprite(canvas: Canvas, t: Int): Unit = {
 
 ```scala
 AppLoop
-  .statefulRenderLoop((t: Int) =>
-    (canvas: Canvas) => {
-      drawBackground(canvas)
-      drawSprite(canvas, t)
-      blendSprite(canvas, t)
-      canvas.redraw()
-      (t + 1) % (128 - 16)
-    }
+  .statefulRenderLoop((t: Int) => (canvas: Canvas) ?=>
+    drawBackground(canvas)
+    drawSprite(canvas, t)
+    blendSprite(canvas, t)
+    canvas.redraw()
+    (t + 1) % (128 - 16)
   )
   .configure(
     canvasSettings,

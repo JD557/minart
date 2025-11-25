@@ -40,8 +40,7 @@ And then we can play it back using the same logic as in the audio playback examp
 
 ```scala
 AppLoop
-  .statelessAppLoop((system: CanvasSubsystem with AudioPlayerSubsystem) => {
-    import system._
+  .statelessAppLoop((canvas: Canvas, audioPlayer: AudioPlayer) ?=>
     if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Space))
       audioPlayer.play(clip)
     if (canvas.getKeyboardInput().keysPressed.contains(KeyboardInput.Key.Backspace))
@@ -50,7 +49,7 @@ AppLoop
     if (!audioPlayer.isPlaying()) canvas.fill(Color(0, 128, 0))
     else canvas.fill(Color(128, 0, 0))
     canvas.redraw()
-  })
+  )
   .configure((Canvas.Settings(width = 128, height = 128), AudioPlayer.Settings()), LoopFrequency.hz60)
   .run()
 ```
