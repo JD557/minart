@@ -14,7 +14,7 @@ The dependencies will be the same as before. We also include Scala's `Random` he
 
 ```scala
 //> using scala "3.3.7"
-//> using dep "eu.joaocosta::minart::0.6.6-SNAPSHOT"
+//> using dep "eu.joaocosta::minart::0.7.0-SNAPSHOT"
 
 import scala.util.Random
 
