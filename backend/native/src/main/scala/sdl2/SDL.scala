@@ -3379,7 +3379,7 @@ object aliases:
       inline def value: CFuncPtr6[Ptr[Byte], CUnsignedInt, CFuncPtr1[Ptr[Byte], CUnsignedInt], Ptr[
         Byte
       ], CUnsignedInt, Ptr[CUnsignedInt], uintptr_t] = v
-      inline def toPtr: Ptr[?] = CFuncPtr.toPtr(v)
+      inline def toPtr: Ptr[?]                       = CFuncPtr.toPtr(v)
 
   /** [bindgen] header: ./SDL_thread.h
     */
