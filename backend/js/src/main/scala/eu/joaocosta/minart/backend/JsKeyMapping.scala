@@ -60,6 +60,11 @@ object JsKeyMapping extends KeyMapping[Int] {
     9  -> Key.Tab,
     13 -> Key.Enter,
     8  -> Key.Backspace,
+    // Accents
+    172 -> Key.Backtick,
+    192 -> Key.Backtick,
+    // MISSING: 94  -> Key.Caret,
+    196 -> Key.Tilde,
     // Control
     27  -> Key.Escape,
     16  -> Key.Shift,
@@ -77,6 +82,7 @@ object JsKeyMapping extends KeyMapping[Int] {
     189 -> Key.Comma,
     59  -> Key.Semicolon,
     161 -> Key.ExclamationMark,
+    // MISSING: 63  -> Key.QuestionMark,
     // Quotes
     222 -> Key.SingleQuote,
     162 -> Key.DoubleQuote,
@@ -89,12 +95,18 @@ object JsKeyMapping extends KeyMapping[Int] {
     173 -> Key.Minus,
     170 -> Key.Asterisk,
     61  -> Key.Equals,
+    // MISSING: 37  -> Key.Percentage,
     // Brackets
     168 -> Key.OpenParenthesis,
     169 -> Key.CloseParenthesis,
+    40  -> Key.OpenParenthesis,
+    41  -> Key.CloseParenthesis,
+    219 -> Key.OpenBracket,
+    221 -> Key.CloseBracket,
     // Other
     166 -> Key.Ampersand,
     164 -> Key.DollarSign,
-    64  -> Key.At
+    64  -> Key.At,
+    163 -> Key.Hash
   )
 }

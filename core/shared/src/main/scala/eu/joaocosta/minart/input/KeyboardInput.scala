@@ -142,6 +142,11 @@ object KeyboardInput {
     case Enter     extends Key(Some('\r'))
     case Backspace extends Key(Some('\u0008'))
 
+    // Accents
+    case Backtick extends Key(Some('`'))
+    case Caret    extends Key(Some('^'))
+    case Tilde    extends Key(Some('~'))
+
     // Control
     case Escape extends Key(None)
     case Shift  extends Key(None)
@@ -161,6 +166,7 @@ object KeyboardInput {
     case Comma           extends Key(Some(','))
     case Semicolon       extends Key(Some(';'))
     case ExclamationMark extends Key(Some('!'))
+    case QuestionMark    extends Key(Some('?'))
 
     // Quotes
     case SingleQuote extends Key(Some('\''))
@@ -170,20 +176,25 @@ object KeyboardInput {
     case Slash      extends Key(Some('/'))
     case Backslash  extends Key(Some('\\'))
     case Underscore extends Key(Some('_'))
+    case Pipe       extends Key(Some('|'))
 
     // Math
-    case Plus     extends Key(Some('+'))
-    case Minus    extends Key(Some('-'))
-    case Asterisk extends Key(Some('*'))
-    case Equals   extends Key(Some('='))
+    case Plus       extends Key(Some('+'))
+    case Minus      extends Key(Some('-'))
+    case Asterisk   extends Key(Some('*'))
+    case Equals     extends Key(Some('='))
+    case Percentage extends Key(Some('%'))
 
     // Brackets
     case OpenParenthesis  extends Key(Some('('))
     case CloseParenthesis extends Key(Some(')'))
+    case OpenBracket      extends Key(Some('['))
+    case CloseBracket     extends Key(Some(']'))
 
     // Other
     case Ampersand  extends Key(Some('&'))
     case DollarSign extends Key(Some('$'))
     case At         extends Key(Some('@'))
+    case Hash       extends Key(Some('#'))
   }
 }

@@ -62,6 +62,11 @@ object AwtKeyMapping extends KeyMapping[Int] {
     KeyEvent.VK_TAB        -> Key.Tab,
     KeyEvent.VK_ENTER      -> Key.Enter,
     KeyEvent.VK_BACK_SPACE -> Key.Backspace,
+    // Accents
+    KeyEvent.VK_BACK_QUOTE      -> Key.Backtick,
+    KeyEvent.VK_CIRCUMFLEX      -> Key.Caret,
+    KeyEvent.VK_DEAD_CIRCUMFLEX -> Key.Caret,
+    KeyEvent.VK_DEAD_TILDE      -> Key.Tilde,
     // Control
     KeyEvent.VK_ESCAPE  -> Key.Escape,
     KeyEvent.VK_SHIFT   -> Key.Shift,
@@ -81,6 +86,7 @@ object AwtKeyMapping extends KeyMapping[Int] {
     KeyEvent.VK_COMMA            -> Key.Comma,
     KeyEvent.VK_SEMICOLON        -> Key.Semicolon,
     KeyEvent.VK_EXCLAMATION_MARK -> Key.ExclamationMark,
+    // MISSING: KeyEvent.VK_QUESTION_MARK    -> Key.QuestionMark,
     // Quotes
     KeyEvent.VK_QUOTE    -> Key.SingleQuote,
     KeyEvent.VK_QUOTEDBL -> Key.DoubleQuote,
@@ -89,6 +95,7 @@ object AwtKeyMapping extends KeyMapping[Int] {
     KeyEvent.VK_DIVIDE     -> Key.Slash,
     KeyEvent.VK_BACK_SLASH -> Key.Backslash,
     KeyEvent.VK_UNDERSCORE -> Key.Underscore,
+    // MISSING: KeyEvent.VK_PIPE       -> Key.Pipe,
     // Math
     KeyEvent.VK_PLUS     -> Key.Plus,
     KeyEvent.VK_ADD      -> Key.Plus,
@@ -97,12 +104,16 @@ object AwtKeyMapping extends KeyMapping[Int] {
     KeyEvent.VK_ASTERISK -> Key.Asterisk,
     KeyEvent.VK_MULTIPLY -> Key.Asterisk,
     KeyEvent.VK_EQUALS   -> Key.Equals,
+    // MISSING: KeyEvent.VK_PERCENT  -> Key.Parcentage,
     // Brackets
     KeyEvent.VK_LEFT_PARENTHESIS  -> Key.OpenParenthesis,
     KeyEvent.VK_RIGHT_PARENTHESIS -> Key.CloseParenthesis,
+    KeyEvent.VK_OPEN_BRACKET      -> Key.OpenBracket,
+    KeyEvent.VK_CLOSE_BRACKET     -> Key.CloseBracket,
     // Other
-    KeyEvent.VK_AMPERSAND -> Key.Ampersand,
-    KeyEvent.VK_DOLLAR    -> Key.DollarSign,
-    KeyEvent.VK_AT        -> Key.At
+    KeyEvent.VK_AMPERSAND   -> Key.Ampersand,
+    KeyEvent.VK_DOLLAR      -> Key.DollarSign,
+    KeyEvent.VK_AT          -> Key.At,
+    KeyEvent.VK_NUMBER_SIGN -> Key.Hash
   )
 }
