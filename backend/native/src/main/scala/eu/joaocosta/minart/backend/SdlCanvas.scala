@@ -26,16 +26,7 @@ final class SdlCanvas(handleQuit: Boolean = false) extends SurfaceBackedCanvas {
 
   // Input resources
 
-  private[this] var keyboardInput: KeyboardInput = {
-    val localesPtr = SDL_GetPreferredLocales()
-    val locale     = ((!localesPtr).language, (!localesPtr).country) match {
-      case (null, _)       => None
-      case (lang, null)    => Some(fromCString(lang))
-      case (lang, country) => Some(fromCString(lang) + "-" + fromCString(country))
-    }
-    SDL_free(localesPtr.asInstanceOf[Ptr[Byte]])
-    KeyboardInput.empty.copy(locale = locale)
-  }
+  private[this] var keyboardInput: KeyboardInput                   = KeyboardInput.empty
   private[this] var pointerInput: PointerInput                     = PointerInput.empty
   private[this] var rawPointerPos: (Int, Int)                      = _
   private[this] def cleanPointerPos: Option[PointerInput.Position] = if (isCreated())

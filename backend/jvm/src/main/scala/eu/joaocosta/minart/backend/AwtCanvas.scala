@@ -46,7 +46,7 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Input resources
 
-  private[this] var keyListener: AwtCanvas.KeyListener     = _
+  private[this] val keyListener: AwtCanvas.KeyListener     = new AwtCanvas.KeyListener()
   private[this] var mouseListener: AwtCanvas.MouseListener = _
 
   // Initialization
@@ -74,7 +74,6 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
       windowWidth = javaCanvas.getWidth,
       windowHeight = javaCanvas.getHeight
     )
-    keyListener = new AwtCanvas.KeyListener(javaCanvas)
     mouseListener = new AwtCanvas.MouseListener(javaCanvas, fullExtendedSettings)
     // Handles input when the canvas is in focus
     javaCanvas.addKeyListener(keyListener)
@@ -155,9 +154,8 @@ object AwtCanvas {
     });
   }
 
-  private final class KeyListener(canvas: JavaCanvas) extends JavaKeyListener {
-    private[this] var state =
-      KeyboardInput.empty.copy(locale = Option(canvas.getInputContext()).map(_.getLocale().toLanguageTag()))
+  private final class KeyListener extends JavaKeyListener {
+    private[this] var state = KeyboardInput.empty
 
     def keyPressed(ev: KeyEvent): Unit =
       AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state.synchronized { state = state.press(key) })
