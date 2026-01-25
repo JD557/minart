@@ -68,6 +68,11 @@ object SdlKeyMapping extends KeyMapping[SDL_KeyCode] {
     SDLK_KP_ENTER     -> Key.Enter,
     SDLK_BACKSPACE    -> Key.Backspace,
     SDLK_KP_BACKSPACE -> Key.Backspace,
+    // Accents
+    SDLK_BACKQUOTE -> Key.Backtick,
+    SDLK_CARET     -> Key.Caret,
+    SDLK_CARET     -> Key.Caret,
+    // MISSING: SDLK_TILDE -> Key.Tilde,
     // Control
     SDLK_ESCAPE -> Key.Escape,
     SDLK_LSHIFT -> Key.Shift,
@@ -92,6 +97,7 @@ object SdlKeyMapping extends KeyMapping[SDL_KeyCode] {
     SDLK_SEMICOLON -> Key.Semicolon,
     SDLK_EXCLAIM   -> Key.ExclamationMark,
     SDLK_KP_EXCLAM -> Key.ExclamationMark,
+    SDLK_QUESTION  -> Key.QuestionMark,
     // Quotes
     SDLK_QUOTE    -> Key.SingleQuote,
     SDLK_QUOTEDBL -> Key.DoubleQuote,
@@ -100,6 +106,7 @@ object SdlKeyMapping extends KeyMapping[SDL_KeyCode] {
     SDLK_KP_DIVIDE  -> Key.Slash,
     SDLK_BACKSLASH  -> Key.Backslash,
     SDLK_UNDERSCORE -> Key.Underscore,
+    // MISSING: SDLK_PIPE       -> Key.Pipe,
     // Math
     SDLK_PLUS        -> Key.Plus,
     SDLK_KP_PLUS     -> Key.Plus,
@@ -109,16 +116,20 @@ object SdlKeyMapping extends KeyMapping[SDL_KeyCode] {
     SDLK_KP_MULTIPLY -> Key.Asterisk,
     SDLK_EQUALS      -> Key.Equals,
     SDLK_KP_EQUALS   -> Key.Equals,
+    SDLK_PERCENT     -> Key.Percentage,
     // Brackets
     SDLK_LEFTPAREN     -> Key.OpenParenthesis,
     SDLK_KP_LEFTPAREN  -> Key.OpenParenthesis,
     SDLK_RIGHTPAREN    -> Key.CloseParenthesis,
     SDLK_KP_RIGHTPAREN -> Key.CloseParenthesis,
+    SDLK_LEFTBRACKET   -> Key.OpenBracket,
+    SDLK_RIGHTBRACKET  -> Key.CloseBracket,
     // Other
     SDLK_AMPERSAND    -> Key.Ampersand,
     SDLK_KP_AMPERSAND -> Key.Ampersand,
     SDLK_DOLLAR       -> Key.DollarSign,
     SDLK_KP_AT        -> Key.At,
-    SDLK_AT           -> Key.At
+    SDLK_AT           -> Key.At,
+    SDLK_HASH         -> Key.Hash
   )
 }
