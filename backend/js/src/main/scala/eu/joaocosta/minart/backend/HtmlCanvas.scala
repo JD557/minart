@@ -33,8 +33,7 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
 
   // Input resources
 
-  private[this] var keyboardInput: KeyboardInput =
-    KeyboardInput.empty.copy(locale = Option(dom.window.navigator.language))
+  private[this] var keyboardInput: KeyboardInput                   = KeyboardInput.empty
   private[this] var pointerInput: PointerInput                     = PointerInput.empty
   private[this] var rawPointerPos: (Int, Int)                      = _
   private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).flatMap { case (x, y) =>
