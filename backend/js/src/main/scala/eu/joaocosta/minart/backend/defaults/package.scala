@@ -15,6 +15,6 @@ package object defaults {
   given defaultPlatform: DefaultBackend[Any, Platform.JS.type] =
     DefaultBackend.fromConstant(Platform.JS)
 
-  given defaultResource: DefaultBackend[String, JsResource] =
-    DefaultBackend.fromFunction[String, JsResource](JsResource.apply)
+  given defaultResource: DefaultBackend[Option[String], JsResource] =
+    DefaultBackend.fromFunction[Option[String], JsResource](JsResource.apply)
 }
