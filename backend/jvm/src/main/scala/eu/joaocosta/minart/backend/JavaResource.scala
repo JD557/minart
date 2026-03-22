@@ -8,8 +8,8 @@ import scala.util.{Failure, Success, Try}
 
 import eu.joaocosta.minart.runtime.Resource
 
-/** Resource loader by first trying to access the jar's resources.
-  * If that fails, it tries to fetch the data from a file.
+/** Resource loader that fetches the data from a file.
+  *  If that fails, it tries to fetch the data from the executable resources.
   */
 final case class JavaResource(resourcePath: String) extends Resource {
   given ExecutionContext = ExecutionContext.global

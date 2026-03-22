@@ -2,7 +2,7 @@ package eu.joaocosta.minart.backend
 
 import java.io.{BufferedInputStream, File, FileInputStream, FileOutputStream, InputStream, OutputStream}
 
-import scala.concurrent.Future
+import scala.concurrent.*
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
@@ -10,14 +10,14 @@ import eu.joaocosta.minart.runtime.Resource
 
 /** Resource loader that fetches the data from a file.
   *  If that fails, it tries to fetch the data from the executable resources.
-  *
-  * Currently in scala-native limitations, the async methods are actually synchronous.
   */
 final case class NativeResource(resourcePath: String) extends Resource {
-  override def exists(): Boolean =
-    new File(path).exists() || this.getClass().getResource("/" + resourcePath) != null
+  given ExecutionContext = ExecutionContext.global
 
   def path = "./" + resourcePath
+
+  override def exists(): Boolean =
+    new File(path).exists() || this.getClass().getResource("/" + resourcePath) != null
 
   def unsafeInputStream(): InputStream =
     Try(new BufferedInputStream(new FileInputStream(path)))
@@ -28,8 +28,6 @@ final case class NativeResource(resourcePath: String) extends Resource {
       .get
   def unsafeOutputStream(): OutputStream = new FileOutputStream(path)
 
-  def withSourceAsync[A](f: Source => A): Future[A] =
-    Future.fromTry(withSource(f))
-  def withInputStreamAsync[A](f: InputStream => A): Future[A] =
-    Future.fromTry(withInputStream(f))
+  def withSourceAsync[A](f: Source => A): Future[A]           = Future(blocking(withSource(f)).get)
+  def withInputStreamAsync[A](f: InputStream => A): Future[A] = Future(blocking(withInputStream(f)).get)
 }
