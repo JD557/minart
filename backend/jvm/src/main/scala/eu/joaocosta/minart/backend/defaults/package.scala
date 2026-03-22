@@ -15,6 +15,6 @@ package object defaults {
   given defaultPlatform: DefaultBackend[Any, Platform.JVM.type] =
     DefaultBackend.fromConstant(Platform.JVM)
 
-  given defaultResource: DefaultBackend[String, JavaResource] =
-    DefaultBackend.fromFunction[String, JavaResource](JavaResource.apply)
+  given defaultResource: DefaultBackend[Option[String], JavaResource] =
+    DefaultBackend.fromFunction[Option[String], JavaResource](JavaResource.apply)
 }

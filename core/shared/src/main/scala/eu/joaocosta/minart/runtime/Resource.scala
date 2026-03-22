@@ -12,9 +12,9 @@ import eu.joaocosta.minart.backend.defaults.*
   */
 trait Resource {
 
-  /** Path to the resource
+  /** Path to the resource. None if the resource doesn't have an associated path (stdin and stdout)
     */
-  def path: String
+  def path: Option[String]
 
   /** Loads the resource synchronously, and returns an [[java.io.InputStream]].
     * The InputStream is NOT closed in the end.
@@ -31,16 +31,15 @@ trait Resource {
   def unsafeOutputStream(): OutputStream
 
   /** Checks if the resource exists */
-  def exists(): Boolean = withInputStream(_ => ()).isSuccess
+  def exists(): Boolean = path.isEmpty || withInputStream(_ => ()).isSuccess
 
   /** Loads the resource synchronously, processes the contents using a [[scala.io.Source]] and returns the result.
     *  The Source is closed in the end, so it should not escape this call.
     * For working with binary files, it is recommended to use [[withInputStream]] instead.
     */
   def withSource[A](f: Source => A): Try[A] =
-    Using[Source, A](
-      Source.fromInputStream(unsafeInputStream())
-    )(f)
+    if (path.isDefined) Using[Source, A](Source.fromInputStream(unsafeInputStream()))(f)
+    else Try(f(Source.fromInputStream(unsafeInputStream()))) // Don't close stdin/stdout
 
   /** Loads the resource asynchronously, processes the contents using a [[scala.io.Source]] and returns the result.
     * The Source is closed in the end, so it should not escape this call.
@@ -52,7 +51,8 @@ trait Resource {
     *  The InputStream is closed in the end, so it should not escape this call.
     */
   def withInputStream[A](f: InputStream => A): Try[A] =
-    Using[InputStream, A](unsafeInputStream())(f)
+    if (path.isDefined) Using[InputStream, A](unsafeInputStream())(f)
+    else Try(f(unsafeInputStream())) // Don't close stdin/stdout
 
   /** Loads the resource asynchronously, processes the contents using a [[java.io.InputStream]] and returns the result.
     *  The InputStream is closed in the end, so it should not escape this call.
@@ -63,10 +63,21 @@ trait Resource {
     * The OutputStream is closed in the end, so it should not escape this call.
     */
   def withOutputStream[A](f: OutputStream => A): Try[A] =
-    Using[OutputStream, A](unsafeOutputStream())(f)
+    if (path.isDefined) Using[OutputStream, A](unsafeOutputStream())(f)
+    else Try(f(unsafeOutputStream())) // Don't close stdin/stdout
 }
 
 object Resource {
-  def apply(resourcePath: String)(using backend: DefaultBackend[String, Resource]): Resource =
+
+  /** Define a resource from a path or pointing to Stdin/Stdout */
+  def apply(resourcePath: Option[String])(using backend: DefaultBackend[Option[String], Resource]): Resource =
     backend.defaultValue(resourcePath)
+
+  /** Define a resource from a path */
+  def apply(resourcePath: String)(using backend: DefaultBackend[Option[String], Resource]): Resource =
+    apply(Some(resourcePath))
+
+  /** Define a resource pointing to Stdin/Stdout */
+  def standardStreams()(using backend: DefaultBackend[Option[String], Resource]): Resource =
+    apply(None)
 }

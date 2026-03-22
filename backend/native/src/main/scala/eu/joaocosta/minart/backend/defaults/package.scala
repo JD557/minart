@@ -15,6 +15,6 @@ package object defaults {
   given defaultPlatform: DefaultBackend[Any, Platform.Native.type] =
     DefaultBackend.fromConstant(Platform.Native)
 
-  given defaultResource: DefaultBackend[String, NativeResource] =
-    DefaultBackend.fromFunction[String, NativeResource](NativeResource.apply)
+  given defaultResource: DefaultBackend[Option[String], NativeResource] =
+    DefaultBackend.fromFunction[Option[String], NativeResource](NativeResource.apply)
 }
