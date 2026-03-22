@@ -4,7 +4,7 @@ package eu.joaocosta.minart.graphics.image.kitty
   *
   * Only supports basic direct image rendering
   */
-final class KittyImageFormat() extends KittyImageWriter
+final class KittyImageFormat() extends KittyImageReader with KittyImageWriter
 object KittyImageFormat {
   val defaultFormat = new KittyImageFormat()
 

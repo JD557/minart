@@ -40,6 +40,11 @@ object Image {
   def loadPdiImage(resource: Resource): Try[RamSurface] =
     loadImage(pdi.PdiImageFormat.defaultFormat, resource)
 
+  /** Loads an image in the Kitty format.
+    */
+  def loadKittyImage(resource: Resource): Try[RamSurface] =
+    loadImage(kitty.KittyImageFormat.defaultFormat, resource)
+
   /** Stores an image using a custom ImageWriter.
     *
     * @param writer ImageWriter to use

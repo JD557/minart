@@ -37,6 +37,12 @@ class ImageWriterSpec extends munit.FunSuite {
       roundtripTest(Resource("lausanne/qoi-24bit.qoi"), qoi.QoiImageFormat.defaultFormat)
     }
 
+    test("Write a Kitty image") {
+      roundtripTest(Resource("scala/kitty-24bit.txt"), kitty.KittyImageFormat.defaultFormat)
+      roundtripTest(Resource("scala-rect/kitty-24bit.txt"), kitty.KittyImageFormat.defaultFormat)
+      roundtripTest(Resource("lausanne/kitty-24bit.txt"), kitty.KittyImageFormat.defaultFormat)
+    }
+
     test("Write a PDI image") {
       roundtripTest(Resource("alpha/pdi-2bit.pdi"), pdi.PdiImageFormat.defaultFormat)
     }

@@ -8,7 +8,7 @@ import eu.joaocosta.minart.internal.*
 
 /** Image writer for Kitty images.
   *
-  * Stores data as a 32 bit raw pixel data, using a=T (transmit and display image) and the direct transmission medium
+  * Stores data as a 24 bit raw pixel data, using a=T (transmit and display image) and the direct transmission medium
   */
 trait KittyImageWriter extends ImageWriter {
   import ByteWriter.*
@@ -17,11 +17,11 @@ trait KittyImageWriter extends ImageWriter {
   private val b64 = java.util.Base64.getEncoder()
 
   private def colorToBytes(color: Color): Array[Byte] =
-    Array(color.r.toByte, color.g.toByte, color.b.toByte, color.a.toByte)
+    Array(color.r.toByte, color.g.toByte, color.b.toByte)
 
   private def storeHeader(surface: Surface): ByteStreamState[String] =
     for {
-      _ <- writeString(s"${ESC}_Gf=32,a=T,s=${surface.width},v=${surface.height};")
+      _ <- writeString(s"${ESC}_Gf=24,a=T,s=${surface.width},v=${surface.height};")
     } yield ()
 
   final def storeImage(surface: Surface, os: OutputStream): Either[String, Unit] = {

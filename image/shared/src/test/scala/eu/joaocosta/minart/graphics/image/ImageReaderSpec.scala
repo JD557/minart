@@ -104,6 +104,22 @@ class ImageReaderSpec extends munit.FunSuite {
       pdiTest("alpha", 507, 200)
     }
 
+    test("Load a Kitty image") {
+      def kittyTest(dir: String, width: Int, height: Int): Unit =
+        testSize(
+          List(
+            Image.loadKittyImage(Resource(s"$dir/kitty-24bit.txt")),
+            Image.loadKittyImage(Resource(s"$dir/kitty-32bit.txt"))
+          ),
+          width,
+          height
+        )
+      kittyTest("scala", 128, 128)
+      kittyTest("scala-rect", 77, 119)
+      testSize(List(Image.loadKittyImage(Resource(s"alpha/kitty-32bit.txt"))), 507, 200)
+      kittyTest("lausanne", 640, 480)
+    }
+
     test("Load the same data from different formats (square image)") {
       sameImage(
         List(
