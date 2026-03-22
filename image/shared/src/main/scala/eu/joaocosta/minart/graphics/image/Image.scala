@@ -73,4 +73,9 @@ object Image {
   def storePdiImage(surface: Surface, resource: Resource): Try[Unit] =
     storeImage(pdi.PdiImageFormat.defaultFormat, surface, resource)
 
+  /** Stores an image in the Kitty format.
+    */
+  def storeKittyImage(surface: Surface, resource: Resource): Try[Unit] =
+    storeImage(kitty.KittyImageFormat.defaultFormat, surface, resource)
+
 }
