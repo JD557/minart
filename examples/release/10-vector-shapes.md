@@ -10,7 +10,7 @@ The relevant methods are in the `eu.joaocosta.minart.geometry` package
 
 ```scala
 //> using scala "3.3.7"
-//> using dep "eu.joaocosta::minart::0.6.5"
+//> using dep "eu.joaocosta::minart::0.6.6"
 
 import eu.joaocosta.minart.backend.defaults.given
 import eu.joaocosta.minart.graphics.*
