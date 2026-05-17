@@ -2,7 +2,7 @@ package eu.joaocosta.minart.graphics
 
 import scala.annotation.nowarn
 
-/** Representation of a RGB Color. */
+/** Representation of a RGBA Color. */
 opaque type Color = Int
 
 object Color {
