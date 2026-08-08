@@ -3,7 +3,7 @@ import scala.scalanative.build._
 
 lazy val scala3Version = "3.3.7"
 
-name := "minart"
+name := "minart-root"
 
 organization := "eu.joaocosta"
 publishTo    := {
@@ -100,8 +100,8 @@ val nativeSettings = Seq(
 )
 
 lazy val minart =
-  (projectMatrix in (file("minart-bundle")))
-    .settings(name := "minart-bundle")
+  (projectMatrix in (file("minart")))
+    .settings(name := "minart")
     .settings(sharedSettings)
     .settings(publishSettings)
     .jvmPlatform(scalaVersions = Seq(scala3Version))
