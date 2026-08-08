@@ -99,6 +99,17 @@ val nativeSettings = Seq(
   }
 )
 
+lazy val minart =
+  (projectMatrix in (file("minart-bundle")))
+    .settings(name := "minart-bundle")
+    .settings(sharedSettings)
+    .settings(publishSettings)
+    .jvmPlatform(scalaVersions = Seq(scala3Version))
+    .jsPlatform(scalaVersions = Seq(scala3Version), settings = jsSettings)
+    .nativePlatform(scalaVersions = Seq(scala3Version), settings = nativeSettings)
+    .dependsOn(core, backend, image, sound)
+    .aggregate(core, backend, image, sound)
+
 lazy val core =
   (projectMatrix in (file("core")))
     .settings(name := "minart-core")
