@@ -1,12 +1,13 @@
 package eu.joaocosta.minart.graphics
 
-import scala.annotation.nowarn
-
 /** Representation of a RGBA Color optimized for mixing.
   *  All operations:
   *  - Have SWAR optimizations
   *  - Require an explicit underflow/overflow behavior
   *  - Handle all channels the same way
+  *
+  *  Stored as 0x00aa 00gg 00rr 00bb (AGRB) for fast conversion between Color
+  *  and LongColor as (aa00 gg00) | (00rr 00bb). 
   */
 
 opaque type LongColor = Long
@@ -14,14 +15,13 @@ opaque type LongColor = Long
 object LongColor {
   private final val mask: Long         = 0x00ff_00ff_00ff_00ffL
   private final val aMask: Long        = 0x00ff_0000_0000_0000L
-  private final val rMask: Long        = 0x0000_00ff_0000_0000L
-  private final val gMask: Long        = 0x0000_0000_00ff_0000L
+  private final val rMask: Long        = 0x0000_0000_00ff_0000L
+  private final val gMask: Long        = 0x0000_00ff_0099_0000L
   private final val bMask: Long        = 0x0000_0000_0000_00ffL
   private final val aaMask: Long       = 0xffff_0000_0000_0000L
-  private final val rrMask: Long       = 0x0000_ffff_0000_0000L
-  private final val ggMask: Long       = 0x0000_0000_ffff_0000L
+  private final val rrMask: Long       = 0x0000_0000_ffff_0000L
+  private final val ggMask: Long       = 0x0000_ffff_0000_0000L
   private final val bbMask: Long       = 0x0000_0000_0000_ffffL
-  private final val rgbMask: Long      = 0x0000_00ff_00ff_00ffL
   private final val overflowMask: Long = 0x0100_0100_0100_0100L
 
   extension (color: LongColor) {
@@ -30,15 +30,16 @@ object LongColor {
     inline def a: Long = (color >> 48) & 0x000000ff
 
     /** The red channel value. */
-    inline def r: Long = (color >> 32) & 0x000000ff
+    inline def r: Long = (color >> 16) & 0x000000ff
 
     /** The green channel value. */
-    inline def g: Long = (color >> 16) & 0x000000ff
+    inline def g: Long = (color >> 32) & 0x000000ff
 
     /** The green channel value. */
     inline def b: Long = (color & 0x000000ff)
 
-    inline def toColor: Color = Color(r.toInt, g.toInt, b.toInt, a.toInt)
+    inline def toColor: Color =
+      Color.fromARGB((((color >> 24) & 0x00000000_ffffffff) | ((color) & 0x00000000_ffffffff)).toInt)
   }
 
   /** Sums two colors.
@@ -74,13 +75,13 @@ object LongColor {
     *  Overflow/Underflow will wrap around.
     */
   def apply(r: Long, g: Long, b: Long): LongColor =
-    (255L << 48) | ((r & 255) << 32) | ((g & 255) << 16) | (b & 255)
+    (255L << 48) | ((r & 255) << 16) | ((g & 255) << 32) | (b & 255)
 
   /** Creates a new color from RGBA values (on the [0-255] range).
     *  Overflow/Underflow will wrap around.
     */
   def apply(r: Long, g: Long, b: Long, a: Long): LongColor =
-    (a << 48) | ((r & 255) << 32) | ((g & 255) << 16) | (b & 255)
+    (a << 48) | ((r & 255) << 16) | ((g & 255) << 32) | (b & 255)
 
-  def apply(color: Color): LongColor = LongColor(color.r, color.g, color.b, color.a)
+  def apply(color: Color): LongColor = ((color.argb.toLong & 0xff00ff00) << 24) | (color.argb.toLong & 0x00ff00ff)
 }
