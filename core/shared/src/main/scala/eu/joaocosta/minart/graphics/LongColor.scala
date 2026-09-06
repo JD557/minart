@@ -7,7 +7,7 @@ package eu.joaocosta.minart.graphics
   *  - Handle all channels the same way
   *
   *  Stored as 0x00aa 00gg 00rr 00bb (AGRB) for fast conversion between Color
-  *  and LongColor as (aa00 gg00) | (00rr 00bb). 
+  *  and LongColor as (aa00 gg00) | (00rr 00bb).
   */
 
 opaque type LongColor = Long
@@ -64,11 +64,10 @@ object LongColor {
     */
   inline def weight(c: LongColor, w: Byte): LongColor = {
     val ww = java.lang.Byte.toUnsignedLong(w)
-    val cc = c * ww
-    (java.lang.Long.divideUnsigned(cc & aaMask, 255) & aMask) |
-      (((cc & rrMask) / 255) & rMask) |
-      (((cc & ggMask) / 255) & gMask) |
-      (((cc & bbMask) / 255) & bMask)
+    // Multiply by floor(w * 256 / 255) for increased precision and then divide
+    // by 256 with a shift (so, effectively, multiply by w / 255)
+    val cc = c * (((ww << 8) + 255) / 255)
+    (cc >> 8) & 0x00ff00ff00ff00ffL
   }
 
   /** Creates a new color from RGB values (on the [0-255] range).
