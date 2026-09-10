@@ -19,7 +19,7 @@ jobs:
 
     env:
       SCALA_VERSION: ${{ matrix.scala }}
-      PROJECT: root${{ matrix.platform }}
+      PROJECT_PLATFORM: ${{ matrix.platform != 'JVM' && matrix.platform || '' }}
 
     steps:
     - uses: actions/checkout@v2
@@ -32,14 +32,14 @@ jobs:
     - name: Setup SBT
       uses: sbt/setup-sbt@v1
     - name: Compile (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/compile
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION minart$PROJECT_PLATFORM/compile
     - name: Install scala-native libraries
       if: matrix.platform == 'native'
       run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev libsdl2-dev
     - name: Compile tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test:compile
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION minart$PROJECT_PLATFORM/Test/compile
     - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
-      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION $PROJECT/test
+      run: sbt -J-Xmx3G -Dsbt.color=always ++$SCALA_VERSION minart$PROJECT_PLATFORM/Test/testFull
 
   compile-examples:
     name: Compile examples
@@ -105,24 +105,3 @@ jobs:
         ./cs launch giter8 -- file://./src/main/g8 --name=sbt-g8-test --sbt_project=yes
         cd sbt-g8-test
         sbt compile
-
-  coverage:
-    name: Code coverage
-    runs-on: ubuntu-latest
-    env:
-      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK (17)
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: 17
-        cache: sbt
-    - name: Setup SBT
-      uses: sbt/setup-sbt@v1
-    - name: Compute coverage
-      run: sbt -J-Xmx3G -Dsbt.color=always rootJVM/clean coverage rootJVM/test rootJVM/coverageAggregate
-    - name: Upload report
-      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r jvm/target/scala-3.3.7/coverage-report/cobertura.xml
