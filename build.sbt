@@ -70,7 +70,8 @@ val testSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalameta" %% "munit" % "1.3.6" % Test
   ),
-  testFrameworks += new TestFramework("munit.Framework")
+  testFrameworks += new TestFramework("munit.Framework"),
+  testOptions += Tests.Argument(new TestFramework("munit.Framework"), "--logger=sbt") // See https://github.com/sbt/sbt/issues/9716
 )
 
 val publishSettings = Seq(
