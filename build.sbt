@@ -30,13 +30,11 @@ scalacOptions ++= Seq(
   "-feature",
   "-unchecked",
   "-language:higherKinds",
-  "-Wunused:implicits",
-  "-Wunused:explicits",
   "-Wunused:imports",
   "-Wunused:locals",
   "-Wunused:params",
-  "-Wunused:privates"
-  // "-Xfatal-warnings"
+  "-Wunused:privates",
+  "-Werror"
 )
 scalafmtOnCompile := true
 semanticdbEnabled := true
@@ -67,6 +65,7 @@ def docSettings(projectName: String) = Seq(
 val sharedSettings = Seq()
 
 val testSettings = Seq(
+  Test / scalacOptions -= "-Wunused:params", // Unused parameters are actually helpful in tests
   libraryDependencies ++= Seq(
     "org.scalameta" %% "munit" % "1.3.6" % Test
   ),
