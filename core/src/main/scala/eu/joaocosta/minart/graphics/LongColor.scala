@@ -14,14 +14,6 @@ opaque type LongColor = Long
 
 object LongColor {
   private final val mask: Long         = 0x00ff_00ff_00ff_00ffL
-  private final val aMask: Long        = 0x00ff_0000_0000_0000L
-  private final val rMask: Long        = 0x0000_0000_00ff_0000L
-  private final val gMask: Long        = 0x0000_00ff_0099_0000L
-  private final val bMask: Long        = 0x0000_0000_0000_00ffL
-  private final val aaMask: Long       = 0xffff_0000_0000_0000L
-  private final val rrMask: Long       = 0x0000_0000_ffff_0000L
-  private final val ggMask: Long       = 0x0000_ffff_0000_0000L
-  private final val bbMask: Long       = 0x0000_0000_0000_ffffL
   private final val overflowMask: Long = 0x0100_0100_0100_0100L
 
   extension (color: LongColor) {
