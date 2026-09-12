@@ -15,6 +15,7 @@ import javax.swing.{JFrame, WindowConstants}
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.input.*
+import scala.compiletime.uninitialized
 
 /** A low level Canvas implementation that shows the image in an AWT/Swing window.
   */
@@ -22,8 +23,8 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 
-  private var javaCanvas: AwtCanvas.InnerCanvas = _
-  protected var surface: BufferedImageSurface   = _
+  private var javaCanvas: AwtCanvas.InnerCanvas = uninitialized
+  protected var surface: BufferedImageSurface   = uninitialized
 
   private[AwtCanvas] def javaRedraw(g: Graphics): Unit = if (javaCanvas != null) {
     g.setColor(new JavaColor(settings.clearColor.rgb))
@@ -47,7 +48,7 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
   // Input resources
 
   private val keyListener: AwtCanvas.KeyListener     = new AwtCanvas.KeyListener()
-  private var mouseListener: AwtCanvas.MouseListener = _
+  private var mouseListener: AwtCanvas.MouseListener = uninitialized
 
   // Initialization
 

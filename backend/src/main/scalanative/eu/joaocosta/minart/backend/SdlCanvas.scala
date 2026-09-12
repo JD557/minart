@@ -2,6 +2,7 @@ package eu.joaocosta.minart.backend
 
 import scala.scalanative.unsafe.*
 import scala.scalanative.unsigned.*
+import scala.compiletime.uninitialized
 
 import sdl2.all.*
 import sdl2.enumerations.SDL_BlendMode.*
@@ -20,15 +21,15 @@ final class SdlCanvas(handleQuit: Boolean = false) extends SurfaceBackedCanvas {
 
   // Rendering resources
 
-  private var window: Ptr[SDL_Window]         = _
-  private var windowSurface: Ptr[SDL_Surface] = _
-  protected var surface: SdlSurface                 = _
+  private var window: Ptr[SDL_Window]         = uninitialized
+  private var windowSurface: Ptr[SDL_Surface] = uninitialized
+  protected var surface: SdlSurface           = uninitialized
 
   // Input resources
 
   private var keyboardInput: KeyboardInput                   = KeyboardInput.empty
   private var pointerInput: PointerInput                     = PointerInput.empty
-  private var rawPointerPos: (Int, Int)                      = _
+  private var rawPointerPos: (Int, Int)                      = uninitialized
   private def cleanPointerPos: Option[PointerInput.Position] = if (isCreated())
     Option(rawPointerPos).map { case (x, y) =>
       PointerInput.Position(
