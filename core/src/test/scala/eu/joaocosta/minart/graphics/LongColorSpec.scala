@@ -44,4 +44,12 @@ class LongColorSpec extends munit.FunSuite {
     assert(LongColor.sumWrapAround(color1, color2) == LongColor(120, 140, 160, 180))
     assert(LongColor.sumWrapAround(color2, color2) == LongColor(220, 240, 4, 24))
   }
+
+  test("weight merges colors as expected") {
+    val color = LongColor(110, 120, 130, 140)
+
+    assert(LongColor.weight(color, 0) == LongColor(0, 0, 0, 0))
+    assert(LongColor.weight(color, 127.toByte) == LongColor(55, 60, 65, 70))
+    assert(LongColor.weight(color, 255.toByte) == color)
+  }
 }
