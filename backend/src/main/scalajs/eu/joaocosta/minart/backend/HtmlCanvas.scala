@@ -15,15 +15,15 @@ import eu.joaocosta.minart.input.*
 final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends SurfaceBackedCanvas {
   // Rendering resources
 
-  private[this] var jsCanvas: JsCanvas                                                                        = _
-  private[this] var ctx: dom.CanvasRenderingContext2D                                                         = _
-  private[this] var childNode: dom.Node                                                                       = _
-  private[this] var globalListeners: List[(String, js.Function1[_, _])]                                       = Nil
-  private[this] def registerGlobalListener[T <: Event](eventType: String, listener: js.Function1[T, _]): Unit = {
+  private var jsCanvas: JsCanvas                                                                        = _
+  private var ctx: dom.CanvasRenderingContext2D                                                         = _
+  private var childNode: dom.Node                                                                       = _
+  private var globalListeners: List[(String, js.Function1[_, _])]                                       = Nil
+  private def registerGlobalListener[T <: Event](eventType: String, listener: js.Function1[T, _]): Unit = {
     dom.document.addEventListener[T](eventType, listener)
     globalListeners = (eventType, listener) :: globalListeners
   }
-  private[this] def unregisterGlobalListeners(): Unit = {
+  private def unregisterGlobalListeners(): Unit = {
     globalListeners.foreach { (eventType, listener) =>
       dom.document.removeEventListener(eventType, listener)
     }
@@ -33,10 +33,10 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
 
   // Input resources
 
-  private[this] var keyboardInput: KeyboardInput                   = KeyboardInput.empty
-  private[this] var pointerInput: PointerInput                     = PointerInput.empty
-  private[this] var rawPointerPos: (Int, Int)                      = _
-  private[this] def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).flatMap { case (x, y) =>
+  private var keyboardInput: KeyboardInput                   = KeyboardInput.empty
+  private var pointerInput: PointerInput                     = PointerInput.empty
+  private var rawPointerPos: (Int, Int)                      = _
+  private def cleanPointerPos: Option[PointerInput.Position] = Option(rawPointerPos).flatMap { case (x, y) =>
     val (offsetX, offsetY) = {
       val canvasRect = jsCanvas.getBoundingClientRect()
       (canvasRect.left.toInt, canvasRect.top.toInt)
