@@ -1,8 +1,8 @@
 package eu.joaocosta.minart.backend
 
+import scala.compiletime.uninitialized
 import scala.scalanative.unsafe.*
 import scala.scalanative.unsigned.*
-import scala.compiletime.uninitialized
 
 import sdl2.all.*
 import sdl2.enumerations.SDL_BlendMode.*
