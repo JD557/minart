@@ -1,8 +1,8 @@
 package eu.joaocosta.minart.backend
 
 import scala.annotation.nowarn
-import scala.scalajs.js
 import scala.compiletime.uninitialized
+import scala.scalajs.js
 
 import org.scalajs.dom
 import org.scalajs.dom.html.Canvas as JsCanvas
@@ -19,8 +19,8 @@ final class HtmlCanvas(parentNode: => dom.Node = dom.document.body) extends Surf
   private var jsCanvas: JsCanvas                                                                        = uninitialized
   private var ctx: dom.CanvasRenderingContext2D                                                         = uninitialized
   private var childNode: dom.Node                                                                       = uninitialized
-  private var globalListeners: List[(String, js.Function1[_, _])]                                       = Nil
-  private def registerGlobalListener[T <: Event](eventType: String, listener: js.Function1[T, _]): Unit = {
+  private var globalListeners: List[(String, js.Function1[?, ?])]                                       = Nil
+  private def registerGlobalListener[T <: Event](eventType: String, listener: js.Function1[T, ?]): Unit = {
     dom.document.addEventListener[T](eventType, listener)
     globalListeners = (eventType, listener) :: globalListeners
   }
