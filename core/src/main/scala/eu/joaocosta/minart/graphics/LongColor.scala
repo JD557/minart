@@ -1,0 +1,81 @@
+package eu.joaocosta.minart.graphics
+
+/** Representation of a RGBA Color optimized for mixing.
+  *  All operations:
+  *  - Have SWAR optimizations
+  *  - Require an explicit underflow/overflow behavior
+  *  - Handle all channels the same way
+  *
+  *  Stored as 0x00aa 00gg 00rr 00bb (AGRB) for fast conversion between Color
+  *  and LongColor as (aa00 gg00) | (00rr 00bb).
+  */
+
+opaque type LongColor = Long
+
+object LongColor {
+  private final val mask: Long         = 0x00ff_00ff_00ff_00ffL
+  private final val overflowMask: Long = 0x0100_0100_0100_0100L
+
+  extension (color: LongColor) {
+
+    /** The alpha channel value. */
+    inline def a: Long = (color >> 48) & 0x000000ffL
+
+    /** The red channel value. */
+    inline def r: Long = (color >> 16) & 0x000000ffL
+
+    /** The green channel value. */
+    inline def g: Long = (color >> 32) & 0x000000ffL
+
+    /** The green channel value. */
+    inline def b: Long = (color & 0x000000ffL)
+
+    inline def toColor: Color =
+      Color.fromARGB((((color >> 24) & 0x00000000_ffffffffL) | (color & 0x00000000_ffffffffL)).toInt)
+
+    /** Sets the alpha to 255 */
+    inline def opaque: LongColor = color | 0x00ff_0000_0000_0000L
+  }
+
+  /** Sums two colors.
+    * Values are clamped on overflow.
+    */
+  inline def sumClamp(c1: LongColor, c2: LongColor): LongColor = {
+    val res      = c1 + c2
+    val overflow = ((res & overflowMask) >> 8) * 255
+    (res | overflow) & mask
+  }
+
+  /** Sums two colors.
+    * Values are wrapped around on overflow.
+    */
+  inline def sumWrapAround(c1: LongColor, c2: LongColor): LongColor = {
+    val res = (c1: Long) + (c2: Long)
+    res & mask
+  }
+
+  /** Multiplies all components by a weight from 0 to 255.
+    *  The behavior is undefined for values outside of that range.
+    */
+  inline def weight(c: LongColor, w: Byte): LongColor = {
+    val ww = java.lang.Byte.toUnsignedLong(w)
+    // Multiply by floor(w * 256 / 255) for increased precision and then divide
+    // by 256 with a shift (so, effectively, multiply by w / 255)
+    val cc = c * (((ww << 8) + 255) / 255)
+    (cc >> 8) & 0x00ff00ff00ff00ffL
+  }
+
+  /** Creates a new color from RGB values (on the [0-255] range).
+    *  Overflow/Underflow will wrap around.
+    */
+  def apply(r: Long, g: Long, b: Long): LongColor =
+    (255L << 48) | ((r & 255) << 16) | ((g & 255) << 32) | (b & 255)
+
+  /** Creates a new color from RGBA values (on the [0-255] range).
+    *  Overflow/Underflow will wrap around.
+    */
+  def apply(r: Long, g: Long, b: Long, a: Long): LongColor =
+    (a << 48) | ((r & 255) << 16) | ((g & 255) << 32) | (b & 255)
+
+  def apply(color: Color): LongColor = ((color.argb.toLong & 0xff00ff00L) << 24) | (color.argb.toLong & 0x00ff00ffL)
+}
