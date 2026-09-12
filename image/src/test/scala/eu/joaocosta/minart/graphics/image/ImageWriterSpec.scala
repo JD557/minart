@@ -5,7 +5,7 @@ import eu.joaocosta.minart.runtime.*
 
 class ImageWriterSpec extends munit.FunSuite {
 
-  def roundtripTest(baseResource: Resource, imageFormat: ImageReader with ImageWriter) = {
+  def roundtripTest(baseResource: Resource, imageFormat: ImageReader & ImageWriter) = {
     val (oldPixels, newPixels) = (for {
       original <- imageFormat.loadImage(baseResource).get
       originalPixels = original.getPixels().map(_.toVector)

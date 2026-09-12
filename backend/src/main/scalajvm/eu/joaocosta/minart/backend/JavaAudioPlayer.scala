@@ -2,6 +2,7 @@ package eu.joaocosta.minart.backend
 
 import javax.sound.sampled.*
 
+import scala.compiletime.uninitialized
 import scala.concurrent.*
 import scala.concurrent.duration.*
 
@@ -10,9 +11,9 @@ import eu.joaocosta.minart.runtime.*
 
 final class JavaAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback             = LoopFrequency.hz15.millis
-  private var sourceDataLine: SourceDataLine = _
+  private var sourceDataLine: SourceDataLine = uninitialized
 
-  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
+  private var playQueue: AudioQueue.MultiChannelAudioQueue = uninitialized
 
   protected def unsafeInit(): Unit = {}
 

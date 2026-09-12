@@ -54,7 +54,7 @@ object JsLoopRunner extends LoopRunner[Future] {
         promise.failure(e)
     }
     def run(initialState: S): Future[S] = {
-      val promise = Promise[S]
+      val promise = Promise[S]()
       finiteLoopAsyncAux(initialState, promise)
       promise.future
     }
@@ -83,7 +83,7 @@ object JsLoopRunner extends LoopRunner[Future] {
         promise.failure(e)
     }
     def run(initialState: S): Future[S] = {
-      val promise = Promise[S]
+      val promise = Promise[S]()
       finiteLoopAux(initialState, promise)
       promise.future
     }

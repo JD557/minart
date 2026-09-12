@@ -59,8 +59,8 @@ object LowLevelSubsystem {
       */
     protected def unsafeDestroy(): Unit
 
-    protected var _settings: Settings     = defaultSettings
-    private[this] var _isCreated: Boolean = false
+    protected var _settings: Settings = defaultSettings
+    private var _isCreated: Boolean   = false
 
     def settings: Settings = _settings
 
@@ -115,7 +115,7 @@ object LowLevelSubsystem {
     protected def unsafeDestroy(): Unit
 
     protected var _extendedSettings: ExtendedSettings = defaultSettings
-    private[this] var _isCreated: Boolean             = false
+    private var _isCreated: Boolean                   = false
 
     def settings: Settings                 = elideSettings(_extendedSettings)
     def extendedSettings: ExtendedSettings = _extendedSettings

@@ -52,6 +52,8 @@ trait QoiImageReader extends ImageReader {
             )
         case (0xc0, run) =>
           State.pure(OpRun(run + 1))
+        case other =>
+          State.error(s"Invalid Op: $other")
       }
   }
 

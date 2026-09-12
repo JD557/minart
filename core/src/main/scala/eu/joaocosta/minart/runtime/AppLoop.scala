@@ -168,7 +168,7 @@ object AppLoop {
     * @param terminateWhen loop termination check
     */
   def statefulAppLoop[State](
-      renderFrame: State => (CanvasSubsystem with AudioPlayerSubsystem) => State,
+      renderFrame: State => (CanvasSubsystem & AudioPlayerSubsystem) => State,
       terminateWhen: State => Boolean = (_: State) => false
   ): AppLoop.Definition[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
     statefulLoop[State, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
@@ -181,7 +181,7 @@ object AppLoop {
     * @param renderFrame operation to render the frame
     */
   def statelessAppLoop(
-      renderFrame: (CanvasSubsystem with AudioPlayerSubsystem) => Unit
+      renderFrame: (CanvasSubsystem & AudioPlayerSubsystem) => Unit
   ): AppLoop.Definition[Unit, (Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems] =
     statelessLoop[(Canvas.Settings, AudioPlayer.Settings), LowLevelAllSubsystems](
       renderFrame

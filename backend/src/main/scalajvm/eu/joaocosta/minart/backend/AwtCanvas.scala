@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage
 import java.awt.{Canvas as JavaCanvas, Color as JavaColor, Dimension, Graphics, GraphicsEnvironment, MouseInfo}
 import javax.swing.{JFrame, WindowConstants}
 
+import scala.compiletime.uninitialized
+
 import eu.joaocosta.minart.graphics.*
 import eu.joaocosta.minart.graphics.LowLevelCanvas.ExtendedSettings
 import eu.joaocosta.minart.input.*
@@ -22,8 +24,8 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Rendering resources
 
-  private[this] var javaCanvas: AwtCanvas.InnerCanvas = _
-  protected var surface: BufferedImageSurface         = _
+  private var javaCanvas: AwtCanvas.InnerCanvas = uninitialized
+  protected var surface: BufferedImageSurface   = uninitialized
 
   private[AwtCanvas] def javaRedraw(g: Graphics): Unit = if (javaCanvas != null) {
     g.setColor(new JavaColor(settings.clearColor.rgb))
@@ -46,8 +48,8 @@ final class AwtCanvas() extends SurfaceBackedCanvas {
 
   // Input resources
 
-  private[this] val keyListener: AwtCanvas.KeyListener     = new AwtCanvas.KeyListener()
-  private[this] var mouseListener: AwtCanvas.MouseListener = _
+  private val keyListener: AwtCanvas.KeyListener     = new AwtCanvas.KeyListener()
+  private var mouseListener: AwtCanvas.MouseListener = uninitialized
 
   // Initialization
 
@@ -155,7 +157,7 @@ object AwtCanvas {
   }
 
   private final class KeyListener extends JavaKeyListener {
-    private[this] var state = KeyboardInput.empty
+    private var state = KeyboardInput.empty
 
     def keyPressed(ev: KeyEvent): Unit =
       AwtKeyMapping.getKey(ev.getKeyCode).foreach(key => state.synchronized { state = state.press(key) })
@@ -172,7 +174,7 @@ object AwtCanvas {
   }
 
   private final class MouseListener(canvas: JavaCanvas, extendedSettings: ExtendedSettings) extends JavaMouseListener {
-    @volatile private[this] var state = PointerInput.empty
+    @volatile private var state = PointerInput.empty
 
     def getMousePos(): Option[PointerInput.Position] = {
       val point =

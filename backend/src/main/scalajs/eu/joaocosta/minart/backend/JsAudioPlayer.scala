@@ -1,5 +1,7 @@
 package eu.joaocosta.minart.backend
 
+import scala.compiletime.uninitialized
+
 import org.scalajs.dom.*
 
 import eu.joaocosta.minart.audio.*
@@ -9,7 +11,7 @@ final class JsAudioPlayer() extends LowLevelAudioPlayer {
   private lazy val audioCtx      = new AudioContext();
   private val preemptiveCallback = LoopFrequency.hz15.millis
 
-  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
+  private var playQueue: AudioQueue.MultiChannelAudioQueue = uninitialized
   private var callbackRegistered                           = false
 
   protected def unsafeInit() = {}

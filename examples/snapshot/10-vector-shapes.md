@@ -9,7 +9,7 @@ Besides surfaces, Minart also allows you to render some basic vector shapes.
 The relevant methods are in the `eu.joaocosta.minart.geometry` package
 
 ```scala
-//> using scala "3.3.7"
+//> using scala "3.9.0"
 //> using dep "eu.joaocosta::minart::0.6.7-SNAPSHOT"
 
 import eu.joaocosta.minart.backend.defaults.given

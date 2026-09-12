@@ -201,7 +201,7 @@ object SurfaceView {
       val newWidth  = Math.min(cw, this.width - cx)
       val newHeight = Math.min(ch, this.height - cy)
       if (cx == 0 && cy == 0 && newWidth == width && newHeight == height) this
-      else plane.clip(cx, cy, newWidth, newHeight)
+      else plane.clip(cx = cx, cy = cy, cw = newWidth, ch = newHeight)
     }
 
     def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
@@ -308,7 +308,7 @@ object SurfaceView {
       val newCy     = this.cy + cy
       val newWidth  = Math.min(cw, this.width - cx)
       val newHeight = Math.min(ch, this.height - cy)
-      copy(cx = newCx, cy = newCy, newWidth, newHeight)
+      copy(cx = newCx, cy = newCy, width = newWidth, height = newHeight)
 
     def overlay(that: Surface, blendMode: BlendMode = BlendMode.Copy)(x: Int, y: Int): SurfaceView =
       toPlaneSurfaceView().overlay(that, blendMode)(x, y)

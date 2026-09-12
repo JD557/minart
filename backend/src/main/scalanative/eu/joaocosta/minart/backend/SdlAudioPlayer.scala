@@ -1,5 +1,6 @@
 package eu.joaocosta.minart.backend
 
+import scala.compiletime.uninitialized
 import scala.concurrent.*
 import scala.concurrent.duration.*
 import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
@@ -16,9 +17,9 @@ import eu.joaocosta.minart.runtime.*
 
 final class SdlAudioPlayer() extends LowLevelAudioPlayer {
   private val preemptiveCallback        = LoopFrequency.hz15.millis
-  private var device: SDL_AudioDeviceID = _
+  private var device: SDL_AudioDeviceID = uninitialized
 
-  private var playQueue: AudioQueue.MultiChannelAudioQueue = _
+  private var playQueue: AudioQueue.MultiChannelAudioQueue = uninitialized
 
   protected def unsafeInit(): Unit = {
     SDL_InitSubSystem(SDL_INIT_AUDIO)

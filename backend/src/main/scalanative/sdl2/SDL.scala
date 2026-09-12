@@ -3,7 +3,7 @@ package sdl2
 // File generated with bindgen. Manually added code marked with [MANUAL]
 
 import _root_.scala.scalanative.*
-import _root_.scala.scalanative.libc.*
+//import _root_.scala.scalanative.libc.* // [MANUAL] Unused
 import _root_.scala.scalanative.unsafe.*
 import _root_.scala.scalanative.unsigned.*
 
@@ -2927,7 +2927,7 @@ object enumerations:
 
 object aliases:
   import _root_.sdl2.enumerations.*
-  import _root_.sdl2.predef.*
+  // import _root_.sdl2.predef.* // [MANUAL] Unused
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
@@ -3444,9 +3444,9 @@ object aliases:
 
 object structs:
   import _root_.sdl2.enumerations.*
-  import _root_.sdl2.predef.*
+  // import _root_.sdl2.predef.* // [MANUAL] Unused
   import _root_.sdl2.aliases.*
-  import _root_.sdl2.structs.*
+  // import _root_.sdl2.structs.* // [MANUAL] Unused
   import _root_.sdl2.unions.*
 
   /** [bindgen] header: ./SDL_system.h
@@ -6588,11 +6588,11 @@ object structs:
     given _tag: Tag[_SDL_iconv_t] = Tag.materializeCStruct0Tag
 
 object unions:
-  import _root_.sdl2.enumerations.*
-  import _root_.sdl2.predef.*
+  // import _root_.sdl2.enumerations.* // [MANUAL] Unused
+  // import _root_.sdl2.predef.* // [MANUAL] Unused
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
-  import _root_.sdl2.unions.*
+  // import _root_.sdl2.unions.* // [MANUAL] Unused
 
   /** General event structure
     *
@@ -6974,7 +6974,7 @@ object unions:
 @link("SDL2") // [MANUAL]
 private[sdl2] object extern_functions:
   import _root_.sdl2.enumerations.*
-  import _root_.sdl2.predef.*
+  // import _root_.sdl2.predef.* // [MANUAL] Unused
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
   import _root_.sdl2.unions.*
@@ -12204,11 +12204,11 @@ private[sdl2] object extern_functions:
 
 object functions:
   import _root_.sdl2.enumerations.*
-  import _root_.sdl2.predef.*
+  // import _root_.sdl2.predef.* // [MANUAL] Unused
   import _root_.sdl2.aliases.*
   import _root_.sdl2.structs.*
-  import _root_.sdl2.unions.*
-  import extern_functions.*
+  // import _root_.sdl2.unions.* // [MANUAL] Unused
+  // import extern_functions.* // [MANUAL] Unused
   export extern_functions.*
 
   /** Convert a GUID string into a ::SDL_GUID structure.
