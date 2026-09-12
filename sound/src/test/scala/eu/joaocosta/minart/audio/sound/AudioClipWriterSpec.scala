@@ -6,7 +6,7 @@ import eu.joaocosta.minart.runtime.*
 
 class AudioClipWriterSpec extends munit.FunSuite {
 
-  def roundtripTest(baseResource: Resource, audioClipFormat: AudioClipReader with AudioClipWriter) = {
+  def roundtripTest(baseResource: Resource, audioClipFormat: AudioClipReader & AudioClipWriter) = {
     val (oldWave, newWave) = (for {
       original <- audioClipFormat.loadClip(baseResource).get
       originalWave = Sampler.sampleClip(original, 44100).toList
