@@ -2,9 +2,9 @@ package eu.joaocosta.minart.backend
 
 import javax.sound.sampled.*
 
+import scala.compiletime.uninitialized
 import scala.concurrent.*
 import scala.concurrent.duration.*
-import scala.compiletime.uninitialized
 
 import eu.joaocosta.minart.audio.*
 import eu.joaocosta.minart.runtime.*

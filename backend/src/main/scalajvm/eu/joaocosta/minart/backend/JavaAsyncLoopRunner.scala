@@ -27,7 +27,7 @@ object JavaAsyncLoopRunner extends LoopRunner[Future] {
 
   final class NeverLoop[S](operation: S => S) {
     def run(initialState: S) =
-      Future(operation(initialState))(ExecutionContext.global)
+      Future(operation(initialState))(using ExecutionContext.global)
   }
 
   final class UncappedLoop[S](
@@ -46,7 +46,7 @@ object JavaAsyncLoopRunner extends LoopRunner[Future] {
       val res = finiteLoopAux(initialState)
       cleanup()
       res
-    }(ExecutionContext.global)
+    }(using ExecutionContext.global)
   }
 
   final class CappedLoop[S](
@@ -77,6 +77,6 @@ object JavaAsyncLoopRunner extends LoopRunner[Future] {
       val res = finiteLoopAux(initialState)
       cleanup()
       res
-    }(ExecutionContext.global)
+    }(using ExecutionContext.global)
   }
 }
