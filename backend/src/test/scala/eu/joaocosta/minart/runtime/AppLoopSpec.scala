@@ -1,6 +1,7 @@
 package eu.joaocosta.minart.runtime
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.compiletime.uninitialized
 
 import eu.joaocosta.minart.backend.*
 import eu.joaocosta.minart.backend.defaults.given
@@ -10,7 +11,7 @@ import eu.joaocosta.minart.input.*
 class AppLoopSpec extends munit.FunSuite {
 
   object TestCanvas extends SurfaceBackedCanvas {
-    protected var surface: RamSurface                                                      = _
+    protected var surface: RamSurface                                                      = uninitialized
     def unsafeInit(): Unit                                                                 = {}
     def unsafeApplySettings(newSettings: Canvas.Settings): LowLevelCanvas.ExtendedSettings = {
       surface = new RamSurface(newSettings.width, newSettings.height, newSettings.clearColor)
