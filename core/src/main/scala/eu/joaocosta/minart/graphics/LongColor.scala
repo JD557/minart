@@ -19,19 +19,22 @@ object LongColor {
   extension (color: LongColor) {
 
     /** The alpha channel value. */
-    inline def a: Long = (color >> 48) & 0x000000ff
+    inline def a: Long = (color >> 48) & 0x000000ffL
 
     /** The red channel value. */
-    inline def r: Long = (color >> 16) & 0x000000ff
+    inline def r: Long = (color >> 16) & 0x000000ffL
 
     /** The green channel value. */
-    inline def g: Long = (color >> 32) & 0x000000ff
+    inline def g: Long = (color >> 32) & 0x000000ffL
 
     /** The green channel value. */
-    inline def b: Long = (color & 0x000000ff)
+    inline def b: Long = (color & 0x000000ffL)
 
     inline def toColor: Color =
-      Color.fromARGB((((color >> 24) & 0x00000000_ffffffff) | ((color) & 0x00000000_ffffffff)).toInt)
+      Color.fromARGB((((color >> 24) & 0x00000000_ffffffffL) | (color & 0x00000000_ffffffffL)).toInt)
+
+    /** Sets the alpha to 255 */
+    inline def opaque: LongColor = color | 0x00ff_0000_0000_0000L
   }
 
   /** Sums two colors.
@@ -74,5 +77,5 @@ object LongColor {
   def apply(r: Long, g: Long, b: Long, a: Long): LongColor =
     (a << 48) | ((r & 255) << 16) | ((g & 255) << 32) | (b & 255)
 
-  def apply(color: Color): LongColor = ((color.argb.toLong & 0xff00ff00) << 24) | (color.argb.toLong & 0x00ff00ff)
+  def apply(color: Color): LongColor = ((color.argb.toLong & 0xff00ff00L) << 24) | (color.argb.toLong & 0x00ff00ffL)
 }

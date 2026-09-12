@@ -63,6 +63,7 @@ private[graphics] object Blitter {
               colorSrc,
               LongColor.weight(colorDst, (255 - colorSrc.a).toByte)
             )
+            .opaque
             .toColor
           dest.unsafePutPixel(destX, destY, color)
         )
@@ -143,6 +144,7 @@ private[graphics] object Blitter {
               colorSrc,
               LongColor.weight(colorDst, (255 - colorSrc.a).toByte)
             )
+            .opaque
             .toColor
           dest.unsafePutPixel(destX, destY, color)
         )

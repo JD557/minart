@@ -40,7 +40,7 @@ object BlendMode {
   }
 
   /** Blends the surfaces using weighted adition: dstColor * (1-srcAlpha) + srcColor
-    *  This behaves as normal alpha blending if the source uses premultiplied alpha.
+    * This behaves as normal alpha blending if the source uses premultiplied alpha.
     */
   case object AlphaAdd extends BlendMode {
     def blend(src: => Color, dst: => Color): Color = {
