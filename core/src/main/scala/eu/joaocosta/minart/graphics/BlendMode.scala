@@ -44,13 +44,15 @@ object BlendMode {
     */
   case object AlphaAdd extends BlendMode {
     def blend(src: => Color, dst: => Color): Color = {
-      val colorSource = src
-      val colorDest   = dst
-      Color(
-        Math.min((colorDest.r * (255 - colorSource.a)) / 255 + colorSource.r, 255),
-        Math.min((colorDest.g * (255 - colorSource.a)) / 255 + colorSource.g, 255),
-        Math.min((colorDest.b * (255 - colorSource.a)) / 255 + colorSource.b, 255)
-      )
+      val colorDst = LongColor(src)
+      val colorSrc = LongColor(dst)
+      LongColor
+        .sumClamp(
+          colorSrc,
+          LongColor.weight(colorDst, (255 - colorSrc.a).toByte)
+        )
+        .opaque
+        .toColor
     }
   }
 }
