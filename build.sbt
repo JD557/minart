@@ -1,7 +1,7 @@
 import ReleaseTransformations._
 import scala.scalanative.build._
 
-lazy val scala3Version = "3.3.7"
+lazy val scala3Version = "3.9.0"
 
 name := "minart-root"
 
